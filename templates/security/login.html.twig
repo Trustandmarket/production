@@ -1,0 +1,190 @@
+
+{% extends 'base.html.twig' %}
+{% block head %}
+{{ parent() }}
+	<meta name="title" content="{{ include('Seo/Meta/title.html.twig', {code: 'login'}) }}">
+	<meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'login'}) }}"/>
+	<link rel="canonical" href="{{ absolute_url(path('app_login')) }}">
+	
+	{# OG CONTENT #}
+	<meta property="og:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'login'}) }}">
+	<meta property="og:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'login'}) }}">
+	<meta property="og:image" content="{{ include('Seo/Meta/security_image.html.twig', {code: 'login_image'}) }}">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="{{ absolute_url(path('app_login')) }}">
+	{# END OG CONTENT #}
+
+	{# Twitter CARD #}
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:site" content="@trustandmarket">
+	<meta name="twitter:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'login'}) }}">
+	<meta name="twitter:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'login'}) }}">
+	<meta name="twitter:image" content="{{ include('Seo/Meta/security_image.html.twig', {code: 'login_image'}) }}">
+	<meta name="twitter:image:alt" content="{{ include('Seo/Meta/title.html.twig', {code: 'login'}) }}">
+	{# END Twitter Card #}
+
+	{# JSON LD #}
+	<script type="application/ld+json">
+	{
+		"@context": "http://schema.org",
+		"@type": "WebPage",
+		"sameAs": [
+			"https://www.facebook.com/trustandmarket",
+			"https://twitter.com/trustandmarket",
+			"https://www.instagram.com/trustandmarket/",
+			"https://www.linkedin.com/company/trustandmarket",
+			"https://www.youtube.com/channel/UC-jLvu82KNM6DnFOp2Nvk_A"
+		]
+	}
+	</script>
+	{# END JSON LD #}
+
+	<script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+{% endblock %}
+
+{% block title %}Trust & Market | {{ include('Seo/Meta/title.html.twig', {code: 'login'}) }} {% endblock %}
+
+{% block stylesheets %}
+	{{parent()}}
+	<style>
+    {# /***/ #}
+    	body{ 
+			{% if include('Seo/Meta/security_image.html.twig', {code: 'login_image'}) != "\n" %}background: url({{ include('Seo/Meta/security_image.html.twig', {code: 'login_image'}) }}) no-repeat center center fixed;{% else %}background: url({{ absolute_url(asset('assets/img/john-raptis.png'))}}) no-repeat center center fixed;{% endif %}
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
+	  	}
+
+	#g-recaptcha-response {
+		display: block !important;
+		position: absolute;
+		margin: -78px 0 0 0 !important;
+		width: 302px !important;
+		height: 55px !important;
+		z-index: -999999;
+		opacity: 0;
+	}
+	</style>
+{% endblock %}
+
+{% block body %}
+
+	<form class="form-signin" action="{{ path('app_login') }}" method="post">
+		{% for message in app.session.flashbag.get('info') %}
+            <div class="alert alert-success" style="color: white; background-color: #008779;">
+                {{ message }}
+            </div>
+        {% endfor %}
+		{% if error %}
+			<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+		{% endif %}
+
+		{% if app.user %}
+			<div class="mb-3">
+				<h4 class="mb-3 font-weight-light white-t" style="font-size: 15px;">Vous etes connecté {{ app.user.displayName }}, <a class="special-link" href="{{ path('app_logout') }}">Déconnexion</a></h4>
+			</div>
+		{% endif %}
+		
+		<div class="text-center mb-4">
+			<a href='/'>
+				<img class="mb-4" src="{{prerender(asset('assets/img/logo_tm.svg'))}}" alt="logo" width="72" height="72">
+			</a>
+			<h1 class="h3 mb-3 font-weight-normal white-t">{{'connexion.titre'|trans}}</h1>
+		</div>
+
+		<div class="form-label-group">
+			<input name="email_canonical" type="email" id="_username" class="form-control input-custom" placeholder="{{'general.email'|trans}}" required autofocus>
+			<label for="_username">{{'general.email'|trans}}</label>
+			<div class="valid-feedback"></div>
+			<div class="invalid-feedback">
+				{{"inscription.erreur.email"|trans}}
+			</div>
+		</div>
+
+		<div class="form-label-group">
+			<input name="password" type="password" id="inputPassword" class="form-control input-custom" placeholder="{{'connexion.newsletter'|trans}}" required>
+			<label for="inputPassword">{{'connexion.passe'|trans}}</label>
+		</div>
+		{% if environnement == 'prod' or environnement == 'dev' %}
+			<div class="g-recaptcha" data-sitekey="6Ld5EEUpAAAAAOcwEkhPcx1fjKi0BUggL3jqUpPJ" data-action="TRUST_LOGIN"></div>
+		{% endif %}
+		<br/>
+		<!-- Hide only on mobile -->
+		<div class="d-none d-sm-block checkbox mb-3 white-t" style="font-size: 12.5px;">
+			<label>
+				<input type="checkbox" name="_remember_me" value="remember-me">
+				{{'connexion.souvenir'|trans}}
+			</label>
+			<a class="float-r special-link" href="{{path('app_forgot_password_request')}}">{{'connexion.passe-oublier'|trans}}</a>
+		</div>
+		<!-- End hide only on mobile -->
+
+		<!-- View only on mobile -->
+		<div class="d-sm-none checkbox mb-3 white-t" style="font-size: 12.5px;">
+			<label>
+				<input type="checkbox" name="_remember_me">{{'connexion.souvenir'|trans}}
+			</label><br>
+			<a class="special-link" href="{{path('app_forgot_password_request')}}">{{'connexion.passe-oublier'|trans}}</a>
+		</div>
+		<!-- End view only on mobile -->
+
+		<div class="text-center">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+			<button class="btn btn-lg btn-primary btn-md registration-button" type="submit">{{'connexion.titre'|trans}}</button>
+		</div>
+
+		<p class="mt-3 mb-3 text-muted text-center">
+			<a href="{{path('home')}}" class="special-below-link">&larr;&nbsp;<span class="special-link">{{'general.accueil'|trans}}</span>
+			</a>&nbsp;|&nbsp;<a class="special-below-link" href="{{absolute_url(path('app_register')) }}">
+				<span class="special-link">{{'connexion.creer-compte'|trans}}</span>&nbsp;&rarr;</a>
+			<br><a href="/fr/login" class="special-below-link">
+				<img src="/assets/img/fr.svg" alt="Langue francaise" height='12'>
+				Fr</a>
+			<!-- |
+			<a href="/fr/login" class="special-below-link">
+				<img src="/assets/img/gb.svg" alt="Langue anglaise" height='12'>En
+			</a> 
+			-->
+		</p>
+		{% if 'annonces/liste' in app.request.headers.get('referer') or 'annonces/details' in app.request.headers.get('referer') %}
+			<input type="hidden" name="_target_path" value="{{ app.request.headers.get('referer') }}" />
+		{% endif %}
+	</form>
+
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+<script type="text/javascript">
+function validateEmail(email) {
+    let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
+$(document).ready(function() {
+
+    $("#_username").change(function() {
+        let email = $("#_username").val();
+
+        if (validateEmail(email)) {
+            $("#_username").removeClass("is-invalid");
+            $("#_username").addClass("is-valid");
+        } else {
+            $("#_username").removeClass("is-valid");
+            $("#_username").addClass("is-invalid");
+        }
+    });
+})
+
+window.addEventListener('load', () => {
+	const $recaptcha = document.querySelector('#g-recaptcha-response');
+	if ($recaptcha) {
+		$recaptcha.setAttribute('required', 'required');
+	}
+})
+</script>
+
+
+{% endblock %}
+

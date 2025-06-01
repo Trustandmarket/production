@@ -1,0 +1,398 @@
+{% extends 'profileTemplate.html.twig' %}
+
+  {% block head %}
+      {{ parent() }}
+
+      <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+            sizes="32x32"/>
+      <link rel="icon"
+            href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}"
+            sizes="192x192"/>
+      <link rel="apple-touch-icon-precomposed"
+            href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+      <meta name="msapplication-TileImage"
+            content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+      <meta name="title" content="{{ include('meta/title.html.twig', {code: 'resultats-recherche'}) }}">
+      <meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'resultats-recherche'}) }}">
+      <link rel="canonical"
+            href="{{ absolute_url(path('annonces_listeAnnonces',{type_prestation:type_prestation,services_proposes: services_proposes,code_postal_ville: code_postal_ville, noPage: noPage })) }}">
+      <link rel="shortlink"
+            href="{{ absolute_url(path('annonces_listeAnnonces',{type_prestation:type_prestation,services_proposes: services_proposes,code_postal_ville: code_postal_ville, noPage: noPage })) }}">
+      {# OG CONTENT #}
+      <meta property="og:title" content="{{ include('meta/title.html.twig', {code: 'toutes-annonces'}) }}">
+      <meta property="og:description"
+            content="{{ include('Seo/Meta/description.html.twig', {code: 'toutes-annonces'}) }}">
+      <meta property="og:image"
+            content="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png') }}">
+      <meta propery="og:type" content="website">
+      <meta property="og:url" content="{{ absolute_url(path('annonces_listeAnnonces')) }}">
+      {# END OG CONTENT #}
+      {# JSON LD #}
+      <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+        {% for liste in listeAnnonces %}
+        {
+            "@type": "ListItem",
+            "position":{{ loop.index }},
+            "item": {
+            "@id": "{{ absolute_url(path('annonces_detailsAnnonce', { id: liste.id })) }}",
+            "name": "{% if app.request.locale == 'en' and liste.titre_en != '' %}{{ liste.titre_en }}{% else %}{{ liste.titre }}{% endif %}",
+            "image": "{% if liste.gallery.0 == null %}https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).jpg{% else %}{{ liste.gallery.0.guid|replace({'www.': ''}) }}{% endif %}"
+            }
+        }
+        {% if loop.last != true %}{% endif %}
+          {% endfor %}]
+	}
+
+      </script>
+      {# END JSON LD #}
+  {% endblock %}
+  {% block title %}Trust &amp; Market | {{ 'titre'|trans({}, 'liste_annonces')|raw }}{% endblock %}
+    {% block style %}
+        {{ parent() }}
+
+        <!-- Gijgo datepicker css -->
+        <link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+
+        <link href="{{ preload(asset('assets/css/custome.css')) }}" rel="stylesheet">
+        <link href="{{ asset('assets/css/prestation-list.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/css/result.css') }}" rel="stylesheet">
+        <style>
+            .pagination .page-item.active .page-link {
+                background-color: #f17b30;
+            }
+
+            @media only screen and (max-width: 500px) {
+                #dialoguons {
+                    width: 70%;
+                }
+            }
+
+            @media only screen and (min-width: 501px) {
+                #dialoguons {
+                    width: 40%;
+                }
+            }
+
+            @media only screen and (min-width: 769) and (max-width: 1024px) {
+                #dialoguons {
+                    width: 30%;
+                }
+            }
+
+            @media only screen and (min-width: 1025px) {
+                #dialoguons {
+                    width: 19%;
+                }
+            }
+
+            .p-pop-up1 {
+                margin-bottom: 2rem;
+            }
+
+            .p-pop-titre1, .p-pop-titre2 {
+                font-family: "Palanquin Dark";
+            }
+
+            .p-pop-content1 {
+                background: #53b4a6;
+                color: white;
+                padding: 10px;
+                text-decoration: none;
+                font-family: "Source Sans Pro";
+            }
+
+            .p-pop-content2 {
+                background: black;
+                color: white;
+                padding: 10px;
+                text-decoration: none;
+                font-family: "Source Sans Pro";
+            }
+        </style>
+    {% endblock %}
+    {% block header %}
+        {{ parent() }}
+    {% endblock %}
+    {% block navigation %}
+
+    {% endblock %}
+    {% block body %}
+        <!--Main Layout-->
+        <main class="">
+            <div class="container" id="cust">
+                <div class="mt-5">
+                    <div class="row">
+                        <div class="col-md-3 py-4 mb-4 custom-filter" id="custom-filter">
+                            <h3>{{ 'form.titre'|trans({}, 'liste_annonces')|raw }}</h3>
+                            <div class="container">
+                                <form action="" id="filtreForm">
+                                    <select name="type_prestation" id="type_prestation"
+                                            class="browser-default custom-select mr-2 mb-2">
+                                        <option value="">{{ 'form.prestation'|trans({}, 'liste_annonces')|raw }}</option>
+                                        {% for prestation in prestations %}
+                                            <option {% if prestation.slug == type_prestation %}selected='selected'{% endif %}
+                                                    value="{{ prestation.slug }}">{% if app.request.locale == 'en' and prestation.name != '' %}{{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select name="services_proposes" id="services_proposes"
+                                            class="browser-default custom-select mr-2 mb-2">
+                                        <option value="">{{ 'form.service'|trans({}, 'liste_annonces')|raw }}</option>
+                                        {% for prestation in sous_categories %}
+                                            <option {% if prestation.slug == services_proposes %}selected='selected'{% endif %}
+                                                    value="{{ prestation.slug }}">{% if app.request.locale == 'en' and prestation.name != '' %}{{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="text"
+                                           value="{% if code_postal_ville != '' %}{{ code_postal_ville }}{% endif %}"
+                                           class="form-control" name="code_postal_ville"
+                                           placeholder="Code postal et/ou Ville">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-lg btn-primary waves-effect waves-light col-md-12 search-normal-btn"
+                                                    type="sumbit">{{ 'form.soumettre'|trans({}, 'liste_annonces')|raw }}</button>
+                                            <button class="btn btn-lg btn-primary waves-effect waves-light col-md-12 search-icon-btn"
+                                                    type="sumbit"><i class="fas fa-search"></i></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-9" id="listeAnnonces">
+                            <!-- list des profil -->
+                            <h5 class="py-4 mb-4 border-bottom">{{ 'filtres.annonce'|trans({}, 'liste_annonces')|raw }}
+                                ({{ listeAnnonces|length }})</h5>
+                            <div class="row mb-4">
+                                <div class="col-md-12 text-right">
+                                    <form action="" class="form-inline float-right">
+                                        <h6 class="filter-text mr-2">{{ 'filtres.titre'|trans({}, 'liste_annonces')|raw }}</h6>
+                                        <select name="prix" id="triPrix"
+                                                class="browser-default custom-select mr-2 mb-2">
+                                            <option value="all">{{ 'filtres.prix'|trans({}, 'liste_annonces')|raw }}</option>
+                                            <option value="0">{{ 'filtres.croissant'|trans({}, 'liste_annonces')|raw }}</option>
+                                            <option value="1">{{ 'filtres.decroissant'|trans({}, 'liste_annonces')|raw }}</option>
+                                        </select>&nbsp;
+                                        <select name="date-dajout" id="triDate"
+                                                class="browser-default custom-select mr-2 mb-2">
+                                            <option value="all">{{ 'filtres.date-ajout'|trans({}, 'liste_annonces')|raw }}</option>
+                                            <option value="1">{{ 'filtres.recent'|trans({}, 'liste_annonces')|raw }}
+                                                &gt; {{ 'filtres.ancien'|trans({}, 'liste_annonces')|raw }}</option>
+                                            <option value="0">{{ 'filtres.ancien'|trans({}, 'liste_annonces')|raw }}
+                                                &lt; {{ 'filtres.recent'|trans({}, 'liste_annonces')|raw }}</option>
+                                        </select>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row isotope">
+                                {% if listeAnnonces is not null %}
+                                    {% for liste in listeAnnonces %}
+                                        <div class="col-md-4 mb-5 clearfix isotope-grid">
+                                            <!-- Card -->
+                                            <div class="card">
+                                                <!-- Card image -->
+                                                {% if liste.gallery is not null %}
+                                                    <div class="view overlay isotope-item"
+                                                         style="height:160px; border-bottom: 4px solid #f17b30">
+                                                        <img loading="lazy" class="card-img-top lazy" width="100%"
+                                                             src="{% if liste.gallery.0 == null %}https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).jpg{% else %}{{ liste.gallery.0.guid|replace({'www.': ''}) }}{% endif %}"
+                                                             alt="Card image cap">
+                                                        <a href="{% if liste.post_name != '' %}{{ path('annonces_detailsAnnonce', { id:liste.post_name }) }}{% endif %}">
+                                                            <div class="mask rgba-white-slight"></div>
+                                                        </a>
+                                                    </div>
+                                                {% endif %}
+                                                <!-- Card content -->
+                                                <div class="card-body">
+                                                    <!-- Title -->
+                                                    <h4 class="card-title fs-18">{% if app.request.locale == 'en' and liste.titre_en != '' %}{{ liste.titre_en }}{% else %}{{ liste.titre }}{% endif %}</h4>
+                                                    <!-- Category -->
+                                                    <h5 class="card-sub-title fs-15"><a href="{% if liste.categorieParent|lower == 'produits' %}{{ path('annonces_listeAnnonces',{type_prestation:'produits',services_proposes: '',code_postal_ville: ''}) }}
+										{% else %}{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: '',code_postal_ville: ''}) }}
+										{% endif %}">{% if app.request.locale == 'en' and liste.categorieParent_en != '' %}{{ liste.categorieParent_en }}{% else %}{{ liste.categorieParent }}{% endif %}</a>
+                                                    </h5>
+                                                    <!-- Sub Category -->
+                                                    <h5 class="card-sub-category fs-21"><a href="{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: liste.sousCategorieSlug,code_postal_ville: ''}) }}">{% if app.request.locale == 'en' and liste.sousCategorie_en != '' %}{{ liste.sousCategorie_en }}{% else %}{{ liste.sousCategorie }}{% endif %}</a></h5>
+                                                    <!-- Price -->
+                                                    <p class="annonce-price fs-24"><span data-stars="{{ liste.price|round(0) }}" class="number">{{ liste.price }}</span> {% if liste.devise != null %}{{ liste.devise }}{% else %}€{% endif %}</p>
+                                                    <!-- address -->
+                                                    <span hidden class="tri-dates">{{ liste.id }}</span>
+                                                </div>
+                                            </div>
+                                            <!-- Card -->
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <!-- list des prestations -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!--Main Layout-->
+
+        {% include("partials/project.html.twig") %}
+        {% include("partials/otherPagesVideoModal.html.twig") %}
+    {% endblock %}
+
+
+{% block footer %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <!-- jQuery plugin for datepicker -->
+    <script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+    <!-- jQuery plugin for date picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            let docWidth = document.documentElement.offsetWidth;
+            [].forEach.call(
+                document.querySelectorAll('*'),
+                function (el) {
+                    if (el.offsetWidth > docWidth) {
+                        console.log(el);
+                    }
+                }
+            );
+
+            //Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+            //first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+            //toggle menu search bar on/off
+            $("#searchMenuShowHide").click(function () {
+                $("#searchMenu").toggle("slide");
+            });
+
+
+            // Set card title and card-body equal height
+            let maxHeightTitle = 0;
+            let maxHeightbody = 0;
+
+            // card body
+            $(".card-body").each(function () {
+                if ($(this).height() > maxHeightbody) {
+                    maxHeightbody = $(this).height();
+                }
+            });
+
+            $(".card-body").height(maxHeightbody);
+
+            // Modification des données newsletter de l'utilisateur
+            $('#triPrix').on('change', function (e) {
+                //  var instance = $('.isotope-grid').drizzle({child:'.isotope-item'});
+                // instance.sort('[data-stars]', {order: 'asc'}); #}
+                if ($('#triPrix').val() == 0) {
+                    console.log($('#triPrix').val());
+                    $('.isotope').each(function () {
+                        $(this).html(
+                            $(this).find('.isotope-grid').sort(function (a, b) {
+                                let dsa = parseInt($(a).find('.number').eq(0).text()),
+                                    dsb = parseInt($(b).find('.number').eq(0).text());
+                                return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                            })
+                        );
+                    });
+                } else {
+                    console.log($('#triPrix').val());
+                    $('.isotope').each(function () {
+                        $(this).html(
+                            $(this).find('.isotope-grid').sort(function (a, b) {
+                                let dsa = parseInt($(a).find('.number').eq(0).text()),
+                                    dsb = parseInt($(b).find('.number').eq(0).text());
+                                return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                            })
+                        );
+                    });
+                }
+
+            });
+
+            $('#triDate').on('change', function (e) {
+
+                if ($('#triDate').val() == 0) {
+                    console.log($('#triDate').val());
+                    $('.isotope').each(function () {
+                        $(this).html(
+                            $(this).find('.isotope-grid').sort(function (a, b) {
+                                let dsa = parseInt($(a).find('.tri-dates').eq(0).text()),
+                                    dsb = parseInt($(b).find('.tri-dates').eq(0).text());
+                                return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                            })
+                        );
+                    });
+                } else {
+                    console.log($('#triDate').val());
+                    $('.isotope').each(function () {
+                        $(this).html(
+                            $(this).find('.isotope-grid').sort(function (a, b) {
+                                let dsa = parseInt($(a).find('.tri-dates').eq(0).text()),
+                                    dsb = parseInt($(b).find('.tri-dates').eq(0).text());
+                                return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                            })
+                        );
+                    });
+                }
+            });
+
+            $('#filtreForm').on('submit', function (e) {
+                e.preventDefault();
+                if ($.trim($('#type_prestation').val()) == "") {
+                    toastr.error('Le type de prestation est obligatoire');
+                    return;
+                }
+
+                let url = "{{ path('annonces_filtre_recherche_xhr',{ _locale : app.request.get('_locale') }) }}";
+                let type_prestation = $('#type_prestation').val();
+                let sous_categorie = $('#services_proposes').val();
+                let code_postal_ville = $('#code_postal_ville').val();
+                let page = "liste";
+
+                $.ajax({
+                    url: url,
+                    method: "post",
+                    data: {
+                        type_prestation: type_prestation,
+                        services_proposes: sous_categorie,
+                        code_postal_ville: code_postal_ville,
+                        page: page,
+                    },
+                    success: function (data) {
+
+                        if (data.html) {
+                            $('#listeAnnonces').html(data.html);
+                        }
+                        let maxHeightTitle = 0;
+                        let maxHeightbody = 0;
+                        $(".card-body").each(function () {
+                            if ($(this).height() > maxHeightbody) {
+                                maxHeightbody = $(this).height();
+                            }
+                        });
+                        $(".card-body").height(maxHeightbody);
+
+                    },
+                    error: function (xhr) {
+                        console.error(xhr);
+                    }
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

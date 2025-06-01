@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.getLocale() }}">
+<head>
+    {% include 'tag-google.html.twig' %}
+    {% include 'hotjar.html.twig' %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="apple-touch-icon-precomposed" href="{{ asset('assets/logo_tm.svg') }}"/>
+    <link rel="icon" href="{{ absolute_url(asset('assets/img/logo_new.svg')) }}" sizes="32x32"/>
+    <meta name="msapplication-TileImage" content="{{ asset('assets/img/logo_tm.svg') }}"/>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.8/css/mdb.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/css/topBtn.css') }} " rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    {% block head %}
+        <!-- No Index for dev -->
+        {% include("Seo/Meta/noindex.html.twig") %}
+        <!-- No Index for dev -->
+    {% endblock %}
+
+    <title> {% block title %}Trust &amp; Market{% endblock %} </title>
+
+    {% block style %}
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/0.8.2/css/flag-icon.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+        <!-- Your custom styles (optional) -->
+        <link href="{{ asset('assets/css/custome.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/css/result.css') }}" rel="stylesheet">
+        <link href="{{ absolute_url(asset('assets/css/footer.css')) }}" rel="stylesheet">
+        {% include 'cssTemplates/chat.css.twig' %}
+        <style>
+            #yourproject-iconed-link {
+                display: block;
+                position: fixed;
+                width: 100px;
+                height: 100px;
+                background: url("{{ asset('assets/img/project-icon.png') }}") no-repeat center center transparent;
+                bottom: 80px;
+                right: 20px;
+                z-index: 9999999999;
+                background-size: cover;
+                cursor: pointer;
+                font-size: 0;
+            }
+
+            .view {
+                height: 100%;
+                background: url({% if contenu is defined %}
+			{% if 'wp-content' in contenu.guid %}
+			{{contenu.guid}}
+			{% else %}
+			{{asset('assets/img/a-propos/a-propos-header.jpg')}}
+			{% endif %}
+			{% endif %}) no-repeat left top;
+                -webkit-background-size: cover;
+                -moz-background-size: cover;
+                -o-background-size: cover;
+                background-size: cover;
+            }
+
+            /* .view {
+                height: 100%;
+                background: url(../img/a-propos/a-propos-header.jpg) no-repeat left top;
+                -webkit-background-size: cover;
+                -moz-background-size: cover;
+                -o-background-size: cover;
+                background-size: cover;
+            } */
+
+            .image-header {
+                width: 35px;
+                height: 35px;
+                object-fit: cover;
+            }
+
+            #dialoguons {
+                bottom: 85px;
+                right: 10%;
+                position: fixed;
+                z-index: 9999999999;
+                background: white;
+                border: 1px solid black;
+                width: 19%;
+                display: none;
+            }
+
+            @media only screen and (max-width: 500px) {
+                #dialoguons {
+                    width: 70%;
+                }
+            }
+
+            @media only screen and (min-width: 501px) {
+                #dialoguons {
+                    width: 40%;
+                }
+            }
+
+            @media only screen and (min-width: 769) and (max-width: 1024px) {
+                #dialoguons {
+                    width: 30%;
+                }
+            }
+
+            @media only screen and (min-width: 1025px) {
+                #dialoguons {
+                    width: 19%;
+                }
+            }
+
+            .p-pop-up1 {
+                margin-bottom: 2rem;
+            }
+
+            .p-pop-titre1, .p-pop-titre2 {
+                font-family: "Palanquin Dark";
+            }
+
+            .p-pop-content1 {
+                background: #53b4a6;
+                color: white;
+                padding: 10px;
+                text-decoration: none;
+                font-family: "Source Sans Pro";
+            }
+
+            .p-pop-content2 {
+                background: black;
+                color: white;
+                padding: 10px;
+                text-decoration: none;
+                font-family: "Source Sans Pro";
+            }
+        </style>
+    {% endblock %}
+
+    {% include "pixelFacebook.html.twig" %}
+    {% include 'scriptautomatisationBrevo.html.twig' %}
+    {% include 'scriptchatBrevo.html.twig' %}
+</head>
+<body style="width: 100%">
+{% include 'facebook-support.html.twig' %}
+{% block header %}
+    <!--Main Navigation-->
+    <header style="">
+        {% include("header-new-design.html.twig") %}
+        <div id="imageHolder" class="view intro-2">
+            <div class="full-bg-img">
+                <div class="mask rgba-purple-light flex-center">
+                    <div class="container text-left align-items-end white-text wow fadeInUp">
+                        <h2 class="page-title" style="color: #fff;">
+                            {% block pageTitle %}
+                                {% if app.request.locale == 'en' and contenu.postExcerpt != '' %}{{ contenu.postExcerpt|upper }}{% else %}{{ contenu.getPostTitle|upper }}{% endif %}
+                            {% endblock %}
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+{% block body %}
+    {% include("partials/project.html.twig") %}
+    {% include("partials/otherPagesVideoModal.html.twig") %}
+{% endblock %}
+{% block footer %}
+    {% include("footer.html.twig") %}
+{% endblock %}
+
+{% block javascripts %}
+    <!-- JQuery -->
+    {# <script type="text/javascript" src="{{ prerender(asset('assets/js/jquery-3.4.1.min.js')) }}"></script> #}
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- Bootstrap tooltips -->
+    {# <script type="text/javascript" src="{{ asset('assets/js/popper.min.js') }}"></script> #}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"
+            async></script>
+    <!-- Bootstrap core JavaScript -->
+    {# <script type="text/javascript" src="{{ asset('assets/js/bootstrap.min.js') }}"></script> #}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    {# <script type="text/javascript" src="{{ asset('assets/js/mdb.min.js') }}"></script> #}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.12.0/js/mdb.min.js"></script>
+    <!-- Lazy load -->
+    <!-- cdnjs for lazy load -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}" async></script>
+    <script src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}" async></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcNudwZAAAAAOo22kCqBlPfeSQHVV05TTIWy2I2"></script>
+    {% include "partials/js/top_button.html.twig" %}
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
+    {% if app.environment == 'prod' %}
+    {% include 'partials/js/cookie.js.twig' %}
+    {% endif %}
+    <script>
+        $(document).on("click", ".linkContent", function (e) {
+            $('.floatingMenu').fadeToggle();
+        });
+
+        {% include("partials/js/videoButton.js.twig") %}
+
+        $(".closeBtnModal").click(function (e) {
+            e.preventDefault();
+            $("#newsletterModal").modal('toggle');
+        });
+
+        $(document).click(function (event) {
+            var target = $(event.target);
+            if (!target.closest('.linkContent').length && $('.linkContent').is(':visible')) {
+                $('.floatingMenu').fadeOut();
+            }
+        });
+
+        $('.searchSelectPicker').selectpicker();
+
+        $(document).on("click", ".homeFilterFormButton", function (event) {
+            event.preventDefault();
+            var oldTexte = $(this).text()
+            $(this).text("En cours...")
+            var whichForm = $(this).attr('attr-form')
+            var typePrestation = $('.' + whichForm).find('select[name="type_prestation"]').val()
+            console.log(typePrestation);
+            if (typePrestation == "") {
+                $(this).text(oldTexte)
+                toastr.error('Veuillez sélectionner un type de prestation pour lancer la recherche.');
+            } else {
+                $(this).text(oldTexte)
+                $('.' + whichForm).submit();
+            }
+        });
+
+        grecaptcha.ready(function () {
+            grecaptcha.execute('6LcNudwZAAAAAOo22kCqBlPfeSQHVV05TTIWy2I2', {action: 'homepage'}).then(function (token) {
+                document.getElementById("recaptchaResponse").value = token;
+            });
+        });
+        // Script to create user for newsletter
+
+        $('#newsletterForm').on('submit', function (e) {
+            e.preventDefault();
+            console.log($('#recaptchaResponse').val());
+
+
+            if ($('#recaptchaResponse').val()) {
+
+                toastr.info('{{ 'newsletter.attente'|trans }}');
+                var $form = $(this);
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    data: $form.serialize(),
+                    success: function (reponse) {
+
+                        if (reponse == 1) {
+                            toastr.clear();
+                            $('#body').hide();
+                            $('#succes').show();
+                            $('html,body').scrollTop(0);
+                            $('#send').removeClass('running');
+                            toastr.success('{{ 'newsletter.succes'|trans }}');
+                            $('#newsletterModal').modal('toggle');
+                        } else if (reponse == 0) {
+                            toastr.clear();
+                            $('#send').removeClass('running');
+                            toastr.warning('{{ 'newsletter.email_occupe'|trans }}');
+                        }
+                    },
+                    error: function (reponse) {
+                        toastr.clear();
+                        $('#send').removeClass('running');
+                        toastr.error('{{ 'newsletter.echec'|trans }}');
+                    }
+                });
+                return false;
+
+            } else {
+                toastr.warning('robot');
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var docWidth = document.documentElement.offsetWidth;
+
+            [].forEach.call(document.querySelectorAll('*'), function (el) {
+                if (el.offsetWidth > docWidth) {
+                    console.log(el);
+                }
+            });
+
+            $("#yourproject-iconed-link, #fermeur").click(function (e) {
+                e.preventDefault();
+                $("#dialoguons").fadeToggle("slow", "linear");
+            });
+
+// Date fields
+            $('.date_debut').datepicker({
+                uiLibrary: 'bootstrap4',
+                format: 'dd-mm-yyyy',
+                showRightIcon: false,
+                iconsLibrary: 'fontawesome'
+            });
+
+            $('.date_fin').datepicker({
+                uiLibrary: 'bootstrap4',
+                showRightIcon: false,
+                format: 'dd-mm-yyyy',
+                iconsLibrary: 'fontawesome'
+            });
+
+// Lazy Loading initializer
+            $(function () {
+                $('.lazy').lazy();
+            });
+
+// Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+
+// first thing turn Hide Menu Search bar
+            $("#frLang").hide();
+// toggle language for English
+            $("#enLang").click(function () {
+                $("#dropdownLang").html("<span class='flag-icon flag-icon-us'> </span>  EN");
+                $("#enLang").hide();
+                $("#frLang").toggle("slide");
+            });
+// toggle language for French
+            $("#frLang").click(function () {
+                $("#dropdownLang").html("<span class='flag-icon flag-icon-fr'> </span>  FR");
+                $("#frLang").hide();
+                $("#enLang").toggle("slide");
+            });
+
+// background image slider
+            $('.fullBackground').fullClip({
+                images: ['img/home-slider/home-slider-o1.png', 'img/home-slider/home-slider-o2.png',
+					'img/home-slider/home-slider-o3.png', 'img/home-slider/home-slider-o4.png', 'img/home-slider/home-slider-o5.png',
+                    'img/home-slider/home-slider-o6.png', 'img/home-slider/home-slider-o7.png',
+                    'img/home-slider/home-slider-o8.png', 'img/home-slider/home-slider-o9.png',
+                    'img/home-slider/home-slider-o11.png', 'img/home-slider/home-slider-o12.png'],
+                transitionTime: 1000,
+                wait: 3000
+            });
+            $(document).on('change', '.categorieParent', function (e) { // On empeche le navigateur de soumettre le formulaire
+
+                e.preventDefault();
+                var url1 = '{{ app.request.get("_locale") }}/home/sous_categorie?id=' + $(this).val();
+                toastr.info('Recherche des sous catégories...');
+                $.ajax({
+                    url: url1,
+                    type: 'get',
+                    success: function (reponse) {
+                        toastr.clear();
+                        $('.sous_category').removeAttr('disabled');
+
+                        $('.sous_category').html(reponse);
+                    },
+                    error: function (reponse) {
+                        toastr.clear();
+                    }
+
+                });
+
+            });
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "30000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+
+        });
+    </script>
+    {% include "partials/js/searchForm.html.twig" %}
+    <!-- End Lazy load -->
+    {% include 'ws/script.html.twig' %}
+
+{% endblock %}

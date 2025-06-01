@@ -1,0 +1,269 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}{{ 'admin.menu.writte-article'|trans }}{% endblock %}
+
+
+{% block main %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/dropzone.css') }}">
+    <script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+    <link rel="stylesheet" href="{{ asset('admin/date/dist/datepicker.min.css') }}">
+    <link href="{{ asset('admin/assets/css/more.css') }}" rel="stylesheet">
+
+    <script>
+        tinymce.init({
+            selector: 'textarea#description',
+            height: 350,
+            plugins: [
+                'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+                'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                'save table contextmenu directionality emoticons template paste textcolor'
+            ],
+
+            toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+            browser_spellcheck: true,
+            contextmenu: false,
+            {% if lang=='fr' %}language: 'fr_FR',{% endif %}
+
+
+        });
+    </script>
+    <style>
+        .tox-statusbar__branding {
+            display: none;
+        }
+
+        label[for="meta_desc"] {
+            flex: none;
+            padding-bottom: 1em;
+            font-size: initial;
+        }
+        #main-menu {
+            font-size: 14px;
+        }
+    </style>
+
+    <div class="content mt-5">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>{{ "admin.menu.writte-article"|trans }}</h4>
+                    </div>
+                    <div class="card-body card-block">
+                        <div class="sufee-alert alert with-close alert-success alert-dismissible fade show" id="success"
+                             style="display:none">
+
+                            <i class="fa fa-check"></i><i class="fa fa-check"></i> Enregistrement terminé!<br> <a
+                                    href="?entity=Article&action=list&menuIndex=4&submenuIndex=0"
+                                    style="margin-left:50px"><span
+                                        class="badge badge-pill badge-info">{{ 'admin.menu.all-post'|trans }}</span></a>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <form action="{{ path('admin_create_post') }}" method="post" id="article">
+                            <div class="form-group">
+                                <input type="text" id="titre" name="titre"
+                                       placeholder="{{ 'admin.article.titre'|trans }}" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <select data-placeholder="{{ 'admin.article.categorie'|trans }}" name="categorie"
+                                        required class="form-control" tabindex="1">
+                                    <option disabled selected>{{ 'admin.article.categorie'|trans }}</option>
+                                    {% for c in categorie %}
+                                        <option value="{{ c.termTaxonomyId }}">{{ c.name }}</option>
+
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="meta_desc">Méta description</label>
+                                <textarea name="meta_desc" class="form-control border-form-control" rows="3" cols="70"
+                                          id="meta_desc"></textarea>
+                            </div>
+
+                            <div class="form-group">
+
+                                <textarea name="description1" placeholder="" class="form-control" rows="8" cols="80"
+                                          id="description"></textarea>
+                            </div>
+                            <textarea name="description" style="display:none" class="form-control border-form-control"
+                                      rows="3" cols="70" id="article1"></textarea>
+
+                            <div class="form-group ">
+                                <div class="dropzone" style="width:100%">
+
+                                </div>
+                            </div>
+                            <input type="hidden" name="status" value="publish" id="status">
+
+                            <div class="m-3">
+                                <button type="button" id="brouillon" style="float:left"
+                                        class="btn btn-warning btn-sm btn-lg ld-over-inverse ">Sauvegarder en
+                                    brouillon<i class="ld ld-ring ld-spin"></i></button>
+                                <button type="submit" id="send" style="float:right;position:relative"
+                                        class="btn btn-success btn-sm btn-lg ld-over-inverse ">{{ 'admin.article.post'|trans }}
+                                    <i class="ld ld-ring ld-spin"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+{% block body_javascript %}
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+            integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/dropzone.js') }}"></script>
+    <script src="{{ asset('admin/date/dist/datepicker.min.js') }}"></script>
+    <script type="text/javascript">
+
+        var myDropzone = new Dropzone("div.dropzone",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image de couverture",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                dictRemoveFile: "{{ 'admin.article.remove'|trans }}",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        $('#article').on('submit', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            var temp = tinymce.activeEditor.getContent();
+            $('#article1').val(temp);
+
+            $('#send').addClass('running');
+            toastr.info('Envoie des données en cours...');
+
+            var $form = $(this);
+            var formdata = (window.FormData) ? new FormData($form[0]) : null;
+            var data = (formdata !== null) ? formdata : $form.serialize() + '&description=' + temp;
+
+            if (myDropzone.files != "") {
+                myDropzone.processQueue();
+                myDropzone.on("successmultiple", function (file, response) {
+                    $.ajax({
+                        url: $form.attr('action'),
+                        type: $form.attr('method'),
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: function (reponse) {
+                            if (reponse > 0) {
+                                toastr.clear();
+                                toastr.success(' Enregistrement terminé!');
+                                $('#success').show();
+                                $('html,body').scrollTop(0);
+                                window.location = document.referrer;
+                            } else if (reponse == 0) {
+                                $('#send').removeClass('running');
+                                toastr.clear();
+                                toastr.error('{{ 'erreur'|trans }}');
+
+                            }
+                        },
+                        error: function (reponse) {
+                            $('#send').removeClass('running');
+                            toastr.clear();
+                            toastr.error('{{ 'erreur'|trans }}');
+                        }
+                    });
+                });
+            } else {
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (reponse) {
+
+                        if (reponse > 0) {
+                            toastr.clear();
+                            toastr.success('Enregistrement terminé');
+                            //$('#article').hide();
+                            //$('#success').show();
+                            $('html,body').scrollTop(0);
+                            window.location = document.referrer;
+                        } else if (reponse == 0) {
+                            $('#send').removeClass('running');
+                            toastr.clear();
+                            toastr.error('{{ 'erreur'|trans }}');
+                        }
+                    },
+                    error: function (reponse) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error('{{ 'erreur'|trans }}');
+
+                    }
+                });
+            }
+            return false;
+        });
+        $(document).on('click', '#brouillon', function (e) {
+            // On empeche le navigateur de soumettre le formulaire
+
+            e.preventDefault();
+            $('#status').val('draft');
+            $('#article').submit();
+
+
+        });
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "12000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+        $('[data-toggle="datepicker"]').datepicker({
+            language: '{% if lang=='fr' %}fr-Fr{% else %}en-GB{% endif %}',
+            format: 'dd/mm/yyyy',
+            startDate: '{{ d|date("d/m/Y", false) }}',
+            autoHide: true,
+        });
+
+
+    </script>
+{% endblock body_javascript %}

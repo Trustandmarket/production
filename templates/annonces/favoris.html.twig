@@ -1,0 +1,508 @@
+{% extends 'otherLayout.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+          sizes="32x32"/>
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}"
+          sizes="192x192"/>
+    <link rel="apple-touch-icon-precomposed"
+          href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+    <meta name="msapplication-TileImage"
+          content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+    <meta name="title" content="{{ include('Seo/Meta/title.html.twig', {code: 'favoris-utilisateur'}) }}">
+    <meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'favoris-utilisateur'}) }}">
+    <link rel="canonical" href="{{ absolute_url(path('annonces_favoris')) }}">
+    <link rel="shortlink" href="{{ path('annonces_listeAnnonces') }}">
+    {# OG CONTENT #}
+    <meta property="og:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'favoris-utilisateur'}) }}">
+    <meta property="og:description"
+          content="{{ include('Seo/Meta/description.html.twig', {code: 'favoris-utilisateur'}) }}">
+    <meta property="og:image"
+          content="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png') }}">
+    <meta propery="og:type" content="website">
+    {# END OG CONTENT #}
+{% endblock %}
+
+{% block title %} Trust &amp; Market | {{ include('Seo/Meta/title.html.twig', {code: 'favoris-utilisateur'}) }}{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+
+    <!-- Gijgo datepicker css -->
+    <link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <!-- Custom css for camroll -->
+    <link href="{{ asset('assets/css/camroll/camroll_slider.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/custome.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/mon-profil.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/result.css') }}" rel="stylesheet">
+    <!-- owl carousel css -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <style>
+
+        .pagination .page-item.active .page-link {
+            background-color: #f17b30;
+        }
+        .card-footer {
+            text-align: end;
+        }
+        @media only screen and (max-width: 500px) {
+            #dialoguons {
+                width: 70%;
+            }
+        }
+
+        @media only screen and (min-width: 501px) {
+            #dialoguons {
+                width: 40%;
+            }
+        }
+
+        @media only screen and (min-width: 769) and (max-width: 1024px) {
+            #dialoguons {
+                width: 30%;
+            }
+        }
+
+        @media only screen and (min-width: 1025px) {
+            #dialoguons {
+                width: 19%;
+            }
+        }
+
+        .p-pop-up1 {
+            margin-bottom: 2rem;
+        }
+
+        .p-pop-titre1,
+        .p-pop-titre2 {
+            font-family: "Palanquin Dark";
+        }
+
+        .p-pop-content1 {
+            background: #53b4a6;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            font-family: "Source Sans Pro";
+        }
+
+        .p-pop-content2 {
+            background: black;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            font-family: "Source Sans Pro";
+        }
+
+        .keyword_search {
+            width: 100%;
+            background-color: #ffffff;
+            position: relative;
+            border-radius: 4rem;
+            padding: 10px;
+            margin-top: 2rem;
+            border: 1px solid #262626;
+        }
+
+        .keyword_search .search__box {
+            width: 85%;
+            background: none;
+            resize: none;
+            color: #000;
+            font-size: 13px;
+            border-radius: 2rem;
+            outline: none;
+            border: none;
+            position: relative;
+            transition: all .75s ease-in;
+            cursor: pointer;
+            margin-top: 0px !important;
+            text-align: left !important;
+            text-align-last: left !important;
+        }
+
+        .keyword_search .search__icon {
+            cursor: pointer;
+            position: absolute;
+            color: #ff7e10;
+            padding: 0.7rem;
+            border-radius: 50%;
+            background-color: #262626;
+            top: 3px;
+        }
+
+        .keyword_search .show {
+            width: 85%;
+            border: 1px solid #ff7e10;
+        }
+
+
+        .btn-wish {
+            background: transparent;
+            border: none;
+            /* margin: 87px; */
+            /* font-size: 88px; */
+            outline: none;
+            color: grey;
+        }
+
+        .btnh1-display {
+            display: flex;
+            justify-content: end;
+        }
+
+        .btn i:hover {
+            cursor: pointer;
+        }
+
+        .subtitle{
+            font-weight: 100;
+            font-size: 1rem
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .overlay .btnh1-display {
+            position: absolute;
+            top: 10%;
+            left: 92%;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        @media only screen and (max-width: 768px) {
+            #custom-filter {
+                padding-right: 15px !important;
+                padding-left: 15px !important;
+            }
+
+        }
+
+        .resultIndex a {
+            width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+        .resultIndex {
+            border-bottom: 1px solid gray;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .resultIndex:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .imgSearchResult {
+            height: 2.5rem;
+            width: 2.5rem;
+            border-radius: 50%;
+            margin-right: 1rem;
+            object-fit: cover;
+        }
+    </style>
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navigation %}{% endblock %}
+
+{% block body %}
+    <!--Main Layout-->
+    <main class="">
+        <div class="container">
+            <div class="mt-5">
+                <div class="row">
+                    <div class="col-md-12" id="listeAnnonces">
+                        <div class="row px-4">
+                            <h1>Favoris</h1>
+                        </div>
+                        <div class="row px-4">
+                            <h2 class="subtitle">Retrouver ici vos annonces ou expériences coup de cœur enregistrées lors de vos recherches.</h2>
+                        </div>
+                        <div class="mt-3 row isotope owl-theme">
+                            {% for liste in listeAnnonces %}
+                                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-5 px-4 clearfix isotope-grid">
+                                    <!-- Card -->
+                                    <div class="card">
+                                        <!-- Card image -->
+                                        {% if liste.gallery is not null %}
+                                            <div class="view overlay isotope-item"
+                                                 style="height:160px; border-bottom: 4px solid #f17b30">
+                                                <img loading="lazy" class="card-img-top lazy" width="100%"
+                                                     src="{% if liste.gallery|first %}{{ liste.gallery.0.guid|replace({'www.': ''}) }}{% elseif liste.images_secondaires|first %}{{ liste.images_secondaires.0.guid|replace({'www.': ''}) }}{% else %}https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).jpg{% endif %}"
+                                                     alt="Card image cap">
+                                                <div class="btnh1-display">
+                                                    <button class="btn-wish btnh1" data-id="{{ liste.id }}">
+                                                        {% if liste.id in text_wishlist %}<i style="color: red;"
+                                                                                             class="fas fa-heart"></i> {% else %}
+                                                            <i class="far fa-heart"></i> {% endif %}</button>
+                                                </div>
+                                                <a href="{% if liste.post_name != '' %}{{ path('annonces_detailsAnnonce', { id:liste.post_name }) }}{% endif %}">
+                                                    <div class="mask rgba-white-slight"></div>
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                        <!-- Card content -->
+                                        <div class="card-body">
+                                            <!-- Title -->
+                                            <h4 class="card-title fs-18">
+                                                {% if app.request.locale == 'en' and liste.titre_en != '' %}
+                                                    {{ liste.titre_en }}
+                                                {% else %}
+                                                    {{ liste.titre }}
+                                                {% endif %}
+                                            </h4>
+                                            <!-- Category -->
+                                            <h5 class="card-sub-title fs-15">
+                                                <a href="{% if liste.categorieParent|lower == 'produits' %}{{ path('annonces_listeAnnonces',{type_prestation:'produits',services_proposes: '',code_postal_ville: ''}) }} {% else %}{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: '',code_postal_ville: ''}) }} {% endif %}">
+                                                    {% if app.request.locale == 'en' and liste.categorieParent_en != '' %}
+                                                        {{ liste.categorieParent_en }}
+                                                    {% else %}
+                                                        {{ liste.categorieParent }}
+                                                    {% endif %}
+                                                </a>
+                                            </h5>
+                                            <!-- Sub Category -->
+                                            <h5 class="card-sub-category fs-21">
+                                                <a href="{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: liste.sousCategorieSlug,code_postal_ville: ''}) }}">
+                                                    {% if app.request.locale == 'en' and liste.sousCategorie_en != '' %}
+                                                        {{ liste.sousCategorie_en }}
+                                                    {% else %}
+                                                        {{ liste.sousCategorie }}
+                                                    {% endif %}
+                                                </a>
+                                            </h5>
+                                            <!-- Price -->
+                                            <p class="annonce-price fs-24">
+                                                    <span data-stars="{{ liste.price|round(0) }}"
+                                                          class="number">{{ liste.price }}</span>
+                                                {% if liste.devise != null %}
+                                                    {{ liste.devise }}{% else %}€
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <a target="_blank" href="{{ path('annonces_listeAnnoncesCommercial', {nom_commercial: liste.nom_commercial, id_commercial: liste.post_author}) }}">{{ liste.nom_commercial }}</a>
+                                        </div>
+                                    </div>
+                                    <!-- Card -->
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!--Main Layout-->
+
+    {% include("partials/project.html.twig") %}
+    {% include("partials/otherPagesVideoModal.html.twig") %}
+{% endblock %}
+
+
+{% block footer %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <!-- jQuery plugin for datepicker -->
+    <script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+    <!-- jQuery plugin for camroll slider -->
+    <script type="text/javascript" src="{{ asset('assets/js/camroll/camroll_slider.js') }}"></script>
+    <!-- jQuery plugin for date picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+    <!-- cdnjs for lazy load -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+    <!-- owl carousel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <!-- RateIt Js -->
+    <script type="text/javascript" src="{{ asset('assets/js/rateit/jquery.rateit.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function () {
+            var docWidth = document.documentElement.offsetWidth;
+
+            [].forEach.call(document.querySelectorAll('*'), function (el) {
+                if (el.offsetWidth > docWidth) { // console.log(el);
+                }
+            });
+
+            function toggleShow() {
+                var el = document.getElementById("box");
+                el.classList.toggle("show");
+            }
+
+
+// Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+// first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+// toggle menu search bar on/off
+            $("#searchMenuShowHide").click(function () {
+                $("#searchMenu").toggle("slide");
+            });
+
+
+// Set card title and card-body equal height
+            let maxHeightTitle = 0;
+            let maxHeightbody = 0;
+// card body
+            $(".card-body").each(function () {
+                if ($(this).height() > maxHeightbody) {
+                    maxHeightbody = $(this).height();
+                }
+            });
+            $(".card-body").height(maxHeightbody);
+// Modification des données newsletter de l'utilisateur
+            $('#triPrix').on('change', function (e) {
+                if ($('#triPrix').val() == 0) {
+//console.log($('#triPrix').val());
+                    $('.isotope').each(function () {
+                        $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                            let dsa = parseInt($(a).find('.number').eq(0).text()),
+                                dsb = parseInt($(b).find('.number').eq(0).text());
+                            return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                        }));
+                    });
+                } else { // console.log($('#triPrix').val());
+                    $('.isotope').each(function () {
+                        $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                            let dsa = parseInt($(a).find('.number').eq(0).text()),
+                                dsb = parseInt($(b).find('.number').eq(0).text());
+                            return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                        }));
+                    });
+                }
+
+            });
+
+            $('#triDate').on('change', function (e) {
+
+                if ($('#triDate').val() == 0) { // console.log($('#triDate').val());
+                    $('.isotope').each(function () {
+                        $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                            let dsa = parseInt($(a).find('.tri-dates').eq(0).text()),
+                                dsb = parseInt($(b).find('.tri-dates').eq(0).text());
+                            return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                        }));
+                    });
+                } else { // console.log($('#triDate').val());
+                    $('.isotope').each(function () {
+                        $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                            let dsa = parseInt($(a).find('.tri-dates').eq(0).text()),
+                                dsb = parseInt($(b).find('.tri-dates').eq(0).text());
+                            return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                        }));
+                    });
+                }
+            });
+
+// Tri des pro
+            $('#relevance').on('change', function (e) {
+                var relevanceData = $('#relevance').val();
+                switch (relevanceData) {
+                    case '1':
+                        break;
+                    case '2':
+                    case '3':
+                        $('.isotope-pro').each(function () {
+                            $(this).html($(this).find('.isotope-grid-pro').sort(function (a, b) {
+                                let dsa = parseInt($(a).find('.tri-date-pro').eq(0).text()),
+                                    dsb = parseInt($(b).find('.tri-date-pro').eq(0).text());
+                                return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                            }));
+                        });
+                        break;
+                    case '4':
+// console.log($('#relevance').val());
+                        $('.isotope-pro').each(function () {
+                            $(this).html($(this).find('.isotope-grid-pro').sort(function (a, b) {
+                                let dsa = parseInt($(a).find('.prix-indicatif').eq(0).text()),
+                                    dsb = parseInt($(b).find('.prix-indicatif').eq(0).text());
+                                return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                            }));
+                        });
+                        break;
+                    case '5':
+// console.log($('#relevance').val());
+                        $('.isotope-pro').each(function () {
+                            $(this).html($(this).find('.isotope-grid-pro').sort(function (a, b) {
+                                let dsa = parseInt($(a).find('.prix-indicatif').eq(0).text()),
+                                    dsb = parseInt($(b).find('.prix-indicatif').eq(0).text());
+                                return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                            }));
+                        });
+                        break;
+                    default:
+                }
+            });
+
+// Lazy Loading initializer
+            $(function () {
+                $('.lazy').lazy();
+            });
+
+
+            // First Like Button
+            $(document).on('click', '.btnh1', function () {
+                let element = $(this);
+                //Enregistrer dans la wishlist
+                let url = "{{ path('annonces_add_remove_to_user_wishlist',{ _locale : app.request.get('_locale') }) }}";
+                $.ajax({
+                    url: url,
+                    method: "get",
+                    data: {
+                        annonce_id: $(this).attr('data-id')
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        if (response.color == 'red') {
+                            element.children().removeClass("far");
+                            element.children().addClass("fas");
+                            element.children().css('color', 'red');
+                        } else if (response.color == 'black') {
+                            element.parent().parent().parent().parent().fadeOut("slow");
+                        } else if (response.status == 401) {
+                            window.location = "{{ path('app_login') }}";
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+            });
+
+
+        });
+    </script>
+
+
+{% endblock %}

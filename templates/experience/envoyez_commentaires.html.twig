@@ -1,0 +1,314 @@
+{% extends 'descriptiveContent.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+    <meta name="title" content="{{ include('Seo/Meta/title.html.twig', {code: 'retours-experience'}) }}">
+    <meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'retours-experience'}) }}">
+    <link rel="canonical" href="{{ absolute_url(path('experience_envoyez_commentaires')) }}">
+
+    {# OG CONTENT #}
+    <meta property="og:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'retours-experience'}) }}">
+    <meta property="og:description"
+          content="{{ include('Seo/Meta/description.html.twig', {code: 'retours-experience'}) }}">
+    <meta property="og:image"
+          content="{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ absolute_url(path('experience_envoyez_commentaires')) }}">
+    {# END OG CONTENT #}
+
+    {# Twitter CARD #}
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@trustandmarket">
+    <meta name="twitter:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'retours-experience'}) }}">
+    <meta name="twitter:description"
+          content="{{ include('Seo/Meta/description.html.twig', {code: 'retours-experience'}) }}">
+    <meta name="twitter:image"
+          content="{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}">
+    <meta name="twitter:image:alt" content="{{ include('Seo/Meta/title.html.twig', {code: 'retours-experience'}) }}">
+    {# END Twitter Card #}
+
+    {# JSON LD #}
+    <script type="application/ld+json">
+	{
+		"@context": "http://schema.org",
+		"@type": "WebPage",
+		"name": "{{ include('Seo/Meta/title.html.twig', {code: 'retours-experience'}) }}",
+		"description": "{{ include('Seo/Meta/description.html.twig', {code: 'retours-experience'}) }}",
+		"sameAs": [
+			"https://www.facebook.com/trustandmarket",
+			"https://twitter.com/trustandmarket",
+			"https://www.instagram.com/trustandmarket/",
+			"https://www.linkedin.com/company/trustandmarket",
+			"https://www.youtube.com/channel/UC-jLvu82KNM6DnFOp2Nvk_A"
+		]
+	}
+
+
+    </script>
+    {# END JSON LD #}
+    <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+{% endblock %}
+{% block title %}Trust &amp; Market |{{ include('Seo/Meta/title.html.twig', {code: 'retours-experience'}) }}{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+
+    <!-- Gijgo datepicker css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <!-- Your custom styles (optional) -->
+    <link href="{{ asset('assets/css/result.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+
+
+    <link href="{{ asset('assets/css/style-feedback.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+          integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+          crossorigin="anonymous"/>
+
+    <style>
+        .chat-menu a {
+            border-radius: 50%;
+            background-color: transparent;
+            width: 100%;
+        }
+
+        #g-recaptcha-response {
+            display: block !important;
+            position: absolute;
+            margin: -78px 0 0 0 !important;
+            width: 302px !important;
+            height: 55px !important;
+            z-index: -999999;
+            opacity: 0;
+        }
+    </style>
+
+
+{% endblock %}
+
+
+{% block navigation %}
+    <div id="imageHolder" class="view intro-2">
+        <div class="full-bg-img">
+            <div class="mask rgba-purple-light flex-center">
+                <div class="container text-left align-items-end white-text wow fadeInUp">
+                    <h2 class="page-title">
+                        AIDE
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block body %}
+    <!--Main Layout-->
+    <main class="text-center mt-5">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <ul class="list-group text-left">
+                        {% for m1 in sous_menu %}
+                            {% if m1.id != 3742 %}
+                                <li class="list-group-item list-group-flush ">
+                                    <a class="prestation-list-item"
+                                       href="{{ path('page_navigation', {idPage: "aide", id: m1.postName}) }}">
+                                        {% if app.request.locale == 'en' and m1.postExcerpt != '' %}{{ m1.postExcerpt }}{% else %}{{ m1.postTitle }}{% endif %}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="list-group-item current-menu-item">
+                            <a class="prestation-list-item" href="#">{{ 'feedback.titre-menu'|trans }}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-9 text-left">
+                    <h4>{{ 'feedback.titre-bloc'|trans }}</h4>
+                    {% if app.user %}
+                        <p class="sub-head">{{ 'feedback.sous-titre-bloc'|trans }}
+                        <strong style="font-weight: 800">Trust &amp; Market</strong>.
+                    {% else %}
+                        <p class="not-logged-msg">{{ 'feedback.condition'|trans }}</p>
+                    {% endif %}
+                    {% if app.user %}
+                        <div class="feedback-div">
+                            <form method="POST" class="form" id="sendCommentEmail"
+                                  action="{{ path('experience_sendFeedbacks') }}">
+                                <div class="feedback-box p-4">
+                                    <h5 style="font-size: 1.2rem; color: #333">{{ 'feedback.label-menu-deroulant'|trans }}
+                                        *</h5>
+                                    <select required name="sujet" id="remarkObject"
+                                            class="browser-default custom-select col-8 form-control rounded">
+                                        <option value="">{{ 'feedback.menu-deroulant.choisir'|trans }}</option>
+                                        <option value="Compte utilisateur">{{ 'feedback.menu-deroulant.compte'|trans }}</option>
+                                        <option value="Réservation/paiement">{{ 'feedback.menu-deroulant.reservation'|trans }}</option>
+                                        <option value="Annulation/Remboursement">{{ 'feedback.menu-deroulant.annulation'|trans }}</option>
+                                        <option value="Versement">{{ 'feedback.menu-deroulant.versement'|trans }}</option>
+                                        <option value="Design et Ergonomie">{{ 'feedback.menu-deroulant.design'|trans }}</option>
+                                        <option value="Technologique">{{ 'feedback.menu-deroulant.technologie'|trans }}</option>
+                                        <option value="Expériences utilisateurs">{{ 'feedback.menu-deroulant.experience'|trans }}</option>
+                                        <option value="Services aux utilisateurs">{{ 'feedback.menu-deroulant.service'|trans }}</option>
+                                        <option value="Bugs application">{{ 'feedback.menu-deroulant.bug'|trans }}</option>
+                                        <option value="Divers">{{ 'feedback.menu-deroulant.divers'|trans }}</option>
+                                    </select>
+
+                                    <h5 class="mt-3" style="font-size: 1.2rem; color:#333">{{ 'feedback.texte'|trans }}
+                                        *</h5>
+                                    <textarea name="votre-message" id="remarkMessage" cols="80" rows="10"
+                                              class="form-control mb-3" placeholder="..." required=""></textarea>
+
+
+                                    <div class="g-recaptcha" data-sitekey="6Ld5EEUpAAAAAOcwEkhPcx1fjKi0BUggL3jqUpPJ"
+                                         data-action="TRUST_FEEDBACKS"></div>
+                                </div>
+
+                                <div class="row below-form px-4">
+                                    {#<div class="col-md-6 text-left">* {{ 'feedback.menu-deroulant.infos'|trans }}</div>#}
+                                    <div class="col-md-6 text-right">
+                                        <input type="submit" id="contacterNousButton"
+                                               value="{{ 'feedback.envoyer'|trans }}"
+                                               class="btn btn-orange btn-md btn-primary rounded text-capitalize">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    {% else %}
+                        <a class="nav-link"
+                           href="{{ path('app_login') }}">{{ 'home.menu.lien-inscription-connexion'|trans }}
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% include("partials/project.html.twig") %}
+        {% include("partials/otherPagesVideoModal.html.twig") %}
+    </main>
+    <!--Main Layout-->
+
+{% endblock %}
+
+	{% block footer %}
+        {{ parent() }}
+
+    {% endblock %}
+
+	{% block javascripts %}
+        {{ parent() }}
+
+        <!-- jQuery plugin for datepicker -->
+        <script src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript"
+                src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+
+        <script>
+            $(document).ready(function () {
+                var docWidth = document.documentElement.offsetWidth;
+
+                [].forEach.call(document.querySelectorAll('*'), function (el) {
+                    if (el.offsetWidth > docWidth) {
+                        console.log(el);
+                    }
+                });
+// Hambuger menu icon
+                $('.animated-button-icon').on('click', function () {
+                    $('.animated-icon2').toggleClass('open');
+                });
+
+// Recherche avancer
+                $("#recherche-avancer").click(function () {
+                    $("#sectionAvancer").toggleClass('d-none');
+                });
+
+// first thing turn Hide Menu Search bar
+                $("#searchMenu").hide();
+// toggle menu search bar on/off
+                $("#searchMenuShowHide").click(function () {
+                    $("#searchMenu").toggle("slide");
+                });
+
+// first thing turn Hide "Autre besoin" input field
+                $("#autresBesoins").hide();
+// toggle menu search bar on/off
+                $("#autres").click(function () {
+                    $("#autresBesoins").toggle("slide");
+                });
+
+
+// For comments add
+
+                $('#sendCommentEmail').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                    e.preventDefault();
+
+                    $('#contacterNousButton').addClass('running');
+                    toastr.info("{{ 'systeme.email.requete-en-cours'|trans }}");
+
+                    let $form = $(this);
+                    let formdata = (window.FormData) ? new FormData($form[0]) : null;
+                    let data = (formdata !== null) ? formdata : $form.serialize();
+
+
+                    $.ajax({
+                        url: $form.attr('action'),
+                        type: $form.attr('method'),
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: function (response) {
+                        console.log(response)
+                            if (response == 1) {
+                                toastr.clear();
+                                toastr.success('{{ 'systeme.email.succes'|trans }}');
+                                window.location = "";
+                            } else if (response == 0) {
+                                $('#contacterNousButton').removeClass('running');
+                                toastr.clear();
+                                toastr.error('{{ 'systeme.email.erreur'|trans }}');
+                            }
+                        },
+                        error: function (response) {
+                            $('#contacterNousButton').removeClass('running');
+                            toastr.clear();
+                            toastr.error('{{ 'systeme.email.erreur'|trans }}');
+                        }
+                    });
+                    return false;
+
+                });
+
+            });
+            window.addEventListener('load', () => {
+                const $recaptcha = document.querySelector('#g-recaptcha-response');
+                if ($recaptcha) {
+                    $recaptcha.setAttribute('required', 'required');
+                }
+            })
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "12000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+        </script>
+
+    {% endblock %}

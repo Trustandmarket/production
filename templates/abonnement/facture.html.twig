@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.getLocale() }}">
+<head>
+    <link rel="stylesheet" type="text/css"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+          integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+          sizes="32x32"/>
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}"
+          sizes="192x192"/>
+    <link rel="apple-touch-icon-precomposed"
+          href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+    <style>
+            body {
+                background: #ccc;
+                padding: 30px;
+                font-size: 0.6em;
+            }
+
+            h6 {
+                font-size: 1em;
+            }
+
+            .container {
+                width: 21cm;
+                min-height: 29.7cm;
+            }
+
+            .invoice {
+                background: #fff;
+                width: 100%;
+                padding: 50px;
+            }
+            thead{
+                color: #fff;
+                background: #0a0a0a;
+                font-size: medium;
+            }
+
+            tbody{
+                font-size: small;
+            }
+
+            .logo {
+                width: 40px;
+            }
+
+            p{
+                font-size: small;
+            }
+            hr{
+                background: #0a0a0a;
+                margin: 0px 0px 0px 0px;
+            }
+
+            .table{
+                border: none;
+            }
+            .no-facture, .name{
+                font-size: large;
+            }
+
+            .document-type {
+                text-align: right;
+                color: #444;
+            }
+
+            .conditions {
+                color: #666;
+                font-size: x-small;
+            }
+
+            .bottom-page {
+                font-size: x-small;
+            }
+    </style>
+    <title>Facture</title>
+</head>
+<body>
+<div class="container">
+    <div class="invoice">
+        <div class="row">
+            <div class="col-md-6 mb-5">
+                <img src="{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"
+                     class="logo"/>
+            </div>
+            <div class="col-md-12">
+                <p class="text-left my-2 no-facture"><strong>FACTURE Nº {{ abonnement.createdAt|date("U") }} </strong></p>
+                <p class="text-left my-2"><strong>Date</strong>: {{ abonnement.createdAt|date("d/m/Y") }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <br/><br/>
+                <p class="addressDriver text-right">
+                    <strong class="name">{{ user.getInformationsFacturationUtilisateur().getNomOuSociete() }}</strong><br/>
+                    {{ user.getInformationsFacturationUtilisateur().getAdresse() }}<br/>
+                    <span>{{ user.getInformationsFacturationUtilisateur().getVille() }} {{ user.getInformationsFacturationUtilisateur().getCodePostal() }}</span><br/>
+                    <span>{{ user.getInformationsFacturationUtilisateur().getPays()|country_name }}</span><br/>
+                </p>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        <table class="table my-0">
+            <thead>
+            <tr>
+                <th>Offre souscrite</th>
+                <th class="text-right">TOTAL HT</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><strong>{{ abonnement.getOffre().getTitre() }}</strong></td>
+                <td class="text-right">{{ abonnement.getTarif() }} €</td>
+            </tr>
+            </tbody>
+        </table>
+        <hr>
+        <div class="row">
+            <div class="col-8">
+            </div>
+            <div class="col-4">
+                <table class="table table-sm text-right table-borderless">
+                    <tr>
+                        <td><strong>Sous-Total</strong></td>
+                        <td class="text-right">{{ abonnement.getTarif()|round(2, 'ceil') }} €</td>
+                    </tr>
+                    <tr class="">
+                        <td>TVA 20%</td>
+                        <td class="text-right">{{ abonnement.getTarif() * 0.2|round(2, 'ceil') }} €</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total TTC</strong></td>
+                        <td class="text-right">{{ abonnement.getTarif() * 1.2|round(2, 'ceil') }} €</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <p class="conditions"><strong><u>CONTACT</u></strong>
+            <br/>
+            Site : https://trustandmarket.com/fr
+            <br/>
+            E-mail : contact@kbr-global.com
+            <br/>
+            Tel. : 01 85 42 14 91
+        </p>
+
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <hr/>
+
+        <p class="bottom-page text-center mt-3">
+            <strong>TRUSTANDMARKET, KBR GLOBAL SAS</strong> au capital social de 30 000,00 €<br>
+            N° RCS 828 427 740 - N° Siret 82842774000018<br>
+            <strong>1 Rue Réjane Ruel</strong> 77500 Chelles, <strong>France</strong><br>
+            N° de TVA : FR60828427740
+        </p>
+    </div>
+</div>
+</body>
+</html>
+
+

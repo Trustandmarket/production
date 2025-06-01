@@ -1,0 +1,774 @@
+{% extends '@!EasyAdmin/layout.html.twig' %} {% block page_title %}Ajouter un utilisateur{% endblock %} {% block content %}
+<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}" />
+{# <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}" /> #}
+<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}" />
+<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}" />
+<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}" />
+<link rel="stylesheet" href="{{ asset('admin/assets/switcher/css/switcher.css') }}" />
+<link rel="stylesheet" href="{{ preload(asset('assets/css/tagsinput/tagify.css'))}}" />
+<link rel="stylesheet" href="{{ asset('assets/phone/css/intlTelInput.css') }}" />
+<link href="{{asset('assets/css/camroll/camroll_slider.css')}}" rel="stylesheet" type="text/css" />
+<!-- owl carousel css -->
+{# <link href="{{ preload(asset('assets/css/style-profile.css'))}}" rel="stylesheet"> #}
+
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" />
+
+<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}" />
+<style media="screen">
+    .navbar {
+        background: none;
+    }
+</style>
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Ajouter un utilisateur</h4>
+                </div>
+                <div class="card-body card-block">
+                    <div class="sufee-alert alert with-close alert-success alert-dismissible fade show" id="success" style="display: none;">
+                        Compte créé avec succès <br />
+                        <a href="?entity=wp_users&action=list&menuIndex=1&submenuIndex=0" style="margin-left: 50px;"><span class="badge badge-pill badge-info">{{'admin.menu.all-user'|trans}}</span></a>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show" id="error" style="display: none;">
+                        <span class="badge badge-pill badge-danger">Error</span>
+                        Erreur survenue lors de la création du compte
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{path('app_admin_create_account')}}" method="post" id="updateProfile" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.formulaire-profil.nom'|trans}}</b>
+                                    <input type="text" required id="nom" name="last_name" placeholder="{{'profil-utilisateur.formulaire-profil.nom'|trans}}" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.formulaire-profil.prenom'|trans}}</b>
+                                    <input type="text" id="prenom" name="first_name" placeholder="{{'profil-utilisateur.formulaire-profil.prenom'|trans}}" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <b>Sexe</b>
+                                    <select class="form-control" name="sexe" id="categorie" required>
+                                        <option disabled selected>Sexe</option>
+                                        <option value="homme">{{'general.homme'|trans}}</option>
+                                        <option value="femme">{{'general.femme'|trans}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.formulaire-profil.date-de-naissance'|trans}}</b>
+                                    <input type="date" id="bdaytime" placeholder="{{'profil-utilisateur.formulaire-profil.date-de-naissance'|trans}}" required name="bdaytime" class="form-control form-control-md inputNaissance" />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.formulaire-profil.lieu-de-naissance'|trans}}</b>
+                                    <input type="text" id="birth_place" placeholder="{{'profil-utilisateur.formulaire-profil.lieu-de-naissance'|trans}}" name="birth_place" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <b>Email</b>
+                                    <input type="email" required name="email" placeholder="Email" class="form-control" />
+                                </div>
+
+                                <div class="form-group">
+                                    <b>Téléphone</b>
+                                    <input type="text" id="telephone" name="telephone" placeholder="{{'profil-utilisateur.formulaire-profil.telephone'|trans}}" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.formulaire-profil.raison-sociale'|trans}}</b>
+                                    <input type="text" required name="raison_sociale" placeholder="{{'profil-utilisateur.formulaire-profil.raison-sociale'|trans}}" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.formulaire-profil.siret'|trans}}</b>
+                                    <input type="text" name="siret" placeholder="{{'profil-utilisateur.formulaire-profil.siret'|trans}}" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.formulaire-profil.tva'|trans}}</b>
+                                    <input type="text" name="tva" placeholder="{{'profil-utilisateur.formulaire-profil.tva'|trans}}" class="form-control" />
+                                </div>
+
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.formulaire-profil.titre'|trans}}</b>
+                                    <input type="text" name="titre" placeholder="{{'profil-utilisateur.formulaire-profil.titre'|trans}}" class="form-control" />
+                                </div>
+
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.formulaire-profil.competence'|trans}}</b>
+                                    <input type="text" id="competencesModif" class="form-control" name="competence1" placeholder="{{'profil-utilisateur.formulaire-profil.competence'|trans}}" data-role="tagsinput"/>
+                                </div>
+                                <div class="form-group">
+                                    <b>Région</b>
+                                    <input type="text" required name="region" placeholder="{{'profil-utilisateur.formulaire-profil.region'|trans}}" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <b>Généré le mot de passe</b>
+                                    <input type="password" required value="" name="password" placeholder="Généré le mot de passe" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <b>Rôle</b>
+                                    <select class="form-control" name="role" id="categorie" required>
+                                        <option disabled selected>Rôle</option>
+                                        <option value="ROLE_ABONNE">{{'inscription.abonne'|trans}}</option>
+                                        <option value="ROLE_AUTO_ENTREPRENEUR">{{'inscription.auto-entrepreneur'|trans}}</option>
+                                        <option value="ROLE_SOCIETE">{{'inscription.societe'|trans}}</option>
+                                        <option value="ROLE_COMMERCE">Commerce</option>
+                                        <option value="ROLE_CONTRIBUTEUR">Contributeur</option>
+                                        <option value="ROLE_SUPER_ADMIN"> {{'admin.user.admin'|trans}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <h5>{{'profil-utilisateur.formulaire-profil.description'|trans}}</h5>
+                                <div class="form-group">
+                                    <textarea class="form-control border-dark" style="width: 100%;" id="description" name="description" rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <h5>{{'profil-utilisateur.formulaire-profil.reference'|trans}}</h5>
+                                <div class="form-group">
+                                    <textarea class="form-control border-dark" id="reference" name="reference" rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <h5>Portfolio</h5>
+                                <div class="form-group">
+                                    <div class="p-2" style="width: 100%;">
+                                        <div class="border border-dark p-2">
+                                            <div class="row">
+                                                <h6 class="control-label col-md-3">{{'general.add-portfolio'|trans}}</h6>
+                                                <div class="col-md-8">
+                                                    <div class="row">
+                                                        <div id="coba" class="row"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mt-2">
+                                <h5>{{'profil-utilisateur.formulaire-profil.video'|trans}}</h5>
+                                <div class="p-2">
+                                    <div class="border border-dark p-2">
+                                        <div id="newVideos" class="row mt-3">
+                                            <div class="col-md-3">
+                                                <h6>{{'general.add-youtube-link'|trans}}</h6>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <div id="newVideosRow" class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <input type="text" pattern="^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+" class="form-control border p-2" name="new_vid[]" placeholder="Add new YouTube video link" />
+                                                        </div>
+                                                        <a id="addScnt" href="#" class="btn btn-md btn-warning">{{'general.add'|trans}}</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-4">
+                                <h3>Paramètres Banque</h3>
+                                <div class="form-group">
+                                    <b>Type</b>
+                                    <select id="bank" name="bank" class="form-control" required>
+                                        <option value=""> Type</option>
+                                        <option value="IBAN">IBAN</option>
+                                        <option value="GB">GB</option>
+                                        <option value="US">US</option>
+                                        <option value="CA">CA</option>
+                                        <option value="autre">autre</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-nom'|trans}}</b>
+                                    <input type="text" id="accountHolder" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-nom'|trans}}" name="accountHolder" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-adresse'|trans}}</b>
+                                    <input type="text" id="addressHolder" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-adresse'|trans}}" name="addressHolder" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-ville'|trans}}</b>
+                                    <input type="text" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-ville'|trans}}" id="cityHolder" class="form-control" required/>
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-code-postal'|trans}}</b>
+                                    <input type="text" id="codePostalHolder" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-code-postal'|trans}}" name="codePostalHolder" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-pays'|trans}}</b>
+                                    <select id="countryHolder" name="countryHolder" class="form-control" required>
+                                        <option value="" selected>{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-pays'|trans}}</option>
+                                        {% include 'country.html.twig' %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-region'|trans}}</b>
+                                    <input type="text" id="regionHolder" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-fournisseurs-region'|trans}}" name="regionHolder" class="form-control" required />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mt-4">
+                                <h3>Détail de votre facture</h3>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-details-facture-prenom'|trans}}</b>
+                                    <input type="text" id="prenom" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-details-facture-prenom'|trans}} *" name="billing_first_name" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-details-facture-nom'|trans}}</b>
+                                    <input type="text" id="nom" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-details-facture-nom'|trans}} *" name="billing_last_name" class="form-control" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-details-facture-pays'|trans}}</b>
+                                    <select id="pays" name="billing_country" class="browser-default custom-select" required>
+                                        <option value="">{{'profil-utilisateur.fournisseurs.formulaire-details-facture-pays'|trans}} *</option>
+                                        {% include 'country.html.twig' %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-details-facture-numero-rue'|trans}}</b>
+                                    <input type="text" id="numeroNomRue" name="billing_address_1" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-details-facture-numero-rue'|trans}} *" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-details-facture-code-postal'|trans}}</b>
+                                    <input type="text" id="codePostal" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-details-facture-code-postal'|trans}} *" name="billing_postcode" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-details-facture-ville'|trans}}</b>
+                                    <input type="text" id="ville" name="billing_city" class="form-control" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-details-facture-ville'|trans}}" required />
+                                </div>
+                                <div class="form-group">
+                                    <b>{{'profil-utilisateur.fournisseurs.formulaire-details-facture-etat-comte'|trans}}</b>
+                                    <input type="text" id="etatComte" placeholder="{{'profil-utilisateur.fournisseurs.formulaire-details-facture-etat-comte'|trans}} *" name="billing_state" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="tell" placeholder="{{'profil-utilisateur.formulaire-profil.telephone'|trans}}" name="billing_phone" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <b>Email</b>
+                                    <input type="email" id="email" placeholder=" Email *" name="billing_email" class="form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions form-group">
+                            <button type="submit" id="send" class="btn btn-success btn-sm btn-lg ld-over-inverse">Ajouter le compte<i class="ld ld-ring ld-spin"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block body_javascript %} {{parent()}}
+<!-- jQuery plugin for camroll slider -->
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{{ prerender(asset('assets/js/camroll/camroll_slider.js')) }}"></script>
+<!-- jQuery plugin for spartan image picker -->
+<script type="text/javascript" src="{{ prerender(asset('assets/js/spartan-image-picker/spartan-multi-image-picker-min.js')) }}"></script>
+<!-- jQuery plugin for input tags -->
+<script src="{{ prerender(asset('assets/js/tagsinput/jQuery.tagify.min.js')) }}"></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<!-- jQuery plugin for datepicker -->
+<script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+<script src="{{ asset('assets/phone/js/intlTelInput.min.js') }}"></script>
+<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+<!-- Tinymce editor -->
+<script src="//cdn.ckeditor.com/4.13.0/standard/ckeditor.js"></script>
+
+<!-- owl carousel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<!-- cdnjs for lazy load -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+
+<script>
+      function getUnique(array){
+            var uniqueArray = [];
+            // Loop through array values
+            for(i=0; i < array.length; i++){
+                if(uniqueArray.indexOf(array[i]) === -1) {
+                    uniqueArray.push(array[i]);
+                }
+            }
+            return uniqueArray;
+        }
+
+    function validateEmail(email) {
+      var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    }
+
+    function validatePhoneNumber(phone) {
+      var re = /^(\+|00)[0-9]{1,3}[0-9 ]{4,20}(?:x.+)?$/;
+      return re.test(phone);
+    }
+    //pattern="^(6|2)[. ]{0,1}[0-9 .]{8,13}(?:x.+)?$"
+        $(document).ready(function() {
+          var docWidth = document.documentElement.offsetWidth;
+
+    CKEDITOR.replace('description');
+    CKEDITOR.replace('reference');
+    CKEDITOR.config.width = 300;     // 500 pixels wide.
+    CKEDITOR.config.width = '100%';
+          [].forEach.call(
+            document.querySelectorAll('*'),
+            function(el) {
+              if (el.offsetWidth > docWidth) {
+                console.log(el);
+              }
+            }
+          );
+
+        $(function() {
+              $('.lazy').lazy();
+          });
+
+           //Portfolio owlcarousel
+          $('#monPortfolio .owl-carousel').owlCarousel({
+            items:1,
+            nav:true,
+            lazyLoad:true,
+            loop:true,
+            margin:10,
+          });
+          //Video owlcarousel
+          $('#mesVideos .owl-carousel').owlCarousel({
+              items:1,
+              merge:true,
+              loop:true,
+              margin:10,
+              nav: true,
+              video:true,
+              lazyLoad:false,
+              center:true,
+             /* responsive:{
+                  480:{
+                      items:2
+                  },
+                  600:{
+                      items:2
+                  }
+              }*/
+          });
+          // add/remove new video in the update section
+          var scntDiv = $('#newVideosRow');
+          var i = $('#newVideosRow .col-md-4').length + 1;
+
+          $('#addScnt').on('click', function() {
+            $('<div class="col-md-4"><div class="form-group"> <input type="url" class="form-control border p-2" name="new_vid[]" placeholder="{{"general.add-youtube-link"|trans}}"><div class="valid-feedback">OK!</div><div class="invalid-feedback">Ce champ contient une erreur!</div></div> <a class="btn btn-md btn-danger" id="retirerSec">{{"general.supprimer"|trans}}</a></div>').appendTo(scntDiv);
+            i++;
+            return false;
+          });
+
+          $('#newVideosRow').on('click', '#retirerSec', function() {
+            // console.log("Am here");
+            if( i > 2 ) {
+              $(this).parents('.col-md-4').remove();
+              i--;
+            }
+            return false;
+          });
+
+           // console.log($("#addPortfolioUrl").val());
+          //add new portfolio images
+          $("#coba").spartanMultiImagePicker({
+            fieldName: 'file[]',
+            directUpload : {
+              status: false,
+              loaderIcon: '<i class="fas fa-sync fa-spin"></i>',
+              // 'portfolio/{{app.request.get('_locale')}}'
+              url: $("#containerForPortfolio").attr("addPortfolioUrl"),
+              additionalParam : {
+    						name : 'portfolios[]'
+    					},
+              success : function(data, textStatus, jqXHR){
+
+              },
+              error : function(jqXHR, textStatus, errorThrown){
+                alert(errorThrown);
+              }
+            }
+          });
+          //Hambuger menu icon
+          $('.animated-button-icon').on('click', function () {
+            $('.animated-icon2').toggleClass('open');
+          });
+          //first thing turn Hide Menu Search bar
+          $("#searchMenu").hide();
+          //toggle menu search bar on/off
+          $( "#searchMenuShowHide" ).click(function() {
+            $( "#searchMenu" ).toggle( "slide" );
+          });
+
+          //first thing turn Hide "Update section" input field
+          $("#modifInfo").hide();
+          //toggle on/off using "Mofier mon profile"
+          $( "#modifierProfile" ).click(function() {
+            $( "#lectureInfo" ).toggle( "slide" );
+            $( "#modifInfo" ).toggle( "slide" );
+          });
+          //toggle on/off using "Annuler les modification"
+          $( "#annulerModif" ).click(function() {
+            $( "#modifInfo" ).toggle( "slide" );
+            $( "#lectureInfo" ).toggle( "slide" );
+
+          });
+
+          $('#date').datepicker({
+                uiLibrary: 'bootstrap4',
+                size: 'large',
+                showRightIcon: false,
+                iconsLibrary: 'fontawesome'
+            });
+
+            $("div[role='wrapper']").append("<label for='date'>Date de naissance</label><div class='valid-feedback'>OK!</div><div class='invalid-feedback'>Ce champ contient une erreur!</div>");
+
+
+    //Validate fields
+        //First Name
+        $("#first_name").change(function(){
+        var prenom = $("#first_name").val();
+        if(isNaN(prenom))
+        {
+            $("#first_name").removeClass("is-invalid");  $("#first_name").addClass("is-valid");
+        }
+        else{
+            $("#first_name").removeClass("is-valid");   $("#first_name").addClass("is-invalid");
+        }
+        });
+
+           //Last Name
+        $("#last_name").change(function(){
+        var prenom = $("#last_name").val();
+        if(isNaN(prenom))
+        {
+            $("#last_name").removeClass("is-invalid");  $("#last_name").addClass("is-valid");
+        }
+        else{
+            $("#last_name").removeClass("is-valid");   $("#last_name").addClass("is-invalid");
+        }
+        });
+
+    $("#sexe").change(function(){
+        var nom = $("#sexe").val();
+    if(isNaN(nom))
+    {
+        $("#sexe").removeClass("is-invalid");  $("#sexe").addClass("is-valid");
+    }
+    else{
+        $("#sexe").removeClass("is-valid");   $("#sexe").addClass("is-invalid");
+    }
+    });
+
+
+    $("#email").change(function(){
+        var email = $("#email").val();
+
+     if (validateEmail(email)) {
+       $("#email").removeClass("is-invalid");  $("#email").addClass("is-valid");
+      } else {
+       $("#email").removeClass("is-valid");   $("#email").addClass("is-invalid");
+      }
+
+    });
+
+    $("#telephone").change(function(){
+        var phone = $("#telephone").val();
+
+     if (validatePhoneNumber(phone)) {
+       $("#telephone").removeClass("is-invalid");  $("#telephone").addClass("is-valid");
+      } else {
+       $("#telephone").removeClass("is-valid");   $("#telephone").addClass("is-invalid");
+      }
+
+    });
+
+    $("#birth_place").change(function(){
+        var prenom = $("#birth_place").val();
+    if(isNaN(prenom))
+    {
+        $("#birth_place").removeClass("is-invalid");  $("#birth_place").addClass("is-valid");
+    }
+    else{
+        $("#birth_place").removeClass("is-valid");   $("#birth_place").addClass("is-invalid");
+    }
+    });
+
+    $("#raison_sociale").change(function(){
+        var nom = $("#raison_sociale").val();
+    if(isNaN(nom))
+    {
+        $("#raison_sociale").removeClass("is-invalid");  $("#raison_sociale").addClass("is-valid");
+    }
+    else{
+        $("#raison_sociale").removeClass("is-valid");   $("#raison_sociale").addClass("is-invalid");
+    }
+    });
+    $("#siret").change(function(){
+        var nom = $("#siret").val();
+    if(isNaN(nom))
+    {
+        $("#siret").removeClass("is-invalid");  $("#siret").addClass("is-valid");
+    }
+    else{
+        $("#siret").removeClass("is-valid");   $("#siret").addClass("is-invalid");
+    }
+    });
+
+    $("#tva").change(function(){
+        var nom = $("#tva").val();
+    if(isNaN(nom))
+    {
+        $("#tva").removeClass("is-invalid");  $("#tva").addClass("is-valid");
+    }
+    else{
+        $("#tva").removeClass("is-valid");   $("#tva").addClass("is-invalid");
+    }
+    });
+
+    //Preview selected profile photo
+
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+        //  $('#blah').attr('src', e.target.result);
+          $('#blah').html('<img class="img-fluid m-auto" style="max-height:400px" width="100%" src="'+e.target.result+'" >');
+
+        }
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    $("#imageUpload").change(function() {
+      readURL(this);
+    });
+
+        });
+        //input tags
+        $('#competencesModif').tagify();
+
+    // Modification du profil de l'utilisateur
+    //list images from portfolio and video
+
+        $('#updateProfile').on('submit', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+
+             for (instance in CKEDITOR.instances) {
+                CKEDITOR.instances[instance].updateElement();
+            }
+
+            if( $('#first_name').val()!=''){
+
+            $('#send').addClass('running');
+            toastr.info('{{'systeme.requetes.requete-en-cours'|trans}}');
+
+            var $form = $(this);
+            var formdata = (window.FormData)? new FormData($form[0]): null;
+            var data = (formdata !== null)? formdata: $form.serialize();
+
+                 $.ajax({
+                 url: $form.attr('action'),
+                 type: $form.attr('method'),
+                 contentType: false,
+                 processData: false,
+                 data: data,
+                   success: function (reponse) {
+                     if(reponse==1){
+                       toastr.clear();
+                       toastr.success('{{'systeme.requetes.succes'|trans}}');
+                      window.location = document.referrer;;
+                       }else if(reponse==0) {
+                       $('#send').removeClass('running');
+                       toastr.clear();
+                       toastr.error('{{'systeme.requetes.erreur'|trans}}');
+                       }
+                        },
+                        error: function (reponse) {
+                       $('#send').removeClass('running');
+                       toastr.clear();
+                       toastr.error('{{'general.error'|trans}}');
+                        }
+               });
+            }
+
+            return false;
+
+        });
+
+        $(document).on('click', '.delete_port', function(e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            var t=$(this);
+            var urlPath=$(this).attr('href');
+            swal({
+            title: "Suppression de l'objet",
+            text: "Attention l'objet sera Supprimer et n'apparaitra plus sur le site",
+            type: "info",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Supprimer",
+            cancelButtonText: "Annuler",
+            closeOnConfirm: false,
+            closeOnCancel: false,
+            showLoaderOnConfirm: true
+            },
+            function(isConfirm) {
+
+            if (isConfirm) {
+
+      $.ajax({
+        url: urlPath,
+        type: 'GET',
+        success: function(reponse) {
+          if (reponse==1) {
+
+            swal("suppression terminée", "", "success");
+
+            t.parents('li').hide();
+          }else {
+
+            swal("erreur de suppression", "", "error");
+
+          };
+          },
+        error: function(reponse) {
+          swal("erreur de suppression", "", "error");
+
+            }
+
+      });
+
+      }else {
+      swal.close();
+      }
+      });
+            return false;
+          });
+
+
+          $(document).on('click', '.delete_port1', function(e) {
+              // On emp�che le navigateur de soumettre le formulaire
+              e.preventDefault();
+              var t=$(this);
+              var urlPath=$(this).attr('href');
+              swal({
+          title: t.text(),
+          text: "{{'general.sure'|trans}}",
+          type: "info",
+          showCancelButton: true,
+          confirmButtonClass: "btn-danger",
+          confirmButtonText: "Oui",
+          cancelButtonText: "Annuler",
+          closeOnConfirm: false,
+          closeOnCancel: false,
+          showLoaderOnConfirm: true
+          },
+          function(isConfirm) {
+          if (isConfirm) {
+          $.ajax({
+          url: urlPath,
+          type: 'GET',
+          success: function(reponse) {
+            if (reponse>0) {
+              swal("Action effectuée avec succès.", "", "success");
+              window.location='{{path('profile_profile' )}}';
+            }else {
+              swal("erreur de suppression", "", "error");
+            };
+            },
+          error: function(reponse) {
+            swal("erreur de suppression", "", "error");
+              }
+          });
+          }else {
+          swal.close();
+          }
+          });
+              return false;
+            });
+
+            $(document).on('click', '.delete_port2', function(e) {
+               var urlPath='';
+                // On emp�che le navigateur de soumettre le formulaire
+                e.preventDefault();
+                 toastr.info('{{'systeme.compte.en-cours'|trans}}');
+                if($('#horns:checkbox:checked').length > 0)
+                {
+                urlPath=$("#hornsUrlDeleteAll").val();
+                console.log(urlPath);
+                }
+                else{urlPath=$("#hornsUrlDelete").val();}
+
+                $.ajax({
+                url: urlPath,
+                type: 'GET',
+                success: function(reponse) {
+                  if (reponse==1) {
+                    console.log('true');
+                       toastr.clear();
+                       toastr.success('{{'systeme.compte.succes'|trans}}');
+                       window.location="/";
+                  }
+                  },
+                  error: function(reponse) {
+                    toastr.clear();
+                    toastr.error('{{'systeme.compte.error'|trans}}');
+                  }
+                 });
+              });
+            toastr.options = {
+              "closeButton": true,
+              "debug": false,
+              "newestOnTop": false,
+              "progressBar": true,
+              "positionClass": "toast-top-center",
+              "preventDuplicates": false,
+              "onclick": null,
+              "showDuration": "300",
+              "hideDuration": "1000",
+              "timeOut": "12000",
+              "extendedTimeOut": "1000",
+              "showEasing": "swing",
+              "hideEasing": "linear",
+              "showMethod": "fadeIn",
+              "hideMethod": "fadeOut"
+            }
+
+            var input = document.querySelector("#telephone,#tell");
+            var input1 = document.querySelector("#tell");
+            window.intlTelInput(input, {
+             autoHideDialCode: true,
+               initialCountry: "fr",
+               nationalMode: false,
+               formatOnDisplay: false,
+               // separateDialCode: true,
+              utilsScript: "/assets/phone/js/utils.js",
+            });
+
+            window.intlTelInput(input1, {
+             autoHideDialCode: true,
+               initialCountry: "fr",
+               nationalMode: false,
+               formatOnDisplay: false,
+               // separateDialCode: true,
+              utilsScript: "/assets/phone/js/utils.js",
+            });
+</script>
+{% endblock body_javascript %}

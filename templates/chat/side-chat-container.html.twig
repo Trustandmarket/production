@@ -1,0 +1,17 @@
+{% for item in channels %}
+    <div class="row side-chat p-2 pl-3 pr-3 mt-2 online {% if item.channel.getName == channel %} active-chat{% endif %}" data-url="{{ path('chat_chat', {channel:item.channel.getName}) }}" data-channel="{{ item.channel.getName }}" data-timestamp="{{item.message.getSentDate.getTimestamp}}" id="channel{{ item.channel.getName }}">
+        <div class="col-left align-center">
+            <img src="{% if item.destinataire.avatar %} {{item.destinataire.avatar|first}}{% else %} {{asset('assets/img/profile/avatar-profile.png')}} {% endif %}" class="logo-left" alt="">
+        </div>
+        <div class="col-right pl-2">
+            <h6>
+                <span class="username">{{item.destinataire.first_name}}
+                    {{ item.destinataire.last_name }}</span>
+                <span class="date">{{item.message.getSentDate|date("d/m/Y à H:i:s")}}</span>
+            </h6>
+            <p class="brief">{{item.message.getContent|u.truncate(25,'...',false)}}</p>
+        </div>
+    </div>
+{% else %}
+    <div class="nochannel-message">{{'chat.barre-laterale.statut-interlocuteur'|trans}}</div>
+{% endfor %}

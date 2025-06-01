@@ -1,0 +1,198 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+	Modifier une Experience
+{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	{#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+ 	<link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+	<link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+	<style>
+	/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.form-group label{
+	flex: none;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+html, body, header, .view {
+    height: 5%;
+}
+</style>
+	<div class="content">
+		<div class="animated fadeIn">
+			<div class="clearfix"></div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header">
+							<h4 class="box-title">Modifier une Expérience</h4>
+						</div>
+						<div class="modal-body">
+							<form action="{{path('parcours_utilisateur_experiences_update')}}" method="POST" id="save_actualite">
+								<div class="row">
+									<div class="col-md-8 form-group">
+										<label for="titre">Titre</label>
+										<input value="{{exp.id}}" name="id" id="id" hidden />
+										<input disabled value="{{exp.exp_type_experience }} {{ exp.exp_ville}} {{ exp.exp_univers}}" class="form-control" type="text" name="titre" id="titre" required/>
+									</div>
+									
+									<div class="col-md-4 form-group">
+										<label for="statut">Statut</label>
+										<select name="statut" id="statut" required class="form-control">
+											<option {% if exp.status|lower == 'publish' %}selected{% endif %} value="publish">Publier</option>
+											<option {% if exp.status|lower == 'draft' %}selected{% endif %} value="draft">Brouillon</option>
+										</select>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" id="send" class="btn btn-success waves-effect waves-light ld-over-inverse ">{{'admin.categorie.enregistrer'|trans}}<i class="ld ld-ring ld-spin"></i>
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block body_javascript %}
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous">
+</script><script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+<script src="https://npmcdn.com/bootstrap@4.0.0-alpha.5/dist/js/bootstrap.min.js"></script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!-- Tinymce editor -->
+<script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+<script type="text/javascript">
+
+	$(document).on('click', '.delete', function (e) {
+	e.preventDefault();
+	var t = $(this);
+	var urlPath = $(this).attr('href');
+	swal({
+	title: "Suppression de la categorie",
+	text: "Attention la catégorie sera Supprimée et n'apparaitra plus sur votre site",
+	type: "info",
+	showCancelButton: true,
+	confirmButtonClass: "btn-danger",
+	confirmButtonText: "Supprimer",
+	cancelButtonText: "Annuler",
+	closeOnConfirm: false,
+	closeOnCancel: false,
+	showLoaderOnConfirm: true
+	}, function (isConfirm) {
+	if (isConfirm) {
+	$.ajax({
+	url: urlPath,
+	type: 'GET',
+	success: function (reponse) {
+	if (reponse == 1) {
+	swal("Suppression terminée", "", "success");
+	t.parents('tr').hide();
+	} else if (reponse == 2) {
+	swal("La catégorie contient des produits", "", "warning");
+	} else {
+	swal("Erreur de suppression", "", "error");
+	};
+	},
+	error: function (reponse) {
+	swal("Erreur de suppression", "", "error");
+	}
+	});
+	} else {
+	swal.close();
+	}
+	});
+	return false;
+	});
+
+		toastr.options = {
+		"closeButton": true,
+		"debug": false,
+		"newestOnTop": false,
+		"progressBar": true,
+		"positionClass": "toast-top-center",
+		"preventDuplicates": false,
+		"onclick": null,
+		"showDuration": "300",
+		"hideDuration": "1000",
+		"timeOut": "12000",
+		"extendedTimeOut": "1000",
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+		}
+</script>
+
+{% endblock body_javascript %}

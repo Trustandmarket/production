@@ -1,0 +1,45 @@
+<nav aria-label=" ...">
+		<ul class="pagination">
+			<li class="page-item">
+				<a class="page-link {% if noPage == 1 %}disabled{% endif %}" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage-1,
+				nombreDeLignes: devisEnAttenteCount, tag: 'devis-pending', type: 'devis'})}}" tabindex="-1">{{'filtres.precedent'|trans({}, 'liste_annonces') }}</a>
+			</li>
+			{% if noPage > 1  %}
+				<li class="page-item">
+					<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: 1,
+					nombreDeLignes: devisEnAttenteCount, tag: 'devis-pending', type: 'devis'})}}">1<span class="sr-only"></span>
+					</a>
+				</li>
+			{% endif %}
+			{% if noPage > 2  %}
+				<li class="page-item">
+					<a class="page-link" href="">...<span class="sr-only"></span>
+					</a>
+				</li>
+			{% endif %}
+			<li class="page-item active">
+				<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage,
+				nombreDeLignes: devisEnAttenteCount, tag: 'devis-pending', type: 'devis'})}}">{{noPage}}<span class="sr-only"></span>
+				</a>
+			</li>
+			{% if pages_devis_pending - noPage > 1  %}
+				<li class="page-item">
+					<a class="page-link" href="">...<span class="sr-only"></span>
+					</a>
+				</li>
+			</li>
+		{% endif %}
+		{% if pages_devis_pending - noPage > 0  %}
+			<li class="page-item">
+				<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: pages_devis_pending,
+				nombreDeLignes: devisEnAttenteCount, tag: 'devis-pending', type: 'devis'})}}">{{pages_devis_pending}}<span class="sr-only"></span>
+				</a>
+			</li>
+		{% endif %}
+		<li class="page-item {% if noPage == pages_devis_pending %}disabled{% endif %}">
+			<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage+1,
+			nombreDeLignes: devisEnAttenteCount, tag: 'devis-pending', type: 'devis'})}}">{{'filtres.suivant'|trans({}, 'liste_annonces') }}
+			</a>
+		</li>
+	</ul>
+</nav>

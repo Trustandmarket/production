@@ -1,0 +1,896 @@
+{% extends 'otherLayout.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+          sizes="32x32"/>
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}"
+          sizes="192x192"/>
+    <link rel="apple-touch-icon-precomposed"
+          href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+    <meta name="msapplication-TileImage"
+          content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+    <meta name="title"
+          content="Trust &amp; Market | {{ include('Seo/Meta/title.html.twig', {code: 'souscription-offre-payante'}) }}">
+    <meta name="description"
+          content="{{ include('Seo/Meta/description.html.twig', {code: 'souscription-offre-payante'}) }}">
+    <link rel="canonical" href="{{ absolute_url(path('app_souscription')) }}">
+    <link rel="shortlink" href="{{ path('app_souscription') }}">
+    {# OG CONTENT #}
+    <meta property="og:title"
+          content="Trust &amp; Market |	{{ include('Seo/Meta/title.html.twig', {code: 'souscription-offre-payante'}) }}">
+    <meta property="og:description"
+          content="{{ include('Seo/Meta/description.html.twig', {code: 'souscription-offre-payante'}) }}">
+    <meta property="og:image"
+          content="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png') }}">
+    <meta propery="og:type" content="website">
+    {# END OG CONTENT #}
+{% endblock %}
+
+{% block title %}
+    Trust &amp; Market | {{ include('Seo/Meta/title.html.twig', {code: 'souscription-offre-payante'}) }}
+{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+
+    <!-- Gijgo datepicker css -->
+    <link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <!-- Custom css for camroll -->
+    <link href="{{ asset('assets/css/camroll/camroll_slider.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/custome.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/mon-profil.css') }}" rel="stylesheet" type="text/css">
+    <!-- owl carousel css -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/css/card-js.min.css') }}" rel="stylesheet" type="text/css"/>
+    <style>
+
+        .pagination .page-item.active .page-link {
+            background-color: #f17b30;
+        }
+
+        .abbo-bloc {
+            border-color: #ff7e10 !important;
+            border-radius: 10px;
+            margin: 10px 1px 10px 1px;
+            padding-bottom: 0.5rem;
+        }
+
+        .btn-abbo {
+            border-radius: 1rem;
+            background: #008779;
+            font-size: medium !important;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .btn-abbo a {
+            color: #fff;
+            font-size: medium;
+        }
+
+        .container {
+            position: relative;
+        }
+
+        .vertical-center {
+            margin-top: 4rem;
+
+        }
+
+        .form-control {
+            border-radius: 25px;
+        }
+
+        .card-footer .btn-primary {
+            border-radius: 25px;
+            background: #008779 !important;
+        }
+
+        .secure-message {
+            color: #008779;
+        }
+
+        .card-number, .expiry, .cvc {
+            border-radius: 15px !important;
+        }
+
+        .card-js .icon {
+            top: 5px;
+        }
+
+        /* For Desktop View */
+        @media screen and (min-width: 1024px) {
+            #dialoguons {
+                width: 19%;
+            }
+        }
+
+        /* For Tablet View */
+        @media screen and (min-device-width: 768px)
+        and (max-device-width: 1024px) {
+            #dialoguons {
+                width: 30%;
+            }
+
+            .playVideoButton {
+                width: 70px !important;
+                height: 70px !important;
+            }
+
+            .vertical-center {
+                margin-top: 5rem;
+            }
+        }
+
+        /* For Mobile Portrait View */
+        @media screen and (max-device-width: 480px)
+        and (orientation: portrait) {
+            #dialoguons {
+                width: 70%;
+            }
+
+            .playVideoButton {
+                width: 50px !important;
+                height: 50px !important;
+            }
+
+            .vertical-center {
+                margin-top: 4rem;
+            }
+
+            h1 {
+                font-size: xx-large;
+            }
+        }
+
+        /* For Mobile Landscape View */
+        @media screen and (max-device-width: 640px)
+        and (orientation: landscape) {
+            #dialoguons {
+                width: 40%;
+            }
+
+            .playVideoButton {
+                width: 50px !important;
+                height: 50px !important;
+            }
+        }
+
+        /* For Mobile Phones Portrait or Landscape View */
+        @media screen
+        and (max-device-width: 640px) {
+            #dialoguons {
+                width: 40%;
+            }
+
+            .playVideoButton {
+                width: 50px !important;
+                height: 50px !important;
+            }
+        }
+
+        /* For iPhone 4 Portrait or Landscape View */
+        @media screen and (min-device-width: 320px)
+        and (-webkit-min-device-pixel-ratio: 2) {
+            #dialoguons {
+                width: 60%;
+            }
+
+            .playVideoButton {
+                width: 50px !important;
+                height: 50px !important;
+            }
+        }
+
+        /* For iPhone 5 Portrait or Landscape View */
+        @media (device-height: 568px)
+        and (device-width: 320px)
+        and (-webkit-min-device-pixel-ratio: 2) {
+            #dialoguons {
+                width: 70%;
+            }
+
+            .playVideoButton {
+                width: 50px !important;
+                height: 50px !important;
+            }
+        }
+
+        /* For iPhone 6 and 6 plus Portrait or Landscape View */
+        @media (min-device-height: 667px)
+        and (min-device-width: 375px)
+        and (-webkit-min-device-pixel-ratio: 3) {
+            #dialoguons {
+                width: 60%;
+            }
+
+            .playVideoButton {
+                width: 50px !important;
+                height: 50px !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navigation %}{% endblock %}
+
+{% block body %}
+    <!--Main Layout-->
+    <main class="">
+        <div class="container">
+            <div class="vertical-center">
+                <h1 class="col-md-10 d-flex justify-content-center text-center mx-auto page-title mb-3">VOTRE
+                    SOUSCRIPTION</h1>
+                <div class="col-md-8 border border-primary abbo-bloc mx-auto mt-5 px-3">
+                    <h3 class="mt-4">Informations de facturation</h3>
+                    <form method="post" action="" id="paiementFacturationForm">
+
+                        <input hidden id="totalHt" name="totalHt" value="{{ totalHt|round(2, 'floor') }}">
+                        <input hidden id="offreId" name="offreId" value="{{ offre.id }}">
+                        <input hidden name="id" id="id"
+                               value="{% if user.getInformationsFacturationUtilisateur() %}{{ user.getInformationsFacturationUtilisateur().getId() }}{% endif %}">
+                        <div class="my-2">
+                            <label for="nom_societe" class="form-label">Nom ou Société *</label>
+                            <input required type="text"
+                                   value="{% if user.getInformationsFacturationUtilisateur() %}{{ user.getInformationsFacturationUtilisateur().getNomOuSociete() }}{% endif %}"
+                                   class="form-control required-input" id="nom_societe" name="nom_societe"
+                                   aria-describedby="emailHelp">
+                        </div>
+                        <div class="my-2">
+                            <label for="adresse" class="form-label">Adresse *</label>
+                            <input required type="text"
+                                   value="{% if user.getInformationsFacturationUtilisateur() %}{{ user.getInformationsFacturationUtilisateur().getAdresse() }}{% endif %}"
+                                   class="form-control required-input" id="adresse" name="adresse">
+                        </div>
+                        <div class="row">
+                            <div class="my-2 col-md-4">
+                                <label for="adresse" class="form-label">Ville *</label>
+                                <input required type="text"
+                                       value="{% if user.getInformationsFacturationUtilisateur() %}{{ user.getInformationsFacturationUtilisateur().getVille() }}{% endif %}"
+                                       class="form-control required-input" id="ville" name="ville">
+                            </div>
+
+                            <div class="my-2 col-md-4">
+                                <label for="code_postal" class="form-label">Code postal *</label>
+                                <input required type="text"
+                                       value="{% if user.getInformationsFacturationUtilisateur() %}{{ user.getInformationsFacturationUtilisateur().getCodePostal() }}{% endif %}"
+                                       class="form-control required-input" id="code_postal" name="code_postal">
+                            </div>
+
+                            <div class="my-2 col-md-4">
+                                <label for="pays" class="form-label">Pays *</label>
+                                <select required id="pays" name="pays" class="form-control required-input">
+                                    {% if user.getInformationsFacturationUtilisateur() %}
+                                        <option
+                                        value="{{ user.getInformationsFacturationUtilisateur().getPays() }}">{{ user.getInformationsFacturationUtilisateur().getPays()|country_name }}</option>{% endif %}
+                                    {% include 'countryRegister.html.twig' %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="my-2">
+                            <label for="numero_tva" class="form-label">Numéro TVA</label>
+                            <input value="{% if user.getInformationsFacturationUtilisateur() %}{{ user.getInformationsFacturationUtilisateur().getNumeroTva() }}{% endif %}"
+                                   type="text" class="form-control" id="numero_tva" name="numero_tva">
+                        </div>
+                        <div class="my-5">
+                            <h3>Votre souscription: <u>{{ offre.titre }}</u></h3>
+                            {% if totalHt < 0 %}
+                                <span class="text-danger">Vous avez souhaité changer d'offre. Vous ne pouvez pas immédiatement modifier votre offre. Veuillez patienter et réessayer d'ici quelques jours.</span>
+                            {% else %}
+                                <table class="table mt-3">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col"><b>Prix mensuel (TTC)</b></th>
+                                        <th scope="col"><b>{{ offre.tarif|round(2, 'ceil') }}€</b></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="col-md-11">
+                                            <span class="text-danger"><b>Ancienne souscription</b></span><br>Une
+                                            nouvelle souscription va démarrer aujourd'hui et remplacer votre
+                                            souscription actuelle. Le temps inutilisé de votre ancienne souscription
+                                            sera déduit de la facture.
+                                        </td>
+                                        <td class="text-danger"><b>{{ prorata|round(2, 'floor') }}€</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="col-md-11">Total à payer aujourd'hui</td>
+                                        <td><b>{{ totalAPayer|round(2, 'floor') }}€</b></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10 abbo-bloc">
+                            {% include("abonnement/Partials/moyenPaiement.html.twig") %}
+                        </div>
+
+                        <div class="d-flex justify-content-center text-center">
+                            <button id="paiementFacturation"
+                                    {% if not card %}disabled{% elseif card and card.Status != "VALIDATED" %}disabled{% endif %}
+                                    type="submit" class="btn btn-abbo btn-sm">SOUSCRIRE ET PAYER
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!--Main Layout-->
+
+    {% include("partials/project.html.twig") %}
+    {% include("partials/otherPagesVideoModal.html.twig") %}
+{% endblock %}
+
+
+{% block footer %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.all.min.js"></script>
+    <script src="{{ asset('assets/js/card-js.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {// Sélectionner le bouton "SAISIR"
+            const saisirBtn = document.querySelector('.saisir');
+
+            //Sélectionner le bouton "ENREGISTRER"
+            const saveBtn = document.querySelector('.save');
+
+            //Sélectionner le bouton "updateBtn"
+            const updateBtn = document.querySelector('.mise-a-jour');
+
+            //Sélectionner la div contenant la carte
+            const cardBloc = document.querySelector('.card-edit-bloc');
+
+            const bankCart = document.querySelector('#card-number');
+            // Ajouter un écouteur d'événements au clic sur le bouton "SAISIR"
+            saisirBtn.addEventListener('click', () => {
+                cardBloc.classList.toggle('d-none');
+                saveBtn.classList.toggle('d-none');
+                saisirBtn.classList.add('d-none');
+
+                let secureSpan = document.querySelector('.secure-message');
+                if (!secureSpan) {
+                    secureSpan = document.createElement('span');
+                    secureSpan.className = 'secure-message small'; // Bootstrap classes for red text and small font
+                    document.querySelector('.card-number-wrapper').appendChild(secureSpan);
+                    secureSpan.textContent = 'Les paiements sont sécurisés avec Mangopay';
+                    secureSpan.style.display = 'block';
+                }
+            });
+
+            bankCart.addEventListener('blur', () => {
+                console.log('modification de la carte bancaire');
+                validateCardFields();
+            });
+
+            //Sélectionner la carte
+
+            const cardViewBloc = document.querySelector('.card-view-bloc');
+            // Ajouter un écouteur d'événements au clic sur le bouton "updateBtn"
+            updateBtn.addEventListener('click', () => {
+                cardBloc.classList.toggle('d-none');
+                saveBtn.classList.toggle('d-none');
+                saisirBtn.classList.add('d-none');
+                document.querySelector('.card-view-bloc').classList.toggle('d-none');
+
+                let secureSpan = document.querySelector('.secure-message');
+                if (!secureSpan) {
+                    secureSpan = document.createElement('span');
+                    secureSpan.className = 'secure-message small'; // Bootstrap classes for red text and small font
+                    document.querySelector('.card-number-wrapper').appendChild(secureSpan);
+                    secureSpan.textContent = 'Les paiements sont sécurisés avec Mangopay';
+                    secureSpan.style.display = 'block';
+                }
+            });
+
+            function validateCardFields() {
+                let myCard = $('#my-card');
+                let validateResponse = cardFormatValidation(myCard.CardJs('cardNumber').replace(/\s/g, ''));
+
+                if (validateResponse.response === true && myCard.CardJs('cardType').length > 0) {
+                    const cardType = myCard.CardJs('cardType').toLowerCase();
+                    const allowedCardTypes = ['cb', 'visa', 'mastercard'];
+
+                    if (!allowedCardTypes.includes(cardType)) {
+                        validateResponse.response = false;
+                        validateResponse.message = 'Ce type de carte n’est pas géré. Veuillez saisir une carte Visa ou Mastercard.';
+                    }
+                }
+                const fields = [
+                    {
+                        element: document.querySelector('.card-number-wrapper'),
+                        value: myCard.CardJs('cardNumber'),
+                        validation: () => validateResponse.response,
+                        errorMessage: validateResponse.message
+                    },
+                ];
+
+                let isValid = true;
+                for (const field of fields) {
+                    const hasError = !field.validation ? (field.value?.length === 0) : !field.validation();
+                    field.element.classList.toggle("has-error", hasError);
+
+                    let errorSpan = field.element.querySelector('.error-message');
+                    if (!errorSpan) {
+                        errorSpan = document.createElement('span');
+                        errorSpan.className = 'error-message text-danger small'; // Bootstrap classes for red text and small font
+                        field.element.appendChild(errorSpan);
+                    }
+                    errorSpan.textContent = hasError ? field.errorMessage : '';
+                    errorSpan.style.display = hasError ? 'block' : 'none';
+
+                    isValid = isValid && !hasError;
+                }
+                return isValid;
+            }
+
+            const validateFields = () => {
+                let myCard = $('#my-card');
+                let validateResponse = cardFormatValidation(myCard.CardJs('cardNumber').replace(/\s/g, ''));
+                if (validateResponse.response === true && myCard.CardJs('cardType').length > 0) {
+                    const cardType = myCard.CardJs('cardType').toLowerCase();
+                    const allowedCardTypes = ['cb', 'visa', 'mastercard'];
+
+                    if (!allowedCardTypes.includes(cardType)) {
+                        validateResponse.response = false;
+                        validateResponse.message = 'Ce type de carte n’est pas géré. Veuillez saisir une carte Visa ou Mastercard.';
+                    }
+                }
+                const fields = [
+                    {
+                        element: document.querySelector('.card-number-wrapper'),
+                        value: myCard.CardJs('cardNumber'),
+                        validation: () => validateResponse.response,
+                        errorMessage: validateResponse.message
+                    },
+                    {
+                        element: document.querySelector('.cvc-wrapper'),
+                        value: myCard.CardJs('cvc'),
+                        validation: () => myCard.CardJs('cvc').length > 0,
+                        errorMessage: 'CVC invalide'
+                    },
+                    {
+                        element: document.querySelector('.expiry').parentElement,
+                        validation: () => CardJs.isExpiryValid(myCard.CardJs('expiryMonth'), myCard.CardJs('expiryYear')),
+                        errorMessage: 'La date d\'expiration est invalide'
+                    }
+                ];
+
+                let isValid = true;
+                for (const field of fields) {
+                    const hasError = !field.validation ? (field.value?.length === 0) : !field.validation();
+                    field.element.classList.toggle("has-error", hasError);
+
+                    let errorSpan = field.element.querySelector('.error-message');
+                    if (!errorSpan) {
+                        errorSpan = document.createElement('span');
+                        errorSpan.className = 'error-message text-danger small'; // Bootstrap classes for red text and small font
+                        field.element.appendChild(errorSpan);
+                    }
+                    errorSpan.textContent = hasError ? field.errorMessage : '';
+                    errorSpan.style.display = hasError ? 'block' : 'none';
+
+                    isValid = isValid && !hasError;
+                }
+                return isValid;
+            };
+
+            function formatMonthNumber(number) {
+                // Check if the number is within the range (1 to 12)
+                if (number < 1 || number > 12) {
+                    throw new Error("Number must be between 1 and 12");
+                }
+
+                // Convert the number to a string
+                const numberString = number.toString();
+
+                // Add leading zero for numbers 1 to 9
+                return numberString.length === 1 ? "0" + numberString : numberString;
+            }
+
+            function cardFormatValidation(number) {
+                let response = {};
+                console.log(number);
+                console.log(luhnCheck(number));
+                //Check if the number contains only numeric value
+                //and is of between 13 to 19 digits
+                const regex = new RegExp("^[0-9]{14,16}$");
+                if (!regex.test(number)) {
+                    response = {
+                        response: false,
+                        message: 'Votre numero de carte est incomplet'
+                    }
+                    return response;
+                }
+                if (luhnCheck(number)) {
+                    response = {
+                        response: true,
+                        message: ''
+                    };
+                } else {
+                    response = {
+                        response: false,
+                        message: 'Le numéro de carte saisi est invalide. Veuillez corriger votre saisie.'
+                    };
+                }
+                console.log(response);
+                return response;
+            }
+
+            function luhnCheck(val) {
+                let checksum = 0; // running checksum total
+                let j = 1; // takes value of 1 or 2
+                // Process each digit one by one starting from the last
+                for (let i = val.length - 1; i >= 0; i--) {
+                    let calc = 0;
+                    // Extract the next digit and multiply by 1 or 2 on alternative digits.
+                    calc = Number(val.charAt(i)) * j;
+                    // If the result is in two digits add 1 to the checksum total
+                    if (calc > 9) {
+                        checksum = checksum + 1;
+                        calc = calc - 10;
+                    }
+                    // Add the units element to the checksum total
+                    checksum = checksum + calc;
+                    // Switch the value of j
+                    if (j == 1) {
+                        j = 2;
+                    } else {
+                        j = 1;
+                    }
+                }
+                //Check if it is divisible by 10 or not.
+                return (checksum % 10) == 0;
+            }
+
+            saveBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (validateFields()) {
+                    let myCard = $('#my-card');
+                    //Create card
+                    const url = "/fr/abonnement/create_card";
+                    const expiryMonth = formatMonthNumber(myCard.CardJs('expiryMonth'));
+                    const formData = {
+                        //cvc: myCard.CardJs('cvc'),
+                        //cardNumber: myCard.CardJs('cardNumber'),
+                        cardType: myCard.CardJs('cardType'),
+                        expirationDate: expiryMonth.concat('', myCard.CardJs('expiryYear')),
+                        alias: myCard.CardJs('cardNumber').slice(-4)
+                        //expiryMonth: myCard.CardJs('expiryMonth'),
+                        //expiryYear: myCard.CardJs('expiryYear'),
+                        //name: myCard.CardJs('name')
+                    }
+                    console.log(formData);
+
+                    toastr.info("Traitement en cours");
+                    fetch(url, {
+                        method: 'POST',
+                        credentials: 'same-origin', // Include for sending cookies/session data
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData) // Stringify form data for POST request
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json(); // Parse JSON response
+                        })
+                        .then(data => {
+                            console.log(data);
+                            if (data.status === 200 && data.result.Status === 'CREATED' && isValidUrl(data.result.CardRegistrationURL)) {
+                                // Proceed with actions that require a valid CardRegistrationURL
+                                console.log('Card registration URL is valid:', data.result.CardRegistrationURL);
+                                //Encrypter les donnees
+
+                                let request = {
+                                    accessKeyRef: data.result.AccessKey,
+                                    data: data.result.PreregistrationData,
+                                    cardNumber: myCard.CardJs('cardNumber').replace(/\s/g, ''),
+                                    cardExpirationDate: expiryMonth.concat('', myCard.CardJs('expiryYear')),
+                                    cardCvx: myCard.CardJs('cvc')
+                                };
+
+                                // Build the URL-encoded form data
+                                $.ajax({
+                                    url: data.result.CardRegistrationURL,
+                                    type: "POST", // Adjust to your desired method (POST, GET, etc.)
+                                    contentType: "application/x-www-form-urlencoded",
+                                    data: request, // Send the request object directly
+                                    success: function (response) {
+                                        console.log(response);
+
+                                        if (response === "errorCode=02625") {
+                                            toastr.clear();
+                                            toastr.error("Le format de la carte bancaire est invalide");
+                                            throw new Error("Le format de la carte bancaire est invalide");
+                                        } else if (response === "errorCode=02626") {
+                                            toastr.clear();
+                                            toastr.error("La date d'expiration est invalide");
+                                            throw new Error("La date d'expiration est invalide");
+                                        } else if (response === "errorCode=02627") {
+                                            toastr.clear();
+                                            toastr.error("Le CVV est invalide");
+                                            throw new Error("Le CVV est invalide");
+                                        } else if (response.includes('data=')) {
+                                            const req = {
+                                                data: response,
+                                                expirationDate: expiryMonth.concat('', myCard.CardJs('expiryYear')),
+                                                alias: myCard.CardJs('cardNumber').slice(-4)
+                                            };
+                                            console.log(req);
+                                            // Mise a jour de la carte encodee sur mangopay
+                                            $.ajax({
+                                                url: "/fr/abonnement/update_card",
+                                                type: "POST", // Adjust to your desired method (GET, PUT, DELETE, etc.)
+                                                contentType: "application/json", // Set content type for JSON data
+                                                data: JSON.stringify(req), // Send the request object directly
+                                                success: function (response) {
+                                                    console.log(response);
+                                                    toastr.clear();
+                                                    toastr.success("Carte de paiement enregistrée avec succès");
+                                                    setTimeout(function () {
+                                                        window.location = '';
+                                                    }, 1000);
+                                                },
+                                                error: function (error) {
+                                                    console.error("Error:", error);
+                                                    toastr.clear();
+                                                    toastr.error("{{ 'general.error'|trans }}");
+                                                }
+                                            });
+                                        } else {
+                                            toastr.clear();
+                                            toastr.error("{{ 'general.error'|trans }}");
+                                        }
+                                    },
+                                    error: function (error) {
+                                        console.error("Error:", error);
+                                        toastr.clear();
+                                        toastr.error("{{ 'general.error'|trans }}");
+                                    }
+                                });
+                            } else if (data.status === 500) {
+                                console.error("Error:", data.error);
+                                toastr.clear();
+                                toastr.error("{{ 'general.error'|trans }}");
+                            } else {
+                                console.error('Invalid CardRegistrationURL or status is not CREATED.');
+                                // Handle the error case (e.g., display an error message, retry, etc.)
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            toastr.error("{{ 'general.error'|trans }}");
+                        })
+                }
+            });
+
+            function isValidUrl(url) {
+                try {
+                    // Create a new URL object with the provided value
+                    let test = new URL(url);
+                    console.log(test);
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+
+            const inputElements = document.querySelectorAll(".required-input");
+
+            // Call the initial check function on page load
+            window.onload = function () {
+                checkButtonState();
+                console.log($("#totalHt").val());
+            };
+
+            for (const input of inputElements) {
+                input.addEventListener("keyup", function () {
+                    checkButtonState();
+                });
+            }
+
+            function checkButtonState() {
+                // Check if any required input is empty (trimmed value)
+                if ($.trim($("#nom_societe").val()) === "" || $.trim($("#adresse").val()) === "" || $.trim($("#ville").val()) === "" || $.trim($("#code_postal").val()) === "" || $.trim($("#pays").val()) === "") {
+                    $("#submit").prop("disabled", true);
+                } else {
+                    // Check if totalAPayer is valid (assuming it should be non-negative)
+                    if ($("#totalHt").val() >= 0) {
+                        $("#submit").prop("disabled", false);
+                    } else {
+                        $("#submit").prop("disabled", true); // Disable if totalAPayer is negative
+                    }
+                }
+            }
+
+            // Fetch API call for updating facturation
+            async function updateFacturation(formData) {
+                try {
+                    const response = await fetch("{{ path('app_abonnement_facturation_update') }}", {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json',
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Facturation update failed');
+                    }
+
+                    const result = await response.json();
+                    return result;
+                } catch (error) {
+                    console.error('Error updating facturation:', error);
+                    throw error;
+                }
+            }
+
+            // Fetch API call for creating a recurring payment
+            async function createRecurringPayment(formPaymentData) {
+                try {
+                    const response = await fetch("{{ path('app_abonnement_create_recurring_payment') }}", {
+                        method: 'POST',
+                        body: JSON.stringify(formPaymentData),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Recurring payment creation failed');
+                    }
+
+                    const result = await response.json();
+                    console.log(result);
+                    return result;
+                } catch (error) {
+                    console.error('Error creating recurring payment:', error);
+                    throw error;
+                }
+            }
+
+            // Main function to handle payment subscription
+            async function paiementAbonnement() {
+                let formPaymentData = {
+                    'prixTotal': "{{ totalAPayer|round(2, 'floor') }}",
+                    'prixMensuel': "{{ offre.tarif|round(2, 'ceil') }}",
+                    'forfaitId': "{{ offre.getId() }}",
+                    'browserInfo': getBrowserInfo()
+                };
+
+                const form = document.querySelector('#paiementFacturationForm');
+                const jsonData = formToJSON(form);
+                formPaymentData = mergeJSON(formPaymentData, jsonData);
+                console.log('JSON Data:', formPaymentData);
+
+                const formData = jsonToFormData(jsonData);
+                console.log('Form Data:', formData);
+
+                let errorSpan = document.querySelector('.error-payment-message');
+
+                try {
+                    console.log(formData.getAll('id'));
+                    // Step 1: Update billing information
+                    const facturationResult = await updateFacturation(formData);
+                    console.log('Facturation updated:', facturationResult);
+
+                    // Step 2: If billing update succeeds, create recurring payment
+                    const paymentResult = await createRecurringPayment(formPaymentData);
+                    console.log(paymentResult.result);
+
+                    if (paymentResult.result.Status === 'CREATED') {
+                        if (paymentResult.result.SecureModeRedirectURL) {
+                            window.location = paymentResult.result.SecureModeRedirectURL;
+                        }
+                    }else if (paymentResult.result.Status === 'SUCCEEDED') {
+                        const abonnementId = paymentResult.abonnement_id; // Make sure to extract this correctly from paymentResult
+                        const transactionId = paymentResult.result.Id;
+                        const status = paymentResult.result.Status;
+                        const generatedUrl = `/fr/abonnement?abonnement_id=${encodeURIComponent(abonnementId)}&transactionId=${encodeURIComponent(transactionId)}&Status=${encodeURIComponent(status)}`;
+                        window.location = generatedUrl;
+                    } else {
+                        if (!errorSpan) {
+                            errorSpan = document.createElement('span');
+                            errorSpan.className = 'error-payment-message text-danger small';
+                            document.querySelector('.card-view-bloc').appendChild(errorSpan);
+                        }
+                        errorSpan.textContent = 'Nous n\'avons pas pu vous débiter. Veuillez mettre à jour votre moyen de paiement';
+                        errorSpan.style.display = 'block';
+                        console.log('Failed:', paymentResult);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    toastr.error("{{ 'general.error'|trans }}");
+                }
+            }
+
+            const form = document.querySelector('#paiementFacturation');
+            const requiredFields = ['nom_societe', 'adresse', 'ville', 'pays', 'code_postal'];
+            form.addEventListener('click', function (event) {
+                let isValid = true;
+
+                requiredFields.forEach(function (fieldId) {
+                    const field = document.getElementById(fieldId);
+                    if (!field.value) {
+                        field.setCustomValidity('Ce champ est requis');
+                        field.reportValidity();
+                        isValid = false;
+                    } else {
+                        field.setCustomValidity('');
+                    }
+                });
+
+                if (isValid) {
+                    event.preventDefault();
+                    toastr.info("Traitement en cours");
+                    paiementAbonnement();
+                } else {
+                    event.preventDefault();
+                }
+            });
+
+            function formToJSON(form) {
+                const formData = new FormData(form);
+                const json = {};
+                formData.forEach((value, key) => {
+                    json[key] = value;
+                });
+                return json;
+            }
+
+            function jsonToFormData(json) {
+                const formData = new FormData();
+                Object.keys(json).forEach(key => {
+                    formData.append(key, json[key]);
+                });
+                return formData;
+            }
+
+            // Fonction pour fusionner deux objets JSON
+            function mergeJSON(json1, json2) {
+                return {...json1, ...json2};
+            }
+
+            function getBrowserInfo() {
+                let info = {
+                    AcceptHeader: window.navigator.acceptHeader || "",
+                    JavaEnabled: window.navigator.javaEnabled() || false,
+                    Language: window.navigator.language || window.navigator.userLanguage || "",
+                    ColorDepth: window.screen.colorDepth || window.screen.pixelDepth || 0,
+                    ScreenHeight: window.screen.height || 0,
+                    ScreenWidth: window.screen.width || 0,
+                    TimeZoneOffset: new Date().getTimezoneOffset() || 0,
+                    UserAgent: window.navigator.userAgent || "",
+                    JavascriptEnabled: true  // JavaScript is always enabled if this script runs
+                };
+
+                return info;
+            }
+        });
+    </script>
+
+
+{% endblock %}

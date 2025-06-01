@@ -1,0 +1,944 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}{{ 'admin.user.update-user'|trans }}{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/switcher/css/switcher.css') }}">
+    <link rel="stylesheet" href="{{ preload(asset('assets/css/tagsinput/tagify.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/phone/css/intlTelInput.css') }}">
+    <link href="{{ asset('assets/css/camroll/camroll_slider.css') }}" rel="stylesheet" type="text/css">
+    {# <link rel="stylesheet" href="{{ asset('assets/css/daterangepicker.css') }}"> #}
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css"/>
+    <!-- owl carousel css -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <style media="screen">
+        .navbar {
+            background: none;
+        }
+    </style>
+    <div class="content">
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>{{ "admin.user.update-user"|trans }}</h4>
+                    </div>
+                    <div class="card-body card-block">
+                        <div class="sufee-alert alert with-close alert-success alert-dismissible fade show" id="success"
+                             style="display:none">
+
+                            Compte créé avec succès <br> <a
+                                    href="?entity=wp_users&action=list&menuIndex=1&submenuIndex=0"
+                                    style="margin-left:50px"><span
+                                        class="badge badge-pill badge-info">{{ 'admin.menu.all-user'|trans }}</span></a>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show" id="error"
+                             style="display:none">
+                            <span class="badge badge-pill badge-danger">Error</span>
+                            Erreur survenue lors de la création du compte
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ path('profile_updateProfile') }}" method="post" id="updateProfile"
+                              enctype="multipart/form-data">
+                            <input type="hidden" name="userId" value="{{ user.id }}">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.formulaire-profil.nom'|trans }}</b>
+                                        <input type="text" required id="last_name" value="{{ last_name.metaValue }}"
+                                               name="last_name"
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.nom'|trans }}"
+                                               class="form-control">
+                                    </div>
+                                    <div class="form-group ">
+                                        <b>{{ 'profil-utilisateur.formulaire-profil.prenom'|trans }}</b>
+                                        <input type="text" id="first_name" value="{{ first_name.metaValue }}"
+                                               name="first_name"
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.prenom'|trans }}"
+                                               class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <b>Sexe</b>
+                                        <select class="form-control" name="sexe" id="sexe">
+                                            <option>Sexe</option>
+                                            <option value="homme"
+                                                    {% if sexe is not null and sexe.metaValue== 'homme' %}selected{% endif %}>{{ 'general.homme'|trans }}</option>
+                                            <option value="femme"
+                                                    {% if sexe is not null and sexe.metaValue== 'femme' %}selected{% endif %}>{{ 'general.femme'|trans }}</option>
+                                            <option value="femme"
+                                                    {% if sexe is not null and sexe.metaValue== 'autre' %}selected{% endif %}>{{ 'general.autre'|trans }}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <b>{{ 'profil-utilisateur.formulaire-profil.date-de-naissance'|trans }}</b>
+                                        <input type="text" id="bdaytime" disabled
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.date-de-naissance'|trans }}"
+                                               class="form-control form-control-md"
+                                               value="{% if bdaytime is not null %}{{ bdaytime.metaValue|trim }}{% endif %}">
+                                    </div>
+                                    <div class="form-group ">
+                                        <b>{{ 'profil-utilisateur.formulaire-profil.lieu-de-naissance'|trans }}</b>
+                                        <select id="birth_place" name="birth_place" required class="form-control">
+                                            <option value="{% if birth_place is not null %} {{ birth_place.metaValue }} {% endif %}">{% if birth_place is not null %} {{ birth_place.metaValue|country_name }} {% endif %}
+                                            </option>
+                                            {% include("countryRegister.html.twig") %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group ">
+                                        <b>Email</b>
+                                        <input type="email" required value="{{ user.getEmailCanonical() }}" name="email"
+                                               placeholder="Email" class="form-control">
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <b>Téléphone</b>
+                                        <input type="text" id="telephone" name="telephone"
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.telephone'|trans }}"
+                                               class="form-control"
+                                               value=" {% if telephone is not null %} {{ telephone.metaValue }} {% endif %} ">
+                                    </div>
+                                    <div class="form-group ">
+                                        <b>{{ 'profil-utilisateur.formulaire-profil.raison-sociale'|trans }}</b>
+                                        <input type="text"
+                                               value="{% if raison_sociale %}{{ raison_sociale.metaValue }}{% endif %}"
+                                               name="raison_sociale"
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.raison-sociale'|trans }}"
+                                               class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.formulaire-profil.activite'|trans }}</b>
+                                        <select id="activite" name="activite" class="form-control">
+                                        <option value="">{{ 'profil-utilisateur.formulaire-profil.activite'|trans }}</option>
+                                        {% for item in activities %}
+                                            <option {% if principal_activity %}{% if item.termId == principal_activity.termId %}selected{% endif %}
+                                                    {% endif %}
+                                                    value="{{ item.termId }}">{% if app.request.locale == 'en' %}{{ item.content }}{% else %}{{ item.name }}{% endif %}</option>
+                                        {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.formulaire-profil.siret'|trans }}</b>
+                                        <input type="text" value="{% if siret %}{{ siret.metaValue }}{% endif %}"
+                                               name="siret"
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.siret'|trans }}"
+                                               class="form-control">
+                                    </div>
+                                    <div class="form-group ">
+                                        <b>{{ 'profil-utilisateur.formulaire-profil.tva'|trans }}</b>
+                                        <input type="text" value="{% if tva %}{{ tva.metaValue }}{% endif %}" name="tva"
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.tva'|trans }}"
+                                               class="form-control">
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <b>{{ 'profil-utilisateur.formulaire-profil.titre'|trans }}</b>
+                                        <input type="text" name="titre"
+                                               value="{% if titre %}{{ titre.metaValue }}{% endif %}"
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.titre'|trans }}"
+                                               class="form-control">
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <b>{{ 'profil-utilisateur.formulaire-profil.competence'|trans }}</b>
+                                        <input type="text" id="competencesModif" class="form-control" name="competence1"
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.competence'|trans }}"
+                                               value="{% if competences is not null %} {{ competences.metaValue }} {% endif %}"
+                                               data-role="tagsinput">
+                                    </div>
+                                    <div class="form-group ">
+                                        <b>Région</b>
+                                        <input type="text"
+                                               value="{% if region %}{{ region.metaValue }}{% endif %}" name="region"
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.region'|trans }}"
+                                               class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <b>Mot de passe</b>
+                                        <input type="password" autocomplete="false" value="" name="password"
+                                               class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <b>Rôle</b>
+                                        <select class="form-control" name="role" id="role" required>
+                                            <option disabled selected>Rôle</option>
+                                            <option value="ROLE_ABONNE" {% if  'ROLE_ABONNE' in user.roles %}selected{% endif %}>{{ 'inscription.abonne'|trans }}</option>
+                                            <option value="ROLE_AUTO_ENTREPRENEUR" {% if  'ROLE_AUTO_ENTREPRENEUR' in user.roles %}selected{% endif %}>{{ 'inscription.auto-entrepreneur'|trans }}</option>
+                                            <option value="ROLE_SOCIETE" {% if  'ROLE_SOCIETE' in user.roles %}selected{% endif %}>{{ 'inscription.societe'|trans }}</option>
+                                            <option value="ROLE_COMMERCE" {% if  'ROLE_COMMERCE' in user.roles %}selected{% endif %}>Commerce</option>
+                                            <option value="ROLE_CONTRIBUTEUR" {% if  'ROLE_CONTRIBUTEUR' in user.roles %}selected{% endif %}>Contributeur</option>
+                                            <option value="ROLE_SUPER_ADMIN" {% if  'ROLE_SUPER_ADMIN' in user.roles %}selected{% endif %}>{{ 'admin.user.admin'|trans }}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <b>Departement</b>
+                                        <select class="form-control" name="departement" id="departement">
+                                            <option value="">{{ 'profil-utilisateur.formulaire-profil.departement'|trans }}</option>
+                                            {% for item in departements %}
+                                                <option {% if user.getUserUniqueData %}
+                                                    {% if user.getUserUniqueData.getDepartement and item.id == user.getUserUniqueData.getDepartement.id %}
+                                                        selected{% endif %}{% endif %}
+                                                        value="{{ item.id }}">{{ item.departement }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <b>Nom commercial</b>
+                                        <input type="text"
+                                               value="{{ nom_commercial }}" name="nom_commercial"
+                                               class="form-control">
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-12">
+                                    <h5>{{ 'profil-utilisateur.formulaire-profil.description'|trans }}</h5>
+                                    <div class="form-group">
+                                        <textarea class="form-control border-dark" style="width:100%" id="description"
+                                                  name="description"
+                                                  rows="4">{% if description is not null %} {{ description.metaValue }} {% endif %}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <h5>{{ 'profil-utilisateur.formulaire-profil.reference'|trans }}</h5>
+                                    <div class="form-group">
+                                        <textarea class="form-control border-dark" id="reference" name="reference"
+                                                  rows="4">{% if reference is not null %} {{ reference.metaValue }} {% endif %}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <h5>Portfolio</h5>
+                                    <div class="form-group">
+                                        <div class="p-2" style="width:100%">
+                                            <div class="border border-dark p-2">
+                                                <div class="row">
+                                                    <div class="col-md-12 d-flex justify-content-center">
+                                                        <ul class="portfolio-ul">
+                                                            {% if portfolio %}
+                                                                {% for p in portfolio %}
+                                                                    <li style="background-image: url({{ p.guid }});"
+                                                                        class="aimg"><span>
+                      <a href="{{ path('profile_delete_portfolio', {'id':p.id}) }}" class="delete_port ld-over-inverse"
+                         style="color:#fff"> Supprimer <i class="ld ld-ring ld-spin"></i></a></span></li>
+                                                                {% endfor %}
+                                                            {% endif %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <h6 class="control-label col-md-3">{{ 'general.add-portfolio'|trans }}</h6>
+                                                    <div class="col-md-8">
+                                                        <div class="row">
+                                                            <div id="coba" class="row"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 mt-2">
+                                    <h5>{{ 'profil-utilisateur.formulaire-profil.video'|trans }}</h5>
+                                    <div class="p-2">
+                                        <div class="border border-dark p-2">
+                                            <div class="row">
+                                                <div class="col-md-12 d-flex justify-content-center">
+                                                    <ul class="videos-ul">
+                                                        {% for v in imgid %}
+                                                            {% if v != '' %}
+                                                                <li style="background-image: url('http://img.youtube.com/vi/{{ v }}/0.jpg');"
+                                                                    class="aimg"><span><a
+                                                                                href="{{ path('profile_delete_video',{'id':v}) }}"
+                                                                                class="delete_port ld-over-inverse"
+                                                                                style="color:#fff"> Supprimer <i
+                                                                                    class="ld ld-ring ld-spin"></i></a></span>
+                                                                </li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div id="newVideos" class="row mt-3">
+                                                <div class="col-md-3">
+                                                    <h6>{{ 'general.add-youtube-link'|trans }}</h6>
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <div id="newVideosRow" class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <input type="text"
+                                                                       pattern="^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+"
+                                                                       class="form-control border p-2" name="new_vid[]"
+                                                                       placeholder="Add new YouTube video link">
+                                                            </div>
+                                                            <a id="addScnt" href="#"
+                                                               class="btn btn-md btn-warning">{{ 'general.add'|trans }}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-4">
+                                    <h3>Paramètres Banque</h3>
+                                    <div class="form-group">
+                                        <select id="bank" name="bank" class="form-control">
+                                            <option value=""> Type</option>
+                                            <option value="IBAN"
+                                                    {% if typeCompte is not null and typeCompte.metaValue =='IBAN' %}selected{% endif %}>
+                                                IBAN
+                                            </option>
+                                            <option value="GB"
+                                                    {% if typeCompte is not null and typeCompte.metaValue =='GB' %}selected{% endif %}>
+                                                GB
+                                            </option>
+                                            <option value="US"
+                                                    {% if typeCompte is not null and typeCompte.metaValue =='US' %}selected{% endif %}>
+                                                US
+                                            </option>
+                                            <option value="CA"
+                                                    {% if typeCompte is not null and typeCompte.metaValue =='CA' %}selected{% endif %}>
+                                                CA
+                                            </option>
+                                            <option value="autre"
+                                                    {% if typeCompte is not null and typeCompte.metaValue =='autre' %}selected{% endif %}>
+                                                autre
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-nom'|trans }}</b>
+                                        <input type="text" id="accountHolder"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-nom'|trans }}"
+                                               name="accountHolder" class="form-control "
+                                               {% if nomCompte is not null %}value="{{ nomCompte.metaValue }}"{% endif %}>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-adresse'|trans }}</b>
+                                        <input type="text" id="addressHolder"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-adresse'|trans }}"
+                                               name="addressHolder" class="form-control"
+                                               {% if adresseDetenteur is not null %}value="{{ adresseDetenteur.metaValue }}"{% endif %}>
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-ville'|trans }}</b>
+                                        <input type="text"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-ville'|trans }}"
+                                               id="cityHolder" name="cityHolder" class="form-control"
+                                               {% if villeCompte is not null %}value="{{ villeCompte.metaValue }}"{% endif %}>
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-code-postal'|trans }}</b>
+                                        <input type="text" id="codePostalHolder"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-code-postal'|trans }}"
+                                               name="codePostalHolder" class="form-control"
+                                               {% if codePostaleCompte is not null %}value="{{ codePostaleCompte.metaValue }}"{% endif %}>
+
+                                    </div>
+                                    <div class="form-group">
+
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-pays'|trans }}</b>
+                                        <select id="countryHolder" name="countryHolder" class="form-control"
+                                                {% if paysCompte %} value="{{ paysCompte.metaValue }}"{% endif %}>
+                                            <option value=""
+                                                    selected>{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-pays'|trans }}</option>
+                                            {% include 'country.html.twig' %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-region'|trans }}</b>
+                                        <input type="text" id="regionHolder"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-region'|trans }}"
+                                               name="regionHolder" class="form-control"
+                                               {% if regionCompte is not null %}value="{{ regionCompte.metaValue }}"{% endif %}>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mt-4">
+                                    <h3>Détail de votre facture</h3>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-prenom'|trans }}</b>
+                                        <input type="text" id="billing_first_name"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-prenom'|trans }} *"
+                                               name="billing_first_name" class="form-control"
+                                               {% if prenom is not null %}value="{{ prenom.metaValue }}"{% endif %}>
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-nom'|trans }}</b>
+                                        <input type="text" id="billing_last_name"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-nom'|trans }} *"
+                                               name="billing_last_name" class="form-control"
+                                               {% if nom is not null %}value="{{ nom.metaValue }}"{% endif %}>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-pays'|trans }}</b>
+                                        <select id="pays" name="billing_country" class="browser-default custom-select "
+                                                {% if pays is not null %}value="{{ pays.metaValue }}"{% endif %}>
+                                            <option value="">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-pays'|trans }}
+                                                *
+                                            </option>
+                                            {% include 'country.html.twig' %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-numero-rue'|trans }}</b>
+                                        <input type="text" id="numeroNomRue" name="billing_address_1"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-numero-rue'|trans }} *"
+                                               class="form-control"
+                                               {% if numeroNomRue is not null %}value="{{ numeroNomRue.metaValue }}"{% endif %}>
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-code-postal'|trans }}</b>
+                                        <input type="text" id="codePostal"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-code-postal'|trans }} *"
+                                               name="billing_postcode" class="form-control"
+                                               {% if codePostal is not null %}value="{{ codePostal.metaValue }}"{% endif %}>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-ville'|trans }}</b>
+                                        <input type="text" id="ville" name="billing_city" class="form-control"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-ville'|trans }}"
+                                               {% if ville is not null %}value="{{ ville.metaValue }}"{% endif %}>
+                                    </div>
+                                    <div class="form-group">
+                                        <b>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-etat-comte'|trans }}</b>
+                                        <input type="text" id="etatComte"
+                                               placeholder="{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-etat-comte'|trans }} *"
+                                               name="billing_state" class="form-control"
+                                               {% if etatComte is not null %}value="{{ etatComte.metaValue }}"{% endif %}>
+                                    </div>
+                                    <div class="form-group">
+                                        <b>Téléphone</b>
+                                        <input type="text" id="tell" style="width:200%"
+                                               placeholder="{{ 'profil-utilisateur.formulaire-profil.telephone'|trans }}"
+                                               name="billing_phone" class="form-control"
+                                               value="{% if telephone1 %}{{ telephone1.metaValue }}{% endif %} ">
+                                    </div>
+                                    <div class="form-group">
+                                        <b>Email</b>
+                                        <input type="email" id="email" placeholder="Email *" name="billing_email"
+                                               class="form-control"
+                                               {% if email is not null %}value="{{ email.metaValue }}"{% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions form-group">
+                                <button type="submit" id="send" class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                    Modifier le compte<i class="ld ld-ring ld-spin"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block body_javascript %}
+    {{ parent() }}
+    <!-- jQuery plugin for camroll slider -->
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ prerender(asset('assets/js/camroll/camroll_slider.js')) }}"></script>
+    <!-- jQuery plugin for spartan image picker -->
+    <script type="text/javascript"
+            src="{{ prerender(asset('assets/js/spartan-image-picker/spartan-multi-image-picker-min.js')) }}"></script>
+    <!-- jQuery plugin for input tags -->
+    <script src="{{ prerender(asset('assets/js/tagsinput/jQuery.tagify.min.js')) }}"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <!-- jQuery plugin for datepicker -->
+    <script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+    <script src="{{ asset('assets/phone/js/intlTelInput.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+    <!-- Tinymce editor -->
+    <script src="//cdn.ckeditor.com/4.13.0/standard/ckeditor.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js"
+            integrity="sha512-mh+AjlD3nxImTUGisMpHXW03gE6F4WdQyvuFRkjecwuWLwD2yCijw4tKA3NsEFpA1C3neiKhGXPSIGSfCYPMlQ=="
+            crossorigin="anonymous"></script>
+    <!-- owl carousel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <!-- cdnjs for lazy load -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+    <script>
+        function getUnique(array) {
+            let uniqueArray = [];
+            // Loop through array values
+            for (i = 0; i < array.length; i++) {
+                if (uniqueArray.indexOf(array[i]) === -1) {
+                    uniqueArray.push(array[i]);
+                }
+            }
+            return uniqueArray;
+        }
+
+        function validateEmail(email) {
+            let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        }
+
+        function validatePhoneNumber(phone) {
+            let re = /^(\+|00)[0-9]{1,3}[0-9 ]{4,20}(?:x.+)?$/;
+            return re.test(phone);
+        }
+
+        //pattern="^(6|2)[. ]{0,1}[0-9 .]{8,13}(?:x.+)?$"
+        $(document).ready(function () {
+            let docWidth = document.documentElement.offsetWidth;
+
+            CKEDITOR.replace('description');
+            CKEDITOR.replace('reference');
+            CKEDITOR.config.width = 300;     // 500 pixels wide.
+            CKEDITOR.config.width = '100%';
+            [].forEach.call(
+                document.querySelectorAll('*'),
+                function (el) {
+                    if (el.offsetWidth > docWidth) {
+                        console.log(el);
+                    }
+                }
+            );
+
+
+            $(function () {
+                $('.lazy').lazy();
+            });
+
+            //Portfolio owlcarousel
+            $('#monPortfolio .owl-carousel').owlCarousel({
+                items: 1,
+                nav: true,
+                lazyLoad: true,
+                loop: true,
+                margin: 10,
+            });
+            //Video owlcarousel
+            $('#mesVideos .owl-carousel').owlCarousel({
+                items: 1,
+                merge: true,
+                loop: true,
+                margin: 10,
+                nav: true,
+                video: true,
+                lazyLoad: false,
+                center: true,
+                /* responsive:{
+                     480:{
+                         items:2
+                     },
+                     600:{
+                         items:2
+                     }
+                 }*/
+            });
+
+            // add/remove new video in the update section
+            let scntDiv = $('#newVideosRow');
+            let i = $('#newVideosRow .col-md-4').length + 1;
+
+            $('#addScnt').on('click', function () {
+                $('<div class="col-md-4"><div class="form-group"> <input type="url" class="form-control border p-2" name="new_vid[]" placeholder="{{ "general.add-youtube-link"|trans }}"><div class="valid-feedback">OK!</div><div class="invalid-feedback">Ce champ contient une erreur!</div></div> <a class="btn btn-md btn-danger" id="retirerSec">{{ "general.supprimer"|trans }}</a></div>').appendTo(scntDiv);
+                i++;
+                return false;
+            });
+
+            $('#newVideosRow').on('click', '#retirerSec', function () {
+                // console.log("Am here");
+                if (i > 2) {
+                    $(this).parents('.col-md-4').remove();
+                    i--;
+                }
+                return false;
+            });
+
+            // console.log($("#addPortfolioUrl").val());
+            //add new portfolio images
+            $("#coba").spartanMultiImagePicker({
+                fieldName: 'file[]',
+                directUpload: {
+                    status: false,
+                    loaderIcon: '<i class="fas fa-sync fa-spin"></i>',
+                    // 'portfolio/{{ app.request.get('_locale') }}'
+                    url: $("#containerForPortfolio").attr("addPortfolioUrl"),
+                    additionalParam: {
+                        name: 'portfolios[]'
+                    },
+                    success: function (data, textStatus, jqXHR) {
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(errorThrown);
+                    }
+                }
+            });
+            //Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+            //first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+            //toggle menu search bar on/off
+            $("#searchMenuShowHide").click(function () {
+                $("#searchMenu").toggle("slide");
+            });
+
+            //first thing turn Hide "Update section" input field
+            $("#modifInfo").hide();
+            //toggle on/off using "Mofier mon profile"
+            $("#modifierProfile").click(function () {
+                $("#lectureInfo").toggle("slide");
+                $("#modifInfo").toggle("slide");
+            });
+            //toggle on/off using "Annuler les modification"
+            $("#annulerModif").click(function () {
+                $("#modifInfo").toggle("slide");
+                $("#lectureInfo").toggle("slide");
+
+            });
+
+            $('#date').datepicker({
+                uiLibrary: 'bootstrap4',
+                size: 'large',
+                showRightIcon: false,
+                iconsLibrary: 'fontawesome'
+            });
+
+            $("div[role='wrapper']").append("<label for='date'>Date de naissance</label><div class='valid-feedback'>OK!</div><div class='invalid-feedback'>Ce champ contient une erreur!</div>");
+
+// Date format
+            $('.inputNaissance').datepicker({
+                uiLibrary: 'bootstrap4',
+                size: 'large',
+                showRightIcon: false,
+                iconsLibrary: 'fontawesome',
+                format: 'mm/dd/yyyy',
+                label: false
+            });
+//Validate fields
+            //First Name
+            $("#first_name").change(function () {
+                let prenom = $("#first_name").val();
+                if (isNaN(prenom)) {
+                    $("#first_name").removeClass("is-invalid");
+                    $("#first_name").addClass("is-valid");
+                } else {
+                    $("#first_name").removeClass("is-valid");
+                    $("#first_name").addClass("is-invalid");
+                }
+            });
+
+            //Last Name
+            $("#last_name").change(function () {
+                let prenom = $("#last_name").val();
+                if (isNaN(prenom)) {
+                    $("#last_name").removeClass("is-invalid");
+                    $("#last_name").addClass("is-valid");
+                } else {
+                    $("#last_name").removeClass("is-valid");
+                    $("#last_name").addClass("is-invalid");
+                }
+            });
+
+            $("#sexe").change(function () {
+                let nom = $("#sexe").val();
+                if (isNaN(nom)) {
+                    $("#sexe").removeClass("is-invalid");
+                    $("#sexe").addClass("is-valid");
+                } else {
+                    $("#sexe").removeClass("is-valid");
+                    $("#sexe").addClass("is-invalid");
+                }
+            });
+
+
+            $("#email").change(function () {
+                let email = $("#email").val();
+
+                if (validateEmail(email)) {
+                    $("#email").removeClass("is-invalid");
+                    $("#email").addClass("is-valid");
+                } else {
+                    $("#email").removeClass("is-valid");
+                    $("#email").addClass("is-invalid");
+                }
+
+            });
+
+            $("#telephone").change(function () {
+                let phone = $("#telephone").val();
+
+                if (validatePhoneNumber(phone)) {
+                    $("#telephone").removeClass("is-invalid");
+                    $("#telephone").addClass("is-valid");
+                } else {
+                    $("#telephone").removeClass("is-valid");
+                    $("#telephone").addClass("is-invalid");
+                }
+
+            });
+
+            $("#birth_place").change(function () {
+                let prenom = $("#birth_place").val();
+                if (isNaN(prenom)) {
+                    $("#birth_place").removeClass("is-invalid");
+                    $("#birth_place").addClass("is-valid");
+                } else {
+                    $("#birth_place").removeClass("is-valid");
+                    $("#birth_place").addClass("is-invalid");
+                }
+            });
+
+//Preview selected profile photo
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    let reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        //  $('#blah').attr('src', e.target.result);
+                        $('#blah').html('<img class="img-fluid m-auto" style="max-height:400px" width="100%" src="' + e.target.result + '" >');
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#imageUpload").change(function () {
+                readURL(this);
+            });
+
+        });
+        //input tags
+        $('#competencesModif').tagify();
+
+        // Modification du profil de l'utilisateur
+        //list images from portfolio and video
+
+        $('#updateProfile').on('submit', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+
+            for (instance in CKEDITOR.instances) {
+                CKEDITOR.instances[instance].updateElement();
+            }
+
+            if ($('#first_name').val() != '') {
+
+                $('#send').addClass('running');
+                toastr.info('{{ 'systeme.requetes.requete-en-cours'|trans }}');
+
+                let $form = $(this);
+                let formdata = (window.FormData) ? new FormData($form[0]) : null;
+                let data = (formdata !== null) ? formdata : $form.serialize();
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (response) {
+                        console.log(response)
+                        if (response.result) {
+                            toastr.clear();
+                            toastr.success('{{ 'systeme.requetes.succes'|trans }}');
+                            window.location = '';
+                        } else {
+                            $('#send').removeClass('running');
+                            toastr.clear();
+                            toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+                        }
+                    },
+                    error: function (response) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+                    }
+                });
+            }
+
+            return false;
+
+        });
+
+        $(document).on('click', '.delete_port', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            let t = $(this);
+            let urlPath = $(this).attr('href');
+            swal({
+                    title: "Suppression de l'objet",
+                    text: "Attention l'objet sera Supprimer et n'apparaitra plus sur le site",
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Supprimer",
+                    cancelButtonText: "Annuler",
+                    closeOnConfirm: false,
+                    closeOnCancel: false,
+                    showLoaderOnConfirm: true
+                },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: urlPath,
+                            type: 'GET',
+                            success: function (response) {
+                                if (response == 1) {
+                                    swal("Suppression terminée", "", "success");
+
+                                    t.parents('li').hide();
+                                } else {
+                                    swal("Erreur de suppression", "", "error");
+                                }
+
+                            },
+                            error: function (response) {
+                                swal("Erreur de suppression", "", "error");
+                            }
+                        });
+                    } else {
+                        swal.close();
+                    }
+                });
+            return false;
+        });
+
+
+        $(document).on('click', '.delete_port1', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            let t = $(this);
+            let urlPath = $(this).attr('href');
+            swal({
+                    title: t.text(),
+                    text: "{{ 'general.sure'|trans }}",
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Oui",
+                    cancelButtonText: "Annuler",
+                    closeOnConfirm: false,
+                    closeOnCancel: false,
+                    showLoaderOnConfirm: true
+                },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: urlPath,
+                            type: 'GET',
+                            success: function (response) {
+                                if (reponse > 0) {
+                                    swal("Action effectuée avec succès.", "", "success");
+                                    window.location = '{{ path('profile_profile' ) }}';
+                                } else {
+                                    swal("erreur de suppression", "", "error");
+                                }
+
+                            },
+                            error: function (response) {
+                                swal("erreur de suppression", "", "error");
+                            }
+                        });
+                    } else {
+                        swal.close();
+                    }
+                });
+            return false;
+        });
+
+        $(document).on('click', '.delete_port2', function (e) {
+            let urlPath = '';
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            toastr.info('{{ 'systeme.compte.en-cours'|trans }}');
+            if ($('#horns:checkbox:checked').length > 0) {
+                urlPath = $("#hornsUrlDeleteAll").val();
+                console.log(urlPath);
+            } else {
+                urlPath = $("#hornsUrlDelete").val();
+            }
+
+            $.ajax({
+                url: urlPath,
+                type: 'GET',
+                success: function (response) {
+                    if (response == 1) {
+                        console.log('true');
+                        toastr.clear();
+                        toastr.success('{{ 'systeme.compte.succes'|trans }}');
+                        window.location = "/";
+                    }
+                },
+                error: function (response) {
+                    toastr.clear();
+                    toastr.error('{{ 'systeme.compte.error'|trans }}');
+                }
+            });
+        });
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "12000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+        let input = document.querySelector("#telephone,#tell");
+        let input1 = document.querySelector("#tell");
+        window.intlTelInput(input, {
+            autoHideDialCode: true,
+            initialCountry: "fr",
+            nationalMode: false,
+            formatOnDisplay: false,
+            // separateDialCode: true,
+            utilsScript: "/assets/phone/js/utils.js",
+        });
+
+        window.intlTelInput(input1, {
+            autoHideDialCode: true,
+            initialCountry: "fr",
+            nationalMode: false,
+            formatOnDisplay: false,
+            // separateDialCode: true,
+            utilsScript: "/assets/phone/js/utils.js",
+        });
+    </script>
+{% endblock body_javascript %}

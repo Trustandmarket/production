@@ -1,0 +1,472 @@
+{% extends 'otherLayout.html.twig' %}
+{% block head %}
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+          sizes="32x32"/>
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}"
+          sizes="192x192"/>
+    <link rel="apple-touch-icon-precomposed"
+          href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+    <meta name="msapplication-TileImage"
+          content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+    <meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'panier'}) }}">
+
+{% endblock %}
+{% block title %}Trust &amp; Market | {{ include('Seo/Meta/title.html.twig', {code: 'panier'}) }}{% endblock %}
+{% block style %}
+    {{ parent() }}
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{{ prerender(asset('assets/css/mdb.min.css')) }} " rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <!-- Your custom styles (optional) -->
+    <link href="{{ asset('assets/css/result.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/0.8.2/css/flag-icon.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/css/cart.css') }}" rel="stylesheet" type="text/css">
+
+    <style>
+        .container-panier {
+            min-height: padding: 10vh !important;
+        }
+
+        .panierResponsive {
+            margin-bottom: 20%;
+        }
+
+        .addServ {
+            position: relative;
+            top: -2.1rem;
+            right: 15rem;
+            background-color: #54b4a6;
+        }
+
+        .addProd {
+            position: relative;
+            top: -4.2rem;
+            right: 30rem;
+            background-color: #54b4a6;
+        }
+
+        .disabled-link {
+            color: gray;
+            text-decoration: none;
+            cursor: not-allowed;
+        }
+        @media only screen and (min-width: 2500px) {
+            .panierResponsive {
+                margin-bottom: 21%;
+            }
+        }
+
+        @media only screen and (min-width: 1200px) {
+            .addServ {
+                right: 19rem !important;
+            }
+
+            .addProd {
+                right: 38rem !important;
+            }
+        }
+
+        @media only screen and (min-width: 768px) and (max-width: 900px) {
+            .addServ {
+                top: -3.1rem !important;
+                right: 12rem !important;
+                background-color: #54b4a6 !important;
+                padding: 17px !important;
+            }
+
+
+            .addProd {
+                top: -6.4rem !important;
+                right: 24rem !important;
+                background-color: #54b4a6 !important;
+                padding: 17px !important;
+            }
+        }
+
+        @media only screen and (max-width: 767px) {
+            .addServ {
+                top: 0.8rem !important;
+                right: 0rem !important;
+                background-color: #54b4a6 !important;
+                padding: 10px !important;
+                margin-bottom: 0.8rem !important;
+            }
+
+            .addProd {
+                top: 0.8rem !important;
+                right: 0rem !important;
+                background-color: #54b4a6 !important;
+                padding: 10px !important;
+            }
+        }
+    </style>
+
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navigation %}
+    {{ parent() }}
+    {% block pageTitle %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <!--Main Layout-->
+    <div class="flex-fill container panierResponsive">
+
+        <main class="p-5">
+            {% for message in app.flashes('notice') %}
+                <div class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>{{ message }}</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+
+            <div class="row title-area">
+                <div class="col-md-6">
+                    <h2>{{ 'panier.titre'|trans }}</h2>
+                </div>
+                <div class="offset-md-2 col-md-4">
+                    <p class="fs-14">{{ 'panier.message'|trans|raw }}</p>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <!-- For large screens -->
+                <div class="table-responsive large-screens">
+                    <table class="table">
+                        <thead class="primary-bg white-text">
+                        <tr>
+                            <th scope="col" class="text-center fs-18 th-sm">{{ 'panier.tableau.annonces'|trans }}</th>
+                            <th scope="col" class="text-center fs-18 th-sm">{{ 'panier.tableau.vendu-par'|trans }}</th>
+                            <th scope="col" class="text-center fs-18 th-sm">{{ 'panier.tableau.prix/u'|trans }}</th>
+                            <th scope="col" class="text-center fs-18 th-sm">{{ 'panier.tableau.quantite'|trans }}</th>
+                            <th scope="col" class="text-center fs-18 th-sm">{{ 'panier.tableau.total'|trans }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {#  {{dump(panier)}} #}
+                        {% for p in panier %}
+
+                            <tr>
+                                <td class="td-announce align-middle custom-bg border-right border-top border-white">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <p class="mb-1">
+													<span class="-ref">Ref:
+														{{ p.id }}</span>
+                                            </p>
+                                            <a href="#">
+                                                <img src="{{ p.image }}" alt="" style="width:100%">
+                                            </a>
+                                        </div>
+                                        <div class="col-md-8 text">
+                                            {% if p.categorie == 'ops_speciale_article' %}
+                                                <p class="fs-14">
+                                                    <span class="ref-element"
+                                                          style="color: #ee7c32;">{{ p.sousCategorie }}</span><br>
+                                                    <span class="ref-element">{{ p.libelle }}</span><br>
+                                                    <span class="ref-element">@trustandmarket</span>
+                                                </p>
+                                            {% else %}
+                                                <p class="fs-14">
+                                                    <span class="ref-element">{{ p.libelle }}</span><br>
+                                                    <span class="location">
+														<i class="fas fa-map-marker primary-colour"></i>
+														{{ p.adresse }}</span>
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="align-middle custom-bg border-right border-top border-white">
+                                    {% if p.categorie == 'ops_speciale_article' %}
+                                        <p class="text-center"><span style="color: #ee7c32;">Trust&Market</span><br>
+                                            KBR GLOBAL<br>
+                                            serviceclients@kbr-global.com</p>
+                                    {% else %}
+                                        <p class="text-center">
+                                            {% for item in p.donnees_vendeur %}
+                                                {{ item }}<br>
+                                            {% endfor %}
+                                        </p>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle custom-bg border-right border-top border-white">
+                                    <p class="text-center primary-colour">{{ p.prixu }}
+                                        {% if p.devise !='' %}
+                                            {{ p.devise }}{% else %}€
+                                        {% endif %}
+                                    </p>
+                                </td>
+                                <td class="align-middle custom-bg border-right border-top border-white">
+                                    <p class="text-center fs-14">
+                                        <span class="primary-colour">X{{ p.qte }}:</span>
+                                        <br>{{ p.dates }}</p>
+                                </td>
+                                <td class="total-p align-middle border-top border-white">
+                                    <p class="text-center">
+											<span class="white-text fs-18">{{ p.qte * p.prixu }}
+                                                {% if p.devise !='' %}
+                                                    {{ p.devise }}{% else %}€
+                                                {% endif %}
+											</span>
+                                    </p>
+                                    <div class="d-flex text-center">
+                                        <div class="col-md-6 px-1">
+                                            <a href="{% if p.categorie == 'ops_speciale_article' %}#{% else %}{{ path('annonces_detailsAnnonce',{'id':p.name, 'etat':'edition'}) }}
+											{% endif %}" title="{{ 'panier.tableau.bouton-editer'|trans }}">
+                                                <i class="fas fa-edit white-text fs-20"></i>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-6 px-1">
+                                            <a href="{{ path('annonces_deleteitem',{'id':p.id}) }}"
+                                               title="{{ 'panier.tableau.bouton-supprimer'|trans }}" class="delete">
+                                                <i class="fas fa-trash-alt white-text fs-20"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- For small screens -->
+                <div class="table-responsive mobile-screens">
+                    <table class="table">
+                        <tbody>
+                        {% for p in panier %}
+                            <tr>
+                                <td id="mobileTable"
+                                    class="td-announce align-middle custom-bg border-right border-top border-white">
+                                    {% if p.categorie == 'ops_speciale_article' %}
+                                        <div class="col-md-12">
+                                            <span class="ref-element fs-16"
+                                                  style="color: #ee7c32;">{{ p.sousCategorie }}</span>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <span class="ref-element fs-16">{{ p.libelle }}</span>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <span class="ref-element fs-16">@trustandmarket</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-md-12">
+                                            <span class="ref-element fs-16">{{ p.libelle }}</span>
+                                        </div>
+                                        <div class="col-md-12">
+													<span class="location">
+														<i class="fas fa-map-marker primary-colour"></i>
+														{{ p.adresse }}
+													</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="col-md-12">
+											<span class="fs-14">
+												<strong>Ref:</strong>
+												{{ p.id }}
+											</span>&nbsp;
+                                        <span class="fs-14">
+												<strong>Prix/u:</strong>
+												{{ p.prixu }}
+                                            {% if p.devise !='' %}
+                                                {{ p.devise }}{% else %}€
+                                            {% endif %}
+											</span>
+                                    </div>
+                                    <div class="col-md-12">
+											<span class="fs-14">
+												<strong>{{ 'panier.tableau.vendu-par'|trans }}: </strong>
+											</span>
+                                        {% if p.categorie == 'ops_speciale_article' %}
+                                            <span class="location">
+												Trust&Market<br>
+												KBR GLOBAL<br>
+												serviceclients@kbr-global.com
+											</span>
+                                        {% else %}
+                                            <span class="location">
+													{% for item in p.donnees_vendeur %}
+                                                        {{ item }}<br>
+                                                    {% endfor %}
+												</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="d-flex pt-2">
+                                        <div class="col-md-4">
+                                            <a href="#">
+                                                <img src="{{ p.image }}" alt="" style="width:100%">
+                                            </a>
+                                        </div>
+                                        <div class="col-md-8 text">
+                                            <p>
+													<span class="fs-14">
+														<strong>Qté - Dates</strong>
+													</span><br>
+                                                <span class="fs-12">X{{ p.qte }}:
+														{{ p.dates }}</span>
+                                            <h6>Total:
+                                                <span>{{ p.qte * p.prixu }}
+                                                    {% if p.devise !='' %}
+                                                        {{ p.devise }}{% else %}€
+                                                    {% endif %}
+														</span>
+                                            </h6>
+                                            <div class="row pl-3">
+                                                <div class="d-flex flex-row-reverse col-12">
+                                                    <div>
+                                                        <a href="{{ path('annonces_deleteitem') }}" title="Supprimer"
+                                                           class="delete">
+                                                            <i class="fas fa-trash-alt primary-colour fs-20"></i>
+                                                        </a>
+                                                    </div>&nbsp;&nbsp;
+                                                    <div>
+                                                        <a href="{% if p.categorie != 'ops_speciale_article' %}{{ path('annonces_detailsAnnonce',{'id':p.name, 'etat':'edition'}) }}{% else %}#{% endif %}"
+                                                           title="Modifier">
+                                                            <i class="fas fa-edit primary-colour fs-20"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row gross-total-area mt-6">
+                <div class="offset-md-8 col-md-4">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <th scope="row" class="align-middle border-top-0 fs-14">
+										<span>
+											<h2>{{ 'panier.recapitulatif-tableau.total'|trans }}</h2>
+										</span>
+                                </th>
+                                <td class="text-right border-top-0 mt-final">
+										<span class="fs-16">
+										{{ prixTotal }}
+                                            {% if panier|length > 0 %}
+                                                {% if panier.0.devise !='' %}
+                                                    {{ panier.0.devise }}{% else %}€
+                                                {% endif %}
+                                            {% else %}
+                                                €
+                                            {% endif %}
+										</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="align-middle fs-14"></th>
+                                <td class="text-right"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-12">
+                        <a {% if panier|length != 0 %}href="{{ path('payment_payment') }}"{% endif %} id="disabled-link"
+                           class="disabled-link btn btn-sm btn-block primary-bg white-text commander rounded">{{ 'panier.recapitulatif-tableau.bouton-commande'|trans }}
+                        </a>
+                        <a href="{{ path('annonces_listeAnnonces', {type_prestation: 'photographe',services_proposes: '',code_postal_ville: '',noPage: 1}) }}"
+                           class="btn btn-sm btn-block primary-bg white-text commander rounded addServ">{{ 'panier.recapitulatif-tableau.addServ'|trans }}
+                        </a>
+                        <a href="{{ path('annonces_listeAnnonces',{type_prestation:'produits',services_proposes: '',code_postal_ville: '',noPage: 1}) }}"
+                           class="btn btn-sm btn-block primary-bg white-text commander rounded addProd">{{ 'panier.recapitulatif-tableau.ajouter_produits'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <!--Main Layout-->
+{% endblock %}
+
+{% block footer %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- jQuery plugin for date picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+    <!-- cdnjs for lazy load -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}"></script>
+    <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            let docWidth = document.documentElement.offsetWidth;
+            [].forEach.call(document.querySelectorAll('*'), function (el) {
+                if (el.offsetWidth > docWidth) {
+                    console.log(el);
+                }
+            });
+            document.getElementById('disabled-link').addEventListener('click', function (e) {
+                e.preventDefault(); // Prevents navigation
+                toastr.warning("Le paiement en ligne sera disponible bientôt!");
+            });
+
+            // Lazy Loading initializer
+            $(function () {
+                $('.lazy').lazy();
+            });
+
+            // Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+            // first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+            // toggle menu search bar on/off
+            $("#searchMenuShowHide").click(function () {
+                $("#searchMenu").toggle("slide");
+            });
+            // Tooltips Initialization
+            $('[data-toggle="tooltip"]').tooltip()
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "2000",
+                "closeDuration": "2000",
+                "timeOut": "2200",
+                "extendedTimeOut": "2400",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+        });
+    </script>
+{% endblock %}

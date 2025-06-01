@@ -1,0 +1,45 @@
+<nav aria-label=" ...">
+		<ul class="pagination">
+			<li class="page-item">
+				<a class="page-link {% if noPage == 1 %}disabled{% endif %}" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage-1,
+				nombreDeLignes: annoncesTermineesCount, tag: 'ended'})}}" tabindex="-1">{{'filtres.precedent'|trans({}, 'liste_annonces') }}</a>
+			</li>
+			{% if noPage > 1  %}
+				<li class="page-item">
+					<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: 1,
+					nombreDeLignes: annoncesTermineesCount, tag: 'ended'})}}">1<span class="sr-only"></span>
+					</a>
+				</li>
+			{% endif %}
+			{% if noPage > 2  %}
+				<li class="page-item">
+					<a class="page-link" href="">...<span class="sr-only"></span>
+					</a>
+				</li>
+			{% endif %}
+			<li class="page-item active">
+				<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage,
+				nombreDeLignes: annoncesTermineesCount, tag: 'ended'})}}">{{noPage}}<span class="sr-only"></span>
+				</a>
+			</li>
+			{% if pages_ended - noPage > 1  %}
+				<li class="page-item">
+					<a class="page-link" href="">...<span class="sr-only"></span>
+					</a>
+				</li>
+			</li>
+		{% endif %}
+		{% if pages_ended - noPage > 0  %}
+			<li class="page-item">
+				<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: pages_ended,
+				nombreDeLignes: annoncesTermineesCount, tag: 'ended'})}}">{{pages_ended}}<span class="sr-only"></span>
+				</a>
+			</li>
+		{% endif %}
+		<li class="page-item {% if noPage == pages_ended %}disabled{% endif %}">
+			<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage+1,
+			nombreDeLignes: annoncesTermineesCount, tag: 'ended'})}}">{{'filtres.suivant'|trans({}, 'liste_annonces') }}
+			</a>
+		</li>
+	</ul>
+</nav>

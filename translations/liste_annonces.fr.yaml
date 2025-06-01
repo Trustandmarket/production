@@ -1,0 +1,19 @@
+titre: Liste des Annonces
+form:
+  titre: Filtrez par
+  prestation: Type de prestation
+  service: Services proposés
+  soumettre: RECHERCHER
+liste:
+  titre: Annonces
+filtres:
+  annonce: Annonces
+  titre: Trier par
+  prix: Prix
+  croissant: Croissant
+  decroissant: Décroissant
+  date-ajout: Date d'ajout
+  ancien: Ancien
+  recent: Récent
+  precedent: Précédent
+  suivant: Suivant

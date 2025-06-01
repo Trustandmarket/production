@@ -1,0 +1,471 @@
+{% extends 'profileTemplate.html.twig' %}
+{% block head %}
+    {{ parent() }}
+    <meta name="robots" content="noindex">
+{% endblock %}
+{% block title %}Trust &amp; Market | Notifications{% endblock %}
+{% block style %}
+    {{ parent() }}
+
+
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link href="{{ preload(asset('assets/css/style-parametres.css')) }}" rel="stylesheet">
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">{% endblock %}
+
+ {% block header %}
+     {{ parent() }}
+     <style>
+         @media (max-width: 575.98px) {
+             main, .container {
+                 margin-top: 70px;
+             }
+         }
+
+         @media (min-width: 576px) and (max-width: 767.98px) {
+             main, .container {
+                 margin-top: 100px;
+             }
+         }
+     </style>
+ {% endblock %}
+{% block navigation %}{% endblock %} {% block body %}
+
+    <div class="flex-fill container">
+        <main class="">
+            <div class="container mt-2 pt-4">
+                {% include 'menuProfile.html.twig' %}
+                <div class="mt-2">
+                    <!-- Modif des infos -->
+                    <div id="modifInfo">
+                        <div class="row">
+                            <div hidden class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
+                                <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"
+                                     aria-orientation="vertical">
+                                    <a class="nav-link active" id="v-pills-notification-tab" data-toggle="pill"
+                                       href="#v-pills-notification" role="tab" aria-controls="v-pills-notification"
+                                       aria-selected="true">{{ 'profil-utilisateur.parametres.menu-notifications'|trans }}</a>
+                                    <a class="nav-link" id="v-pills-transactions-tab" data-toggle="pill"
+                                       href="#v-pills-transactions" role="tab" aria-controls="v-pills-transactions"
+                                       aria-selected="false">{{ 'profil-utilisateur.parametres.menu-historique-de-transactions'|trans }}</a>
+                                    <a class="nav-link" id="v-pills-passe-tab" data-toggle="pill" href="#v-pills-passe"
+                                       role="tab" aria-controls="v-pills-passe"
+                                       aria-selected="false">{{ 'profil-utilisateur.parametres.menu-mot-de-passe'|trans }}</a>
+                                    {% for r in app.user.roles %}
+                                        {% if r=="ROLE_SOCIETE" or r== "ROLE_AUTO_ENTREPRENEUR" %}
+                                            <a class="nav-link" id="v-pills-calendrier-tab" data-toggle="pill"
+                                               href="#v-pills-calendrier"
+                                               role="tab" aria-controls="v-pills-calendrier" aria-selected="false">Calendrier</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-8 mb-2">
+                                <div class="tab-content" id="v-pills-tabContent">
+                                    <div class="tab-pane fade show active" id="v-pills-notification" role="tabpanel"
+                                         aria-labelledby="v-pills-notification-tab">
+                                        <h4>{{ 'profil-utilisateur.parametres.formulaire-notifications-titre'|trans }}</h4>
+                                        <div class="row">
+                                            <p class="col-12 custome-text">{{ 'profil-utilisateur.parametres.formulaire-notifications-description'|trans }}</p>
+                                        </div>
+                                        <form class="row container custome-text" id="userNewsletterData"
+                                              action="{{ path('profile_userNotificationData') }}" method="post">
+                                            <div class="col-md-6">
+                                                <!-- Default unchecked -->
+                                                <div class="custom-control custom-checkbox p-2">
+                                                    <input type="checkbox" {% if reservationServiceClient is not null %} {% if reservationServiceClient.metaValue==1 %} checked{% endif %} {% endif %}
+                                                           class="custom-control-input" id="rServicesClient"
+                                                           name="reservationServiceClient">
+                                                    <label class="custom-control-label"
+                                                           for="rServicesClient">{{ 'profil-utilisateur.parametres-notifications.reservation-de-service-client'|trans }}</label>
+                                                </div>
+
+                                                <!-- Default unchecked -->
+                                                <div class="custom-control custom-checkbox p-2">
+                                                    <input type="checkbox" {% if reservationServiceAnnonceur is not null %} {% if reservationServiceAnnonceur.metaValue==1 %}checked{% endif %} {% endif %}
+                                                           class="custom-control-input" id="rServicesFournisseur"
+                                                           name="reservationServiceAnnonceur">
+                                                    <label class="custom-control-label"
+                                                           for="rServicesFournisseur">{{ 'profil-utilisateur.parametres-notifications.reservation-de-service-annonceur'|trans }}</label>
+                                                </div>
+
+                                                <!-- Default unchecked -->
+                                                <div class="custom-control custom-checkbox p-2">
+                                                    <input type="checkbox" {% if annulationReservation is not null %} {% if annulationReservation.metaValue==1 %}checked{% endif %} {% endif %}
+                                                           class="custom-control-input" id="rAnnulation"
+                                                           name="annulationReservation">
+                                                    <label class="custom-control-label"
+                                                           for="rAnnulation">{{ 'profil-utilisateur.parametres-notifications.annulation-de-reservation'|trans }}</label>
+                                                </div>
+
+                                                <!-- Default unchecked -->
+                                                <div class="custom-control custom-checkbox p-2">
+                                                    <input type="checkbox" {% if annonceBrouillon is not null %} {% if annonceBrouillon.metaValue==1 %}checked{% endif %} {% endif %}
+                                                           class="custom-control-input" id="annonceBrouillon"
+                                                           name="annonceBrouillon">
+                                                    <label class="custom-control-label"
+                                                           for="annonceBrouillon">{{ 'profil-utilisateur.parametres-notifications.annonce-en-brouillon'|trans }}</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <!-- Default unchecked -->
+                                                <div class="custom-control custom-checkbox p-2">
+                                                    <input type="checkbox" {% if annonceModeration is not null %} {% if annonceModeration.metaValue==1 %}checked{% endif %} {% endif %}
+                                                           class="custom-control-input" id="annonceModeration"
+                                                           name="annonceModeration">
+                                                    <label class="custom-control-label"
+                                                           for="annonceModeration">{{ 'profil-utilisateur.parametres-notifications.annonce-en-moderation'|trans }}</label>
+                                                </div>
+
+                                                <!-- Default unchecked -->
+                                                <div class="custom-control custom-checkbox p-2">
+                                                    <input type="checkbox" {% if annonceRejete is not null %} {% if annonceRejete.metaValue==1 %}checked{% endif %} {% endif %}
+                                                           class="custom-control-input" id="annonceRejete"
+                                                           name="annonceRejete">
+                                                    <label class="custom-control-label"
+                                                           for="annonceRejete">{{ 'profil-utilisateur.parametres-notifications.annonce-rejete'|trans }}</label>
+                                                </div>
+
+                                                <!-- Default unchecked -->
+                                                <div class="custom-control custom-checkbox p-2">
+                                                    <input type="checkbox" {% if annoncePublie is not null %} {% if annoncePublie.metaValue==1 %}checked{% endif %} {% endif %}
+                                                           class="custom-control-input" id="annoncePubliee"
+                                                           name="annoncePublie">
+                                                    <label class="custom-control-label"
+                                                           for="annoncePubliee">{{ 'profil-utilisateur.parametres-notifications.annonce-publiee'|trans }}</label>
+                                                </div>
+
+                                                <!-- Default unchecked -->
+                                                <div class="custom-control custom-checkbox p-2">
+                                                    <input type="checkbox" {% if adhesionNewsletter is not null %} {% if adhesionNewsletter.metaValue==1 %}checked{% endif %} {% endif %}
+                                                           class="custom-control-input" id="adhesionNewsletter"
+                                                           name="adhesionNewsletter">
+                                                    <label class="custom-control-label"
+                                                           for="adhesionNewsletter">{{ 'profil-utilisateur.parametres-notifications.newsletter'|trans }}</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 md-form">
+                                                <button id="enregNotifs" class="btn btn-md btn-success float-right"
+                                                        type="submit">{{ 'profil-utilisateur.parametres.bouton-enregistrer'|trans }}</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="tab-pane fade" id="v-pills-transactions" role="tabpanel"
+                                         aria-labelledby="v-pills-transactions-tab">
+                                        <h4> {{ 'profil-utilisateur.parametres.formulaire-transactions-versees'|trans }}
+                                            (<span id="transactionVersees">0</span>)</h4>
+                                        <div class="row">
+                                            <p class="col-12 custome-text">
+                                            </p>
+                                        </div>
+                                        <h4> {{ 'profil-utilisateur.parametres.formulaire-transactions-recus'|trans }} (<span
+                                                    id="transactionRecues">0</span>)</h4>
+                                        <div class="row">
+                                            <p class="col-12 custome-text">
+                                            </p>
+                                        </div>
+                                        <h4> {{ 'profil-utilisateur.parametres.formulaire-revenus-generes'|trans }} </h4>
+                                        <div class="row">
+                                            <p class="col-12 custome-text"> {{ 'profil-utilisateur.parametres.formulaire-messages-revenus-generes'|trans }}
+                                                :
+                                                <br>
+                                                <span id="revenueGeneres" class="mt-3">0 €</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="v-pills-passe" role="tabpanel"
+                                         aria-labelledby="v-pills-passe-tab">
+                                        <h4>{{ 'profil-utilisateur.parametres.formulaire-mot-de-passe-titre'|trans }}</h4>
+                                        <div class="row">
+                                            <div class="col-8 custome-text">
+                                                <form action="{{ path('profile_updateUserPassword') }}"
+                                                      id="updateUserPassword" method="post">
+                                                    <div class="md-form">
+                                                        <input type="password" id="passeActuel" name="oldUserPassword"
+                                                               class="form-control" required>
+                                                        <label for="passeActuel">{{ 'profil-utilisateur.parametres-mot-de-passe.mot-de-passe-actuel'|trans }}
+                                                            *</label>
+                                                    </div>
+                                                    <div class="md-form">
+                                                        <input type="password" id="nouveauPasse" name="newUserPassword"
+                                                               class="form-control" required>
+                                                        <label for="nouveauPasse">{{ 'profil-utilisateur.parametres-mot-de-passe.nouveau-mot-de-passe'|trans }}
+                                                            *</label>
+                                                        <div id="progress-container"></div>
+                                                    </div>
+                                                    <div class="md-form">
+                                                        <input type="password" id="confirmerNouveauPasse"
+                                                               name="newUserPasswordRetype" class="form-control"
+                                                               required>
+                                                        <label for="confirmerNouveauPasse">{{ 'profil-utilisateur.parametres-mot-de-passe.confirmer-mot-de-passe-actuel'|trans }}
+                                                            *</label>
+                                                    </div>
+                                                    <p class="text-justify">
+                                                        {{ 'profil-utilisateur.parametres.formulaire-mot-de-passe-messages-astuce'|trans }}
+                                                    </p>
+                                                    <div class="col-md-12 md-form">
+                                                        <button id="enregPasse"
+                                                                class="btn btn-md btn-success float-right"
+                                                                type="submit">{{ 'profil-utilisateur.parametres.bouton-enregistrer'|trans }}</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="v-pills-calendrier" role="tabpanel"
+                                         aria-labelledby="v-pills-calendrier-tab">
+                                        <h4>{{ 'profil-utilisateur.calendrier.titre'|trans }}</h4>
+                                        <div class="row">
+                                            <p class="col-12 custome-text">{{ 'profil-utilisateur.calendrier.conseil'|trans }}</p>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12 custome-text">
+                                                <form action="">
+                                                    <div class="multipleDatePicker md-form date" value='' type='text'
+                                                         data-date-format="dd-mm-yyyy">
+                                                        <input type='hidden' class='DateField' value='' id="date">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin des modifs -->
+                </div>
+            </div>
+            {% include("partials/project.html.twig") %}
+            {% include("partials/otherPagesVideoModal.html.twig") %}
+        </main>
+    </div>
+{% endblock %} {% block footer %} {{ parent() }} {% endblock %} {% block javascripts %} {{ parent() }}
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+
+    <!-- jQuery plugin for password meter -->
+    <script src="{{ asset('assets/js/password-meter/password-score.js') }}"></script>
+    <script src="{{ asset('assets/js/password-meter/password-score-options.js') }}"></script>
+    <script src="{{ asset('assets/js/password-meter/bootstrap-strength-meter.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var docWidth = document.documentElement.offsetWidth;
+
+            [].forEach.call(
+                document.querySelectorAll('*'),
+                function (el) {
+                    if (el.offsetWidth > docWidth) {
+                        console.log(el);
+                    }
+                }
+            );
+            //Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+            //first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+            //toggle menu search bar on/off
+            $("#searchMenuShowHide").click(function () {
+                $("#searchMenu").toggle("slide");
+            });
+
+            //Configure password Meter
+            $('#nouveauPasse').strengthMeter('progressBar', {
+                container: $('#progress-container'),
+                base: 80,
+                hierarchy: {
+                    '0': 'progress-bar-striped progress-bar-animated bg-danger',
+                    '25': 'progress-bar-striped progress-bar-animated bg-warning',
+                    '50': 'progress-bar-striped progress-bar-animated bg-success'
+                },
+                passwordScore: {
+                    options: [],
+                    append: true
+                }
+            });
+
+            // Modification des données newsletter de l'utilisateur
+
+            $('#userNewsletterData').on('submit', function (e) {
+                // On emp�che le navigateur de soumettre le formulaire
+                e.preventDefault();
+
+                $('#annoncePubliee').addClass('running');
+                toastr.info('{{ 'systeme.requetes.requete-en-cours'|trans }}');
+
+                let $form = $(this);
+                let formdata = (window.FormData) ? new FormData($form[0]) : null;
+                let data = (formdata !== null) ? formdata : $form.serialize();
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (reponse) {
+
+                        if (reponse != 0) {
+
+                            toastr.clear();
+                            toastr.success('{{ 'systeme.requetes.succes'|trans }}');
+                            window.location = "";
+                        } else if (reponse == 0) {
+                            $('#annoncePubliee').removeClass('running');
+                            toastr.clear();
+                            toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+                        }
+                    },
+                    error: function (reponse) {
+                        $('#annoncePubliee').removeClass('running');
+                        toastr.clear();
+                        toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+                    }
+                });
+                return false;
+            });
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "12000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+
+            //End Banking Form
+            //multiple datepicker
+            $(".multipleDatePicker").datepicker({
+                multidate: true,
+                format: 'dd-mm-yyyy',
+                startDate: '{{ d|date("d-m-Y", false) }}',
+                language: '{{ app.request.getLocale() }}',
+
+            }).on('changeDate', function (e) {
+
+                let dateTime = new Date($(".multipleDatePicker").datepicker("getDate"));
+                let date = dateTime.getDate() + "-" + (dateTime.getMonth() + 1) + "-" + dateTime.getFullYear();
+
+                //$('.multipleDatePicker').datepicker('getDates');
+                let url1 = '/profil-utilisateur/fr/add_date/' + date;
+                //   alert(url1);
+                $.ajax({
+                    url: url1,
+                    type: 'get',
+                    success: function (reponse) {
+                    },
+                    error: function (reponse) {
+                    }
+                });
+            });
+            $('.multipleDatePicker').datepicker('update', {% for d in date %}
+                '{{ d }}', {% endfor %});
+
+            // $('#date').datepicker({
+            //       uiLibrary: 'bootstrap4',
+            //       size: 'large',
+            //       showRightIcon: false,
+            //       iconsLibrary: 'fontawesome'
+            //   });
+
+            // Validations Password
+
+            //Validate fields for Billing
+            //First Name
+            $("#confirmerNouveauPasse").change(function () {
+                if ($("#confirmerNouveauPasse").val() == $("#nouveauPasse").val()) {
+                    $("#confirmerNouveauPasse").removeClass("is-invalid");
+                    $("#confirmerNouveauPasse").addClass("is-valid");
+                } else {
+                    $("#confirmerNouveauPasse").removeClass("is-valid");
+                    $("#confirmerNouveauPasse").addClass("is-invalid");
+                }
+            });
+
+            //End validation
+
+            // Modification des données mot de passe de l'utilisateur
+
+            $('#updateUserPassword').on('submit', function (e) {
+                // On emp�che le navigateur de soumettre le formulaire
+                e.preventDefault();
+
+                $('#enregPasse').addClass('running');
+                toastr.info('{{ 'systeme.requetes.requete-en-cours'|trans }}');
+
+                let $form = $(this);
+                let formdata = (window.FormData) ? new FormData($form[0]) : null;
+                let data = (formdata !== null) ? formdata : $form.serialize();
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (reponse) {
+
+                        if (reponse != 0) {
+
+                            toastr.clear();
+                            toastr.success('{{ 'systeme.requetes.succes'|trans }}');
+                            window.location = "";
+                        } else if (reponse == 0) {
+                            $('#enregPasse').removeClass('running');
+                            toastr.clear();
+                            toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+
+                        }
+
+                    },
+                    error: function (reponse) {
+                        $('#enregPasse').removeClass('running');
+                        toastr.clear();
+                        toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+                    }
+                });
+
+                return false;
+
+            });
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "12000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+        });
+    </script>
+
+{% endblock %}

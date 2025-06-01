@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Réinitialiser mot de passe | Trust & Market</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{asset('assets/css/bootstrap.min.css')}}" rel="stylesheet">
+    <!-- Font awesome and date picker -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
+
+    <style>
+      body{ {% if include('Seo/Meta/security_image.html.twig', {code: 'verifier_email_reinitialiser_compte_image'}) != "\n" %}
+			background: url({{ include('Seo/Meta/security_image.html.twig', {code: 'verifier_email_reinitialiser_compte_image'}) }}) no-repeat center center fixed;
+		{% else %} background: url({{ absolute_url(asset('assets/img/john-raptis.png'))}}) no-repeat center center fixed;
+		{% endif %}
+	        -webkit-background-size: cover;
+	        -moz-background-size: cover;
+	        -o-background-size: cover;
+	        background-size: cover;
+	  }
+      .white-t{
+        color: #fff;
+      }
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      .registration-ok {
+        width: 100%;
+        max-width: 600px;
+        padding: 15px;
+        margin: auto;
+      }
+      .btn-primary {
+        background: #f17c30 !important;
+        border: none
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+      @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        body{
+            background-size: auto;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="{{asset('assets/css/floating-labels.css')}}" rel="stylesheet">
+  </head>
+  <body>
+    
+    <div class="registration-ok">
+      <div class="text-center mb-5">
+        <a href='/'>
+          <img class="mb-4" src="{{ prerender(asset('assets/img/logo_tm.svg')) }}" alt="logo" width="72" height="72">
+        </a>
+        <h1 class="h3 mb-3 font-weight-normal white-t">{{'changer-mot-de-passe.message-accueil'|trans}}</h1>
+        <p class="white-t">{{'changer-mot-de-passe.conseil'|trans}}</p>
+        <p class="white-t">Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+      </div>
+
+      <div class="text-center">
+          <p class="white-t">Si vous ne recevez pas d'e-mail, veuillez vérifier votre dossier spam ou <br><a class="btn btn-lg btn-primary btn-lg mt-3" href="{{ path('app_forgot_password_request') }}">Réessayez.</a></p>
+      </div>
+    </div>
+
+<!-- jQuery -->
+<script src="{{asset('assets/js/jquery-3.4.1.min.js')}}"></script>
+<!-- Bootstrap Js -->
+<script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
+</body>
+</html>
+
+

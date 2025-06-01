@@ -1,0 +1,327 @@
+{% extends 'homeLayout.html.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+	<link rel="icon" href="{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}" sizes="32x32"/>
+	<link rel="apple-touch-icon-precomposed" href="{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+	<meta name="msapplication-TileImage" content="{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+	<meta name="title" content="{{ include('Seo/Meta/title.html.twig', {code: 'home'}) }}">
+	<meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'home'}) }}">
+	<link rel="canonical" href="https://www.trustandmarket.com/{{app.request.getLocale()}}">
+	{# OG CONTENT #}
+	<meta property="og:site_name" content="Trust&Market">
+	<meta property="og:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'home'}) }}">
+	<meta property="og:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'home'}) }}">
+	<meta property="og:image" content="{% if bloc10 %}{{bloc10.optionValue}}{% else %}{{absolute_url(asset('assets/img/prestations/cover.jpg'))}}{% endif %}">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="{{ absolute_url(path('home')) }}">
+	{# END OG CONTENT #}
+
+	{# Twitter CARD #}
+	<meta name="twitter:card" content="summary_large_image"> <meta name="twitter:creator" content="Kbr Global">
+	<meta name="twitter:site" content="@trustandmarket">
+	<meta name="twitter:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'home'}) }}">
+	<meta name="twitter:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'home'}) }}">
+	<meta name="twitter:image" content="{% if bloc1 %}{{bloc1.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-photo.jpg')}}{% endif %}">
+	<meta name="twitter:image:alt" content="{{ include('Seo/Meta/title.html.twig', {code: 'home'}) }}">
+	{# END Twitter Card #}
+
+	{# LD JSON #}
+	<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "Organization",
+			"name": "Trust & Market",
+			"legalName" : "SAS KBR GLOBAL",
+			"url": "{{ absolute_url(path('home')) }}",
+			"image":"{% if bloc10 %}{{bloc10.optionValue}}{% else %}{{asset('assets/img/prestations/cover.jpg')}}{% endif %}",
+			"telephone": "+33 1 85 42 14 91",
+			"email": "contact@kbr-global.com",
+			"logo" : "{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}",
+			"foundingDate": "2017",
+			"founders": [{
+				"@type": "Person",
+				"name": "Kalide Brassier"
+			}],
+			"address": {
+				"@type": "PostalAddress",
+				"addressLocality": "CHELLES",
+				"postalCode": "77500",
+				"streetAddress": "1 Rue Rejane Ruel",
+				"addressCountry": "FR"
+			},
+			"sameAs": [
+				"https://www.facebook.com/trustandmarket",
+				"https://twitter.com/trustandmarket",
+				"https://www.instagram.com/trustandmarket/",
+				"https://www.linkedin.com/company/trustandmarket",
+				"https://www.youtube.com/channel/UC-jLvu82KNM6DnFOp2Nvk_A"
+			]
+		}
+	</script>
+
+	{# End LD JSON #}
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css"/>
+{% endblock %}
+
+{% block title %}
+	{{ parent() }}
+	|
+	{% if meta_page is not null %}
+		{{ meta_page.postTitle }}
+		{% else %}Trust &amp; Market |
+		{{'general.titre'|trans}}
+	{% endif %}
+{% endblock %}
+
+{% block style %}
+	{{ parent() }}
+
+	<!-- Your custom styles (optional) -->
+	<link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+    <link href="{{ absolute_url(asset('assets/css/footer.css')) }}" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.css">
+	<link href="{{ absolute_url(asset('assets/css/home.min.css')) }}" rel="stylesheet">
+{% endblock %}
+
+{% block header %}
+	{{parent()}}
+{% endblock %}
+
+{% block navigation %}
+	{{parent()}}
+{% endblock %}
+
+
+{% block body %}
+	<main class="text-center">
+		<div class="container" style="max-width: 60rem;display: none;">
+			<div class="row"></div>
+		</div>
+		<div class="container" style="max-width: 60rem;padding: 1rem;">
+			<div class="row">
+				<div class="col-md-12 toi">
+					<div class="com-preview">
+						<div class="com-preview-media-container">
+							<a class="com-preview-media__image" href="{% if bloc12 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc12.optionValue|split('|||')[0] %} {{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'photographe',services_proposes: '',code_postal_ville: ''})}}{% endif %}"
+							   style="background-image:url({% if bloc12 %}{{bloc12.optionValue|split('|||')[1]}}{% else %}https://unsplash.it/800/600?image=696{% endif %});box-shadow: inset 0 0 0 2000px rgba(6, 48, 66, 0.35);"></a>
+							<h3 class="com-preview-media__text">
+								{{'general.decouvrez_musique'|trans}}
+							</h3>
+						</div>
+					</div>
+				</div>
+
+				<h3 style="margin-top: 2rem;">{{'general.decouvrez_les_services'|trans}}</h3>
+				<div class="col-md-12" style="padding: 0;">
+					<div id="news-slider" class="owl-carousel">
+						<div class="post-slide">
+							<a class="hover-orange" href="#">
+								<div class="box-prestation box-photograph overlay lazy carroussel_image" data-src="{% if bloc1 %}{{bloc1.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-photo.jpg')}}{% endif %}">
+									<a href="{% if bloc1 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc1.optionValue|split('|||')[0] %} {{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'photographe',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.photographe'|trans}}</a>
+								</div>
+							</a>
+						</div>
+						<div class="post-slide">
+							<a class="hover-orange" href="#">
+								<div class="box-prestation box-musicien overlay lazy carroussel_image" data-src="{% if bloc2 %}{{bloc2.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-musicien.jpg')}}{% endif %}">
+									<a href="{% if bloc2 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc2.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'musiciens',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.musicien'|trans}}</a>
+								</div>
+							</a>
+						</div>
+						<div class="post-slide">
+							<a class="hover-orange" href="#">
+								<div class="box-prestation box-prod-musicale overlay lazy carroussel_image" data-src="{% if bloc3 %}{{bloc3.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-production-musicale.jpg')}}{% endif %}">
+									<a href="{% if bloc3 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc3.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'studio-denregistrement',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.studio-enregistrement'|trans}}</a>
+								</div>
+							</a>
+						</div>
+						<div class="post-slide">
+							<a class="hover-orange" href="#">
+								<div class="box-prestation box-grp-d-musiq overlay lazy carroussel_image" data-src="{% if bloc4 %}{{bloc4.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-group-music.jpg')}}{% endif %}">
+									<a href="{% if bloc4 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc4.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'groupes-de-musique',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.groupe-de-musique'|trans}}</a>
+								</div>
+							</a>
+						</div>
+						<div class="post-slide">
+							<div class="box-prestation box-chorale overlay lazy carroussel_image" data-src="{% if bloc5 %}{{bloc5.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-chorale.jpg')}}{% endif %}">
+								<a href="{% if bloc5 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc5.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces',{type_prestation:'chorale-gospel',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.chorale'|trans}}</a>
+							</div>
+						</div>
+						<div class="post-slide">
+							<a class="hover-orange" href="#">
+								<div class="box-prestation box-stud-photo overlay lazy carroussel_image" data-src="{% if bloc6 %}{{bloc6.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-stud-photo.jpg')}}{% endif %}">
+									<a href="{% if bloc6 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc6.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'studio-photo',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.studio-photo'|trans}}</a>
+								</div>
+							</a>
+						</div>
+						<div class="post-slide">
+							<a class="hover-orange" href="#">
+								<div class="box-prestation box-realisation-vid overlay lazy carroussel_image" data-src="{% if bloc7 %}{{bloc7.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-realisation-vid.jpg')}}{% endif %}">
+									<a href="{% if bloc7 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc7.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'realisation-video',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.realisation-video'|trans}}</a>
+								</div>
+							</a>
+						</div>
+						<div class="post-slide">
+							<a class="hover-orange" href="#">
+								<div class="box-prestation box-evenementiels overlay lazy carroussel_image" data-src="{% if bloc8 %}{{bloc8.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-evenementiels.jpg')}}{% endif %}">
+									<a href="{% if bloc8 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc8.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'evenementiels',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.evenementiel'|trans}}</a>
+								</div>
+							</a>
+						</div>
+						<div class="post-slide">
+							<a class="hover-orange" href="#">
+								<div class="box-prestation box-stud-vid overlay lazy carroussel_image" data-src="{% if bloc9 %}{{bloc9.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-studio-video.jpg')}}{% endif %}">
+									<a href="{% if bloc9 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc9.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'studio-video',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.studio-video'|trans}}</a>
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<h3>{{'general.decouvrez_les_produits'|trans}}</h3>
+				<div class="col-md-12 toi">
+					<div class="com-preview">
+						<div class="com-preview-media-container">
+							<a class="com-preview-media__image" href="{{path('annonces_listeAnnonces', {type_prestation: 'produits',services_proposes: '',code_postal_ville: ''})}}" style="background-image:url({% if bloc11 %}{{bloc11.optionValue}}{% else %}https://unsplash.it/800/600?image=696{% endif %});box-shadow: inset 0 0 0 2000px rgba(6, 48, 66, 0.35);"></a>
+							<h3 class="com-preview-media__text">
+								{{'general.produits_offres'|trans}}
+							</h3>
+						</div>
+					</div>
+				</div>
+
+				<h3 class="mt-4">{{'general.derniers_articles'|trans}}</h3>
+				<div class="cartearticles row">
+					{% for article in blog %}
+						<div class="col-md-4">
+							<a href="{{absolute_url(path('blog_details_postBlog', {slug: article.post_name}))}}" style="text-decoration: none;">
+								<div class="card">
+									<div class="img-cover">
+										<img src="{{ article.imagePost }}" class="lazy" alt="article-cover">
+									</div>
+									<div class="desc">
+										<h4 style="text-overflow: ellipsis;font-size: 1.25rem;">{{ article.post_title }}</h4>
+									</div>
+								</div>
+							</a>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<div class="siteorigin-widget-tinymce textwidget">
+		<div id="video-popup-light" style="display: none;">
+			<a class="boxclose" id="video-popup-close"></a>
+			<iframe src="" width="100%" height="100%" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+		</div>
+
+		<div id="video-popup-fade" style="display: none;"></div>
+
+		{# <a href="#" id="video-popup-opener"></a> #}
+	</div>
+	{{parent()}}
+{% endblock %}
+
+{% block footer %}
+	{{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<!-- Full background slider jQuery plugin -->
+	<script src="https://code.jquery.com/ui/1.10.2/jquery-ui.min.js" integrity="sha256-FgiaQnQazF/QCrF9qSvpRY6PACn9ZF8VnlgqfqD1LsE=" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="{{ absolute_url(asset('assets/js/fullclip.min.js')) }}" defer></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.js" defer></script>
+	<script>
+		/* 	const clickC = document.querySelector(".desc");
+	clickC.addEventListener("click", function () {
+		const r = Math.round(Math.random() * 255 + 0);
+		const g = Math.round(Math.random() * 255 + 0);
+		const b = Math.round(Math.random() * 255 + 0);
+		document.body.style.backgroundColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+	}); */
+
+$(document).ready(function () {
+$("#news-slider").owlCarousel({
+items: 3,
+itemsDesktop: [
+1199, 3
+],
+itemsDesktopSmall: [
+980, 2
+],
+itemsMobile: [
+600, 1
+],
+navigation: true,
+navigationText: [
+"", ""
+],
+pagination: true,
+autoPlay: true
+});
+});
+$("#yourproject-iconed-link, #fermeur").click(function (e) {
+	e.preventDefault();
+	$("#dialoguons").fadeToggle("slow", "linear");
+});
+
+$(".closeBtnModal").click(function (e) {
+	e.preventDefault();
+	$("#newsletterModal").modal('toggle');
+});
+
+
+setTimeout(function () {
+	var f = document.querySelectorAll('iframe')[0];
+	let url = $("#youtube_url").val();
+	console.log(url);
+	f.src = 'https://www.youtube.com/embed/' + url;
+	console.log('FB loaded after 2s');
+}, 100);
+
+$(document).ready(function () {
+var docWidth = document.documentElement.offsetWidth;
+
+[].forEach.call(document.querySelectorAll('*'), function (el) {
+if (el.offsetWidth > docWidth) {
+console.log(el);
+}
+});
+
+// Hambuger menu icon
+$('.animated-button-icon').on('click', function () {
+$('.animated-icon2').toggleClass('open');
+});
+
+// Recherche avancer
+$("#recherche-avancer").click(function () {
+$("#sectionAvancer").toggleClass('d-none');
+});
+
+// first thing turn Hide Menu Search bar
+$("#frLang").hide();
+// toggle language for English
+$("#enLang").click(function () {
+$("#dropdownLang").html("<span class='flag-icon flag-icon-us'> </span>  EN");
+$("#enLang").hide();
+$("#frLang").toggle("slide");
+});
+// toggle language for French
+$("#frLang").click(function () {
+$("#dropdownLang").html("<span class='flag-icon flag-icon-fr'> </span>  FR");
+$("#frLang").hide();
+$("#enLang").toggle("slide");
+});
+
+});
+
+	</script>
+
+{% endblock %}

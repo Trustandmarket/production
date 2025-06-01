@@ -1,0 +1,897 @@
+{% extends 'profileTemplate.html.twig' %}
+
+{% block head %}
+{{parent()}}
+
+  <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+  sizes="32x32" />
+  <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}"
+  sizes="192x192" />
+  <link rel="apple-touch-icon-precomposed"
+  href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}" />
+  <meta name="msapplication-TileImage"
+  content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}" />
+  <meta name="robots" content="noindex">
+
+{% endblock %}
+
+{% block title %}Trust &amp; Market | Profil Annonces{% endblock %}
+
+{% block annonce %} active{% endblock %}
+{% block style %}
+{{parent()}}
+<!-- Gijgo datepicker css -->
+<link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+
+<link href="{{ preload(asset('assets/css/custome.css'))}}" rel="stylesheet">
+<link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ asset('assets/css/img-picker/image-picker.css')}}">
+<link href="{{ asset('assets/css/style-annonces.css')}}" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+
+<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+
+<!-- file input fonts -->
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+<link href="{{asset('assets/font/file-input-font/font/font-fileuploader.css')}}" rel="stylesheet">
+<!-- file input styles -->
+<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+  <script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+<style>
+  .image_picker_image {
+    width: 100px;
+    height: 100px
+  }
+
+  .tox-statusbar__branding {
+    display: none;
+  }
+
+  .fletter-caps {
+    text-transform: lowercase;
+  }
+
+  .position-brouillon {
+    position: fixed-top;
+  }
+
+  .fletter-caps::first-letter {
+    text-transform: capitalize;
+  }
+
+  .btn-primary {
+    background-color: #eb6918 !important;
+    color: #fff;
+    font-size: 0.8rem !important;
+  }
+
+  .btn-primary:not([disabled]):not(.disabled):active {
+    background-color: #eb6918 !important;
+  }
+
+  /* preload*/
+  .lds-ring {
+    height: 10px;
+    margin-top: 10px;
+    z-index: 999;
+  }
+
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    margin-right: 40px;
+    margin: 6px;
+    border: 6px solid #717373;
+    border-radius: 50%;
+    animation: lds-ring 0.4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #717373 transparent transparent transparent;
+  }
+
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+
+  .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+
+  .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    main, .container {
+      margin-top: 70px;
+    }
+  }
+
+  @media (min-width: 576px) and (max-width: 767.98px) {
+    main, .container {
+      margin-top: 100px;
+    }
+  }
+
+</style>
+{% endblock %}
+
+
+{% block header %}
+  {{parent()}}
+{% endblock %}
+
+{% block navigation %}
+  {{parent()}}
+{% endblock %}
+
+{% block body %}
+<div class="flex-fill container">
+  <main class="">
+    <div class="container mt-2 pt-4">
+      {% include 'menuProfile.html.twig' %}
+      <div class="mt-2">
+        <!-- Modif des infos -->
+        <div id="modifInfo">
+          <div class="row">
+            <div hidden class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
+              <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            {% include 'annonces/sousMenuAnnonces.html.twig' %}
+
+            <div class="col-md-8 mb-2">
+              <!-- multistep form -->
+              <form id="msform" action="{% if nom_prenom_email is defined and nom_prenom_email is defined and client is defined and client != "" %}{{path('devis_ajouter_devis')}}
+                {% elseif editedData is defined and state is defined and state == 'edition' %}{{path('profile_editer_annonce')}}
+                {% else %}{{path('profile_ajouter_annonce')}}{% endif %}" method="post" enctype="multipart/form-data">
+                <!-- progressbar -->
+                <ul id="progressbar">
+                  <li class="active">{{'profil-utilisateur.formulaire-creer-annonce.onglet-prestations'|trans}}</li>
+                  <li>{{'profil-utilisateur.formulaire-creer-annonce.onglet-adresse'|trans}}</li>
+                  <li>{{'profil-utilisateur.formulaire-creer-annonce.onglet-service'|trans}}</li>
+                  <li>{{'profil-utilisateur.formulaire-creer-annonce.onglet-photos-videos'|trans}}</li>
+                  <li>{{'profil-utilisateur.formulaire-creer-annonce.onglet-prix'|trans}}</li>
+                  <li>{{'profil-utilisateur.formulaire-creer-annonce.onglet-conditions'|trans}}</li>
+                </ul>
+                <!-- fieldsets -->
+                <fieldset>
+                  <div class="row mb-4">
+                    <div class="col-md-6 text-left">
+                      <h2 class="fs-title">{{'profil-utilisateur.formulaire-creer-annonce.type-de-prestations'|trans}}*
+                      </h2>
+                      <h3 class="fs-subtitle">
+                        {{'profil-utilisateur.formulaire-creer-annonce.contrainte-de-choix'|trans}}</h3>
+                      <!-- Default unchecked -->
+                      {# {{dump(editedData)}} #}
+                      {% for c in categorie %}
+                      {% if c.name|lower == 'produits' %}
+                        <div class="custom-control custom-radio mb-2">
+                          <input type="radio" {% if editedData is defined and editedData.post_type !="devis" and c.name==editedData.categorieParent %}checked{% endif %}
+                            myUrl="{{path('profile_liste_sous_categorie',{'id':c.termTaxonomyId})}}"
+                            class="custom-control-input categorie" id="cat{{c.termTaxonomyId}}" name="categorieParent"
+                            value="{{c.termTaxonomyId}}" {% if app.user.getAbonnements()|length == 0 %}disabled{% elseif app.user.getAbonnements()|length > 0
+                            and app.user.getAbonnements()|last.isAbonnementActif() and app.user.getAbonnements()|last.getOffre().isReferencement() %}{% else %}disabled{% endif %}/>
+                          <label class="custom-control-label" for="cat{{c.termTaxonomyId}}">{% if app.request.locale ==
+                            'en' and c.content != '' %}{{c.content}}{% else %}{{c.name}}{% endif %}</label>
+                        </div>
+                      {% elseif c.name|lower == 'packs production' %}
+                        <div class="custom-control custom-radio mb-2">
+                          <input type="radio" {% if editedData is defined and editedData.post_type !="devis" and c.name==editedData.categorieParent %}checked{% endif %}
+                            myUrl="{{path('profile_liste_sous_categorie',{'id':c.termTaxonomyId})}}"
+                            class="custom-control-input categorie" id="cat{{c.termTaxonomyId}}" name="categorieParent"
+                            value="{{c.termTaxonomyId}}" {% if app.user.getAbonnements()|length == 0 %}disabled{% elseif app.user.getAbonnements()|length > 0
+                            and app.user.getAbonnements()|last.isAbonnementActif() and app.user.getAbonnements()|last.getOffre().isPacksProduction() %}{% else %}disabled{% endif %}/>
+                          <label class="custom-control-label" for="cat{{c.termTaxonomyId}}">{% if app.request.locale ==
+                            'en' and c.content != '' %}{{c.content}}{% else %}{{c.name}}{% endif %}</label>
+                        </div>
+                      {% else %}
+                      <div class="custom-control custom-radio mb-2">
+                        <input type="radio" {% if editedData is defined and editedData.post_type !="devis" and c.name==editedData.categorieParent %}checked{% endif %}
+                          myUrl="{{path('profile_liste_sous_categorie',{'id':c.termTaxonomyId})}}"
+                          class="custom-control-input categorie" id="cat{{c.termTaxonomyId}}" name="categorieParent"
+                          value="{{c.termTaxonomyId}}"/>
+                        <label class="custom-control-label" for="cat{{c.termTaxonomyId}}">{% if app.request.locale ==
+                          'en' and c.content != '' %}{{c.content}}{% else %}{{c.name}}{% endif %}</label>
+                      </div>
+                      {% endif %}
+                      {% endfor %}
+                      {# For Devis Process #}
+                      <div class="custom-control custom-radio mb-2">
+                        <input type="radio" {% if editedData is defined and editedData.post_type=="devis" %}checked{%
+                          endif %} myUrl="" class="custom-control-input categorie" id="cat0" name="categorieParent" value="devis"
+                                {% if app.user.getAbonnements()|length == 0 %}disabled{% elseif app.user.getAbonnements()|length > 0
+                                  and app.user.getAbonnements()|last.isAbonnementActif() and app.user.getAbonnements()|last.getOffre().isCreerDevis() %}{% else %}disabled{% endif %}/>
+                        <label class="custom-control-label" for="cat0">{{'profil-utilisateur.formulaire-creer-annonce.creer-un-devis'|trans}}</label>
+                        {# For Devis Process #}
+                      </div>
+                    </div>
+                    {# {{ dump(nom_prenom_email) }} #}
+                    <div id="prestProposee" class="col-md-6 text-left">
+                      <div id="sous_categorie">
+                        <div id="sous_categorie_sous">
+                          {% if editedData is defined %} {# is defined and nom_prenom_email == "" #}
+                          <h2 class="fs-title">
+                            {{'profil-utilisateur.formulaire-creer-annonce.type-de-prestations'|trans}}*</h2>
+                          <h3 class="fs-subtitle">
+                            {{'profil-utilisateur.formulaire-creer-annonce.contrainte-de-choix'|trans}}</h3>
+                          <div class="custom-control custom-radio mb-2">
+                            {# {% if nom_prenom_email != "" %} #}
+                            {% if editedData.post_type != 'devis' %}
+                            <input type="radio" checked myUrl="{{path('profile_liste_sous_categorie',{'id':editedData.IdSousCategorie})}}"
+                              class="custom-control-input categorie" id="cat{{editedData.IdSousCategorie}}"
+                              name="categorie" value="{{editedData.IdSousCategorie}}" required>
+                            <label class="custom-control-label" for="cat{{editedData.IdSousCategorie}}">{{editedData.sousCategorie}}</label>
+                            {% endif %}
+                            {# {% endif %} #}
+                          </div>
+                          {% endif %}
+                        </div>
+
+                        <div class="devis-input-data" id="devis-input-data"
+                          style="{% if nom_prenom_email is not defined or nom_prenom_email == "" %}display:none;{% else %}{% endif %}">
+                          <h2 class="fs-title">
+                            {{'profil-utilisateur.formulaire-creer-annonce.champs-trouver-client'|trans}}</h2>
+                          <div class="" style="position: relative;margin-top:0.5rem;margin-bottom: 1.5rem;">
+                            <input autocomplete="off" type="text" id="nom_prenom" name="nom_prenom"
+                              class="form-control search_devis"
+                              value="{% if nom_prenom_email is defined and nom_prenom_email != "" %} {{ nom_prenom_email }} {% endif %}"
+                              placeholder="Chercher par nom prénom ou son email" />
+                            <div class="lds-ring" style="display:none;height:0px;margin-top:0px;">
+                              <div></div>
+                              <div></div>
+                              <div></div>
+                              <div></div>
+                            </div>
+                            <input hidden="hidden" type="text" value="{% if client is defined and client != "" %} {{ client }} {% endif %}"
+                              name="idClient" id="idClient">
+                          </div>
+                          <h2 class="fs-title">
+                            {{'profil-utilisateur.formulaire-creer-annonce.dates-horaires-prestations'|trans}}</h2>
+                          <div style="position: relative;margin-top:0.5rem;margin-bottom: 1.5rem;">
+                            <input required="required" type="text"
+                              value="{% if dates_horaires is defined and dates_horaires != "" %} {{ dates_horaires }} {% else %}{% endif %}"
+                              id="dates_horaires" name="dates_horaires" class="form-control">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <input type="button" {% if editedData is defined %}{% else %}disabled{% endif %} name="previous"
+                    class="next action-button prestations"
+                    value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-suivant'|trans}}" />
+                </fieldset>
+                <fieldset>
+                  <h3 class="fs-subtitle text-left">
+                    {{'profil-utilisateur.formulaire-creer-annonce.presence-reseau-sociaux'|trans}}</h3>
+                  <div class="row mb-4">
+                    <div class="col-md-6 text-left">
+                      <h2 class="fs-title">{{'profil-utilisateur.formulaire-creer-annonce.champs-pays'|trans}}*</h2>
+                      <select class="browser-default custom-select" name="pays" required>
+                        {% if editedDataPays is defined and editedDataPays != '' %}
+                        <option value="{{editedDataPays}}">{{editedDataPays|country_name}}</option>
+                        {% endif %}
+                        {% include 'country.html.twig' %}
+                      </select>
+                      <div class="md-form">
+                        <input type="text" id="addressePostale" {% if editedDataAdressePostale is defined and
+                          editedDataAdressePostale !='' %} value="{{editedDataAdressePostale}}" {% else %} value="" {%
+                          endif %} name="adresse_postale" class="form-control"
+                          placeholder="{{'profil-utilisateur.formulaire-creer-annonce.champs-adresse'|trans}}*" />
+                      </div>
+                      <div class="md-form">
+                        <input type="text" id="precisions" name="precision" class="form-control" {% if
+                          editedDataPrecision is defined and editedDataPrecision !='' %}value="{{editedDataPrecision}}"
+                          {% else %}value="" {% endif %}
+                          placeholder="{{'profil-utilisateur.formulaire-creer-annonce.champs-localisation'|trans}}">
+                      </div>
+                      <div class="md-form">
+                        <input type="text" id="codePostale" {% if editedDataCodePostale is defined and
+                          editedDataCodePostale !='' %}value="{{editedDataCodePostale}}" {% else %} value="" {% endif %}
+                          name="code_postal" class="form-control"
+                          placeholder="{{'profil-utilisateur.formulaire-creer-annonce.champs-code-postal'|trans}}*" />
+                      </div>
+                      <div class="md-form">
+                        <input type="text" id="ville" {% if editedDataVille is defined and editedDataVille !=''
+                          %}value="{{editedDataVille}}" {% else %} value="" {% endif %} name="ville"
+                          class="form-control"
+                          placeholder="{{'profil-utilisateur.formulaire-creer-annonce.champs-ville'|trans}}*" />
+                      </div>
+                    </div>
+                    <div class="col-md-6 text-left">
+                      <h2 class="fs-title">{{'profil-utilisateur.formulaire-creer-annonce.equipements'|trans}}</h2>
+                      <div class="custom-control custom-checkbox">
+                        <input type="checkbox" {% if editedDataWifi is defined and editedDataWifi !='' %}checked{% endif
+                          %} id="wifi" name="wifi" class="form-control custom-control-input">
+                        <label class="custom-control-label"
+                          for="wifi">{{'profil-utilisateur.formulaire-creer-annonce.case-a-cocher-wi-fi'|trans}}</label>
+                      </div>
+                      <div class="custom-control custom-checkbox">
+                        <input type="checkbox" {% if editedDataCafe is defined and editedDataCafe !='' %}checked{% endif
+                          %} id="cafeThe" name="cafe" class="form-control custom-control-input">
+                        <label class="custom-control-label"
+                          for="cafeThe">{{'profil-utilisateur.formulaire-creer-annonce.case-a-cocher-cafe'|trans}}</label>
+                      </div>
+                      <div class="custom-control custom-checkbox">
+                        <input type="checkbox" {% if editedDataBureau is defined and editedDataBureau !='' %}checked{%
+                          endif %} id="bureauEspace" name="bureau" class="form-control custom-control-input">
+                        <label class="custom-control-label"
+                          for="bureauEspace">{{'profil-utilisateur.formulaire-creer-annonce.case-a-cocher-bureau'|trans}}</label>
+                      </div>
+                      <div class="md-form">
+                        <input type="text" {% if editedDataCafe is defined and editedDataCafe !=''
+                          %}value="{{editedDataCafe}}" {% else %} value="" {% endif %} class="form-control"
+                          name="autre_equipement"
+                          placeholder="{{'profil-utilisateur.formulaire-creer-annonce.autres'|trans}}">
+                      </div>
+                    </div>
+                  </div>
+                  <input type="button" name="previous" class="previous action-button"
+                    value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
+                  <input type="button" {% if editedDataPays is defined and editedDataPays !='' and
+                    editedDataAdressePostale is defined and editedDataAdressePostale !='' and editedDataCodePostale is
+                    defined and editedDataCodePostale !='' and editedDataVille is defined and editedDataVille !='' %}{%
+                    else %}disabled{% endif %} name="suivant" class="next action-button adresse"
+                    value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-suivant'|trans}}" />
+                </fieldset>
+                <fieldset class="mb-4">
+                  <h2 class="fs-title text-left">
+                    {{'profil-utilisateur.formulaire-creer-annonce-3.entete-nom-service'|trans}}*</h2>
+                  <div class="md-form">
+                    <input type="text" id="nom" class="form-control" {% if editedData is defined and
+                      editedData.post_title !='' %}value="{{editedData.post_title}}" {% else %}value="" {% endif %}
+                      name="titre"
+                      placeholder="{{'profil-utilisateur.formulaire-creer-annonce-3.champs-titre-service'|trans}}" />
+                  </div>
+                  <h2 class="fs-title text-left">
+                    {{'profil-utilisateur.formulaire-creer-annonce-3.entete-description-service'|trans}}*</h2>
+                  <!-- <h3 class="fs-subtitle">Brève description de vos techniques, votre matériel, vos compétences...</h3> -->
+                  <div class="form-group text-left">
+                    <label
+                      for="briefDesc">{{'profil-utilisateur.formulaire-creer-annonce-3.champs-description-service'|trans}}</label>
+                    <textarea class="form-control" name="description" id="description" rows="5">{% if editedData is defined and editedData.post_content != '' %}{{editedData.post_content|raw}}{% else %}{% endif %}</textarea>
+                  </div>
+
+                  <input type="button" name="previous" class="previous action-button"  value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
+                  <input type="button" {% if editedData is defined and editedData.post_title !='' and editedData.post_content !='' %}{% else %}disabled{% endif %} name="next" class="next action-button nom"
+                    value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-suivant'|trans}}" />
+                </fieldset>
+                <fieldset>
+                  <div class="row mb-4">
+                    <div class="col-md-12">
+                      <h2 class="fs-title text-left">
+                        {{'profil-utilisateur.formulaire-creer-annonce-4.entete-portfolio'|trans}}</h2>
+                      <h3 class="fs-subtitle text-left">
+                        {{'profil-utilisateur.formulaire-creer-annonce-4.contrainte-ajout-portfolio'|trans}}</h3>
+                      <select id="photos" class="image-picker show-html" name="portfolio[]" data-limit=""
+                        multiple="multiple">
+                        <option selected value="" hidden></option>
+                        {% for p in portfolio %}
+                        <option {% if editedData is defined and editedData.gallery %} {% for v in
+                          editedData.gallery %} {% if v and v.guid==p.guid %}selected {% endif %} {% endfor %}{% endif %}
+                          data-img-src="{{p.guid}}" value="{{p.id}}"></option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="col-md-12">
+                      <h2 class="fs-title text-left">
+                      {{'profil-utilisateur.formulaire-creer-annonce-4.telecharger-image'|trans}}</h2>
+                      {% if imagesSecondaires is defined and imagesSecondaires|first %}
+                        <div class="row mb-2">
+                        {% for p in imagesSecondaires %}
+                          {% if p %}
+                          <div class="card col-md-3 m-1 card_images">
+                            <img class="card-img-top" src="{{p.guid}}" alt="Card image cap">
+                            <div class="card-body">
+                              <p><a href="{{path('profile_delete_images_secondaires', {'id':p.id, 'postId':editedData.id})}}" class="delete_port ld-over-inverse">Supprimer<i class="ld ld-ring ld-spin"></i></a></p>
+                            </div>
+                          </div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                      {% endif %}
+                      <div id="coba" class="row"></div>
+                    </div>
+
+                    <div class="col-md-12 mt-4">
+                      <h2 class="fs-title text-left">
+                        {{'profil-utilisateur.formulaire-creer-annonce-4.entete-video'|trans}}</h2>
+                      <h3 class="fs-subtitle text-left">
+                        {{'profil-utilisateur.formulaire-creer-annonce-4.contrainte-ajout-video'|trans}}</h3>
+                      <select id="videos" class="image-picker show-html" name="videos[]" data-limit=""
+                        multiple="multiple">
+                        {% for v in imgid %}
+                          <option {% if editedData is defined and editedData.videos !=null %} {% for a in
+                            editedData.videos %} {% if a==v %}selected {% endif %} {% endfor %} {% endif %}
+                            data-img-src="https://img.youtube.com/vi/{{v}}/0.jpg" value="{{v}}">
+                          </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <input type="button" name="previous" class="previous action-button" value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
+                  <input type="button" {% if editedData is defined and editedData.gallery|first != null %}{% elseif imagesSecondaires is defined and imagesSecondaires|length > 0 %}{% else %}disabled{% endif %} name="next" class="next action-button portfolio" value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-suivant'|trans}}" />
+                </fieldset>
+
+                <fieldset>
+                  <div class="row mb-4">
+                    <div class="col-md-12 text-left">
+                      <h2 class="fs-title">
+                        {{'profil-utilisateur.formulaire-creer-annonce-5.entete-prix-prestation'|trans}}*</h2>
+                      <h3 class="fs-subtitle text-left">
+                        {{'profil-utilisateur.formulaire-creer-annonce-5.description-prix-prestation'|trans}}</h3>
+                      <div class="md-form">
+                        <select name="devise" id="devise" class="form-control">
+                          {% if editedDataDevise is defined and editedDataDevise != '' %}
+                          <option value="{{editedDataDevise}}">{{editedDataDevise}}</option>
+                          {% else %}{% endif %}
+                          {% include 'profile/deviseList.html.twig' %}
+                        </select>
+                      </div>
+                      <h3 class="fs-subtitle text-left">
+                        {{'profil-utilisateur.formulaire-creer-annonce-5.entete-prix-ttc'|trans}}</h3>
+                      <div class="md-form">
+                        <input type="text" data-type="currency" {% if editedDataPrix is defined and editedDataPrix !=''
+                          %} value="{{editedDataPrix}}" {% else %} value="0" {% endif %} id="prix" name="prix"
+                          class="form-control prix-prestation" placeholder="" />
+                      </div>
+                    </div>
+                  </div>
+                  <input type="button" name="previous" class="previous action-button"
+                    value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
+                  <input type="button" {% if editedDataPrix is defined and editedDataPrix !='' %}{% else %}disabled{%
+                    endif %} name="previous" class="next action-button devise"
+                    value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-suivant'|trans}}" />
+                </fieldset>
+                <fieldset>
+                  <div id="body">
+                    <h2 class="fs-title text-left mb-4">
+                      {{'profil-utilisateur.formulaire-creer-annonce-6.entete-legislation-et-conditions-utilisation'|trans}}
+                    </h2>
+                    <p class="text-left">{{'profil-utilisateur.formulaire-creer-annonce-6.texte'|trans}}</p>
+                    <input type="button" name="previous" class="previous action-button"
+                      value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
+                    <input type="submit" id="send" class="submit action-button"
+                      value="{{'profil-utilisateur.formulaire-creer-annonce-6.bouton-accepter'|trans}}" />
+                  </div>
+                  <div id="succes" style="display:none">
+                    <div hiddden class="col-md-12 alert alert-success alert-dismissible fade show" role="alert">
+                      <strong>Felicitation!</strong> Votre annonce à été publier avec succès
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                  </div>
+                </fieldset>
+
+                {% if editedData is defined %}
+                <input id="state" name="state" hidden value="{% if state == "edition" %}edition{% elseif
+                  state == "creation" %}creation{% elseif state=="brouillon" %}brouillon{% endif %}"
+                  class="state" />
+                <input id="idPostEdited" name="idPostEdited" hidden value="{{editedData.id}}" class="state" />
+                {% else %}
+                <input id="state" name="state" hidden value="creation" class="state" />{% endif %}
+              </form>
+
+              <div class="text-left ">
+                <button {% if editedData is defined %}{% else %}disabled{% endif %}
+                  class="position-brouillon m-0 pl-3 pr-3 btn btn-md btn-primary fletter-caps brouillon">Sauvegarder en
+                  brouillon, publier plus tard</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Fin des modifs -->
+      </div>
+    </div>
+    {% include("partials/project.html.twig") %}
+    {% include("partials/otherPagesVideoModal.html.twig") %}
+  </main>
+  {# {{dump(categorie.0.name)}}
+  {{dump(editedData.categorieParent)}} #}
+
+</div>
+{% endblock %}
+
+
+{% block footer %}
+{{parent()}}
+
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+
+<!-- jQuery plugin for datepicker -->
+<script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+<script src="{{ prerender(asset('assets/js/img-picker/image-picker.min.js')) }}"></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+  <script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+<!-- jQuery plugin for spartan image picker -->
+<script type="text/javascript" src="{{asset('assets/js/spartan-image-picker/spartan-multi-image-picker-min.js') }}"></script>
+
+<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+
+<script>
+  var verify_images = 0;
+  $(document).ready(function () {
+
+    tinymce.init({
+      selector: 'textarea#description',
+      height: 350,
+      plugins: [
+        'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+        'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+        'save table contextmenu directionality emoticons template paste textcolor'
+      ],
+
+      toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+      browser_spellcheck: true,
+      contextmenu: false,
+      language: 'fr_FR'
+    });
+
+    var docWidth = document.documentElement.offsetWidth;
+
+    [].forEach.call(
+      document.querySelectorAll('*'),
+      function (el) {
+        if (el.offsetWidth > docWidth) {
+          // console.log(el);
+        }
+      }
+    );
+    //Hambuger menu icon
+    $('.animated-button-icon').on('click', function () {
+      $('.animated-icon2').toggleClass('open');
+    });
+    //first thing turn Hide Menu Search bar
+    $("#searchMenu").hide();
+    //toggle menu search bar on/off
+    $("#searchMenuShowHide").click(function () {
+      $("#searchMenu").toggle("slide");
+    });
+
+    // Initialize the object
+    $("#photos").imagepicker();
+    $("#videos").imagepicker();
+    // Retrieve the picker
+    $("#photos").data('picker');
+    $("#videos").data('picker');
+
+    //multiple datepicker
+    $('.date').datepicker({
+      multidate: true,
+      format: 'dd-mm-yyyy'
+    });
+
+
+    //jQuery time
+    var current_fs, next_fs, previous_fs; //fieldsets
+    var left, opacity, scale; //fieldset properties which we will animate
+    var animating; //flag to prevent quick multi-click glitches
+
+    $(".next").click(function () {
+      {% if imagesSecondaires is defined and imagesSecondaires|first or editedData is defined and editedData.gallery|first != null %}
+        verify_images = {{ imagesSecondaires|length }};
+        $('.portfolio').attr('name', "next");
+        $('.portfolio').removeAttr('disabled');
+      {% endif %}
+      if (animating) return false;
+      animating = true;
+
+      current_fs = $(this).parent();
+      next_fs = $(this).parent().next();
+
+      //activate next step on progressbar using the index of next_fs
+      $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+      //show the next fieldset
+      next_fs.show();
+      //hide the current fieldset with style
+      current_fs.animate({ opacity: 0 }, {
+        step: function (now, mx) {
+          //as the opacity of current_fs reduces to 0 - stored in "now"
+          //1. scale current_fs down to 80%
+          scale = 1 - (1 - now) * 0.2;
+          //2. bring next_fs from the right(50%)
+          left = (now * 50) + "%";
+          //3. increase opacity of next_fs to 1 as it moves in
+          opacity = 1 - now;
+          current_fs.css({
+            'transform': 'scale(' + scale + ')',
+            'position': 'absolute'
+          });
+          next_fs.css({ 'left': left, 'opacity': opacity });
+        },
+        duration: 800,
+        complete: function () {
+          current_fs.hide();
+          animating = false;
+        },
+        //this comes from the custom easing plugin
+        easing: 'easeInOutBack'
+      });
+    });
+
+    $(".previous").click(function () {
+      if (animating) return false;
+      animating = true;
+
+      current_fs = $(this).parent();
+      previous_fs = $(this).parent().prev();
+
+      //de-activate current step on progressbar
+      $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+      //show the previous fieldset
+      previous_fs.show();
+      //hide the current fieldset with style
+      current_fs.animate({ opacity: 0 }, {
+        step: function (now, mx) {
+          //as the opacity of current_fs reduces to 0 - stored in "now"
+          //1. scale previous_fs from 80% to 100%
+          scale = 0.8 + (1 - now) * 0.2;
+          //2. take current_fs to the right(50%) - from 0%
+          left = ((1 - now) * 50) + "%";
+          //3. increase opacity of previous_fs to 1 as it moves in
+          opacity = 1 - now;
+          current_fs.css({ 'left': left });
+          previous_fs.css({ 'transform': 'scale(' + scale + ')', 'opacity': opacity });
+        },
+        duration: 800,
+        complete: function () {
+          current_fs.hide();
+          animating = false;
+        },
+        //this comes from the custom easing plugin
+        easing: 'easeInOutBack'
+      });
+    });
+  });
+
+  // add new portfolio images
+  $("#coba").spartanMultiImagePicker({
+    fieldName: 'files_annonce[]',
+    status: false,
+    loaderIcon: '<i class="fas fa-sync fa-spin"></i>',
+    maxFileSize: '1048576',
+    //url: $("#containerForPortfolio").attr("addPortfolioUrl"),
+    additionalParam: {
+      name: 'files_annonce[]'
+    },
+    onSizeErr: function (index, file) {
+      toastr.clear();
+      toastr.warning("{{'systeme.requetes.taille_fichier'|trans}}");
+    },
+    onAddRow: function(index) {
+      verify_images += 1;
+      if (verify_images > 1) {
+        $('.portfolio').attr('name', "next");
+        $('.portfolio').removeAttr('disabled');
+      } else {
+        $('.portfolio').attr('disabled', "disabled");
+        $('.portfolio').attr('name', "previous");
+      }
+    },
+    onRemoveRow: function (index) {
+      verify_images -= 1;
+      if (verify_images > 1) {
+        $('.portfolio').attr('name', "next");
+        $('.portfolio').removeAttr('disabled');
+      } else {
+        $('.portfolio').attr('disabled', "disabled");
+        $('.portfolio').attr('name', "previous");
+      }
+    }
+  });
+
+  $(document).on('change', '.categorie', function (e) {
+    //  console.log('categorie test');
+    /* if ( $(".categorie").val() == "0") {
+        $('#msform').attr('action', "{{path('devis_ajouter_devis')}}");
+     }
+     else{
+        $('#msform').attr('action', " {{path('profile_ajouter_annonce')}}");
+     }*/
+  });
+
+  $(document).on('change', '.souscategorie', function (e) {
+    $('.prestations').attr('name', "next");
+    $('.prestations').removeAttr('disabled');
+  });
+
+  $(document).on('change', '#nom_prenom', function (e) {
+    if ($("#nom_prenom").val() != "") {
+      $('.prestations').removeAttr('disabled');
+    }
+    if ($("#nom_prenom").val() == "") {
+      $('.prestations').attr('disabled', 'disabled');
+    }
+  });
+
+  $(document).on('blur', '#addressePostale, #codePostale, #ville', function (e) {
+    if ($('#addressePostale').val() != '' && $('#codePostale').val() != '' && $('#ville').val() != '') {
+      $('.adresse').attr('name', "next");
+      $('.adresse').removeAttr('disabled');
+      $('.brouillon').removeAttr('disabled');
+    } else {
+      $('.adresse').attr('disabled', "disabled");
+      $('.adresse').attr('name', "previous");
+      $('.brouillon').attr('disabled', "disabled");
+    }
+
+  });
+
+  $(document).on('blur', '#nom', function (e) {
+    if ($('#nom').val() != '') {
+      $('.nom').attr('name', "next");
+      $('.nom').removeAttr('disabled');
+    } else {
+      $('.nom').attr('disabled', "disabled");
+      $('.nom').attr('name', "previous");
+    }
+
+  });
+
+  $(document).on('change', '#photos', function (e) {
+    if ($('#photos').val() != '' || $(this).files.length + document.getElementsByClassName('card_images').length > 0) {
+      $('.portfolio').attr('name', "next");
+      $('.portfolio').removeAttr('disabled');
+    } else {
+      $('.portfolio').attr('disabled', "disabled");
+      $('.portfolio').attr('name', "previous");
+    }
+  });
+
+  $("input[name^=files_annonce]").change(function() {
+    if(document.getElementsByClassName('card_images')){verify_images = $(this).files.length + document.getElementsByClassName('card_images').length;
+    }else{verify_images = $(this).files.length;}
+    console.log(document.getElementsByClassName('card_images').length);
+  })
+
+  $(document).on('change', '.input[name^=files_annonce]', function (e) {
+    if ($('#photos').val() != '' || verify_images != 0) {
+      $('.portfolio').attr('name', "next");
+      $('.portfolio').removeAttr('disabled');
+    } else {
+      $('.portfolio').attr('disabled', "disabled");
+      $('.portfolio').attr('name', "previous");
+    }
+  });
+
+  $(document).on('blur', '#prix', function (e) {
+    if ($('#devise').val() != '' && $('#prix').val() != '') {
+      $('.devise').attr('name', "next");
+      $('.devise').removeAttr('disabled');
+    } else {
+      $('.devise').attr('disabled', "disabled");
+      $('.devise').attr('name', "previous");
+    }
+
+  });
+
+  //Format price
+  $("input[data-type='currency']").on({
+    keyup: function () {
+      var myFloat = $("#prix").val().replace(/[^0-9\.{1,2}]+/g, "");
+      $("#prix").val(myFloat);
+
+    },
+    blur: function () {
+      if ($(this).val() == '') {
+        $(this).val(0);
+      }
+    },
+    focus: function () {
+      let s = $(this).val();
+      while (s.charAt(0) === '0') {
+        s = s.substr(1);
+        $(this).val(s);
+      }
+    }
+  });
+
+  $('#dates_horaires').daterangepicker({
+    autoUpdateInput: true,
+    locale: {
+      cancelLabel: 'Clear'
+    }
+  }, function (start, end, label) {
+    //   console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+  });
+
+  
+$(document).on('click', '.delete_port', function (e) { // On emp�che le navigateur de soumettre le formulaire
+e.preventDefault();
+var t = $(this);
+var urlPath = $(this).attr('href');
+swal({
+title: "Suppression de l'objet",
+text: "Attention l'objet sera Supprimé et n'apparaitra plus sur le site",
+type: "info",
+showCancelButton: true,
+confirmButtonClass: "btn-danger",
+confirmButtonText: "Supprimer",
+cancelButtonText: "Annuler",
+closeOnConfirm: false,
+closeOnCancel: false,
+showLoaderOnConfirm: true
+}, function (isConfirm) {
+
+if (isConfirm) {
+
+$.ajax({
+url: urlPath,
+type: 'GET',
+success: function (reponse) {
+if (reponse == 1) {
+
+  verify_images -= 1;
+swal("suppression terminée", "", "success");
+t.closest('.card').hide();
+} else {
+
+swal("erreur de suppression", "", "error");
+
+}
+},
+error: function (reponse) {
+swal("erreur de suppression", "", "error");
+}
+
+});
+
+} else {
+swal.close();
+}
+});
+return false; 
+});
+
+</script>
+{% include 'profile/js/rechercheSousCategories.html.twig' %}
+{% include 'profile/js/creerDevisAnnonce.html.twig' %}
+{% include 'profile/js/brouillonDevisAnnonce.html.twig' %}
+
+<script>
+  toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": true,
+    "positionClass": "toast-top-center",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "30000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+  };
+
+</script>
+{% include 'profile/autocomplete.html.twig' %}
+
+{% endblock %}

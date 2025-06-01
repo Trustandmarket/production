@@ -1,0 +1,91 @@
+<div class="col-md-4 mb-2">
+	<ul class="list-group text-left px-1">
+		<li class="list-group-item">
+			<a href="{{path('profile_annonces')}}" class="prestation-list-item list-grp-head">{{'profil-utilisateur.annonces.reservations-titre'|trans}}</a>
+			<ul class="list-group list-group-flush text-left">
+				<li class="list-group-item">
+					<a class="rsv-list-item" href="{% if reservationsDevisEnAttenteCount != 0 %}{{path('profile_annoncesTag',{tag:'reservation-devis-en-attente'})}}{% endif %}">
+						{{'profil-utilisateur.annonces.devis-en-attente'|trans}}
+						<span class="rsv-en-annulees">({{reservationsDevisEnAttenteCount}})</span>
+					</a>
+				</li>
+
+				<li class="list-group-item">
+					<a class="rsv-list-item" href="{% if reservationsEnCoursCount != 0 %}{{path('profile_annoncesTag',{tag:'reservations-en-cours'})}}{% endif %}">
+						{{'profil-utilisateur.annonces.reservations-en-cours'|trans}}
+						<span class="rsv-en-cours">({{reservationsEnCoursCount}})</span>
+					</a>
+				</li>
+				<li class="list-group-item">
+					<a class="rsv-list-item" href="{% if reservationsTermineesCount != 0 %}{{path('profile_annoncesTag',{tag:'reservations-terminees'})}}{% endif %}">
+						{{'profil-utilisateur.annonces.reservations-terminees'|trans}}
+						<span class="rsv-en-term">({{reservationsTermineesCount}})</span>
+					</a>
+				</li>
+				<li class="list-group-item">
+					<a class="rsv-list-item" href="{% if reservationsAnnuleesCount != 0 %}{{path('profile_annoncesTag',{tag:'reservations-annulees'})}}{% endif %}">
+						{{'profil-utilisateur.annonces.reservations-annulees'|trans}}
+						<span class="rsv-en-annulees">({{reservationsAnnuleesCount}})</span>
+					</a>
+				</li>
+			</ul>
+		</li>
+		{% for r in app.user.roles %}
+			{% if r == 'ROLE_AUTO_ENTREPRENEUR' or r == 'ROLE_SOCIETE' %}
+				<li class="list-group-item  current-menu-item">
+					<a class="list-grp-head" href="{{path('profile_annonces')}}">
+						{{'profil-utilisateur.annonces.annonces-titre'|trans}}</a>
+					<ul class="list-group list-group-flush text-left">
+						<li class="list-group-item">
+							<a class="annonce-list-item" href="{% if annoncesBrouillonCount != 0 %}{{path('profile_annoncesTag',{'tag':'annonces-en-brouillon'})}}{% endif %}">
+								{{'profil-utilisateur.annonces.annonces-en-brouillon'|trans}}
+								<span class="ann-brll">({{annoncesBrouillonCount}})</span>
+							</a>
+						</li>
+
+						<li class="list-group-item">
+							<a class="annonce-list-item" href="{% if annoncesModerationCount != 0 %}{{path('profile_annoncesTag',{'tag':'annonces-en-moderation'})}}{% endif %}">
+								{{'profil-utilisateur.annonces.annonces-en-moderation'|trans}}
+								<span class="ann-mod">({{annoncesModerationCount}})</span>
+							</a>
+						</li>
+
+						<li class="list-group-item">
+							<a class="annonce-list-item" href="{% if annoncesRejeteesCount != 0 %}{{path('profile_annoncesTag',{'tag':'annonces-rejetees'})}}{% endif %}">
+								{{'profil-utilisateur.annonces.annonces-rejetees'|trans}}
+								<span class="ann-rej">({{annoncesRejeteesCount}})</span>
+							</a>
+						</li>
+
+						<li class="list-group-item">
+							<a class="annonce-list-item" href="{% if annoncesPublieesCount != 0 %}{{path('profile_annoncesTag',{'tag':'annonces-publiees'})}}{% endif %}">
+								{{'profil-utilisateur.annonces.annonces-publiees'|trans}}
+								<span class="ann-pub">({{annoncesPublieesCount}})</span>
+							</a>
+						</li>
+
+						<li class="list-group-item">
+							<a class="annonce-list-item" href="{% if devisEnAttenteCount != 0 %}{{path('profile_annoncesTag',{'tag':'devis-en-attente'})}}{% endif %}">
+								{{'profil-utilisateur.annonces.devis-en-attente'|trans}}
+								<span class="ann-pub">({{devisEnAttenteCount}})</span>
+							</a>
+						</li>
+
+						<li class="list-group-item">
+							<a class="annonce-list-item" href="{% if devisEnBrouillonCount != 0 %}{{path('profile_annoncesTag',{'tag':'devis-en-brouillon'})}}{% endif %}">
+								{{'profil-utilisateur.annonces.devis-en-brouillon'|trans}}
+								<span class="ann-pub">({{devisEnBrouillonCount}})</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li class="list-group-item">
+					<a class="prestation-list-item list-grp-head {% if app.user.getAbonnements()|length == 0 %}{% elseif app.user.getAbonnements()|length > 0
+			and app.user.getAbonnements()|last.isAbonnementActif()
+			and app.user.getAbonnements()|last.getOffre().isCreerAnnonce() %}{% else %}disabled{% endif %}" href="{{path('profile_creerAnnonces')}}">{{'profil-utilisateur.annonces.annonces-publier'|trans}}
+					</a>
+				</li>
+			</li>
+		{% endif %}
+	{% endfor %}
+</ul></div>

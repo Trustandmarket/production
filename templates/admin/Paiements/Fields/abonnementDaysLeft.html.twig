@@ -1,0 +1,2 @@
+{% set interval = render(controller('App\\Controller\\Admin\\AdminController::checkAbonnementDaysLeft', {id: field.value})) %}
+<span style="font-size: x-large" class="rounded {% if interval >10 %}text-success{% elseif interval > 5 %}text-warning{% else %}text-danger{% endif %}">{{ interval }}</span>

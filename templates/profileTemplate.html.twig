@@ -1,0 +1,136 @@
+{% extends 'generalLayout.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+    <link rel="apple-touch-icon-precomposed"
+          href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+    <meta name="msapplication-TileImage"
+          content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+    {% include("Seo/Meta/noindex.html.twig") %}
+{% endblock %}
+{% block title %}Trust &amp; Market{% endblock %}
+{% block style %}
+    {{ parent() }}
+    <!-- Gijgo datepicker css -->
+    <link rel="stylesheet" href="{{ preload(asset('assets/css/gijgo-css/gijgo.min.css')) }}">
+    {# <link rel="stylesheet" href="{{ asset('assets/css/daterangepicker.css') }}"> #}
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/0.8.2/css/flag-icon.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <!-- Your custom styles (optional) -->
+    <link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+    <link href="{{ absolute_url(asset('assets/css/footer.css')) }}" rel="stylesheet">
+    {% include 'cssTemplates/chat.css.twig' %}
+{% endblock %}
+
+
+{% block header %}
+    <header>
+        {% include("header-new-design.html.twig") %}
+        {% include("partials/otherPagesVideoModal.html.twig") %}
+    </header>
+{% endblock %}
+
+	{% block body %}
+
+    {% endblock %}
+
+	{% block footer %}
+        {{ parent() }}
+    {% endblock %}
+
+	{% block javascripts %}
+        {{ parent() }}
+        <!-- cdnjs for lazy load -->
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+                integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+                crossorigin="anonymous"></script>
+        {# <script type="text/javascript" src="{{asset('assets/js/daterangepicker.js')}}"></script> #}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js"
+                integrity="sha512-mh+AjlD3nxImTUGisMpHXW03gE6F4WdQyvuFRkjecwuWLwD2yCijw4tKA3NsEFpA1C3neiKhGXPSIGSfCYPMlQ=="
+                crossorigin="anonymous"></script>
+        <script src="https://www.google.com/recaptcha/api.js?render=6LcNudwZAAAAAOo22kCqBlPfeSQHVV05TTIWy2I2"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+        <script>
+            $(".closeBtnModal").click(function (e) {
+                e.preventDefault();
+                $("#newsletterModal").modal('toggle');
+            });
+            {% include("partials/js/videoButton.js.twig") %}
+
+            $('.searchSelectPicker').selectpicker();
+            $(document).on("click", ".homeFilterFormButton", function (event) {
+                event.preventDefault();
+                let oldTexte = $(this).text()
+                $(this).text("En cours...")
+                let whichForm = $(this).attr('attr-form')
+                let typePrestation = $('.' + whichForm).find('select[name="type_prestation"]').val()
+                console.log(typePrestation);
+                if (typePrestation == "") {
+                    $(this).text(oldTexte)
+                    toastr.error('Veuillez sélectionner un type de prestation pour lancer la recherche.');
+                } else {
+                    $(this).text(oldTexte)
+                    $('.' + whichForm).submit();
+                }
+            });
+
+            $(document).ready(function () {
+                var docWidth = document.documentElement.offsetWidth;
+                [].forEach.call(document.querySelectorAll('*'), function (el) {
+                    if (el.offsetWidth > docWidth) {
+                        console.log(el);
+                    }
+                });
+
+                $("#yourproject-iconed-link, #fermeur").click(function (e) {
+                    e.preventDefault();
+                    $("#dialoguons").fadeToggle("slow", "linear");
+                });
+                // Lazy Loading initializer
+                $(function () {
+                    $('.lazy').lazy();
+                });
+
+                // Hambuger menu icon
+                $('.animated-button-icon').on('click', function () {
+                    $('.animated-icon2').toggleClass('open');
+                });
+
+// first thing turn Hide Menu Search bar
+                $("#frLang").hide();
+// toggle language for English
+                $("#enLang").click(function () {
+                    $("#dropdownLang").html("<span class='flag-icon flag-icon-us'> </span>  EN");
+                    $("#enLang").hide();
+                    $("#frLang").toggle("slide");
+                });
+// toggle language for French
+                $("#frLang").click(function () {
+                    $("#dropdownLang").html("<span class='flag-icon flag-icon-fr'> </span>  FR");
+                    $("#frLang").hide();
+                    $("#enLang").toggle("slide");
+                });
+
+            });
+        </script>
+        <script>
+            grecaptcha.ready(function () {
+                grecaptcha.execute('6LcNudwZAAAAAOo22kCqBlPfeSQHVV05TTIWy2I2', {action: 'homepage'}).then(function (token) {
+                    document.getElementById("recaptchaResponse").value = token;
+                });
+            });
+        </script>
+        {% include "partials/js/searchForm.html.twig" %}
+        {% include 'ws/script.html.twig' %}
+    {% endblock %}

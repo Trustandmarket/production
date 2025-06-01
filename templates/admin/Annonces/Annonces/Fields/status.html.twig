@@ -1,0 +1,13 @@
+{% if field.value == 'moderation' %}
+    {{'admin.annonce.moderation'|trans}}
+{% elseif field.value == 'trash' %}
+    {{'admin.annonce.trash'|trans}}
+{% elseif field.value == 'draft' %}
+    {{'admin.annonce.draft'|trans}}
+{% elseif field.value == 'publish' %}
+    {{'admin.annonce.publish'|trans}}
+{% elseif field.value == 'pending' %}
+    {{'admin.annonce.pending'|trans}}
+{% elseif field.value == 'in-progress' %}
+    {{'admin.annonce.in-progress'|trans}}
+{% endif %}

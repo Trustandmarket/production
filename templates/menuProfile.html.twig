@@ -1,0 +1,23 @@
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('profile_dashboard') }}">Compte</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{ page_name }}</li>
+                <li>
+                    {% if infos_bulle is defined %}
+                        <span class="nav-link popover_infos px-2 py-0" data-html="true" data-container="body"
+                              data-toggle="popover"
+                              data-placement="right" data-content="">
+            <i style="color: #f17c30;" class="fas fa-question-circle fa-lg"></i>
+        </span>
+                    {% endif %}</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-12">
+        <h1 class="d-flex justify-content-center justify-content-md-start justify-content-sm-center">{{ page_name }}</h1>
+        <hr class="divider bg-dark mt-0 pt-0"/>
+    </div>
+</div>

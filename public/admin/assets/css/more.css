@@ -1,0 +1,53 @@
+/* body{font-size: 14px} */
+.rezise-handler, .navbar{background-color:#E3E7ED }
+.content{background: none; box-shadow: none; margin-top: -50px;width: 100%}
+  .red{background: #B0413E; margin-left: 5px;float: right; width: 30px; height: 30px; color: #fff;  border-radius: 100%;padding: 3px; text-align: center;}
+    #weatherWidget .currentDesc {
+        color: #ffffff!important;
+    }
+        .traffic-chart {
+            min-height: 335px;
+        }
+        #flotPie1  {
+            height: 150px;
+        }
+        #flotPie1 td {
+            padding:3px;
+        }
+        #flotPie1 table {
+            top: 20px!important;
+            right: -10px!important;
+        }
+        .chart-container {
+            display: table;
+            min-width: 270px ;
+            text-align: left;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        #flotLine5  {
+             height: 105px;
+        }
+
+        #flotBarChart {
+            height: 150px;
+        }
+        #cellPaiChart{
+            height: 160px;
+        }
+        /* .form-control-label{text-transform: capitalize;}
+        .img{width: 100%; min-height: 250px; }
+        .right{float: right; margin-left: 10px }
+        .left{margin-left: 10px}
+        .right1{float: right; width: 30px; height: 30px; color: #fff; background-color: #00C292; border-radius: 100%;padding: 8px}
+
+        .content-slider li{
+          background-color: #ed3020;
+          text-align: center;
+          color: #FFF;
+        }
+        .content-slider h3 {
+          margin: 0;
+          padding: 70px 0;
+        }
+        .form-control-label{text-transform: capitalize;} */

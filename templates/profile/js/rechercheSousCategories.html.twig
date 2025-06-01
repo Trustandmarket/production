@@ -1,0 +1,36 @@
+<script>
+$(document).on('change', '.categorie', function (e) {
+// On empeche le navigateur de soumettre le formulaire
+  e.preventDefault();
+  $('.prestations').attr('disabled',"disabled");
+  $('.prestations').attr('name', "previous");
+  // var url1='/profile/sous_categorie/{{app.request.get('_locale')}}?id='+$(this).val();
+  //console.log($(this).val());
+  var url1 = $(this).attr('myUrl');
+  console.log(url1);
+  if(url1 != ""){
+    toastr.info("{{'home.formulaire-champs.recherche-sous-categories'|trans}}");
+    $.ajax({
+      url: url1,
+      type: 'get',
+      success: function (reponse) {
+        toastr.clear();
+        $("#devis-input-data").css('display', 'none');
+        $('#sous_categorie_sous').html(reponse);
+        //$("#msform").attr('action',"{{path('profile_ajouter_annonce')}}")
+      },
+      error: function (reponse) {
+        toastr.clear();
+      }
+    });
+  }
+  if( url1 == "" ){
+    /*console.log('test');*/
+    $("#sous_categorie_sous").html('');
+    $("#devis-input-data").css('display', 'block');
+    $("#msform").attr('action',"{{path('devis_ajouter_devis')}}");
+  }else{
+    $("#msform").attr('action',"{{path('profile_ajouter_annonce')}}");
+  }
+});
+</script>

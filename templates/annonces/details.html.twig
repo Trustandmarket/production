@@ -1,0 +1,1217 @@
+{% extends 'otherLayout.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}" sizes="32x32"/>
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}" sizes="192x192"/>
+    <link rel="apple-touch-icon-precomposed" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+    <meta name="msapplication-TileImage" content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+    <meta name="title" content="{% if app.request.locale == 'en' and detailsAnnonce.titre_en != '' %}{{ detailsAnnonce.titre_en }}{% else %}{{ detailsAnnonce.post_title }}{% endif %}">
+    <meta name="description" content="{% if app.request.locale == 'en' and detailsAnnonce.content_en != '' %}{{ detailsAnnonce.content_en|raw|u.truncate(160, '...', false) }}{% else %}{{ detailsAnnonce.post_content|raw|u.truncate(160 , '...', false) }}{% endif %}">
+    <meta name="keywords" content="{% if app.request.locale == 'en' and detailsAnnonce.categorie_parent_en != '' %}{{ detailsAnnonce.categorie_parent_en }}{% else %}{{ detailsAnnonce.categorieParent }}{% endif %}">
+
+    <link rel="canonical" href="{{ absolute_url(path('annonces_detailsAnnonce', {id: detailsAnnonce.post_name})) }}">
+    <link rel="shortlink" href="{{ path('annonces_detailsAnnonce', {id: detailsAnnonce.post_name}) }}">
+    <meta property="og:title" content="{% if app.request.locale == 'en' and detailsAnnonce.titre_en != '' %}{{ detailsAnnonce.titre_en }}{% else %}{{ detailsAnnonce.post_title }}{% endif %}">
+    <meta property="og:description" content="{% if app.request.locale == 'en' and detailsAnnonce.content_en != '' %}{{ detailsAnnonce.content_en|raw|u.truncate(160, '...', false) }}{% else %}{{ detailsAnnonce.post_content|raw|u.truncate(160, '...', false) }}{% endif %}">
+    <meta property="og:image" content="{% if detailsAnnonce.gallery|first %}{{ detailsAnnonce.gallery.0.guid }}{% elseif detailsAnnonce.images_secondaires|first %}{{ detailsAnnonce.images_secondaires.0.guid }}{% endif %}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ absolute_url(path('annonces_detailsAnnonce', {id: detailsAnnonce.post_name})) }}">
+    <meta property="og:locale" content="fr"/>
+    <meta property="og:locale:alternate" content="en"/>
+
+    {# Twitter CARD #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="Kbr Global">
+    <meta name="twitter:site" content="@trustandmarket">
+    <meta name="twitter:title" content="{% if app.request.locale == 'en' and detailsAnnonce.titre_en != '' %}{{ detailsAnnonce.titre_en }}{% else %}{{ detailsAnnonce.post_title }}{% endif %}">
+    <meta name="twitter:description" content="{% if app.request.locale == 'en' and detailsAnnonce.content_en != '' %}{{ detailsAnnonce.content_en|raw|u.truncate(160, '...', false) }}{% else %}{{ detailsAnnonce.post_content|raw|u.truncate(160, '...', false) }}{% endif %}">
+    <meta name="twitter:image" content="{% if detailsAnnonce.gallery|first %}{{ detailsAnnonce.gallery.0.guid }}{% elseif detailsAnnonce.images_secondaires|first %}detailsAnnonce.images_secondaires.0.guid{% endif %}">
+    <meta name="twitter:image:alt" content="{% if detailsAnnonce.gallery|first %}{{ detailsAnnonce.gallery.0.guid }}{% elseif detailsAnnonce.images_secondaires|first %}detailsAnnonce.images_secondaires.0.guid{% endif %}">
+    {# END Twitter Card #}
+
+    {% if detailsAnnonce.categorieParentType == 'product_cat' %}
+        <script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "product",
+				"brand": "Acme",
+				"logo": "http://www.example.com/logo.png",
+				"name": "{% if app.request.locale == 'en' and detailsAnnonce.titre_en != '' %}{{ detailsAnnonce.titre_en }}{% else %}{{ detailsAnnonce.post_title }}{% endif %}",
+				"image": "{% if detailsAnnonce.gallery|first %}{{ detailsAnnonce.gallery.0.guid }}{% elseif detailsAnnonce.images_secondaires|first %}detailsAnnonce.images_secondaires.0.guid{% endif %}",
+				"description": "{% if app.request.locale == 'en' and detailsAnnonce.content_en != '' %}{{ detailsAnnonce.content_en|raw|u.truncate(160, '...', false) }}{% else %}{{ detailsAnnonce.post_content|raw|u.truncate(160, '...', false) }}{% endif %}",
+				"offers": {
+					"@type": "Offer",
+					"priceCurrency": "{% if detailsAnnonce.devise is not null %}{{ detailsAnnonce.devise.metaValue }}{% else %}€{% endif %}",
+					"price": "{% if detailsAnnonce.prix is not null %}{{ detailsAnnonce.prix }}{% else %}0{% endif %}",
+					"availability": "http://schema.org/InStock",
+					"seller": {
+					"@type": "Organization",
+					"name": "Trust&Market"
+					}
+				}
+			}
+
+
+
+        </script>
+    {% else %}
+        <script type="application/ld+json">
+		{
+			"@context": "http://schema.org/",
+			"@type": "Service",
+			"name": "{% if app.request.locale == 'en' and detailsAnnonce.titre_en != '' %}{{ detailsAnnonce.titre_en }}{% else %}{{ detailsAnnonce.post_title }}{% endif %}",
+			"description": "{% if app.request.locale == 'en' and detailsAnnonce.content_en != '' %}{{ detailsAnnonce.content_en|raw|u.truncate(160, '...', false) }}{% else %}{{ detailsAnnonce.post_content|raw|u.truncate(160, '...', false) }}{% endif %}",
+			"provider": {
+				"@type": "Organization",
+				"name": "Trust&Market"
+			},
+			"image": "{% if detailsAnnonce.gallery|first %}{{ detailsAnnonce.gallery.0.guid }}{% elseif detailsAnnonce.images_secondaires|first %}detailsAnnonce.images_secondaires.0.guid{% endif %}",
+			"offers": {
+				"@type": "Offer",
+				"priceCurrency": "{% if detailsAnnonce.devise is not null %}{{ detailsAnnonce.devise.metaValue }}{% else %}€{% endif %}",
+				"price": "{% if detailsAnnonce.prix is not null %}{{ detailsAnnonce.prix }}{% else %}0{% endif %}",
+				"seller": {
+					"@type": "Organization",
+					"name": "Trust&Market"
+				}
+			}
+		}
+
+
+
+        </script>
+    {% endif %}
+
+
+{% endblock %}
+
+{% block title %}Trust &amp; Market | {% if app.request.locale == 'en' and detailsAnnonce.titre_en != '' %}{{ detailsAnnonce.titre_en | u.truncate(45, true) }}{% else %}{{ detailsAnnonce.post_title|u.truncate(45, true) }}{% endif %}{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+
+    <!-- Gijgo datepicker css -->
+    <link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+    <link href="{{ absolute_url(asset('assets/css/home.min.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/custome.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/voir-annonce.css') }}" rel="stylesheet" type="text/css">
+    <!-- Custom css for camroll -->
+    <link href="{{ asset('assets/css/camroll/camroll_slider.css') }}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <!-- owl carousel css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
+          integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css"
+          integrity="sha512-OTcub78R3msOCtY3Tc6FzeDJ8N9qvQn1Ph49ou13xgA9VsH9+LRxoFU6EqLhW4+PKRfU+/HReXmSZXHEkpYoOA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <!-- Bootstrap toggle switch -->
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+
+
+    <style>
+
+        @media only screen and (max-width: 500px) {
+            #dialoguons {
+                width: 70%;
+            }
+        }
+
+        @media only screen and (min-width: 501px) {
+            #dialoguons {
+                width: 40%;
+            }
+        }
+
+        @media only screen and (min-width: 769) and (max-width: 1024px) {
+            #dialoguons {
+                width: 30%;
+            }
+        }
+
+        @media only screen and (min-width: 1025px) {
+            #dialoguons {
+                width: 19%;
+            }
+        }
+
+        @media only screen and (max-width: 800px) {
+            .datepicker table {
+                width: 100%;
+            }
+
+            .datepicker-inline {
+                width: 100%;
+            }
+
+            .datepicker-days table {
+                width: 100%;
+            }
+
+            .mode3 {
+                margin-bottom: 3rem;
+            }
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: "|";
+        }
+
+        .breadcrumb {
+            background-color: white;
+        }
+
+        .breadcrumb a {
+            color: #000000;
+        }
+
+        .p-pop-up1 {
+            margin-bottom: 2rem;
+        }
+
+        .p-pop-titre1,
+        .p-pop-titre2 {
+            font-family: "Palanquin Dark";
+        }
+
+        .p-pop-content1 {
+            background: #53b4a6;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            font-family: "Source Sans Pro";
+        }
+
+        .p-pop-content2 {
+            background: black;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            font-family: "Source Sans Pro";
+        }
+
+        .button_profil_sendmsg {
+            width: 100%;
+            display: flex;
+            justify-content: end;
+            align-items: center;
+            margin: 0.5rem;
+            padding: 0;
+        }
+
+        .prestation-link {
+            text-align: center;
+        }
+
+        ul.slick-dots {
+            position: absolute;
+            bottom: -25px;
+            display: block;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            text-align: center;
+        }
+
+        .slick-dots li {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 0 5px;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .slick-dots li button {
+            border-radius: 50%;
+            font-size: 0;
+            line-height: 0;
+            display: block;
+            width: 10px;
+            height: 10px;
+            padding: 5px;
+            cursor: pointer;
+            color: transparent;
+            border: 0;
+            outline: none;
+            background: transparent;
+        }
+
+        .slick-dots li button:before {
+            font-family: 'slick';
+            font-size: 35px;
+            line-height: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            content: '•';
+            text-align: center;
+            opacity: .25;
+            color: black;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .slick-dots li.slick-active button:before {
+            opacity: .75;
+            color: black;
+        }
+
+        .btn-wish {
+            background: transparent;
+            border: none;
+            /* margin: 87px; */
+            /* font-size: 88px; */
+            outline: none;
+            color: grey;
+        }
+
+        .btnh1-display {
+            display: flex;
+            justify-content: end;
+        }
+
+        .btn i:hover {
+            cursor: pointer;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .item .btnh1-display {
+            position: absolute;
+            top: 10%;
+            left: 95%;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .bloc-nom-commercial{
+            display: flex;
+            justify-content: space-between;
+        }
+
+    </style>
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+{% block navigation %}{% endblock %}
+{% block body %}
+
+    <!--Main Layout-->
+    <main class="">
+        <div class="container">
+            <div class="mt-3">
+                {% for message in app.flashes('notice') %}
+                    <div class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+                <!-- Vu du profil -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb px-0">
+                        <li class="breadcrumb-item"><a href="{{ path('home') }}">Accueil</a></li>
+                        <li class="breadcrumb-item">
+                            <a target="_blank"
+                               href="{% if detailsAnnonce.categorieParent|lower == 'produits' %}{{ path('annonces_listeAnnonces', {type_prestation: detailsAnnonce.categorieParentSlug,services_proposes: '',code_postal_ville: ''}) }}
+										{% else %}{{ path('annonces_listeAnnonces', {type_prestation: detailsAnnonce.categorieParentSlug,services_proposes: '',code_postal_ville: ''}) }}
+										{% endif %}">{% if app.request.locale == 'en' and detailsAnnonce.categorie_parent_en != '' %}{{ detailsAnnonce.categorie_parent_en }}{% else %}{{ detailsAnnonce.categorieParent }}{% endif %}</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a target="_blank"
+                               href="{{ path('annonces_listeAnnonces', {type_prestation: detailsAnnonce.categorieParentSlug,services_proposes: detailsAnnonce.sousCategorieSlug,code_postal_ville: ''}) }}">{% if app.request.locale == 'en' and detailsAnnonce.categorie_en != '' %}
+                                    {{ detailsAnnonce.categorie_en }}{% else %}{{ detailsAnnonce.sousCategorie }}{% endif %}</a>
+                        </li>
+                    </ol>
+                </nav>
+                <div id="lectureInfo" class="row">
+                    <div class="col-md-3 desktop-form">
+                        <div>
+                            <h5 class="border-bottom pb-3">
+                                {% if detailsAnnonce.prix is not null %}
+                                    {{ detailsAnnonce.prix }}
+                                {% else %}
+                                    0
+                                {% endif %}
+                                {% if detailsAnnonce.devise is not null %}
+                                    {{ detailsAnnonce.devise.metaValue }}{% else %}€
+                                {% endif %}
+                            </h5>
+                            <h6 class="mt-4 mb-2" {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
+                                <i class="fas fa-calendar"></i>
+                                {{ 'profil-utilisateur.annonces-details.disponibilites'|trans }}
+                            </h6>
+                            <p class="fs-14" {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
+                                Sélectionner les dates de prestations souhaitées pour finaliser votre reservation.
+                                <span class="calendar_infos" data-html="true" data-container="body"
+                                      data-toggle="popover2" data-placement="top" data-content="">
+												<i style="color:rgb(0, 82, 204);"
+                                                   class="fas fa-question-circle fa-lg"></i>
+											</span>
+                            </p>
+                            <form action="">
+                                <div class="multipleDatePicker md-form" {% if detailsAnnonce.categorieParentType
+                                    !='product_cat' %}hidden{% endif %} value='' type='text'>
+                                    <input type='hidden' class='DateField' value=''>
+                                </div>
+                                {% if detailsAnnonce.categorieParentType != 'product_cat' %}
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <label for="product_quantity">{{ 'profil-utilisateur.annonces-details.quantite'|trans }}</label>
+                                            <select class="form-control" id="product_quantity" name="product_quantity">
+                                                <option selected>1</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                                <option>5</option>
+                                                <option>6</option>
+                                                <option>7</option>
+                                                <option>8</option>
+                                                <option>9</option>
+                                                <option>10</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="col-md-12 md-form">
+                                    <p id="price" {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
+                                        {% if datep|length >0 %}
+                                            {{ datep|length }}x{{ detailsAnnonce.prix }}={{ datep|length * detailsAnnonce.prix }}
+                                            {% if detailsAnnonce.devise is not null %}
+                                                {{ detailsAnnonce.devise.metaValue }}{% else %}€
+                                            {% endif %}
+                                        {% elseif detailsAnnonce.categorieParentType != 'product_cat' %}
+                                            {{ detailsAnnonce.prix }}
+                                            {% if detailsAnnonce.devise is not null %}
+                                                {{ detailsAnnonce.devise.metaValue }}{% else %}€
+                                            {% endif %}
+                                        {% endif %}
+                                    </p>
+                                    <button id="enregDates" {% if rupture==0 and detailsAnnonce.categorieParentType
+                                        !='product_cat' %}disabled{% endif %} class="btn btn-md btn-primary text-center"
+                                            type="submit">
+                                        {{ 'profil-utilisateur.annonces-details.ajouter-panier'|trans }}
+                                    </button>
+                                    {% if rupture == 0 and detailsAnnonce.categorieParentType != 'product_cat' %}
+                                        <span id="rupture" class="btn btn-md btn-warning text-center">
+									{{ 'profil-utilisateur.annonces-details.rupture'|trans }}</span>
+                                    {% endif %}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <h1 class="pb-3 border-bottom" style="text-transform: uppercase; font-size: 1.7rem">
+                            {% if app.request.locale == 'en' and detailsAnnonce.titre_en != '' %}
+                                {{ detailsAnnonce.titre_en }}{% else %}
+                                {{ detailsAnnonce.post_title }}{% endif %}
+                        </h1>
+
+                        <div class="row">
+                            <!-- Carousel slider for portfolio -->
+                            <div id="monPortfolio" class="col-md-12 my-2">
+                                <div class="owl-carousel owl-theme">
+                                    {% if detailsAnnonce.gallery|first %}
+                                        {% for a in detailsAnnonce.gallery %}
+                                            <div class="item" data-merge="2">
+                                                <div class="portfolio-bg lazy"
+                                                     data-src="{{ a.guid|replace({'www.': ''}) }}"></div>
+                                                <div class="btnh1-display">
+                                                    <button class="btn-wish btnh1" data-id="{{ detailsAnnonce.id }}">
+                                                        {% if detailsAnnonce.id in text_wishlist %}<i
+                                                                style="color: red;" class="fas fa-heart"></i> {% else %}
+                                                            <i class="wish-heart far fa-heart"></i> {% endif %}</button>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                    {% if detailsAnnonce.images_secondaires|first %}
+                                        {% for a in detailsAnnonce.images_secondaires %}
+                                            <div class="item" data-merge="2">
+                                                <div class="portfolio-bg lazy"
+                                                     data-src="{{ a.guid|replace({'www.': ''}) }}"></div>
+                                                <div class="btnh1-display">
+                                                    <button class="btn-wish btnh1" data-id="{{ detailsAnnonce.id }}">
+                                                        {% if detailsAnnonce.id in text_wishlist %}<i
+                                                                style="color: red;" class="fas fa-heart"></i> {% else %}
+                                                            <i class="far fa-heart"></i> {% endif %}</button>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+
+                                <h2 class="mt-4 mb-2" style="font-size: 1.5rem">
+                                    {{ 'profil-utilisateur.annonces-details.caracteristiques'|trans }}
+                                </h2>
+                                <div class="container">
+                                    <div class="row py-2 px-2 xtic-box">
+                                        <div class="col-md-6">
+                                            <p class="x-info ref fs-14">
+                                                <strong>Ref: {{ detailsAnnonce.id }}</strong>
+                                            </p>
+                                            <p>
+                                                <a class="x-info fs-18"
+                                                   href="{% if detailsAnnonce.categorieParent|lower == 'produits' %}{{ path('annonces_listeAnnonces', {type_prestation: detailsAnnonce.categorieParentSlug,services_proposes: '',code_postal_ville: ''}) }}
+										{% else %}{{ path('annonces_listeAnnonces', {type_prestation: detailsAnnonce.categorieParentSlug,services_proposes: '',code_postal_ville: ''}) }}
+										{% endif %}"><strong>{% if app.request.locale == 'en' and detailsAnnonce.categorie_parent_en != '' %}{{ detailsAnnonce.categorie_parent_en }}{% else %}{{ detailsAnnonce.categorieParent }}{% endif %}</strong>
+                                                </a>
+                                            </p>
+                                            <p>
+                                                <a class="x-info fs-18"
+                                                   href="{{ path('annonces_listeAnnonces', {type_prestation: detailsAnnonce.categorieParentSlug,services_proposes: detailsAnnonce.sousCategorieSlug,code_postal_ville: ''}) }}">
+                                                    <strong>{% if app.request.locale == 'en' and detailsAnnonce.categorie_en
+                                                            != '' %}
+                                                            {{ detailsAnnonce.categorie_en }}{% else %}{{ detailsAnnonce.sousCategorie }}{% endif %}</strong>
+                                                </a>
+                                            </p>
+                                            <p class="x-info fs-14">
+                                                <strong>
+                                                    <i class="fas fa-map-marker"></i>
+                                                    {% if detailsAnnonce.codePostal is not null %}
+                                                        {{ detailsAnnonce.codePostal }}
+                                                    {% endif %}
+                                                    {% if detailsAnnonce.ville is not null %}
+                                                        {{ detailsAnnonce.ville }}
+                                                    {% endif %}
+                                                    {% if detailsAnnonce.pays is not null %}
+                                                        {{ detailsAnnonce.pays|country_name }}
+                                                    {% endif %}
+                                                </strong>
+                                            </p>
+                                            <p class="x-info fs-14">
+                                                {% if detailsAnnonce.categorieParent == 'product_cat' %}
+                                                    <strong>
+                                                        <i class="fas fa-calendar"></i>
+                                                        ({{ detailsAnnonce.calendrier|first }}
+                                                        -
+                                                        {{ detailsAnnonce.calendrier|last }}
+                                                        )
+                                                        {{ detailsAnnonce.calendrier|length }}
+                                                        {{ 'profil-utilisateur.annonces-details.dates-disponibles'|trans }}
+                                                    </strong>
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <div class="row bloc-nom-commercial">
+                                                <div class="content">
+                                                    <!-- Your content goes here -->
+                                                </div>
+                                                <img class="img-fluid rounded-circle float-right" width="100% \9"
+                                                     src="{% if detailsAnnonce.avatar != null %}{{ detailsAnnonce.avatar|last|replace({'www.': ''}) }}{% else %}{{ asset('assets/img/profile/avatar-profile.png') }}{% endif %}"
+                                                     alt="{{ detailsAnnonce.first_name }}">
+                                            </div>
+                                            <p><a class="x-info fs-18 mt-2" href="{{ path('annonces_listeAnnoncesCommercial', {nom_commercial: detailsAnnonce.nom_commercial, id_commercial: detailsAnnonce.post_author}) }}"><strong>{{ detailsAnnonce.nom_commercial }}</strong></a></p>
+
+                                            {#<p class="x-info ref fs-14" style="margin-top:-20px">
+                                                <strong>{% if detailsAnnonce.societe != '' %}{{ detailsAnnonce.societe }}{% else %}{{ detailsAnnonce.first_name }}{% endif %}</strong>
+                                            </p>#}
+                                            <p class="x-info ref fs-14">
+                                                {{ 'profil-utilisateur.annonces-details.publie-le'|trans }}
+                                                {{ detailsAnnonce.post_date }}
+                                                {{ 'profil-utilisateur.annonces-details.maj-le'|trans }}
+                                                {{ detailsAnnonce.post_modified }}
+                                            </p>
+                                        </div>
+                                        <div class="row" style="width: 100%;">
+                                            <div class="col-md-12 my-1 pull-right button_profil_sendmsg">
+											<span class="popover_infos" data-html="true" data-container="body"
+                                                  data-toggle="popover" data-placement="top" data-content="">
+												<i style="color:rgb(0, 82, 204);"
+                                                   class="fas fa-question-circle fa-lg"></i>
+											</span>
+                                                <a target="_blank"
+                                                   href="{{ path('profile_detailsProfessionnel',{'id': 'infos-profil-' ~ detailsAnnonce.post_author }) }}"
+                                                   class="btn btn-sm btn-primary">
+                                                    {{ 'profil-utilisateur.annonces-details.details-profil'|trans }}</a>
+                                                <a target="_blank"
+                                                   href="{{ path('chat_chat', {'destinataire': detailsAnnonce.post_author }) }}"
+                                                   class="btn btn-sm btn-primary">
+                                                    {{ 'profil-utilisateur.annonces-details.envoyer-message'|trans }}</a>
+                                                {% if app.user %}
+                                                    {% if app.user.id == detailsAnnonce.post_author %}
+                                                        <a href="{{ path('annonces_deleteAnnounce', { id: detailsAnnonce.id }) }}"
+                                                           tabindex="0"
+                                                           class="btn btn-sm btn-primary deleteAnnounce">{{ 'profil-utilisateur.annonces-details.supprimer-annonce'|trans }}</a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-4">
+                                    <div class="mobile-form">
+
+                                    </div>
+                                    {# <h5 class="py-4 mb-4 border-bottom">
+                                        {% if detailsAnnonce.post_type == "devis"
+                                        %}{{'profil-utilisateur.annonces-details.description-devis'|trans}}
+                                        {% else %}{{'profil-utilisateur.annonces-details.description-prestation'|trans}}
+                                        {% endif %}
+                                    </h5> #}
+                                    <div class="">
+                                        {% if app.request.locale == 'en' and detailsAnnonce.content_en != '' %}
+                                            {{ detailsAnnonce.content_en|raw }}{% else %}{{ detailsAnnonce.post_content|raw }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <!-- Videos -->
+                                {% if detailsAnnonce.livraison == 'oui' and detailsAnnonce.categorieParentSlug == 'produits' %}
+                                    <div id="mesVideos" class="col-md-12 mt-4">
+                                        <h2 class="py-4 mb-4 border-bottom" style="font-size: 1.5rem">Modes de livraison</h2>
+                                        <div class="row modes">
+                                            <div class="col-md-6 mode mode1" style="display: flex;margin-bottom: 3rem;">
+                                                <img src="{{ asset('assets/img/livraison-standard.svg') }}" alt=""
+                                                     style="width: 100px;height: 60px;">
+                                                <div class="description_mode" style="margin-left: 1rem;">
+                                                    <h5>{{ 'details-annonces.titre-livraison-standard'|trans }}</h5>
+                                                    <p>{{ 'details-annonces.contenu-livraison-standard'|trans }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mode mode2" style="display: flex;margin-bottom: 3rem;">
+                                                <img src="{{ asset('assets/img/livraison-prioritaire.svg') }}" alt=""
+                                                     style="width: 100px;height: 60px;">
+                                                <div class="description_mode" style="margin-left: 1rem;">
+                                                    <h5>{{ 'details-annonces.titre-livraison-prioritaire'|trans }}</h5>
+                                                    <p>{{ 'details-annonces.contenu-livraison-prioritaire'|trans }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mode mode3" style="display: flex;">
+                                                <img src="{{ asset('assets/img/livraison-express.svg') }}" alt=""
+                                                     style="width: 100px;height: 60px;">
+                                                <div class="description_mode" style="margin-left: 1rem;">
+                                                    <h5>{{ 'details-annonces.titre-livraison-express'|trans }}</h5>
+                                                    <p>{{ 'details-annonces.contenu-livraison-express'|trans }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mode mode4">
+                                                <p style="margin-bottom: 0.5rem;"><span
+                                                            style="font-weight: bold;font-size: 0.8rem;">{{ 'details-annonces.titre-infos'|trans }}</span>
+                                                    <span>01 85 42 14 91</span></p>
+                                                <a target="_blank"
+                                                   href="{{ path('page_navigation', { idPage: 'aide' ,id: 'modes-de-livraison' }) }}"
+                                                   style="color: black;text-decoration: underline;">{{ 'details-annonces.contenu-infos'|trans }}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                <!-- Videos -->
+                                <!-- Videos -->
+                                <div id="mesVideos" class="col-md-12 mt-4">
+                                    <h2 class="py-4 mb-4 border-bottom" style="font-size: 1.5rem">
+                                        {{ 'profil-utilisateur.annonces-details.videos'|trans }}</h2>
+                                    <div class="owl-carousel owl-theme">
+                                        {% for a in detailsAnnonce.videos %}
+                                            <div class="item-video" data-merge="3">
+                                                <a class="owl-video"
+                                                   href="https://www.youtube.com/embed/{% if a != " " %}{{ a }}{% endif %}"></a>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <!-- Videos -->
+                                <div class="col-md-12 mt-4">
+                                    <h2 class="py-4 mb-4 border-bottom" style="font-size: 1.5rem">{{ detailsAnnonce.commentaires|length }}
+                                        {{ 'profil-utilisateur.annonces-details.commentaires'|trans }}
+                                    </h2>
+                                    <div class="container">
+                                        {# {{ dump(detailsAnnonce) }}#}
+                                        {% for a in detailsAnnonce.commentaires %}
+                                            <div class="row xtic-box py-2 rounded mb-2">
+                                                <div class="col-md-2 pt-2 text-center">
+                                                    <center>
+                                                        <img class="img-fluid rounded-circle" width="100% \9"
+                                                             src="{% if a.avatar %}{{ a.avatar|first }}{% else %} {{ asset('assets/img/profile/avatar-profile.png') }}{% endif %}"
+                                                             alt="{{ a.comment_author }}">
+                                                    </center>
+                                                    <p class="x-info ref-comment fs-14">
+                                                        <strong>
+                                                            <a href="#" target="_blank">{{ a.comment_author }}</a>
+                                                        </strong>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <p class="x-info ref-comment fs-14">
+                                                        {{ a.comment_content|raw }}<br>
+                                                        {{ a.comment_date|date('d-m-Y h:i') }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="col-md-12 mt-4" style="padding: 0;">
+                                        <h3 class="py-4 mb-4 border-bottom" style="font-size: 1.5rem;">
+                                            {{ 'profil-utilisateur.annonces-details.ajouter-commentaire'|trans }}</h3>
+                                        <form action="{{ path('annonces_addAnnounceComment') }}"
+                                              id="addAnnounceComment"
+                                              method="post">
+                                            <input hidden name="postId" value="{{ detailsAnnonce.id }}"/>
+                                            <textarea id="comment-text" name="comment-box" class="comment-box form-control" rows="10"></textarea>
+                                            <button class="btn btn-md btn-primary addComment {% if not app.user %}disabled{% endif %}"
+                                                    id="enregPasse" type="submit" style="margin: 0;margin-top: 3em;">
+                                                {{ 'profil-utilisateur.annonces-details.publier'|trans }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Vu du profil -->
+                    </div>
+                    <div class="col-md-12">
+                        <h3 style="margin-top: 2rem;">Explorez notre univers</h3>
+                        <p class="x-info fs-14">Complétez l'offre ou contactez-nous si besoin</p>
+                        <div class="col-md-12" style="padding: 0;">
+                            <div id="news-slider" class="">
+                                <div class="post-slide">
+                                    <a class="hover-orange" href="#">
+                                        <div class="box-prestation box-photograph overlay lazy carroussel_image"
+                                             data-src="{% if bloc1 %}{{ bloc1.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-photo.jpg') }}{% endif %}">
+                                            <a href="{% if bloc1 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc1.optionValue|split('|||')[0] %} {{ path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''}) }}{% endif %} {% endfor %}{% else %}{{ path('annonces_listeAnnonces', {type_prestation: 'photographe',services_proposes: '',code_postal_ville: ''}) }}{% endif %}"
+                                               class="prestation-link lazyload">{{ 'home.bouton.photographe'|trans }}</a>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="post-slide">
+                                    <a class="hover-orange" href="#">
+                                        <div class="box-prestation box-musicien overlay lazy carroussel_image"
+                                             style="background-image: url({% if bloc2 %}{{ bloc2.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-musicien.jpg') }}{% endif %});">
+                                            <a href="{% if bloc2 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc2.optionValue|split('|||')[0] %}{{ path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''}) }}{% endif %} {% endfor %}{% else %}{{ path('annonces_listeAnnonces', {type_prestation: 'musiciens',services_proposes: '',code_postal_ville: ''}) }}{% endif %}"
+                                               class="prestation-link lazyload">{{ 'home.bouton.musicien'|trans }}</a>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="post-slide">
+                                    <a class="hover-orange" href="#">
+                                        <div class="box-prestation box-prod-musicale overlay lazy carroussel_image"
+                                             style="background-image: url({% if bloc3 %}{{ bloc3.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-production-musicale.jpg') }}{% endif %});">
+                                            <a href="{% if bloc3 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc3.optionValue|split('|||')[0] %}{{ path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''}) }}{% endif %} {% endfor %}{% else %}{{ path('annonces_listeAnnonces', {type_prestation: 'studio-denregistrement',services_proposes: '',code_postal_ville: ''}) }}{% endif %}"
+                                               class="prestation-link lazyload">{{ 'home.bouton.studio-enregistrement'|trans }}</a>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="post-slide">
+                                    <a class="hover-orange" href="#">
+                                        <div class="box-prestation box-grp-d-musiq overlay lazy carroussel_image"
+                                             style="background-image: url({% if bloc4 %}{{ bloc4.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-group-music.jpg') }}{% endif %});">
+                                            <a href="{% if bloc4 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc4.optionValue|split('|||')[0] %}{{ path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''}) }}{% endif %} {% endfor %}{% else %}{{ path('annonces_listeAnnonces', {type_prestation: 'groupes-de-musique',services_proposes: '',code_postal_ville: ''}) }}{% endif %}"
+                                               class="prestation-link lazyload">{{ 'home.bouton.groupe-de-musique'|trans }}</a>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="post-slide">
+                                    <div class="box-prestation box-chorale overlay lazy carroussel_image"
+                                         style="background-image: url({% if bloc5 %}{{ bloc5.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-chorale.jpg') }}{% endif %});">
+                                        <a href="{% if bloc5 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc5.optionValue|split('|||')[0] %}{{ path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''}) }}{% endif %} {% endfor %}{% else %}{{ path('annonces_listeAnnonces',{type_prestation:'chorale-gospel',services_proposes: '',code_postal_ville: ''}) }}{% endif %}"
+                                           class="prestation-link lazyload">{{ 'home.bouton.chorale'|trans }}</a>
+                                    </div>
+                                </div>
+                                <div class="post-slide">
+                                    <a class="hover-orange" href="#">
+                                        <div class="box-prestation box-stud-photo overlay lazy carroussel_image"
+                                             style="background-image: url({% if bloc6 %}{{ bloc6.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-stud-photo.jpg') }}{% endif %});">
+                                            <a href="{% if bloc6 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc6.optionValue|split('|||')[0] %}{{ path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''}) }}{% endif %} {% endfor %}{% else %}{{ path('annonces_listeAnnonces', {type_prestation: 'studio-photo',services_proposes: '',code_postal_ville: ''}) }}{% endif %}"
+                                               class="prestation-link lazyload">{{ 'home.bouton.studio-photo'|trans }}</a>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="post-slide">
+                                    <a class="hover-orange" href="#">
+                                        <div class="box-prestation box-realisation-vid overlay lazy carroussel_image"
+                                             style="background-image: url({% if bloc7 %}{{ bloc7.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-realisation-vid.jpg') }}{% endif %});">
+                                            <a href="{% if bloc7 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc7.optionValue|split('|||')[0] %}{{ path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''}) }}{% endif %} {% endfor %}{% else %}{{ path('annonces_listeAnnonces', {type_prestation: 'realisation-video',services_proposes: '',code_postal_ville: ''}) }}{% endif %}"
+                                               class="prestation-link">{{ 'home.bouton.realisation-video'|trans }}</a>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="post-slide">
+                                    <a class="hover-orange" href="#">
+                                        <div class="box-prestation box-evenementiels overlay lazy carroussel_image"
+                                             style="background-image: url({% if bloc8 %}{{ bloc8.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-evenementiels.jpg') }}{% endif %});">
+                                            <a href="{% if bloc8 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc8.optionValue|split('|||')[0] %}{{ path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''}) }}{% endif %} {% endfor %}{% else %}{{ path('annonces_listeAnnonces', {type_prestation: 'evenementiels',services_proposes: '',code_postal_ville: ''}) }}{% endif %}"
+                                               class="prestation-link">{{ 'home.bouton.evenementiel'|trans }}</a>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="post-slide">
+                                    <a class="hover-orange" href="#">
+                                        <div class="box-prestation box-stud-vid overlay lazy carroussel_image"
+                                             style="background-image: url({% if bloc9 %}{{ bloc9.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-studio-video.jpg') }}{% endif %});">
+                                            <a href="{% if bloc9 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc9.optionValue|split('|||')[0] %}{{ path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''}) }}{% endif %} {% endfor %}{% else %}{{ path('annonces_listeAnnonces', {type_prestation: 'studio-video',services_proposes: '',code_postal_ville: ''}) }}{% endif %}"
+                                               class="prestation-link lazyload">{{ 'home.bouton.studio-video'|trans }}</a>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% include("partials/project.html.twig") %}
+                {% include("partials/otherPagesVideoModal.html.twig") %}
+    </main>
+    <!--Main Layout-->
+{% endblock %}
+{% block footer %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <!-- jQuery plugin for camroll slider -->
+    <script type="text/javascript" src="{{ asset('assets/js/camroll/camroll_slider.js') }}"></script>
+    <!-- jQuery plugin for date picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+    {# Text editor #}
+    <script src="//cdn.ckeditor.com/4.13.0/standard/ckeditor.js"></script>
+    <script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+    <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+    <!-- jQuery plugin for date picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+    <!-- cdnjs for lazy load -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+    <!-- owl carousel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
+            integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.js" defer></script> -->
+    <!-- Bootstrap Toggle switch -->
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            if ($(window).width() < 768) {
+                $('.desktop-form div').appendTo('.mobile-form');
+            }
+            window.onresize = function (event) {
+                if ($(window).width() < 768) {
+                    $('.desktop-form div').appendTo('.mobile-form');
+                } else if ($(window).width() > 768) {
+                    $('.mobile-form div').appendTo('.desktop-form');
+                }
+            };
+
+            $(function () {
+                let infos_bulle = `{% if infos_bulle is defined and infos_bulle %}{{ infos_bulle.optionValue|raw }}{% endif %}`;
+                $('.popover_infos').data('content', infos_bulle);
+                $('[data-toggle="popover"]').popover();
+
+
+                let calendar_infos = `{% if calendar_infos is defined and calendar_infos %}{{ calendar_infos.optionValue|raw }}{% endif %}`;
+                $('.calendar_infos').data('content', calendar_infos);
+                $('[data-toggle="popover2"]').popover();
+            })
+
+            tinymce.init({
+                selector: 'textarea#comment-text',
+                height: 350,
+                plugins: [
+                    'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+                    'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                    'save table contextmenu directionality emoticons template paste textcolor'
+                ],
+
+                toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+                browser_spellcheck: true,
+                contextmenu: false,
+                language: 'fr_FR'
+            });
+
+            var docWidth = document.documentElement.offsetWidth;
+            [].forEach.call(document.querySelectorAll('*'), function (el) {
+                if (el.offsetWidth > docWidth) {
+                    console.log(el);
+                }
+            });
+            // Lazy Loading initializer
+            $(function () {
+                $('.lazy').lazy();
+            });
+            // multiple datepicker setup
+
+
+            // little function to return available dates to calender
+            let dateDipo = [];
+            let dates = "";
+            let exist = {{ datep| length }}; // si l'annonce courante est deja dans le panier
+            let prix = 0;
+            let devise = {% if detailsAnnonce.devise is not null %}"{{ detailsAnnonce.devise.metaValue }}"{% else %} '€'{% endif %};
+            {% for d1 in date %}dateDipo[dateDipo.length] = '{{ d1 }}'; {% endfor %}
+            let nombreJour = "{{ datep|length }}";
+
+            $(".multipleDatePicker").datepicker({
+                multidate: true,
+                format: 'dd-mm-yyyy',
+                startDate: '{{ d|date("d-m-Y", false) }}',
+                endDate: '{{ d|date_modify("+1 year")|date("d-m-Y", false) }}',
+                beforeShowDay: function (d) {
+                    let dat = formatDate(d);
+                    console.log(dat);
+                    let rep = false;
+                    if (dateDipo.includes(dat)) {
+                        rep = {
+                            true: true,
+                            tooltip: 'Disponible',
+                            classes: 'jr-dispo'
+                        };
+                    }
+                    return rep;
+                }
+            }).on('changeDate', function (e) {
+                let dateTime = $(".multipleDatePicker").datepicker("getDates");
+                nombreJour = dateTime.length;
+                let p2 = '{{ detailsAnnonce.prix }}';
+                let p3 = p2.match(/[0-9,.]*/);
+                if (p3 !== null) {
+                    var amount2 = parseFloat(p3[0].replace(/,/g, '')); // replace , thousands separator
+                }
+                prix = nombreJour * amount2;
+                if (nombreJour > 0) {
+                    $('#price').html(nombreJour + "x" + '{{ detailsAnnonce.prix }}' + '=' + prix + ' ' + devise);
+                } else {
+                    $('#price').html('');
+                }
+            });
+
+            function padTo2Digits(num) {
+                return num.toString().padStart(2, '0');
+            }
+
+            function formatDate(date) {
+                return [
+                    padTo2Digits(date.getDate()),
+                    padTo2Digits(date.getMonth() + 1),
+                    date.getFullYear(),
+                ].join('-');
+            }
+
+            $('.multipleDatePicker').datepicker('update', {% for d in datep %}'{{ d }}', {% endfor %});
+            function arrayRemove(arr, value) {
+                return arr.filter(function (ele) {
+                    return ele != value;
+                });
+            }
+
+            // start portfolio/video slider
+            // Portfolio owlcarousel
+            $('#monPortfolio .owl-carousel').owlCarousel({
+                items: 1,
+                nav: true,
+                lazyLoad: true,
+                loop: false,
+                rewind: true,
+                margin: 10,
+                merge: true
+            });
+            // Video owlcarousel
+            $('#mesVideos .owl-carousel').owlCarousel({
+                items: 1,
+                merge: true,
+                loop: true,
+                margin: 10,
+                nav: true,
+                video: true,
+                lazyLoad: false,
+                center: true
+            });
+
+
+            $('#news-slider').slick({
+                infinite: true,
+                slidesToShow: 4,
+                slidesToScroll: 3,
+                dots: true,
+                arrows: false,
+                autoplay: true,
+                autoplaySpeed: 3000,
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 3,
+                            infinite: true,
+                            dots: true
+                        }
+                    },
+                    {
+                        breakpoint: 769,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 2
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                    }
+                    // You can unslick at a given breakpoint now by adding:
+                    // settings: "unslick"
+                    // instead of a settings object
+                ]
+            });
+            // $("#news-slider").owlCarousel({
+            // 	items: 3,
+            // 	itemsDesktop: [
+            // 		1199, 3
+            // 	],
+            // 	itemsDesktopSmall: [
+            // 		980, 2
+            // 	],
+            // 	itemsMobile: [
+            // 		600, 1
+            // 	],
+            // 	navigation: true,
+            // 	navigationText: [
+            // 		"", ""
+            // 	],
+            // 	pagination: true,
+            // 	autoPlay: true
+            // });
+
+
+            $(document).on('click', '#enregDates', function (e) {// On empeche le navigateur de soumettre le formulaire
+                e.preventDefault();
+                let d = $(".multipleDatePicker").datepicker("getDates");
+                let alldates = [];
+                for (let i = 0; i < d.length; i++) {
+                    let dateTime = new Date(d[i]);
+                    let date = formatDate(dateTime);
+                    alldates[alldates.length] = date;
+                }
+                dates += alldates.join('|');
+
+                let adresse = "{% if detailsAnnonce.ville is not null %}{{ detailsAnnonce.ville }}{% endif %}{% if detailsAnnonce.etat is not null %}{{ detailsAnnonce.etat }}{% endif %}{% if detailsAnnonce.pays is not null %}{{ detailsAnnonce.pays|country_name }}{% endif %}";
+                let image = '{% if detailsAnnonce.gallery|first %}{{ detailsAnnonce.gallery.0.guid }}{% elseif detailsAnnonce.images_secondaires|first %}{{ detailsAnnonce.images_secondaires.0.guid }}{% endif %}';
+                let email = '{{ detailsAnnonce.email }}';
+                let p = '{{ detailsAnnonce.prix }}';
+                let categorieParent = "{{ detailsAnnonce.categorieParentType }}";
+                let match = p.match(/[0-9,.]*/);
+                let nombreJour = 0;
+                let amount = 0;
+                if (match !== null) {
+                    amount = parseFloat(match[0].replace(/,/g, '')); // replace , thousands separator
+                }
+                if (categorieParent != 'product_cat') {
+                    nombreJour = $('#product_quantity').val();
+                } else {
+                    nombreJour = d.length;
+                }
+
+                let livraison = '{{ detailsAnnonce.livraison }}';
+                let url1 = "{{ path('annonces_panier') }}" + '?id=' + '{{ detailsAnnonce.id }}' +
+                    '&prixu=' + amount + '&userId=' + '{{ detailsAnnonce.post_author }}' +
+                    '&qte=' + nombreJour + '&dates=' + dates +
+                    '&libelle=' + '{{ detailsAnnonce.post_title }}' + '&image=' + image + '&adresse=' + adresse +
+                    '&email=' + email + '&devise=' + devise + '&name=' + '{{ detailsAnnonce.post_name }}' +
+                    '&categorie=' + '{{ detailsAnnonce.categorieParentSlug }}' + '&sousCategorie=' + '{{ detailsAnnonce.sousCategorieSlug }}' +
+                    '&livraison=' + livraison + '&etat=' + '{{ etat }}';
+
+
+                if (nombreJour > 0) {
+                    toastr.info('Ajout au panier en cours...');
+                    $.ajax({
+                        url: url1,
+                        type: 'get',
+                        success: function (response) {
+                            toastr.clear();
+                            toastr.success('Annonce ajoutée au panier!');
+                            if (exist == 0) {
+                                $('#panier').html({{ app.session.get('taille') }} +1);
+                            }
+                            window.location = "{{ path('annonces_detailsAnnonce', {id:detailsAnnonce.post_name}) }}";
+                        },
+                        error: function (response) {
+                            toastr.clear();
+                            toastr.error('Erreur lors de l\'ajout');
+                        }
+                    });
+                } else {
+                    toastr.info('Veuillez selectionner une date disponible');
+                }
+            });
+
+            // Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+            // first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+            // toggle menu search bar on/off
+            $("#searchMenuShowHide").click(function () {
+                $("#searchMenu").toggle("slide");
+            });
+            // For comments add
+
+            $('#addAnnounceComment').on('submit', function (e) {
+                e.preventDefault();
+
+                // Get the content from TinyMCE editor
+                let temp = tinymce.activeEditor.getContent();
+
+                // Check if the content is empty
+                if (temp.trim() === "") {  // Check if the content is empty or only contains whitespace
+                    toastr.warning("{{ 'Vous devez remplir un commentaire!'|trans }}");  // Display an error message
+                    return false;  // Prevent form submission
+                }
+
+                // If not empty, proceed with form submission
+                toastr.info("{{ 'systeme.requetes.requete-en-cours'|trans }}");
+
+                $('#comment-text').val(temp);
+                let $form = $(this);
+                let formdata = (window.FormData) ? new FormData($form[0]) : null;
+                let data = (formdata !== null) ? formdata : $form.serialize() + '&comment-box=' + temp;
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (response) {
+                        if (response != 0) {
+                            toastr.clear();
+                            toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                            window.location = "";
+                        } else if (response == 0) {
+                            $('#enregPasse').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{ 'systeme.requetes.erreur'|trans }}");
+                        }
+                    },
+                    error: function (response) {
+                        $('#enregPasse').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'systeme.requetes.erreur'|trans }}");
+                    }
+                });
+
+                return false;
+            });
+
+
+            $(document).on('click', '.deleteAnnounce', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                e.preventDefault();
+                let t = $(this);
+                let urlPath = $(this).attr('href');
+                swal({
+                    title: t.text(),
+                    text: "{{ 'general.sure'|trans }}",
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Oui",
+                    cancelButtonText: "Annuler",
+                    closeOnConfirm: false,
+                    closeOnCancel: false,
+                    showLoaderOnConfirm: true
+                }, function (isConfirm) {
+
+                    if (isConfirm) {
+                        $.ajax({
+                            url: urlPath,
+                            type: 'GET',
+                            success: function (reponse) {
+                                if (reponse > 0) {
+                                    swal("Action effectuée avec succès.", "", "success");
+                                    window.location = "{{ path('profile_profile') }}";
+                                } else {
+                                    swal("erreur de suppression", "", "error");
+                                }
+                            },
+                            error: function (reponse) {
+                                swal("erreur de suppression", "", "error");
+                            }
+                        });
+                    } else {
+                        swal.close();
+                    }
+                });
+                return false;
+            });
+
+            // First Like Button
+            $(document).on('click', '.btnh1', function () {
+                let element = $(this);
+                //Enregistrer dans la wishlist
+                let url = "{{ path('annonces_add_remove_to_user_wishlist',{ _locale : app.request.get('_locale') }) }}";
+                $.ajax({
+                    url: url,
+                    method: "get",
+                    data: {
+                        annonce_id: $(this).attr('data-id')
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        if (response.color == 'red') {
+                            element.children().removeClass("far");
+                            element.children().addClass("fas");
+                            element.children().css('color', 'red');
+                        } else if (response.color == 'black') {
+                            element.children().removeClass("fas");
+                            element.children().addClass("far");
+                            element.children().css('color', 'grey');
+                        } else if (response.status == 401) {
+                            window.location = "{{ path('app_login') }}";
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+            });
+
+        });
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "200",
+            "hideDuration": "800",
+            "timeOut": "3000",
+            "extendedTimeOut": "800",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    </script>
+{% endblock %}

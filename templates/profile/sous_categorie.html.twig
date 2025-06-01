@@ -1,0 +1,20 @@
+{% if option ==0 %}
+<div class="annonces-input-data" style="display:block;">
+	 	<h2 class="fs-title">{{'profil-utilisateur.formulaire-creer-annonce.type-de-prestations'|trans}}*</h2>
+		<h3 class="fs-subtitle">{{'profil-utilisateur.formulaire-creer-annonce.contrainte-de-choix'|trans}}</h3>
+	{% for c in categorie %}
+
+
+	<div class="custom-control custom-radio mb-2">
+	    <input type="radio" class="custom-control-input souscategorie" id="cat{{c.termTaxonomyId}}"  name="souscategorie" value="{{c.termTaxonomyId}}" required>
+	    <label class="custom-control-label" for="cat{{c.termTaxonomyId}}">{% if app.request.locale == 'en' and c.content != '' %}{{c.content}}{% else %}{{c.name}}{% endif %}</label>
+	</div>
+
+	{% endfor %}
+{% endif %}
+</div>
+{% if option ==1 %}
+{% for c in categorie %}
+<option value="{{c.termTaxonomyId}}">{% if app.request.locale == 'en' and c.content != '' %}{{c.content}}{% else %}{{c.name}}{% endif %}</option>
+  {% endfor %}
+{% endif %}

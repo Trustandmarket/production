@@ -1,0 +1,241 @@
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+	{# {{dump(header)}} #}
+	<style>
+		.floatingMenu{
+			position: absolute;
+			background: white;
+			border: 1px solid orange;
+			border-radius: 10px;
+			padding-block: 10px;
+			top: 70px;
+			width: 180px;
+			right: 100px;
+			display: none;
+		}
+		.floatingMenu li{
+			padding-inline: 10px;
+		}
+		.floatingMenu a{
+			font-family: 'Palanquin',sans-serif;
+			color: black;
+		}
+		.floatingMenu a:hover{
+			color: #f17c30;
+			text-decoration: none;
+		}
+		.logoButtonHeader div#navbarSupportedContent{
+			display: none !important;
+		}
+		.nav-link {
+			font-family: 'Source Sans Pro', sans-serif;
+			font-size: 18px;
+    	}
+		
+		nav.navbar-expand-lg>div#navbarSupportedContent .toHideOnDesktop{
+			display: none !important;
+		}
+		@media only screen and (max-width: 768px) {
+			.linkContent {
+				{# width: 25%; #}
+			}
+			.floatingMenu{
+				z-index: 1;
+				right: 12px;
+    			top: 70px;
+			}
+			.minify-menu{
+				display: none !important;
+			}
+
+			nav.navbar-expand-lg>div#navbarSupportedContent, .resteMenu{
+				display: none !important;
+			}
+			.logoButtonHeader div#navbarSupportedContent{
+				display: block !important;
+			}
+			.mobilePositionHeader{
+				display: flex;
+				width: 100%;
+				justify-content: flex-end;
+			}
+			.logoButtonHeader div#navbarSupportedContent .lang-selector:hover::after{
+				background-color: transparent;
+			}
+		}
+		.notification-new-marker{
+			background-color: red;
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			position: absolute;
+			top: 4px;
+			right: 7px;
+		}
+	</style>
+	<ul class="nav navbar-nav nav-flex-icons ml-auto mx-2 minify-menu">
+		<li class="nav-item "><a class="nav-link" href="{{ path('marketing_details_univers_trust', {slug:'la-solution-trust-market'}) }}" aria-haspopup="true">Solution</a>
+		<li class="nav-item"><a class="nav-link" href="{{path('app_souscription')}}">Tarifs pros</a></li>
+		<li class="nav-item"><a class="nav-link" href="https://meet.brevo.com/trustandmarket" target="_blank">Prendre rdv</a></li>
+		<li class="nav-item">
+			<a class="nav-link" href="{{ path('annonces_listeAnnonces', {'type_prestation': 'studio-musique', 'code_postal_ville': '', 'noPage': 1}) }}">
+				<i class="fa fa-search" style="font-size: 24px;"></i> <!-- Magnifying glass icon -->
+			</a>
+    	</li>
+	</ul>
+	<div class="c1grjlav crawnjq dir dir-ltr mobilePositionHeader" style="position: relative;">
+		<div class="linkContent" style="display: flex;background: white;padding: 7px;justify-content:space-between;align-items:center;border-radius: 28px;" type="button">
+			<div class=" dir dir-ltr">
+				<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+					role="presentation" focusable="false"
+					style="display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 3; overflow: visible;">
+					<g fill="none" fill-rule="nonzero">
+						<path d="m2 16h28"></path>
+						<path d="m2 24h28"></path>
+						<path d="m2 8h28"></path>
+					</g>
+				</svg>
+			</div>
+			{% if app.user %}
+				{% set newmessages = render(controller('App\\Controller\\ChatController::iHaveNewMessages')) %}
+				<p class="{% if 'yes' in newmessages %}notification-new-marker{% endif %}"></p>
+				<img src="{% if app.session.get('avatar')!='' %} {{app.session.get('avatar')}}{% else %} {{asset('assets/img/profile/avatar-profile.png')}}{% endif %}" class="image-header rounded-circle z-depth-0" alt="avatar image" height="30" style="margin-left:15px;width: 1.5rem;height: 1.5rem;">
+			{% else %}
+				<img src="/assets/img/profile/avatar-profile.png" class="image-header rounded-circle z-depth-0" alt="avatar image" height="30" style="margin-left:15px;width: 1.5rem;height: 1.5rem;">
+			{% endif %}
+		</div>
+		
+	</div>
+	<div class="floatingMenu">
+		{% if app.user %}
+			{# is non connected user #}
+			<ul style="list-style: none;padding: 0;">
+				<li class="mt-2">
+					<a href="{{ path('chat_chat',{channel:''}) }}"><i class="fas fa-envelope {% if 'yes' in newmessages %}new-message{% endif %}"></i> Messagerie</a>
+				</li>
+				<li class="mt-2">
+					<a href="{% if 'ROLE_SUPER_ADMIN' in app.user.roles or 'ROLE_CONTRIBUTEUR' in app.user.roles or 'ROLE_COMMERCE' in app.user.roles %}{{path('admin')}}{% else %}{{ path('profile_dashboard' )}} {% endif %}">{{'profil-utilisateur.liens.dashboard'|trans}}</a>
+				</li>
+				<li class="mt-2">
+					<a href="{{ path('profile_profile' )}}">{{'profil-utilisateur.liens.profil'|trans}}</a>
+				</li>
+				{% if 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles or 'ROLE_CONTRIBUTEUR' in app.user.roles or 'ROLE_COMMERCE' in app.user.roles or 'ROLE_SOCIETE' in app.user.roles %}
+				<li class="mt-2">
+					<a href="{{ path('app_abonnement') }}">Abonnements</a>
+				</li>
+				{% endif %}
+				
+				<li class="mt-2">
+					<a href="{{ path('profile_parameters' )}}">{{'profil-utilisateur.liens.parametres'|trans}}</a>
+				</li>
+				<li class="mt-2 toHideOnDesktop">
+					<a href="{{ path('marketing_details_univers_trust', {slug:'la-solution-trust-market'}) }}">Solution</a>
+				</li>
+				<li class="mt-2 toHideOnDesktop">
+					<a href="{{path('app_souscription')}}">Tarifs pros</a>
+				</li>
+				<li class="mt-2 toHideOnDesktop">
+					<a href="https://meet.brevo.com/trustandmarket" target="_blank">Prendre rdv</a>
+				</li>
+				<li class="mt-2">
+					<a href="{{ path('annonces_favoris' )}}">Favoris</a>
+				</li>
+				<p class="toHideOnDesktop"></p>
+				<hr class="toHideOnDesktop">
+				<li class="nav-item dropdown lang-selector toHideOnDesktop">
+					<a class="nav-link dropdown-toggle" href="#" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						{% if app.request.get('_locale')=='fr' %}
+							<span class="flag-icon flag-icon-fr"></span>
+							FR
+						{% else %}
+							{# <span class="flag-icon flag-icon-gb"></span>
+							EN #}
+						{% endif %}
+		
+					</a>
+				</li>
+				<li id="shopping-link" class="nav-item toHideOnDesktop">
+					<a class="nav-link" href="{{path('annonces_panier_user')}}">
+						<div class="icon-wrapper">
+							<i id="shopping-bag" class="fas fa-shopping-bag fa-lg"></i>
+							<span class="badge badge-over badge-warning" id="panier">
+							{{ render(controller('App\\Controller\\AnnoncesController::getPanierNumber')) }}
+							</span>
+						</div>
+					</a>
+				</li>
+				<hr class="my-4">
+				<li>
+					<a href="{{ path('app_logout') }}">{{'profil-utilisateur.liens.deconnexion'|trans}}</a>
+				</li>
+			</ul>
+		{% else %}
+			{# is non connected user #}
+			<ul style="list-style: none;padding: 0;">
+				<li>
+					<a href="{{ path('app_login') }}">Connexion</a>
+				</li>
+				<li>
+					<a href="{{ path('app_register') }}">Inscription</a>
+				</li>
+				
+				<li class="toHideOnDesktop">
+					<a href="{{ path('marketing_details_univers_trust', {slug:'la-solution-trust-market'}) }}">Solution</a>
+				</li>
+				<li class="toHideOnDesktop">
+					<a href="{{path('app_souscription')}}">Tarifs pros</a>
+				</li>
+				<li class="toHideOnDesktop">
+					<a href="https://meet.brevo.com/trustandmarket" target="_blank">Prendre rdv</a>
+				</li>
+				<p class="toHideOnDesktop"></p>
+				<hr class="toHideOnDesktop">
+				<li class="nav-item dropdown lang-selector toHideOnDesktop">
+					<a class="nav-link dropdown-toggle" href="#" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						{% if app.request.get('_locale')=='fr' %}
+							<span class="flag-icon flag-icon-fr"></span>
+							FR
+						{% else %}
+							{# <span class="flag-icon flag-icon-gb"></span>
+							EN #}
+						{% endif %}
+		
+					</a>
+				</li>
+				<li id="shopping-link" class="nav-item toHideOnDesktop">
+					<a class="nav-link" href="{{path('annonces_panier_user')}}">
+						<div class="icon-wrapper">
+							<i id="shopping-bag" class="fas fa-shopping-bag fa-lg"></i>
+							<span class="badge badge-over badge-warning" id="panier">
+							{{ render(controller('App\\Controller\\AnnoncesController::getPanierNumber')) }}
+							</span>
+						</div>
+					</a>
+				</li>
+			</ul>
+		{% endif %}
+	</div>
+	<ul class="nav navbar-nav nav-flex-icons ml-auto resteMenu">
+		<li class="nav-item dropdown lang-selector">
+			<a class="nav-link dropdown-toggle" href="#" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				{% if app.request.get('_locale')=='fr' %}
+					<span class="flag-icon flag-icon-fr"></span>
+					FR
+				{% else %}
+					{# <span class="flag-icon flag-icon-gb"></span>
+					EN #}
+				{% endif %}
+
+			</a>
+		</li>
+		<li id="shopping-link" class="nav-item">
+			<a class="nav-link" href="{{path('annonces_panier_user')}}">
+				<div class="icon-wrapper">
+					<i id="shopping-bag" class="fas fa-shopping-bag fa-lg"></i>
+					<span class="badge badge-over badge-warning" id="panier">
+					{{ render(controller('App\\Controller\\AnnoncesController::getPanierNumber')) }}
+					</span>
+				</div>
+			</a>
+		</li>
+	</ul>
+</div>

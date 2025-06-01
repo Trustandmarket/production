@@ -1,0 +1,221 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}{{'admin.menu.categorie-produit'|trans}}{% endblock %}
+
+{% block main %}
+{# <link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}"> #}
+{# <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+<link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+<div class="content">
+
+<div class="animated fadeIn">
+<div class="clearfix"></div>
+<div class="row">
+<div class="col-lg-12">
+<div class="card">
+<div class="card-header">
+<h4 class="box-title">Catégories de produits<a class="badge badge-complete right1 " data-toggle="modal" data-target="#add-category" href="" title="{{'admin.categorie.add-categorie'|trans}}" ><i class="fa fa-plus"></i> </a>
+</h4>
+</div>
+<div class="card-body--">
+    <div class="table-stats order-table ov-h">
+        <table class="table ">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>{{'admin.menu.type-prestation'|trans}}</th>
+                    <th>{{'admin.menu.libelle'|trans}}</th>
+                    <th>{{'admin.menu.frais-livraison'|trans}}</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in cat_produits %}
+                    <tr  style="background-color: #F7F7F7;font-weight: bold;">
+                        <td> {{m.termTaxonomyId}}</td>
+                        <td> {{m.nom_parent}}</td>
+                        <td> <span class="name">{% if app.request.locale == 'en' %}{{m.content}}{% else %}{{m.name}}{% endif %}</span>
+                            <input type="text" name="titre" value="{% if app.request.locale == 'en' %}{{m.content}}{% else %}{{m.name}}{% endif %}" class="form-control titre"  style="display:none">
+                            <input type="hidden" name="id" class="id" value="{{m.termTaxonomyId}}">
+                        </td>
+                        <td> {% if m.frais_livraison == 'non' or m.frais_livraison == 0 %}NON{% else %}OUI{% endif %}</td>
+                        <td>
+                        {% set url = ea_url().setController('App\\Controller\\Admin\\CategoriesProduits\\WpTermTaxonomyCrudController').setAction('edit').setEntityId(m.termTaxonomyId) %}
+                            <a class="badge badge-pending" href="{{url}}" title=""><i class="fa fa-edit "></i> </a>
+                            <a class="red delete" href="{{ path('admin_delete_sub_categorie', {id: m.termTaxonomyId}) }}" title="Supprimer le menu" ><i class="fa fa-trash"></i> </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+</div>
+
+
+</div>
+
+
+</div>
+<div class="modal fade none-border" id="add-category">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><strong>{{'admin.categorie.add-categorie'|trans}} </strong></h4>
+            </div>
+            <div class="modal-body">
+                <form action="{{path('admin_new_prestation_type')}}" method="post" id="register">
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <input class="form-control" placeholder="{{'admin.categorie.libelle'|trans}}" type="text" name="name" id="cat_name" required />
+                            <input type="hidden" name="type" value="product_cat">
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <select class="form-control"  name="parent" required>
+                                <option value="" disabled selected>{{'admin.categorie.categorie-produit'|trans}}</option>
+                                {% for m in categories %}
+                                    {% if m.parent == 0 %}
+                                        <option value="{{m.termTaxonomyId}}">{% if app.request.locale == 'en' %}{{m.content}}{% else %}{{m.name}}{% endif %}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-check-label" style="font-size: large;font-weight: 600;" for="exampleRadios3">
+                                Frais de livraison
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-check">
+                                <input class="form-check-input" type="radio" name="frais_livraison" id="exampleRadios1" value="oui" checked>
+                                <label class="form-check-label mx-3" for="exampleRadios1">
+                                    Oui
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="frais_livraison" id="exampleRadios2" value="non">
+                                <label class="form-check-label mx-3" for="exampleRadios2">
+                                    Non
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Fermer</button>
+                        <button type="submit" id="send" class="btn btn-success waves-effect waves-light ld-over-inverse ">{{'admin.categorie.send'|trans}}<i class="ld ld-ring ld-spin"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+{% endblock %}
+{% block body_javascript %}
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+{# <script src="{{ asset('admin/assets/js/vendor/jquery-2.1.4.min.js') }}" type="text/javascript"></script> #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+<script type="text/javascript">
+
+$('#register').on('submit', function (e) {
+    e.preventDefault();
+    if($('#cat_name').val()!=''){
+        $('#send').addClass('running');
+        var $form = $(this);
+        $.ajax({
+            url: $form.attr('action'),
+            type: $form.attr('method'),
+            data:$form.serialize(),
+            success: function (reponse) {
+            if(reponse>0){
+                toastr.clear();
+                $('#send').removeClass('running');
+                toastr.success('Ajout Terminé');
+                window.location='';
+            }else if(reponse==0) {
+                toastr.clear();
+                $('#send').removeClass('running');
+                toastr.error('Erreur d\'ajout');
+            }
+            },
+            error: function (reponse) {
+                toastr.clear();
+                $('#send').removeClass('running');
+                toastr.error('Erreur d\'ajout');
+            }
+        });
+    }
+    return false;
+});
+
+$(document).on('click', '.delete', function(e) {
+    e.preventDefault();
+    var t=$(this);
+    var urlPath=$(this).attr('href');
+    swal({
+        title: "Suppression de la categorie",
+        text: "Attention la catégorie sera Supprimée et n'apparaitra plus sur votre site",
+        type: "info",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Supprimer",
+        cancelButtonText: "Annuler",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+        showLoaderOnConfirm: true
+    },
+    function(isConfirm) {
+        if (isConfirm) {
+            $.ajax({
+                url: urlPath,
+                type: 'GET',
+                success: function(reponse) {
+                    console.log(reponse);
+                if (reponse==1) {
+                    swal("Suppression terminée", "", "success");
+                    t.parents('tr').hide();
+                }
+                else if (reponse==2) {
+                    swal("La catégorie contient des articles", "", "warning");
+                }else {
+                    swal("Erreur de suppression", "", "error");
+                };
+                },
+                error: function(reponse) {
+                    swal("Erreur de suppression", "", "error");
+                }
+            });
+            }else {swal.close();}
+    });
+        return false;
+    });
+
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "12000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+</script>
+{% endblock body_javascript %}

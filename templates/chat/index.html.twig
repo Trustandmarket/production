@@ -1,0 +1,903 @@
+{% extends 'otherLayout.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+
+    <link rel="icon" href="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png') }}"
+          sizes="32x32"/>
+    <link rel="icon" href="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png') }}"
+          sizes="192x192"/>
+    <link rel="apple-touch-icon-precomposed"
+          href="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png') }}"/>
+    <meta name="msapplication-TileImage"
+          content="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png') }}"/>
+
+{% endblock %}
+
+{% block title %}
+    Trust &amp; Market | {{ 'chat.titre-de-page'|trans }}{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+
+    <!-- Font Awesome -->
+    <link
+            rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Your custom styles (optional) -->
+    <link rel="stylesheet" href="{{ asset('assets/css/chat/custome.css') }}">
+    <link href="{{ asset('assets/css/chat/messages.css') }}" rel="stylesheet" type="text/css">
+    <style type="text/css">/* Absolute Center Spinner */
+        .loading {
+            position: fixed;
+            z-index: 999;
+            height: 2em;
+            width: 2em;
+            overflow: show;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+
+        /* Transparent Overlay */
+        .loading:before {
+            content: '';
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(rgba(20, 20, 20, .8), rgba(0, 0, 0, 0.8));
+            background: -webkit-radial-gradient(rgba(20, 20, 20, .8), rgba(0, 0, 0, .8));
+        }
+
+        /* :not(:required) hides these rules from IE9 and below */
+        .loading:not(:required) {
+            /* hide "loading..." text */
+            font: 0 / 0 a;
+            color: transparent;
+            text-shadow: none;
+            background-color: transparent;
+            border: 0;
+        }
+
+        .loading:not(:required):after {
+            content: '';
+            display: block;
+            font-size: 10px;
+            width: 1em;
+            height: 1em;
+            margin-top: -0.5em;
+            -webkit-animation: spinner 150ms infinite linear;
+            -moz-animation: spinner 150ms infinite linear;
+            -ms-animation: spinner 150ms infinite linear;
+            -o-animation: spinner 150ms infinite linear;
+            animation: spinner 150ms infinite linear;
+            border-radius: 0.5em;
+            -webkit-box-shadow: rgba(255, 255, 255, 0.75) 1.5em 0 0 0, rgba(255, 255, 255, 0.75) 1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) 0 1.5em 0 0, rgba(255, 255, 255, 0.75) -1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) -1.5em 0 0 0, rgba(255, 255, 255, 0.75) -1.1em -1.1em 0 0, rgba(255, 255, 255, 0.75) 0 -1.5em 0 0, rgba(255, 255, 255, 0.75) 1.1em -1.1em 0 0;
+            box-shadow: rgba(255, 255, 255, 0.75) 1.5em 0 0 0, rgba(255, 255, 255, 0.75) 1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) 0 1.5em 0 0, rgba(255, 255, 255, 0.75) -1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) -1.5em 0 0 0, rgba(255, 255, 255, 0.75) -1.1em -1.1em 0 0, rgba(255, 255, 255, 0.75) 0 -1.5em 0 0, rgba(255, 255, 255, 0.75) 1.1em -1.1em 0 0;
+        }
+
+        /* Animation */
+
+        @-webkit-keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        @-moz-keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        @-o-keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        .typing {
+            display: block;
+            width: 60px;
+            height: 40px;
+            background-color: #BDBDBD;
+            margin-left: 20px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .circle {
+            display: block;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            background-color: #757575;
+            margin: 3px;
+        }
+
+
+        .circle.scaling {
+            animation: typing 1000ms ease-in-out infinite;
+            animation-delay: 3600ms;
+        }
+
+        .circle:nth-child(1) {
+            animation-delay: 0;
+        }
+
+        .circle:nth-child(2) {
+            animation-delay: 333ms;
+        }
+
+        .circle:nth-child(3) {
+            animation-delay: 666ms;
+        }
+
+        @keyframes typing {
+            0% {
+                transform: scale(1);
+            }
+            33% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.4);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .chat-content {
+            width: 100%;
+        }
+
+        .nochannel-message {
+            position: relative;
+            top: 50%;
+            text-align: left;
+        }
+
+        .no-message {
+            text-align: center;
+            position: relative;
+            top: 10em;
+        }
+    </style>
+
+{% endblock %}
+
+{% block header %}
+
+    {{ parent() }}
+
+{% endblock %}
+
+{% block navigation %}
+    {{ parent() }}
+    {% block pageTitle %}{% endblock %}
+{% endblock %}
+
+
+{% block body %}
+    <div class="loading" style="display: none;">Loading&#8230;</div>
+    <main class="py-5">
+        <div class="row pr-2 pl-2" style="width:100%;margin-left: 0px;margin-right: 0px;">
+            <div class="col-md-3 py-5">
+                <h4 class="">{{ 'chat.sous-titre-bloc-conversations'|trans }}</h4>
+                <div class="side-chat-container">
+                    <!-- first discussion side chat -->
+                    {% for item in channels %}
+						{% if item.destinataire %}
+							<div class="row side-chat p-2 pl-3 pr-3 mt-2 online {% if item and item.channel.getName == channel.getName %} active-chat{% endif %}"
+								 data-url="{{ path('chat_chat', {channel:item.channel.getName}) }}"
+								 data-channel="{{ item.channel.getName }}"
+								 data-timestamp="{% if item.message %}{{ item.message.getSentDate.getTimestamp }}{% endif %}"
+								 id="channel{{ item.channel.getName }}">
+								<div class="col-left align-center">
+									<img src="{% if item and item.destinataire.avatar %} {{ item.destinataire.avatar|last }}{% else %} {{ asset('assets/img/profile/avatar-profile.png') }} {% endif %}"
+										 class="logo-left" alt="">
+								</div>
+								<div class="col-right pl-2">
+									<h6>
+									<span class="username">{{ item.destinataire.first_name }}
+										{{ item.destinataire.last_name }}</span>
+										<span class="date">{% if item.message %}{{ item.message.getSentDate|date("d/m/Y à H:i:s") }}{% endif %}</span>
+									</h6>
+									<p class="brief">{% if item.message %}{{ item.message.getContent | u.truncate(45, '...', false) }}{% endif %}</p>
+								</div>
+							</div>
+						{% endif %}
+                    {% else %}
+                        <div class="nochannel-message">Aucun interlocuteur pour le moment</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-9 py-4 all-messages">
+                {# {{dump(destinataire)}} #}
+                <div class="row py-2 border-bottom border-left destinataire-details-haut">
+                    {% if destinataire is not empty %}
+                        <div class="col-md-7 text-right">
+                            <img src="{% if destinataire.avatar %} {{ destinataire.avatar|first }}{% else %} {{ asset('assets/img/profile/avatar-profile.png') }} {% endif %}"
+                                 class="img-fluid rounded-circle header-chat-img" alt="">&nbsp;&nbsp;<span
+                                    class="header-chat-name">{{ destinataire.first_name }}
+                                {{ destinataire.last_name }}</span>
+                        </div>
+                        <div class="col-md-5 text-right">
+                            <a href="#" class="lightblue">
+                                <i class="fa fa-download fs-18" aria-hidden="true"></i>
+                            </a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="lightblue">
+                                <i class="fa fa-question-circle fs-19" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-md-8" id="messages-content">
+                        <div class="row chat-box border-left border-bottom border-right p-3 mb-3"
+                             id="{{ channel.getName }}"
+                             data-destinataire-img="{% if destinataire is not null and destinataire is not empty %} {{ destinataire.avatar|first }}{% else %} {{ asset('assets/img/profile/avatar-profile.png') }} {% endif %}">
+                            <div class="chat-content">
+                                {% if destinataire is not empty %}
+                                    {% set date = null %}
+                                    {% for message in messages %}
+                                        {% if date != message.getSentDate | date("d/m/Y") %}
+                                            {% set date = message.getSentDate | date("d/m/Y") %}
+                                            <!-- Date of day chatting -->
+                                            <div class="col-md-12 text-center my-3 today-date">
+                                                <p> {{ date }} </p>
+                                            </div>
+                                        {% endif %}
+                                        {% if message.getSender.id == destinateur.id %}
+                                            <!-- From message -->
+                                            <div class="offset-md-4 col-md-8 receiver">
+                                                <div class="row receiver-msg mb-2 float-right">
+                                                    <div class="col-left pl-2 rounded m-2 p-2">
+                                                        <p class="text-msg">{{ message.getContent | nl2br }}</p>
+                                                    </div>
+                                                    <div class="col-right">
+                                                        <img src="{% if destinateur.avatar %} {{ destinateur.avatar|first }}{% else %} {{ asset('assets/img/profile/avatar-profile.png') }} {% endif %}"
+                                                             class="img-fluid rounded-circle avatar-message" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <!-- I'm receiver -->
+                                            <div class='col-md-8 sending'>
+                                                <div class='row sender-msg mb-2'>
+                                                    <div class='col-left'>
+                                                        <img src="{% if destinataire.avatar %} {{ destinataire.avatar|first }}{% else %} {{ asset('assets/img/profile/avatar-profile.png') }} {% endif %}"
+                                                             class='img-fluid rounded-circle avatar-message' alt=''>
+                                                    </div>
+                                                    <div class='col-right pl-2 rounded m-2 p-3'>
+                                                        <p class='text-msg'>{{ message.getContent | nl2br }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <input type="hidden" name="destinataire-img" id="destinataire-img"
+                                           value="{% if destinataire.avatar %} {{ destinataire.avatar|first }}{% else %} {{ asset('assets/img/profile/avatar-profile.png') }} {% endif %}">
+                                {% else %}
+                                    <div class="no-message">{{ 'chat.message-accueil'|trans|raw }}
+                                        {{ 'chat.descriptif'|trans|raw }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class='typing' style="visibility: hidden;">
+                                <span class='circle scaling'></span>
+                                <span class='circle scaling'></span>
+                                <span class='circle scaling'></span>
+                            </div>
+                        </div>
+                        <!-- Text area for chat -->
+
+                        <div class="row mychat-textarea" {% if not (destinataire is not empty) %} style="display:none;" {% endif %}>
+                            <div id="msgForm" class="col-md-12 text-right">
+                                <textarea required="required" name="chatTxtBox" id="chatTxtBox"
+                                          class="form-control form-control-lg border-dark font-weight-light chatTxtBox"></textarea>
+                                <button type="submit" id="form-submit" class="btn btn-md btn-primary send-msg">Envoyer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 destinataire-details">
+                        <div class="row user-details p-2 pl-3 pr-3">
+                            {% if destinataire is not empty %}
+                                <div class="col-left">
+                                    <img src="{% if destinataire.avatar %} {{ destinataire.avatar|first }}{% else %} {{ asset('assets/img/profile/avatar-profile.png') }} {% endif %}"
+                                         class="img-fluid rounded-circle avatar-detail" alt="">
+                                </div>
+                                <div class="col-right pl-2">
+                                    <h6>
+										<span class="username">{{ destinataire.first_name }}
+                                            {{ destinataire.last_name }}</span>
+                                    </h6>
+                                    <p class="brief">{{ destinataire.titre }}</p>
+                                    <p class="ratings">
+                                        <i class="fa fa-star lightblue"></i>
+                                        <i class="fa fa-star lightblue"></i>
+                                        <i class="fa fa-star lightblue"></i>
+                                        <i class="fa fa-star lightblue"></i>
+                                        <i class="fa fa-star lightblue"></i>
+                                        <strong>
+                                            <a target="_blank"
+                                               href="{{ path('profile_detailsProfessionnel',{'id':'infos-profil-' ~ destinataire.id}) }}">{# ({{destinataireAvis}}) #}
+                                                {{ 'chat.profil-vendeur.voir-avis'|trans }}</a><br>
+                                            <span class="mission-counter">{{ destinataire.annonces_publiees }}
+                                                {{ 'chat.annonces'|trans }}</span>
+                                        </strong>
+                                    </p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% if destinataire is not empty %}
+                            <!-- Envoyer un devis -->
+                            <div class="row mt-5">
+                                <div class="col-md-12">
+                                    <a href="#"
+                                       class="btn btn-primary btn-block send-quote">{{ 'chat.envoyer-un-devis'|trans }}</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+{% endblock %}
+
+{% block footer %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script async>
+
+        var format = function (date) {
+            var fullDate = date
+            var twoDigitDay = (fullDate.getDate() < 10) ? '0' + (fullDate.getDate() + 1) : (fullDate.getDate() + 1);
+            var twoDigitMonth = (fullDate.getMonth() < 10) ? '0' + (fullDate.getMonth() + 1) : (fullDate.getMonth() + 1);
+            var twoDigitHours = (fullDate.getHours() < 10) ? '0' + (fullDate.getHours() + 1) : (fullDate.getHours() + 1);
+            var twoDigitMinutes = (fullDate.getMinutes() < 10) ? '0' + (fullDate.getMinutes() + 1) : (fullDate.getMinutes() + 1);
+            var twoDigitSeconds = (fullDate.getSeconds() < 10) ? '0' + (fullDate.getSeconds() + 1) : (fullDate.getSeconds() + 1);
+
+            return twoDigitDay + "/" + twoDigitMonth + "/" + fullDate.getFullYear() + ' à ' + twoDigitHours + ':' + twoDigitMinutes + ':' + twoDigitSeconds;
+        }
+
+        var trueDate = function () {
+            fullDate = new Date();
+            var twoDigitDay = (fullDate.getDate() < 10) ? '0' + (fullDate.getDate() + 1) : (fullDate.getDate() + 1);
+            var twoDigitMonth = (fullDate.getMonth() < 10) ? '0' + (fullDate.getMonth() + 1) : (fullDate.getMonth() + 1);
+            var twoDigitHours = (fullDate.getHours() < 10) ? '0' + (fullDate.getHours() + 1) : (fullDate.getHours() + 1);
+            var twoDigitMinutes = (fullDate.getMinutes() < 10) ? '0' + (fullDate.getMinutes() + 1) : (fullDate.getMinutes() + 1);
+            var twoDigitSeconds = (fullDate.getSeconds() < 10) ? '0' + (fullDate.getSeconds() + 1) : (fullDate.getSeconds() + 1);
+
+            return fullDate.getFullYear() + "-" + twoDigitMonth + "-" + twoDigitDay + ' ' + twoDigitHours + ':' + twoDigitMinutes + ':' + twoDigitSeconds;
+        }
+
+        nl2br = function (str, is_xhtml) {
+            if (typeof str === 'undefined' || str === null) {
+                return '';
+            }
+            var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+            return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+        }
+
+        function truncateString(str, num) {
+            if (str.length <= num) {
+                return str
+            }
+            return str.slice(0, num) + '...'
+        }
+
+        $(document).ready(function () {
+            let defaultChannel = "{{ channel.getName | default('') }}";
+
+            let botName = 'ChatBot';
+
+            let userId = '{{ user.getId }}';
+
+            let userName = '{{ user.getUsername }}';
+
+            // var wsUrl = '{{ ws_url }}';
+
+            // var ws = new WebSocket('ws://' + wsUrl);
+
+            let clearInterval = 900; //0.9 seconds
+            let clearTimerId;
+
+
+            function addMessageToChannel(message) {
+
+                var message = JSON.parse(message);
+
+                if (message.action == 'message') {
+                    if (message.user != userName) {
+                        if (message.channel == defaultChannel) {
+                            $('.chat-content').append("<div class='col-md-8 sending'><div class='row sender-msg mb-2'><div class='col-left'><img src='" + $("#destinataire-img").val() + "' class='img-fluid rounded-circle' alt=''></div><div class='col-right pl-2 rounded m-2 p-3'><p class='text-msg'>" + nl2br(message.message) + "</p></div></div></div>");
+
+                            // Default scroll chat box to bottom
+                            var height = 0;
+                            $('.chat-box div').each(function (i, value) {
+                                height += parseInt($(this).height());
+                            });
+                            height += '';
+                            $('.chat-box').animate({scrollTop: height});
+                            /*$('.all-messages').animate({scrollTop: height});
+                            $('.all-messages').stop().animate({ scrollTop: $('.all-messages').scrollHeight}, 1000);*/
+                            //  	ws.send(JSON.stringify({
+                            //   action: 'is_read',
+                            //   user: userName,
+                            //   userId: userId,
+                            //   channel: message.channel
+                            // }));
+                        }
+                    } else {
+                        if (!message.connected) {
+                            $.ajax({
+                                url: "{{ path('chat_send_message_to_not_connected_user_xhr') }}",
+                                method: "get",
+                                dataType: 'json',
+                                data: {channel: message.channel},
+                                success: function (data) {
+                                    console.info("success send messages to not connected")
+                                },
+                                error: function (data) {
+                                    console.error('error of sending email to not connected user');
+                                }
+                            });
+                        }
+                    }
+
+                    $('#channel' + message.channel).attr('data-timestamp', message.timestamp);
+                    $('#channel' + message.channel).find('.date').html(message.date);
+                    $('#channel' + message.channel).find('.brief').html(truncateString(message.message, 20));
+
+                    $('.side-chat-container .row.side-chat').sort(function (a, b) {
+                        return $(b).data('timestamp') - $(a).data('timestamp');
+                    }).appendTo('.side-chat-container');
+
+                    //$(".side-chat-container").html(
+                    //  $(".side-chat-container").find('.row').sort(function(a, b) {
+                    //  let dsa = parseInt($(a).data('timestamp')),
+                    //    dsb = parseInt($(b).data('timestamp'));
+                    //    return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                    //  })
+                    //);
+
+                    //$('.side-chat-container').each(function(){
+                    //  $(this).html(
+                    //    $(this).find('.row.side-chat').sort(function(a, b) {
+                    //      let dsa = parseInt($(a).data('timestamp')),
+                    //      dsb = parseInt($(b).data('timestamp'));
+                    //      return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                    //    })
+                    //  );
+                    //});
+                    //$('.side-chat-container .row').sort(function(a,b) {
+                    //  return $(a).data('timestamp') < $(b).data('timestamp');
+                    //}).appendTo('.side-chat-container');
+
+                }
+
+                /*if(message.action == 'send_email'){
+                    if(message.user == userName){
+                        $.ajax({
+                        url : "{{ path('chat_send_message_to_not_connected_user_xhr') }}",
+	            method : "post",
+	            dataType : 'json',
+	            data : { channel : message.channel },
+	            success : function(data){
+	              console.info("success send messages to not connected")
+	            },
+	            error : function(data){
+	              console.error('error of sending email to not connected user');
+	            }
+	          });
+        	}
+        }*/
+
+                if (message.action == 'is_tiping') {
+                    if (message.user != userName && message.channel == defaultChannel) {
+
+                        $('.typing').css("visibility", "visible");
+                        //restart timeout timer
+                        clearTimeout(clearTimerId);
+                        clearTimerId = setTimeout(function () {
+                            //clear user is typing message
+                            $('.typing').css("visibility", "hidden");
+                        }, clearInterval);
+                    }
+                }
+            }
+
+            // function botMessageToGeneral(message) {
+            // }
+
+            // ws.onopen = function () {
+            //   ws.send(JSON.stringify({
+            //     action: 'subscribe',
+            //     channel: userName,
+            //     user: userName
+            //   }));
+            //   {% for item in channels %}
+            //   ws.send(JSON.stringify({
+            //     action: 'subscribe',
+            //     channel: "{{ item.channel.getName }}",
+            //     user: userName
+            //   }));
+            //   {% endfor %}
+
+            //   // On notifie au serveur qu'on vient de lire le messsage
+            //   {% if channel.getName is not null %}
+            //  ws.send(JSON.stringify({
+            //    action: 'is_read',
+            //    user: userName,
+            //    userId: userId,
+            //    channel: defaultChannel
+            //  }));
+            //  {% endif %}
+
+            // };
+
+            // ws.onmessage = function (event) {
+            //   addMessageToChannel(event.data);
+            // };
+
+            // ws.onclose = function () {
+            //   console.warn("{{ 'chat.serveur-ferme.erreur'|trans }}");
+            //   clearTimeout(clearTimerIdConnect);
+
+            //   clearTimerIdConnect = setTimeout(function () {
+            //     ws = new WebSocket('ws://' + wsUrl);
+            //     connectToAllChannels();
+            //   }, clearIntervalConnect);
+            // };
+
+            // var clearIntervalConnect = 10000; //10 seconds
+            // var clearTimerIdConnect;
+
+            // ws.onerror = function () {
+            //   console.warn("{{ 'chat.message-erreur.erreur'|trans }}");
+
+            //   clearTimeout(clearTimerIdConnect);
+
+            //   clearTimerIdConnect = setTimeout(function () {
+            //     ws = new WebSocket('ws://' + wsUrl);
+            //     connectToAllChannels();
+            //   }, clearIntervalConnect);
+
+            // };
+
+            var docWidth = document.documentElement.offsetWidth;
+
+            [].forEach.call(
+                document.querySelectorAll('*'),
+                function (el) {
+                    if (el.offsetWidth > docWidth) {
+                        console.log(el);
+                    }
+                }
+            );
+            //Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+            //first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+            //toggle menu search bar on/off
+            $("#searchMenuShowHide").on('click', function () {
+                $("#searchMenu").toggle("slide");
+            });
+
+            //live chat side section
+            $('select#discussionsEnLigne').on('change', function () {
+                var sessionS = $(this).children("option:selected").val();
+                switch (sessionS) {
+                    case 'online' :
+                        $('.online').show(); //show all active users
+                        $('.offline').hide(); //hide all active users
+                        break;
+                    case 'offline' :
+                        $('.offline').show(); //show all active users
+                        $('.online').hide(); //hide all active users
+                        break;
+                    case 'all' :
+                        $('.offline').show(); //show all active users
+                        $('.online').show(); //show all active users
+                        break;
+                }
+            });
+
+            // Default scroll chat box to bottom
+            var height = 0;
+            $('.chat-box div').each(function (i, value) {
+                height += parseInt($(this).height());
+            });
+            height += '';
+            $('.chat-box').animate({scrollTop: height});
+
+            //Lets begin sending our message from the text form
+
+            //First let's prevent form from submitting to action file
+            /*$("#msgForm").on('submit',function() {
+              return false; //to prevent redirection to action file
+            });*/
+            //Lets click on the submit button
+            $(document).on('click', '.send-msg', function () {
+                var data = $("#chatTxtBox").val();
+
+                // first verify if data ie empty then disable send button
+                if (data.trim() == '') {
+                    toastr.info("Text area can't be empty");
+                    return;
+                }
+
+                $('.chat-content').append('<div class="offset-md-4 col-md-8 receiver"> <div class="row receiver-msg mb-2 float-right"> <div class="col-left pl-2 rounded m-2 p-2"> <p class="text-msg">' + nl2br(data) + '</p></div><div class="col-right"> <img src="{% if destinataire is not null and destinataire is not empty %} {{ destinateur.avatar|first }}{% else %} {{ asset('assets/img/profile/avatar-profile.png') }} {% endif %}" class="img-fluid rounded-circle" alt=""> </div></div></div>');
+
+                clearInput();
+
+                date = new Date();
+
+                now = format(date);
+
+                //$('#channel'+defaultChannel).attr('data-timestamp',+date);
+                //$('#channel'+defaultChannel).find('.date').html(now);
+                //$('#channel'+defaultChannel).find('.brief').html(truncateString(data, 20));
+
+                // Send it to WS
+                //
+                $.ajax({
+                    url: "{{ path('chat_send_message') }}",
+                    method: "post",
+                    dataType: "json",
+                    data: {channel: defaultChannel, message: data},
+                    success: function (response) {
+                        if (response.status == "error") {
+                            toastr.error(response.message);
+                        }
+                        if (response.status == "success") {
+                            console.info(response.message);
+                        }
+                    },
+                    error: function (response) {
+                        console.error("Une erreur s'est produite lors de l'envoie du message");
+                    }
+                });
+
+                // ws.send(JSON.stringify({
+                //   action: 'message',
+                //   user: userName,
+                //   userId: userId,
+                //   message: data,
+                //   channel: defaultChannel,
+                //   date:now,
+                //   vraiedate: trueDate()
+                // }));
+
+                // Default scroll chat box to bottom
+                var height = 0;
+                $('.chat-box div').each(function (i, value) {
+                    height += parseInt($(this).height());
+                });
+                height += '';
+                $('.chat-box').animate({scrollTop: height});
+
+                //$('.chat-content').animate({scrollTop: height});
+                //$('.chat-content').stop().animate({ scrollTop: $('.chat-content').scrollHeight}, 1000);
+            });
+
+            // $('#chatTxtBox').on('keyup',function(){
+            //   ws.send(JSON.stringify({
+            //     action: 'is_tiping',
+            //     user: userName,
+            //     userId: userId,
+            //     channel: defaultChannel
+            //   }));
+            // });
+
+            timer = 0;
+
+            // Clear chat text area
+            function clearInput() {
+                $("#chatTxtBox").val('');
+            }
+
+            $(document).on('click', '.row.side-chat', function () {
+                var channel = $(this).attr('data-channel');
+                var url = $(this).attr('data-url');
+                if (defaultChannel != channel) {
+                    $('.loading').show();
+                    $.ajax({
+                        url: "{{ path('chat_get_channel_messages') }}",
+                        method: "get",
+                        dataType: 'json',
+                        data: {channel: channel},
+                        success: function (data) {
+                            $('.mychat-textarea').show();
+                            $('.row.side-chat').removeClass('active-chat');
+                            $('#channel' + channel).addClass('active-chat');
+
+                            $(".chat-content").html(data.html.all_messages);
+                            $(".destinataire-details").html(data.html.destinataire_details);
+                            $(".destinataire-details-haut").html(data.html.destinataire_details_haut);
+
+                            // Default scroll chat box to bottom
+                            var height = 0;
+                            $('.chat-box div').each(function (i, value) {
+                                height += parseInt($(this).height());
+                            });
+                            height += '';
+                            $('.chat-box').animate({scrollTop: height});
+
+                            window.history.pushState("", "", url);
+                            defaultChannel = channel;
+                            $('.loading').hide();
+                            //    ws.send(JSON.stringify({
+                            //   action: 'is_read',
+                            //   user: userName,
+                            //   userId: userId,
+                            //   channel: defaultChannel
+                            // }));
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            $('.loading').hide();
+                            if (textStatus == 'timeout') {
+                                console.error("Vous n'êtes pas connectés");
+                            } else {
+                                console.error("Une erreur s'est produite avec le serveur");
+                            }
+                        }
+                    });
+                }
+            });
+
+            var refreshConnectToAllChannelsId = setInterval(function () {
+                connectToAllChannels();
+            }, 4000);
+            // Récupère la liste des chaines et remplace le contenu du sélecteur .site-chat-container
+            var connectToAllChannels = function () {
+                $.ajax({
+                    url: "{{ path('chat_get_all_channels_xhr') }}",
+                    dataType: "json",
+                    method: "get",
+                    data: {channel: defaultChannel},
+                    success: function (result) {
+                        if (result.error) {
+                            if (result.error == "not-connected") {
+                                console.error("{{ 'chat.message-erreur.non-connecte'|trans }}");
+                            }
+                        } else {
+
+                            var channels = result.channels;
+                            var html_channels = result.html_channels;
+
+                            // ws.send(JSON.stringify({
+                            //   action: 'subscribe',
+                            //   channel: userName,
+                            //   user: userName
+                            // }));
+
+                            // $.each(channels,function(key,channel) {
+                            //   ws.send(JSON.stringify({
+                            //     action: 'subscribe',
+                            //     channel: channel.name,
+                            //     user: userName
+                            //   }));
+                            // });
+                            if (html_channels.length > 0) {
+                                $('.side-chat-container').html(html_channels);
+                            }
+
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        if (textStatus == 'timeout') {
+                            console.error("Vous n'êtes pas connectés");
+                        } else {
+                            console.error("Une erreur s'est produite avec le serveur");
+                        }
+                    }
+                });
+            };
+
+            var refreshGetAllMessagesOfDefaultChannelId = setInterval(function () {
+                getAllMessagesOfDefaultChannel();
+            }, 4000);
+            var getAllMessagesOfDefaultChannel = function () {
+                if (defaultChannel != "") {
+                    $.ajax({
+                        url: "{{ path('chat_get_channel_messages') }}",
+                        method: "get",
+                        dataType: 'json',
+                        data: {channel: defaultChannel},
+                        success: function (data) {
+                            $(".chat-content").html(data.html.all_messages);
+                            $(".destinataire-details").html(data.html.destinataire_details);
+                            $(".destinataire-details-haut").html(data.html.destinataire_details_haut);
+
+                            // Default scroll chat box to bottom
+                            var height = 0;
+                            $('.chat-box div').each(function (i, value) {
+                                height += parseInt($(this).height());
+                            });
+                            height += '';
+                            $('.chat-box').animate({scrollTop: height});
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            $('.loading').hide();
+                            if (textStatus == 'timeout') {
+                                console.error("Vous n'êtes pas connectés");
+                            } else {
+                                console.error("Une erreur s'est produite avec le serveur");
+                            }
+                        }
+                    });
+                }
+            };
+
+        });
+    </script>
+{% endblock %}

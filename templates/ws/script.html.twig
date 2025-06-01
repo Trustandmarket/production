@@ -1,0 +1,32 @@
+{% if app.user %}
+<script async>
+    $(document).ready(function(){
+        var refresHaveINewMessagesId = setInterval(function(){ haveINewMessages(); }, 10000);
+        var haveINewMessages = function(){
+            $.ajax({
+                url : "{{ path('chat_i_have_new_messages_xhr') }}",
+                method : "get",
+                dataType : "json",
+                success : function(data){
+                    if(data.statut== 'yes'){
+                        $('.chat-menu i').addClass('new-message');
+                    }
+                    else{
+                        $('.chat-menu i').removeClass('new-message');
+                    }
+                },
+                error : function(XMLHttpRequest, textStatus, errorThrown){
+                    if(textStatus == 'timeout') {
+                        console.error("Vous n'êtes pas connectés");
+                    }
+                    else{
+                        console.error("Une erreur s'est produite avec le serveur");
+                    }
+                }
+            });
+        }
+        
+    });
+
+</script>
+{% endif %}

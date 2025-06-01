@@ -1,0 +1,248 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Trust and Market\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-08-23 23:29+0000\n"
+"PO-Revision-Date: 2017-12-11 10:25+0000\n"
+"Last-Translator: David Maire <david@lebackyard.fr>\n"
+"Language-Team: French (France)\n"
+"Language: fr-FR\n"
+"Plural-Forms: nplurals=2; plural=n > 1\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco - https://localise.biz/"
+
+#. Name of the template
+msgid "Full Width Page"
+msgstr "Page entière"
+
+#: 404.php:11
+msgid "The page you were looking for does not exist."
+msgstr "La page recherchée n'existe pas."
+
+#. Name of the template
+msgid "Home Page"
+msgstr "Page d'accueil"
+
+#: search.php:9
+msgid "Search Results for"
+msgstr "Résultats de recherche pour"
+
+#. Name of the template
+msgid "Page with Cover"
+msgstr "Page avec couverture"
+
+#. Name of the template
+msgid "Custom Login"
+msgstr "Connexion client"
+
+#: templates/custom-login.php:24
+msgid "Connexion"
+msgstr "Connexion"
+
+#. Name of the template
+msgid "Custom Register"
+msgstr "Enregistrement client"
+
+#: functions/widgets.php:9
+msgid "Sidebar"
+msgstr "Barre latérale"
+
+#: functions/widgets.php:11
+msgid "The sidebar widget area"
+msgstr "Le widget de la zone Barre latérale"
+
+#: functions/widgets.php:22
+msgid "Footer"
+msgstr "Pied de page"
+
+#: functions/widgets.php:24
+msgid "The footer widget area"
+msgstr "Le widget de la zone Pied de page"
+
+#: functions/woocommerce-setup.php:64
+msgid "View your shopping cart"
+msgstr "Voir votre panier"
+
+#: functions/woocommerce-setup.php:65
+msgid "Start shopping"
+msgstr "Commencer vos achats"
+
+#: functions/woocommerce-setup.php:69
+#, php-format
+msgid "%d item"
+msgid_plural "%d items"
+msgstr[0] "%d item"
+msgstr[1] ""
+
+#: functions/feedback.php:28
+msgid "at"
+msgstr "à"
+
+#: functions/feedback.php:30
+msgid "Your comment is awaiting moderation."
+msgstr "Votre commentaire est en attente de modération."
+
+#: functions/feedback.php:41
+msgid "Edit"
+msgstr "Editer"
+
+#: functions/navbar.php:171
+msgid "Upper navbar (left)"
+msgstr "Barre de navigation du haut (gauche)"
+
+#: functions/navbar.php:172
+msgid "Upper navbar (right)"
+msgstr "Barre de navigation du haut (droite)"
+
+#: functions/navbar.php:175
+msgid "Lower navbar (left)"
+msgstr "Barre de navigation du bas (gauche)"
+
+#: functions/navbar.php:176
+msgid "Lower navbar (right)"
+msgstr "Barre de navigation du bas (droite)"
+
+#: functions/search.php:5
+msgid "Recherchez un musicien, un photographe, "
+msgstr "Recherchez un musicien, un photographe, "
+
+#: functions/search.php:6
+msgid "Search"
+msgstr "Recherche"
+
+#: functions/setup.php:16
+msgid "Read more"
+msgstr "En savoir plus"
+
+#: includes/loops/content-single.php:16 includes/loops/content-resource.php:18
+#: includes/loops/content.php:22
+msgid "By"
+msgstr "Par"
+
+#: includes/loops/content-single.php:21 includes/loops/content-resource.php:23
+msgid "Filed under"
+msgstr ""
+
+#: includes/loops/content-single.php:22 includes/loops/comments.php:20
+#: includes/loops/content-resource.php:24 includes/loops/content.php:35
+msgid "Comments"
+msgstr "Commentaires"
+
+#: includes/loops/content-single.php:22 includes/loops/comments.php:20
+#: includes/loops/content-resource.php:24 includes/loops/content.php:35
+msgid "None"
+msgstr "Aucun"
+
+#: includes/loops/content-search.php:22
+msgid "Sorry, your search yielded no results."
+msgstr "Toutes nos excuses, votre recherche n'a pas abouti."
+
+#: includes/loops/comments.php:8
+msgid "This post is password protected. Enter the password to view comments."
+msgstr ""
+"Ce post a été protégé par un mot de passe. Entrez le mot de passe pour voir "
+"les commentaires."
+
+#: includes/loops/comments.php:17
+msgid "Feedback"
+msgstr "Commentaire"
+
+#: includes/loops/comments.php:34
+msgid "Be the first to write a comment."
+msgstr "Soyez le premier à publier un commentaire."
+
+#: includes/loops/comments.php:36
+msgid "Comments are closed for this post."
+msgstr "Les commentaires sont fermés sur cette publication."
+
+#: includes/loops/comments.php:43
+msgid "Your feedback"
+msgstr "Votre retour"
+
+#: includes/loops/comments.php:43
+#, php-format
+msgid "Responses to %s"
+msgstr "Réponses à %s"
+
+#: includes/loops/comments.php:46
+#, php-format
+msgid "You must be <a href=\"%s\">logged in</a> to post a comment."
+msgstr "Vous devez être connecté pour publier un commentaire."
+
+#: includes/loops/comments.php:51
+msgid "Logged in as"
+msgstr "Connecté en tant que"
+
+#: includes/loops/comments.php:52
+msgid "Log out of this account"
+msgstr "Se déconnecter de ce compte"
+
+#: includes/loops/comments.php:52
+msgid "Log out"
+msgstr "Déconnexion"
+
+#: includes/loops/comments.php:56 includes/loops/comments.php:57
+msgid "Your name"
+msgstr "Votre nom"
+
+#: includes/loops/comments.php:60 includes/loops/comments.php:61
+msgid "Your email address"
+msgstr "Votre adresse email"
+
+#: includes/loops/comments.php:60
+msgid "(required, but will not be published)"
+msgstr "(Champs obligatoire, mais ne sera pas publié)"
+
+#: includes/loops/comments.php:64
+msgid "Your website"
+msgstr "Votre site internet"
+
+#: includes/loops/comments.php:64
+msgid "if you have one (not required)"
+msgstr "(Facultatif)"
+
+#: includes/loops/comments.php:69 includes/loops/comments.php:70
+msgid "Your comment"
+msgstr "Votre commentaire"
+
+#: includes/loops/comments.php:72
+msgid "Submit comment"
+msgstr "Envoyer un commentaire"
+
+#: includes/loops/content.php:34
+msgid "Category"
+msgstr "Catégorie"
+
+#: includes/loops/content.php:45
+msgid "Previous"
+msgstr "Précédent"
+
+#: includes/loops/content.php:46
+msgid "Next"
+msgstr "Suivant"
+
+#. Name of the theme
+msgid "Trust and Market"
+msgstr "Trust & Market"
+
+#. Description of the theme
+msgid "Bootstrap Starter Theme for WordPress. Using Twitter Bootstrap 3.3.5"
+msgstr "Bootstrap Starter Theme for WordPress. Using Twitter Bootstrap 3.3.5"
+
+#. URI of the theme
+msgid "https://github.com/BST-Plus/BST-Plus"
+msgstr "https://github.com/BST-Plus/BST-Plus"
+
+#. Author of the theme
+msgid "Simon Padbury &amp; Ciaran Whelan"
+msgstr "Simon Padbury &amp; Ciaran Whelan"
+
+#. Author URI of the theme
+msgid "http://simonpadbury.com%20&%20http://cmwwebfx.com.au"
+msgstr "http://simonpadbury.com%20&%20http://cmwwebfx.com.au"
+
+#: 404.php:10
+msgid "Error"
+msgstr "Erreur"

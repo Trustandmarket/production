@@ -1,0 +1,45 @@
+<nav aria-label=" ...">
+		<ul class="pagination">
+			<li class="page-item">
+				<a class="page-link {% if noPage == 1 %}disabled{% endif %}" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage-1,
+				nombreDeLignes: devisEnBrouillonCount, tag: 'devis-draft'})}}" tabindex="-1">{{'filtres.precedent'|trans({}, 'liste_annonces') }}</a>
+			</li>
+			{% if noPage > 1  %}
+				<li class="page-item">
+					<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: 1,
+					nombreDeLignes: devisEnBrouillonCount, tag: 'devis-draft'})}}">1<span class="sr-only"></span>
+					</a>
+				</li>
+			{% endif %}
+			{% if noPage > 2  %}
+				<li class="page-item">
+					<a class="page-link" href="">...<span class="sr-only"></span>
+					</a>
+				</li>
+			{% endif %}
+			<li class="page-item active">
+				<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage,
+				nombreDeLignes: devisEnBrouillonCount, tag: 'devis-draft'})}}">{{noPage}}<span class="sr-only"></span>
+				</a>
+			</li>
+			{% if pages_devis_draft - noPage > 1  %}
+				<li class="page-item">
+					<a class="page-link" href="">...<span class="sr-only"></span>
+					</a>
+				</li>
+			</li>
+		{% endif %}
+		{% if pages_devis_draft - noPage > 0  %}
+			<li class="page-item">
+				<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: pages_devis_draft,
+				nombreDeLignes: devisEnBrouillonCount, tag: 'devis-draft'})}}">{{pages_devis_draft}}<span class="sr-only"></span>
+				</a>
+			</li>
+		{% endif %}
+		<li class="page-item {% if noPage == pages_devis_draft %}disabled{% endif %}">
+			<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage+1,
+			nombreDeLignes: devisEnBrouillonCount, tag: 'devis-draft'})}}">{{'filtres.suivant'|trans({}, 'liste_annonces') }}
+			</a>
+		</li>
+	</ul>
+</nav>

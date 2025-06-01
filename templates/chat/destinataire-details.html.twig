@@ -1,0 +1,69 @@
+<div class="row user-details p-2 pl-3 pr-3">
+  <div class="col-left">
+    <img src="{% if destinataire.avatar %} {{destinataire.avatar|first}}{% else %} {{asset('assets/img/profile/avatar-profile.png')}} {% endif %}" class="img-fluid rounded-circle avatar-detail" alt="">
+  </div>
+  <div class="col-right pl-2">
+    <h6>
+      <span class="username">{{destinataire.first_name}}
+        {{ destinataire.last_name }}</span>
+    </h6>
+    <p class="brief">{{destinataire.titre}}</p>
+    <p class="ratings">
+      <i class="fa fa-star lightblue"></i>
+      <i class="fa fa-star lightblue"></i>
+      <i class="fa fa-star lightblue"></i>
+      <i class="fa fa-star lightblue"></i>
+      <i class="fa fa-star lightblue"></i>
+      <strong>
+        <a target="_blank" href="{{path('profile_detailsProfessionnel',{'id':'infos-profil-' ~ destinataire.id})}}">{# ({{destinataireAvis}}) #}
+          {{'chat.profil-vendeur.voir-avis'|trans}}</a><br>
+        <span class="mission-counter">{{destinataire.annonces_publiees}}
+          {{'chat.annonces'|trans}}</span>
+      </strong>
+    </p>
+  </div>
+</div>
+<!-- Next section -->
+{# <div class="row">
+  <div class="col-md-12 pl-2 pr-2">
+    <!-- Accordion -->
+    <div id="accordionProfileDetails" class="accordion">
+      <!-- Accordion item 1 -->
+      <div class="card">
+        <div id="headingOne" class="card-header bg-white border-0">
+          <h6 data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="text-dark border-bottom pb-3 collapsible-link">
+            {{'chat.annonces-en-cours'|trans}}
+            ({{destinataire.annonces|length}})
+          </h6>
+        </div>
+        <div id="collapseOne" aria-labelledby="headingOne" data-parent="#accordionProfileDetails" class="collapse show">
+          <div class="card-body">
+            <p class="fs-15">{{'chat.annonces-en-cours'|trans}}</p>
+            <p class="font-weight-light m-0 bg-light p-1 rounded">
+              {% for a in destinataire.annonces %}
+                <a href="{{path('annonces_detailsAnnonce',{'id':a.slug})}}" target="_blank" class="fs-12 lightblue font-weight-bold text-decoration-none">{{a.post_title|raw}}</a>
+              {% endfor %}
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- End -->
+  </div>
+</div> #}
+<!-- Envoyer un devis -->
+<div class="row mt-5">
+  <div class="col-md-12">
+<a {% for r in app.user.roles %} {% if r=='ROLE_SUPER_ADMIN' or r=='ROLE_AUTO_ENTREPRENEUR' or r=='ROLE_SOCIETE' %} href="{{path('profile_creerAnnonces')}}" target=" _blank" {% endif %} {% endfor %} class="btn btn-primary btn-block send-quote">{{'chat.envoyer-un-devis'|trans}}</a>
+
+
+
+
+
+
+
+
+
+  </div>
+</div>

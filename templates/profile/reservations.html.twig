@@ -1,0 +1,598 @@
+{% extends 'profileTemplate.html.twig' %}
+
+{% block head %}
+	{{parent()}}
+	<link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}" sizes="32x32"/>
+	<link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}" sizes="192x192"/>
+	<link rel="apple-touch-icon-precomposed" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+	<meta name="msapplication-TileImage" content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+	<meta name="robots" content="noindex">
+{% endblock %}
+
+{% block title %}
+Trust &amp; Market | Profil Réservations{% endblock %}
+{% block  annonce %}
+	active
+{% endblock %}
+{% block style %}
+	{{parent()}}
+
+	<!-- Gijgo datepicker css -->
+	<link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+
+<link href="{{ preload(asset('assets/css/custome.css'))}}" rel="stylesheet">
+<link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+
+	<link rel="stylesheet" href="{{ asset('assets/css/img-picker/image-picker.css')}}">
+	<link href="{{ asset('assets/css/style-moderation.css')}}" rel="stylesheet">
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+	<link
+	rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+
+	<!-- file input fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+	<link
+	href="{{asset('assets/font/file-input-font/font/font-fileuploader.css')}}" rel="stylesheet">
+	<!-- file input styles -->
+	<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+
+	<style>
+		.image_picker_image {
+			width: 100px;
+			height: 100px
+		}
+		.tox-statusbar__branding {
+			display: none;
+		}
+		.btn-bg-primary {
+			color: #fff;
+			background: #f17b30 !important;
+		}
+		.btn-bg-primary:hover {
+			color: #fff;
+			background: #f4b279 !important;
+		}
+		.btn-bg-details-button {
+			color: #fff;
+			background: #008778 !important;
+		}
+
+		@media only screen and(min-width : 992px) {
+			.dashboard-menu {
+				margin-top: 12px !important;
+			}
+		}
+	</style>
+
+{% endblock %}
+
+
+{% block header %}
+
+	{{parent()}}
+
+{% endblock %}
+
+{% block navigation %}{% endblock %}
+
+{% block body %}
+	<div class="flex-fill container">
+		<main class="">
+
+			<div class="container">
+				{% include 'menuProfile.html.twig' %}
+				<div
+					class="mt-2">
+					<!-- Modif des infos -->
+					<div id="modifInfo">
+						<div class="row">
+							<div hidden class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
+								<strong>Holy guacamole!</strong>
+								You should check in on some of those fields below.
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+
+							{% include 'annonces/sousMenuAnnonces.html.twig' %}
+
+							<div class="col-md-8 mb-2">
+
+								{% if reservationsDevisEnAttente|length != 0 %}
+									<div class="row">
+										<div class="col-md-4">
+											<h5 class="underline fs-16">Devis en Attente ({{reservationsDevisEnAttente|length}})</h5>
+										</div>
+										<div class="col-md-8">
+											<p class="fs-12">
+												Ces devis sont actuellement en attente de validation.
+											</p>
+										</div>
+									</div>
+									{% for a in reservationsDevisEnAttente %}
+										<div class="row mt-3" style="min-height: 200px">
+											<div class="col-md-4 annonce-img" style="background: url('{% if a.gallery.0 %}{{a.gallery.0.guid}}{% else %}{{a.images_secondaires.0.guid}}{% endif %}')"></div>
+											<div class="col-md-8 py-2 annonce-detail">
+												<h4>SERVICE:
+													{{a.titre}}</h4>
+												<h4>DATES ET HORAIRES:
+													{{a.dates_devis}}</h4>
+												{# <p class="fs-14">{{a.titre}}</p> #}
+												<h4>PRESTATAIRE:
+													{{a.prenom_prestataire}}
+													{{a.nom_prestataire}}</h4>
+												{# <span class="texte-gris text-bold fs-14"><i class="fas fa-map-marker"></i> {{a.pays|country_name}}, {{a.etat}}, {{a.ville}}</span> <br> #}
+												{# <span class="texte-gris text-bold fs-14"><i class="fas fa-calendar"></i> {{a.dates_devis}} </span> #}
+												<div class="pt-4">
+													<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+														<div class="btn-group mr-2" role="group" aria-label="First group">
+														<a class="btn btn btn-bg-primary btn-s annulerCommande" href="{{path('devis_annulerDevis',{id:a.id})}}">Annuler
+
+															</a>
+														</div>
+														<div class="btn-group mr-2" role="group" aria-label="Second group">
+															<a href="{{path('devis_detailsDevis',{id:a.id})}}" class="btn btn-bg-details-button btn-s">Voir et accepter</a>
+														</div>
+
+														<div class="btn-group ml-4 " role="group" aria-label="Thirth group"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									{% endfor %}
+								{% endif %}
+
+
+								{% if reservationsEnCours|length != 0  %}
+
+									<div class="row">
+										<div class="col-md-4">
+											<h5 class="underline fs-16">{{'profil-utilisateur.annonces.reservations-en-cours'|trans}}
+												({{reservationsEnCours|length}})</h5>
+										</div>
+										<div class="col-md-8">
+											<p class="fs-12">
+												{{'profil-utilisateur.annonces.message-reservations-en-cours'|trans}}
+											</p>
+										</div>
+									</div>
+									{# {{dump(reservationsEnCours.pinged)}} #}
+
+									{% for a in reservationsEnCours %}
+										{% if a.pinged == "devis" %}
+
+											<div class="row mt-3" style="min-height: 200px">
+												<div class="col-md-4 annonce-img" style="background: url('{% if a.annonces|first.gallery.0 %}{{a.annonces|first.gallery.0.guid}}{% else %}{{a.annonces|first.images_secondaires.0.guid}}{% endif %}')"></div>
+												<div class="col-md-8 py-2 annonce-detail">
+													<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+														{{a.post_title}}</h4>
+
+													<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:{{a.date_evenement}}</h4>
+													{# <p class="fs-14">{{a.titre}}</p> #}
+													<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+														{{a.prenom_prestataire}}
+														{{a.nom_prestataire}}</h4>
+													{# <span class="texte-gris text-bold fs-14"><i class="fas fa-map-marker"></i> {{a.pays|country_name}}, {{a.etat}}, {{a.ville}}</span> <br> #}
+													{# <span class="texte-gris text-bold fs-14"><i class="fas fa-calendar"></i> {{a.dates_devis}} </span> #}
+
+													<div class="pt-4">
+														<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+															<div class="btn-group mr-2" role="group" aria-label="First group">
+<a class="btn btn btn-bg-primary btn-s annulerCommande" href="{{path('devis_annulerDevis',{id:a.id, state:'edition'})}}">Annuler
+
+																</a>
+															</div>
+
+															<div class="btn-group ml-4 " role="group" aria-label="Thirth group"></div>
+														</div>
+													</div>
+
+
+												</div>
+											</div>
+
+										{% elseif a.pinged == "product" %}
+
+
+											{% for s in a.annonces %}
+												<div class="row mt-3" style="min-height: 200px">
+													<div class="col-md-4 annonce-img" style="background: url('{{s.gallery.0.guid}}')"></div>
+													<div class="col-md-8 py-2 annonce-detail">
+														<h3>{{s.first_name}}
+															{{s.last_name}}</h3>
+														<p class="fs-14">{{s.post_title}}</p>
+														<h3>{{s.prix}}
+															{{s.devise.metaValue}}</h3>
+														<span class="texte-gris text-bold fs-14">
+															<i class="fas fa-map-marker"></i>
+															{{s.pays|country_name}},
+															{{s.etat}},
+															{{s.ville}}</span>
+														<br>
+														<span class="texte-gris text-bold fs-14">
+															<i class="fas fa-calendar"></i>
+															{{a.date_evenement}}</span>
+
+														<div class="pt-4">
+															<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+																<div class="btn-group mr-2" role="group" aria-label="First group">
+																	{% if s.id != "" %}
+																		<a class="btn btn-bg-primary btn-sm editer" href="{{path('annonces_detailsAnnonce',{id:s.slug})}}">
+																			Voir l'annonce
+																		</a>
+																	{% endif %}
+																</div>
+																<div class="btn-group mr-2" role="group" aria-label="Second group">
+																	{% if a.id != "" and s.id != "" %}
+																		<a href="{{path('payment_annulerCommande', {idPost:s.id , idCommande:a.id}) }}" class="btn btn-bg-primary btn-sm editer annulerCommande">
+																			Annuler
+																		</a>
+																	{% endif %}
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											{% endfor %}
+										{% endif %}
+									{% endfor %}
+
+								{% endif %}
+
+								{% if reservationsTerminees|length != 0 %}
+
+									<div class="row">
+										<div class="col-md-4">
+											<h5 class="underline fs-16">{{'profil-utilisateur.annonces.reservations-terminees'|trans}}
+												({{reservationsTerminees|length}})</h5>
+										</div>
+										<div class="col-md-8">
+											<p class="fs-12">
+												{{'profil-utilisateur.annonces.message-reservations-terminees'|trans}}
+											</p>
+										</div>
+									</div>
+
+									{% for a in reservationsTerminees %}
+										{% if a.pinged == "devis" %}
+
+											<div class="row mt-3" style="min-height: 200px">
+												<div class="col-md-4 annonce-img" style="background: url('{% if a.annonces|first.gallery.0 %}{{a.annonces|first.gallery.0.guid}}{% else %}{{a.annonces|first.images_secondaires.0.guid}}{% endif %}')"></div>
+												<div class="col-md-8 py-2 annonce-detail">
+													<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+														{{a.post_title}}</h4>
+
+													<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:{{a.date_evenement}}</h4>
+													{# <p class="fs-14">{{a.titre}}</p> #}
+													<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+														{{a.prenom_prestataire}}
+														{{a.nom_prestataire}}</h4>
+												</div>
+											</div>
+
+										{% elseif a.pinged == "product" %}
+											{% for s in a.annonces %}
+												<div class="row mt-3" style="min-height: 200px">
+													<div class="col-md-4 annonce-img" style="background: url('{% if s.gallery.0 %}{{s.gallery.0.guid}}{% else %}{{s.gallery.images_secondaires.0.guid}}{% endif %}')"></div>
+													<div class="col-md-8 py-2 annonce-detail">
+														<h3>{{s.first_name}}
+															{{s.last_name}}</h3>
+														<p class="fs-14">{{s.post_title}}</p>
+														<h3>{{ a.post_parent }}
+															{{s.devise.metaValue}}</h3>
+														<span class="texte-gris text-bold fs-14">
+															<i class="fas fa-map-marker"></i>
+															{{s.pays|country_name}},
+															{{s.etat}},
+															{{s.ville}}</span>
+														<br>
+														<span class="texte-gris text-bold fs-14">
+															<i class="fas fa-calendar"></i>
+															{{a.date_evenement}}</span>
+													</div>
+												</div>
+											{% endfor %}
+										{% endif %}
+									{% endfor %}
+
+								{% endif %}
+								{% if reservationsAnnulees|length != 0  %}
+
+									<div class="row">
+										<div class="col-md-4">
+											<h5 class="underline fs-16">{{'profil-utilisateur.annonces.reservations-annulees'|trans}}
+												({{reservationsAnnulees|length}})</h5>
+										</div>
+										<div class="col-md-8">
+											<p class="fs-12">
+												{{'profil-utilisateur.annonces.message-reservations-annulees'|trans}}
+											</p>
+										</div>
+									</div>
+									{% for a in reservationsAnnulees %}
+										{% if a.pinged == "devis" %}
+
+											<div class="row mt-3" style="min-height: 200px">
+												<div class="col-md-4 annonce-img" style="background: url('{% if a.annonces|first.gallery.0 %}{{a.annonces|first.gallery.0.guid}}{% else %}{{a.annonces|first.images_secondaires.0.guid}}{% endif %}')"></div>
+												<div class="col-md-8 py-2 annonce-detail">
+													<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+														{{a.post_title}}</h4>
+
+													<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:{{a.date_evenement}}</h4>
+													{# <p class="fs-14">{{a.titre}}</p> #}
+													<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+														{{a.prenom_prestataire}}
+														{{a.nom_prestataire}}</h4>
+													</div>
+											</div>
+
+										{% elseif a.pinged == "product" %}
+											{% for s in a.annonces %}
+												<div class="row mt-3" style="min-height: 200px">
+													<div class="col-md-4 annonce-img" style="background: url('{% if s.gallery.0 %}{{s.gallery.0.guid}}{% else %}{{s.images_secondaires.0.guid}}{% endif %}')"></div>
+													<div class="col-md-8 py-2 annonce-detail">
+														<h3>{{s.first_name}}
+															{{s.last_name}}</h3>
+														<p class="fs-14">{{s.post_title}}</p>
+														<h3>{{ a.post_parent }}
+															{{s.devise.metaValue}}</h3>
+														<span class="texte-gris text-bold fs-14">
+															<i class="fas fa-map-marker"></i>
+															{{s.pays|country_name}},
+															{{s.etat}},
+															{{s.ville}}</span>
+														<br>
+														<span class="texte-gris text-bold fs-14">
+															<i class="fas fa-calendar"></i>
+															{{a.date_evenement}}</span>
+													</div>
+												</div>
+											{% endfor %}
+										{% endif %}
+									{% endfor %}
+
+								{% endif %}
+
+
+							</div>
+
+
+						</div>
+					</div>
+					<!-- Fin des modifs -->
+				</div>
+			</div>
+			{% include("partials/project.html.twig") %}
+			{% include("partials/otherPagesVideoModal.html.twig") %}
+		</main>
+	</div>
+
+{% endblock %}
+
+
+{% block footer %}
+	{{parent()}}
+
+{% endblock %}
+
+{% block javascripts %}
+	{{parent()}}
+
+	<!-- jQuery plugin for datepicker -->
+	<script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+	<script src="{{ prerender(asset('assets/js/img-picker/image-picker.min.js')) }}"></script>
+	<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+	{# Text editor #}
+	<script src="//cdn.ckeditor.com/4.13.0/standard/ckeditor.js"></script>
+
+	<script>
+		$(document).ready(function () {
+CKEDITOR.replace('description');
+// CKEDITOR.replace( 'description1' );
+
+var docWidth = document.documentElement.offsetWidth;
+
+[].forEach.call(document.querySelectorAll('*'), function (el) {
+if (el.offsetWidth > docWidth) {
+console.log(el);
+}
+});
+// Hambuger menu icon
+$('.animated-button-icon').on('click', function () {
+$('.animated-icon2').toggleClass('open');
+});
+// first thing turn Hide Menu Search bar
+$("#searchMenu").hide();
+// toggle menu search bar on/off
+$("#searchMenuShowHide").click(function () {
+$("#searchMenu").toggle("slide");
+});
+
+// Initialize the object
+$("#photos").imagepicker();
+$("#videos").imagepicker();
+// Retrieve the picker
+$("#photos").data('picker');
+$("#videos").data('picker');
+
+$('.date').datepicker({multidate: true, format: 'dd-mm-yyyy'});
+
+
+// jQuery time
+var current_fs,
+
+_fs,
+previous_fs; // fieldsets
+var left,
+opacity,
+scale; // fieldset properties which we will animate
+var animating; // flag to prevent quick multi-click glitches
+
+$(".next").click(function () {
+if (animating) 
+return false;
+
+
+
+animating = true;
+
+current_fs = $(this).parent();
+next_fs = $(this).parent().next();
+
+// activate next step on progressbar using the index of next_fs
+$("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+// show the next fieldset
+next_fs.show();
+// hide the current fieldset with style
+current_fs.animate({
+opacity: 0
+}, {
+step: function (now, mx) {
+// as the opacity of current_fs reduces to 0 - stored in "now"
+// 1. scale current_fs down to 80%
+scale = 1 - (1 - now) * 0.2;
+// 2. bring next_fs from the right(50%)
+left = (now * 50) + "%";
+// 3. increase opacity of next_fs to 1 as it moves in
+opacity = 1 - now;
+current_fs.css({
+'transform': 'scale(' + scale + ')',
+'position': 'absolute'
+});
+next_fs.css({'left': left, 'opacity': opacity});
+},
+duration: 800,
+complete: function () {
+current_fs.hide();
+animating = false;
+},
+// this comes from the custom easing plugin
+easing: 'easeInOutBack'
+});
+});
+
+$(".previous").click(function () {
+if (animating) 
+return false;
+
+
+
+animating = true;
+
+current_fs = $(this).parent();
+previous_fs = $(this).parent().prev();
+
+// de-activate current step on progressbar
+$("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+// show the previous fieldset
+previous_fs.show();
+// hide the current fieldset with style
+current_fs.animate({
+opacity: 0
+}, {
+step: function (now, mx) {
+// as the opacity of current_fs reduces to 0 - stored in "now"
+// 1. scale previous_fs from 80% to 100%
+scale = 0.8 + (1 - now) * 0.2;
+// 2. take current_fs to the right(50%) - from 0%
+left = ((1 - now) * 50) + "%";
+// 3. increase opacity of previous_fs to 1 as it moves in
+opacity = 1 - now;
+current_fs.css({'left': left});
+previous_fs.css({
+'transform': 'scale(' + scale + ')',
+'opacity': opacity
+});
+},
+duration: 800,
+complete: function () {
+current_fs.hide();
+animating = false;
+},
+// this comes from the custom easing plugin
+easing: 'easeInOutBack'
+});
+});
+
+$(document).on('click', '.annulerCommande', function (e) { // On emp�che le navigateur de soumettre le formulaire
+e.preventDefault();
+var t = $(this);
+var urlPath = $(this).attr('href');
+swal({
+title: "Annulation de la reservation",
+text: "{{ 'commande.annuler.confirmer_annulation'|trans }}",
+
+type: "info",
+showCancelButton: true,
+confirmButtonClass: "btn-danger",
+confirmButtonText: "Annuler Reservation",
+cancelButtonText: "Annuler",
+closeOnConfirm: false,
+closeOnCancel: false,
+showLoaderOnConfirm: true
+}, function (isConfirm) {
+
+if (isConfirm) {
+
+$.ajax({
+url: urlPath,
+type: 'GET',
+success: function (reponse) {
+if (reponse == 1) {
+
+swal("{{ 'commande.annuler.succes'|trans }}", "", "success");
+
+window.setTimeout(function () {
+window.location = "";
+}, 1000);
+t.parents('li').hide();
+} else {
+
+swal("commande.annuler.erreur'|trans }}", "", "error");
+
+
+}
+},
+error: function (reponse) {
+swal("{{ 'commande.annuler.erreur'|trans }}", "", "error");
+
+
+}
+
+});
+
+} else {
+swal.close();
+}
+});
+return false;
+});
+
+});
+
+
+toastr.options = {
+"closeButton": true,
+"debug": false,
+"newestOnTop": false,
+"progressBar": true,
+"positionClass": "toast-top-center",
+"preventDuplicates": false,
+"onclick": null,
+"showDuration": "300",
+"hideDuration": "1000",
+"timeOut": "30000",
+"extendedTimeOut": "1000",
+"showEasing": "swing",
+"hideEasing": "linear",
+"showMethod": "fadeIn",
+"hideMethod": "fadeOut"
+}
+</script>
+
+{% endblock %}

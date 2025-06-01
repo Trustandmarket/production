@@ -1,0 +1,219 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+	Details Opération spéciale
+{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	{#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+ 	<link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+	<link href="{{asset('assets/css/camroll/camroll_slider.css')}}" rel="stylesheet" type="text/css">
+	<link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+	
+	<link rel="stylesheet" href="{{ asset('assets/css/img-picker/image-picker.css')}}">
+	<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+	<link href="{{asset('assets/font/file-input-font/font/font-fileuploader.css')}}" rel="stylesheet">
+	<!-- file input styles -->
+	<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+	<style>
+	/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+
+.file_upload {
+    min-width: 200px;
+    width: 100%;
+    height: 200px
+}
+
+.created-announce-elements{
+	display: flex;
+}
+
+.label-perso{
+	text-align:left !important;
+	font-size:1.5rem !important;
+}
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.form-group label{
+	flex: none;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+html, body, header, .view {
+    height: 3%;
+}
+</style>
+	<div class="content">
+		<div class="animated fadeIn">
+			<div class="clearfix"></div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header">
+							<h4 class="box-title">Details d'une opération speciale</h4>
+						</div>
+						<div class="modal-body">
+								<div class="row">
+									<div class="col-md-6 form-group">
+										<label class="col-md-12 label-perso">Libelle</label>
+										<div class="container border border-info rounded p-2">{{ops.titre}} </div>
+									</div>
+									
+									<div class="col-md-6 form-group">
+										<label class="col-md-12 label-perso">Meta description</label>
+										<div class="container border border-info rounded p-2">{{ops.meta_description}}</div>
+									</div>
+
+									<div class="col-md-6 form-group">
+										<label class="col-md-12 label-perso">URL</label>
+										<button class="container border border-info rounded p-2" id="url" onclick="copyToClipboard()">{{absolute_url(path('marketing_details_ops_speciales',{slug: ops.slug}))}}</button>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-md-12 row created-announce-elements" id="created-announce-elements">
+									{% for item in ops.articles %}
+										<div class="card col-md-3 announce-list m-2 p-2" data-id="{{item.id}}" style="width: 18rem;">
+											<img class="card-img-top" src="{{item.guid}}" alt="{{item.postName}}">
+											<div class="card-body">
+												<h5 class="card-title">Annonce {{item.id}}</h5>
+												<p class="card-text">{{item.postTitle}}</p>
+												<h6 class="card-title">Prix: {{item.toPing}}</h6>
+												<h6 class="card-title">Vendu par: {{item.postExcerpt}}</h6>
+												<h6 class="card-title btn {% if item.pinged == 1 %}btn-success{% else %}btn-warning{% endif %}">{% if item.pinged == 1 %}
+													Livrable{% else %}Non Livrable{% endif %}</h6>
+											</div>
+										</div>
+									{% endfor %}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6 form-group">
+										<label class="col-md-6 label-perso" for="description">Description</label>
+										<div class="container border border-info rounded p-3">{{ops.description|raw}}</div>
+									</div>
+									<div class="col-md-6 form-group">
+										<label class="col-md-6 label-perso" for="chapeau" >Chap&ocirc;</label>
+										<div class="container border border-info rounded p-3" id="chapeau">{{ops.chapeau|raw}}</div>
+									</div>
+								</div>
+									<div class="col-md-6">
+										<label for="cat_afficher" class="label-perso">Categories d'annonces a afficher</label>
+										{% for item in categories %}
+										<div class="form-check">
+											<input disabled class="form-check-input" type="checkbox" name="cat_afficher" {% for item2 in ops.categorie %}
+												{% if item.termTaxonomyId == item2.TermId %}checked{% endif %}
+											{% endfor %}
+											 id="cat_afficher{{item.termTaxonomyId}}" value="{{item.termTaxonomyId}}">
+											<label class="form-check-label mx-3 opacity-100" for="cat_afficher">
+												{{item.name}}
+											</label>
+										</div>
+										{% endfor %}
+									</div>
+								</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block body_javascript %}
+{{parent()}}
+
+<!-- jQuery plugin for camroll slider -->
+<script type="text/javascript" src="{{ prerender(asset('assets/js/camroll/camroll_slider.js')) }}"></script>
+<!-- jQuery plugin for spartan image picker -->
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+{# <script src="{{ asset('admin/assets/js/vendor/jquery-2.1.4.min.js') }}" type="text/javascript"></script> #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</script><script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+<script src="{{asset('assets/js/img-picker/image-picker.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/spartan-image-picker/spartan-multi-image-picker-min.js') }}"></script>
+
+<!-- Tinymce editor -->
+<script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+<script>
+		function copyToClipboard(text) {
+			var inputc = document.body.appendChild(document.createElement("input"));
+			inputc.value = document.getElementById('url').textContent;
+			inputc.focus();
+			inputc.select();
+			document.execCommand('copy');
+			inputc.parentNode.removeChild(inputc);
+			alert("URL Copiee avec succes.");
+		}
+	$(document).ready(function () {
+	})
+</script>
+
+{% endblock body_javascript %}

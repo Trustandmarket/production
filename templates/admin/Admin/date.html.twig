@@ -1,0 +1,11 @@
+{% if date1 %}
+    {% for d in date %}
+        <option value="{{ d }}" {% for d1 in date1 %}{% if d1 == d %}selected{% endif %}{% endfor %}>{{ d }}</option>
+    {% endfor %}
+{% else %}
+    {% for d in date %}
+        {% if d|date('U') > ('now'|date('d-m-Y'))|date('U') %}
+            <option value="{{ d }}">{{ d }}</option>
+        {% endif %}
+    {% endfor %}
+{% endif %}

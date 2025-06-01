@@ -1,0 +1,448 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+	Editer un Leads
+{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	{#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+ 	<link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+	<link href="{{asset('assets/css/camroll/camroll_slider.css')}}" rel="stylesheet" type="text/css">
+	<link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+	
+	<link rel="stylesheet" href="{{ asset('assets/css/img-picker/image-picker.css')}}">
+	<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+	<link href="{{asset('assets/font/file-input-font/font/font-fileuploader.css')}}" rel="stylesheet">
+	<!-- file input styles -->
+	<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+	<style>
+	/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+
+.file_upload {
+    min-width: 200px;
+    width: 100%;
+    height: 200px
+}
+
+.created-announce-elements{
+	display: flex;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.form-group label{
+	flex: none;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+html, body, header, .view {
+    height: 3%;
+}
+</style>
+	<div class="content">
+		<div class="animated fadeIn">
+			<div class="clearfix"></div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header">
+							<h4 class="box-title">Editer un Lead Gen</h4>
+						</div>
+						<div class="modal-body">
+							<form action="{{path('marketing_leads_gen_edit')}}" method="POST" id="save_ops_speciale">
+								<div class="row">
+									<input value="{{ops.id}}" id="id" name="id" hidden/>
+									<div class="col-md-12 form-group">
+										<label style="text-align:left;" class="col-md-12">Libelle</label>
+										<input value="{{ops.titre}}" class="form-control" type="text" placeholder="Libelle" name="libelle" id="libelle" required/>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-12 form-group">
+										<label style="text-align:left;" class="col-md-12">Meta description</label>
+										<textarea class="form-control" placeholder="Meta description" name="meta_description" id="meta_description" required>{{ops.meta_description}}</textarea>
+									</div>
+								</div>
+								
+
+								<div class="row">
+									<div class="col-md-12 form-group">
+										<label style="text-align:left;" class="col-md-3" for="chapeau">Chap&ocirc;</label>
+										<textarea class="col-md-12 form-control border-form-control" name="chapeau" id="chapeau">{{ops.chapeau}}</textarea>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-3">
+										<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAnnounceData">
+											<i class="fas fa-plus"></i> Ajouter des articles
+										</button>
+									</div>
+									<div class="col-md-9 row created-announce-elements" id="created-announce-elements">
+									{% for item in ops.articles %}
+										<div class="card col-md-3 announce-list" data-id="{{item.id}}" style="width: 18rem;">
+											<img class="card-img-top" src="{{item.guid}}" alt="{{item.postName}}">
+											<div class="card-body">
+												<h5 class="card-title">Annonce {{item.id}}</h5>
+												<p class="card-text">{{item.postTitle}}</p>
+												<a href="{{path('post_delete_get', {'id' : item.id})}}" class="btn btn-danger delete_announce_element">Supprimer</a>
+											</div>
+										</div>
+									{% endfor %}
+									</div>
+									<input hidden name="annonces_id" id="annonces_id" />
+								</div>
+								<div class="row">
+									<div class="col-md-12 form-group">
+										<label style="text-align:left;" class="col-md-3" for="description">Description</label>
+										<textarea class="col-md-12 form-control border-form-control" name="description" id="description">{{ops.description}}</textarea>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<label for="cat_afficher">Categories d'annonces a afficher</label>
+										{% for item in categories %}
+										<div class="form-check">
+											<input {% for item2 in ops.categorie %}
+												{% if item.termTaxonomyId == item2.TermId %}checked{% endif %}
+											{% endfor %}
+											 class="form-check-input" type="checkbox" name="cat_afficher[]" id="cat_afficher{{item.termTaxonomyId}}" value="{{item.termTaxonomyId}}">
+											<label class="form-check-label mx-3" for="cat_afficher">
+												{{item.name}}
+											</label>
+										</div>
+										{% endfor %}
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" id="send" class="btn btn-success waves-effect waves-light ld-over-inverse ">{{'admin.categorie.enregistrer'|trans}}<i class="ld ld-ring ld-spin"></i>
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade none-border" id="addAnnounceData">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">
+							<strong>{{'admin.categorie.add-critere'|trans}}</strong>
+						</h4>
+					</div>
+					<div class="modal-body">
+						<form action="{{path('marketing_leads_gen_add_announce')}}" method="post" id="add_announce">
+							<div class="col-md-12 mt-2">
+							<h5>Image principale</h5>
+								<div class="form-group">
+									<div id="coba" class="row"></div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-12 form-group">
+									<input class="form-control" placeholder="Titre" type="text" name="titre" id="titre" required/>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Fermer</button>
+								<button type="submit" id="send" class="btn btn-success waves-effect waves-light ld-over-inverse ">{{'admin.categorie.send'|trans}}<i class="ld ld-ring ld-spin"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block body_javascript %}
+{{parent()}}
+
+<!-- jQuery plugin for camroll slider -->
+<script type="text/javascript" src="{{ prerender(asset('assets/js/camroll/camroll_slider.js')) }}"></script>
+<!-- jQuery plugin for spartan image picker -->
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+{# <script src="{{ asset('admin/assets/js/vendor/jquery-2.1.4.min.js') }}" type="text/javascript"></script> #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</script><script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+<script src="{{asset('assets/js/img-picker/image-picker.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/spartan-image-picker/spartan-multi-image-picker-min.js') }}"></script>
+
+<!-- Tinymce editor -->
+<script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+<script type="text/javascript">
+	$(document).ready(function () {
+		tinymce.init({
+		selector: 'textarea#description',
+		height: 350,
+		plugins: [
+		'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+		],
+
+		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+		browser_spellcheck: true,
+		contextmenu: false,{% if lang=='fr' %}
+		language : 'fr_FR',{% endif %}
+		});
+
+		
+		tinymce.init({
+		selector: 'textarea#chapeau',
+		height: 350,
+		plugins: [
+		'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+		],
+
+		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+		browser_spellcheck: true,
+		contextmenu: false,{% if lang=='fr' %}
+		language : 'fr_FR',{% endif %}
+		});
+		initImagePicker();
+
+$('#add_announce').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+e.preventDefault();
+toastr.info("{{'systeme.requetes.requete-en-cours'|trans}}");
+var $form = $(this);
+var formdata = (window.FormData) ? new FormData($form[0]) : null;
+var data = (formdata !== null) ? formdata : $form.serialize();
+
+$.ajax({
+url: $form.attr('action'),
+type: $form.attr('method'),
+contentType: false,
+processData: false,
+data: data,
+success: function (reponse) {
+	console.log(reponse);
+if (reponse.response > 0) {
+toastr.clear();
+toastr.success("{{'systeme.requetes.succes'|trans}}");
+if (reponse.html) {
+	$('#created-announce-elements').append(reponse.html);
+}
+document.getElementById("add_announce").reset();
+$('#addAnnounceData').hide();
+$('.modal-backdrop').hide();
+$('body').attr("style", "overflow:auto");
+} else if (reponse.response == 0) {
+	toastr.clear();
+	toastr.error("{{'systeme.requetes.erreur'|trans}}");
+}
+},
+error: function (reponse) {
+$('#send').removeClass('running');
+toastr.clear();
+toastr.error("{{'general.error'|trans }}");
+}
+});
+return false;
+});
+
+$('#save_ops_speciale').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+e.preventDefault();
+let annonces = document.getElementsByClassName('announce-list');
+	if (annonces.length > 0) {
+		let temp = tinymce.get("description").getContent();
+		$('#description').val(temp);
+		let annonces_id = [];
+		//Get All Updated announces
+		for (let index = 0; index < annonces.length; index++) {
+			annonces_id.push(annonces[index].getAttribute('data-id'));
+		}
+		$("#annonces_id").val(annonces_id.join());
+		toastr.info("{{'systeme.requetes.requete-en-cours'|trans}}");
+		var $form = $(this);
+		var formdata = (window.FormData) ? new FormData($form[0]) : null;
+		var data = (formdata !== null) ? formdata : $form.serialize();
+			$.ajax({
+			url: $form.attr('action'),
+			type: $form.attr('method'),
+			contentType: false,
+			processData: false,
+			data: data,
+			success: function (reponse) {
+			if (reponse > 0) {
+			toastr.clear();
+			toastr.success("{{'systeme.requetes.succes'|trans}}");
+			window.location =  document.referrer;
+			} else if (reponse == 0) {
+				toastr.clear();
+				toastr.error("{{'systeme.requetes.erreur'|trans}}");
+			}
+			},
+			error: function (reponse) {
+			$('#send').removeClass('running');
+			toastr.clear();
+			toastr.error("{{'general.error'|trans }}");
+			}
+			});
+		return false;
+	} else {
+		toastr.warning("{{'systeme.requetes.remplir_annonces'|trans}}");
+	}
+});
+
+$(document).on('click', '.delete_announce_element', function (e) {
+	e.preventDefault();
+	var t = $(this);
+	var urlPath = $(this).attr('href');
+	swal({
+	title: "Suppression de l'image et ses données",
+	text: "Attention l'image ainsi que toutes ses données seront Supprimées",
+	type: "info",
+	showCancelButton: true,
+	confirmButtonClass: "btn-danger",
+	confirmButtonText: "Supprimer",
+	cancelButtonText: "Annuler",
+	closeOnConfirm: false,
+	closeOnCancel: false,
+	showLoaderOnConfirm: true
+	}, function (isConfirm) {
+	if (isConfirm) {
+	$.ajax({
+	url: urlPath,
+	type: 'GET',
+	success: function (reponse) {
+	if (reponse > 0) {
+	swal("Suppression terminée", "", "success");
+		t.parent().parent().fadeOut();
+	} else {
+	swal("Erreur de suppression", "", "error");
+	}
+	},
+	error: function (reponse) {
+	swal("Erreur de suppression", "", "error");
+	}
+	});
+	} else {
+	swal.close();
+	}
+	});
+	return false;
+	});
+
+	toastr.options = {
+		"closeButton": true,
+		"debug": false,
+		"newestOnTop": false,
+		"progressBar": true,
+		"positionClass": "toast-top-center",
+		"preventDuplicates": false,
+		"onclick": null,
+		"showDuration": "220",
+		"hideDuration": "600",
+		"timeOut": "900",
+		"extendedTimeOut": "1000",
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	}
+
+	function initImagePicker() {
+		$("#coba").spartanMultiImagePicker({
+			fieldName: 'file[]',
+			maxCount: 1,
+			allowedExt:'jpg|jpeg|png',
+			directUpload: {
+			status: false,
+			loaderIcon: '<i class="fas fa-sync fa-spin"></i>',
+			// 'portfolio/{{app.request.get('_locale')}}'
+			url: $("#containerForPortfolio").attr("addPortfolioUrl"),
+			additionalParam: {
+			name: 'portfolios[]'
+			},
+			onExtensionErr : function(index, file){
+				console.log(index, file,  'Uploader uniquement les fichier JPG/JPEG');
+				toastr.warning("Uploader uniquement les fichier JPG/JPEG");
+			},
+			onSizeErr : function(index, file){
+				console.log(index, file,  'Le fichier est trop grang');
+				toastr.warning("Le fichier est trop grang");
+			},
+			success: function (data, textStatus, jqXHR) {},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log(errorThrown);
+			}
+		}
+		});
+		}
+	})
+</script>
+
+{% endblock body_javascript %}

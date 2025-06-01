@@ -1,0 +1,263 @@
+{% extends 'profileTemplate.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block title %}
+    Trust &amp; Market | Fournisseur de services{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+
+    <link href="{{ preload(asset('assets/css/style-fournisseur.css')) }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+
+    <link href="{{ asset('assets/css/abonner-fournisseur.css') }}" rel="stylesheet">
+    <link href="{{ preload(asset('assets/css/customeFournisseur.css')) }}" rel="stylesheet">
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ asset('assets/css/tagsinput/tagify.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- owl carousel css -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+{% endblock %}
+
+
+{% block header %}
+
+    {{ parent() }}
+    <style>
+        .image_picker_image {
+            width: 100px;
+            height: 100px
+        }
+
+        .tox-statusbar__branding {
+            display: none;
+        }
+
+        .btn-bg-primary {
+            color: #fff;
+            background: #f17b30 !important;
+        }
+
+        .btn-bg-primary:hover {
+            color: #fff;
+            background: #f4b279 !important;
+        }
+
+        .btn-bg-details-button {
+            color: #fff;
+            background: #008778 !important;
+        }
+        .swal2-icon{
+            color: #FF7E10 !important;
+            border-color: #FF7E10 !important;
+        }
+
+        .swal2-cancel{
+            background-color: #262626 !important;
+        }
+        .swal2-confirm{
+            background-color: #FF7E10 !important;
+        }
+        .swal2-container {
+            zoom: 0.7;
+        }
+
+        @media (max-width: 575.98px) {
+            main, .container {
+                margin-top: 70px;
+            }
+            .swal2-container {
+                zoom: 0.67 !important;
+            }
+
+            .swal2-title {
+                font-size: 1.275em !important;
+            }
+        }
+
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            main, .container {
+                margin-top: 100px;
+            }
+            .swal2-container {
+                zoom: 0.65 !important;
+            }
+            .swal2-title {
+                font-size: 1.475em !important;
+            }
+        }
+    </style>
+
+
+{% endblock %}
+
+{% block navigation %}{% endblock %}
+
+{% block body %}
+    <div class="flex-fill container">
+        <main class="">
+            <div class="container mt-2 pt-4">
+                {% include 'menuProfile.html.twig' %}
+                <div class="mt-3">
+                    <div class="m-auto" style="max-width: 500px">
+                        <p class="border border-dark text-center p-3 fs-18 pre-config-txt"
+                           style="width: 100%; border-radius: 25px;">
+                            {{ 'profil-utilisateur.fournisseurs-abonne.texte'|trans|raw }}
+                            <strong>{{ 'profil-utilisateur.fournisseurs-abonne.auto-entrepreneur'|trans|raw }}</strong>
+                            {{ 'profil-utilisateur.fournisseurs-abonne.ou'|trans|raw }}
+                            <strong>{{ 'profil-utilisateur.fournisseurs-abonne.societe'|trans|raw }}</strong>
+                        </p>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <form class="switch" method="post" action="{{ path('profile_app_switch') }}">
+                                    <input hidden name="user_new_role" value="ROLE_AUTO_ENTREPRENEUR">
+                                    <div>
+                                        <button id="passer-entrepreneur" type="submit"
+                                           class="switch btn btn-md fl-uppercase rounded config-btn enregProfile">{{ 'profil-utilisateur.fournisseurs-abonne.passez-auto-entrepreneur'|trans }}</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div>
+                                <form class="switch" method="post" action="{{ path('profile_app_switch') }}">
+                                    <input hidden name="user_new_role" class="user_new_role" value="ROLE_SOCIETE">
+                                    <div>
+                                        <button type="submit" id="passer-societe"
+                                           class="btn btn-md fl-uppercase rounded config-btn enregProfile1">{{ 'profil-utilisateur.fournisseurs-abonne.passez-societe'|trans }}</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% include("partials/project.html.twig") %}
+            {% include("partials/otherPagesVideoModal.html.twig") %}
+        </main>
+    </div>
+{% endblock %}
+
+
+{% block footer %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var docWidth = document.documentElement.offsetWidth;
+
+            [].forEach.call(document.querySelectorAll('*'), function (el) {
+                if (el.offsetWidth > docWidth) {
+                    console.log(el);
+                }
+            });
+
+            $(document).on('submit', '.switch', function (e) {
+                e.preventDefault();
+                console.log($(this).find('input[name="user_new_role"]').val());
+                Swal.fire({
+                    title: "Pour passer à un profil professionnel, veuillez  renseigner l’adresse de votre entreprise",
+                    html: `<div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="adresse">Adresse *</label>
+                        <input type="text" id="adresse" class="form-control" placeholder="Adresse"></div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="ville">Ville *</label>
+                        <input type="text" id="ville" class="form-control" placeholder="Ville"></div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <select id="pays" id="pays" class="form-control" style="border: 1px solid #d9d9d9;
+                            border-radius: 0.1875em;background: rgba(0,0,0,0); box-shadow: inset 0 1px 1px rgba(0,0,0,.06), 0 0 0 3px rgba(0,0,0,0);"><option value="" selected>Pays de residence...</option>{% include 'Tools/CountryRegister.html.twig' %}</select></select>
+                        </div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="postal_code">Code Postale *</label>
+                        <input type="text" id="postal_code" class="form-control" placeholder="Code Postale"></div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="region">Region *</label>
+                        <input type="text" id="region" class="form-control" placeholder="Region"></div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="compagny_number">Siret *</label>
+                        <input type="text" id="compagny_number" class="form-control" placeholder="Siret"></div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="compagny_name">Dénomination sociale *</label>
+                        <input type="text" id="compagny_name" class="form-control" placeholder="Dénomination sociale"></div>`,
+                    cancelButtonText: "Annuler",
+                    confirmButtonText: "Valider",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        const adresse = Swal.getPopup().querySelector('#adresse').value
+                        const ville = Swal.getPopup().querySelector('#ville').value
+                        const pays = Swal.getPopup().querySelector('#pays').value
+                        const postal_code = Swal.getPopup().querySelector('#postal_code').value
+                        const region = Swal.getPopup().querySelector('#region').value
+                        const compagny_number = Swal.getPopup().querySelector('#compagny_number').value
+                        const compagny_name = Swal.getPopup().querySelector('#compagny_name').value
+                        const user_new_role = $(this).find('input[name="user_new_role"]').val()
+                        if (!adresse || !ville || !pays || !postal_code || !region || !compagny_number || !compagny_name) {
+                            Swal.showValidationMessage(`Veuillez remplir les champs du formulaire`)
+                        }
+                        return {adresse: adresse, ville: ville, pays: pays, postal_code: postal_code, region: region, compagny_number: compagny_number,
+                             compagny_name: compagny_name,user_new_role: user_new_role}
+                    }
+                }).then((result) => {
+                    if(result.value){
+                        $.ajax({
+                            url: "{{path('profile_app_switch')}}",
+                            type: 'POST',
+                            processData: false,
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            data: JSON.stringify(result.value),
+                            success: function (response) {
+                                if (response.status == 200) {
+                                    console.log(JSON.stringify(result.value));
+                                    console.log(response);
+                                    swal.fire("Succès!", "Mise a jour du profil effectuée avec succès.", response.status);
+                                    window.location = '{{ path('profile_profile' ) }}';
+                                } else {
+                                    swal.fire("Erreur!","Un probleme est survenu", response.status);
+                                }
+                            },
+                            error: function (response) {
+                                swal.fire("Erreur!","Un probleme est survenu", response.status);
+                            }
+                        });
+                    }
+                })
+            });
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "12000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+
+        });
+    </script>
+
+{% endblock %}

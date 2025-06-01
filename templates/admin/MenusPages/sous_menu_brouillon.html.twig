@@ -1,0 +1,266 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}{% if statut == 'draft' %}Brouillon{% endif %}{% if statut == 'trash' %}Corbeille{% endif %}{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <style>
+        #main-menu {
+            font-size: 14px;
+        }
+        .right1 {
+            float: right;
+            padding: 8px;
+        }
+    </style>
+    <div class="content">
+        <div class="animated fadeIn">
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                        </div>
+                        <div class="card-body--">
+                            <div class="table-stats order-table ov-h">
+                                <table class="table ">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>{{ 'admin.menu.libelle'|trans }}</th>
+                                        <th>Le parent</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for m in sous_menu %}
+                                        <tr>
+                                            <td> {{ m.id }}</td>
+                                            <td><span class="name">{{ m.postTitle }}</span>
+                                                <input type="text" name="titre" value="{{ m.postTitle }}"
+                                                       class="form-control titre" style="display:none">
+                                                <input type="hidden" class="id" name="id" value="{{ m.id }}">
+                                            </td>
+                                            <td>
+                                                <span class="name">{{ m.name }}</span>
+                                            </td>
+                                            <td>
+                                                {% if statut=='draft' %}
+                                                    {% set edit_url = ea_url({id:m.id})
+                                                        .setController('App\\Controller\\Admin\\MenusPages\\Pages\\WpPostsCrudController')
+                                                        .setAction('edit')
+                                                        .setEntityId(m.id) %}
+                                                    <a class="badge badge-complete"
+                                                       href="{{ edit_url }}"
+                                                       title="{{ 'admin.menu.modifie-page'|trans }}"><i
+                                                                class="fa fa-pencil"></i> </a>
+
+                                                    <a class=" red delete"
+                                                       href="/admin/delete_post?id={{ m.id }}&statut=draft"
+                                                       title="Supprimer le menu"><i class="fa fa-trash"></i> </a>
+                                                {% endif %}
+
+                                                {% if statut=='trash' %}
+                                                    <a class="badge badge-complete delete"
+                                                       href="/admin/delete_post?id={{ m.id }}&statut=publish"
+                                                       title="Restaurer le menu"><i class="fa fa-reply"></i> </a>
+
+                                                    <a class=" red delete"
+                                                       href="/admin/delete_post?id={{ m.id }}&statut=trash"
+                                                       title="Supprimer définitivement le menu"><i
+                                                                class="fa fa-times"></i> </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block body_javascript %}
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+            integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).on('click', '.update', function (e) {
+            // On empeche le navigateur de soumettre le formulaire
+            e.preventDefault();
+            $(this).parents('tr').find('.titre').show();
+            $(this).parents('tr').find('.name').hide();
+            $(this).parents('tr').find('.titre').focus();
+        });
+
+        $(document).on('blur', '.titre', function (e) {
+            // On empeche le navigateur de soumettre le formulaire
+            e.preventDefault();
+            $(this).parents('tr').find('.name').html($(this).val());
+            t = $(this);
+            let url1 = '/admin/update_menu?id=' + $(this).parents('td').find('.id').val() + '&t=titre&description=' + $(this).val();
+            toastr.info('Modification en cours...');
+            $.ajax({
+                url: url1,
+                type: 'post',
+                success: function (reponse) {
+                    toastr.clear();
+                    t.parents('tr').find('.name').show();
+                    t.hide();
+                    toastr.success('Modification Terminée');
+                },
+                error: function (reponse) {
+                    toastr.clear();
+                    t.parents('tr').find('.name').show();
+                    t.hide();
+                }
+            });
+        });
+
+        $(document).on('click', '.delete', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            var t = $(this);
+            var urlPath = $(this).attr('href');
+            var txt = $(this).attr('title');
+            swal({
+                    title: txt,
+                    text: "Voulez-vous vraiment effectué cette action?",
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Oui",
+                    cancelButtonText: "Annuler",
+                    closeOnConfirm: false,
+                    closeOnCancel: false,
+                    showLoaderOnConfirm: true
+                },
+                function (isConfirm) {
+
+                    if (isConfirm) {
+
+                        $.ajax({
+                            url: urlPath,
+                            type: 'GET',
+                            success: function (reponse) {
+                                if (reponse == 1) {
+
+                                    swal("Action terminée", "", "success");
+
+                                    t.parents('tr').hide();
+                                } else {
+
+                                    swal("erreur de suppression", "", "error");
+
+                                }
+                                ;
+                            },
+                            error: function (reponse) {
+                                swal("erreur de suppression", "", "error");
+
+                            }
+
+                        });
+
+                    } else {
+                        swal.close();
+                    }
+                });
+
+
+            return false;
+
+        });
+
+
+        $(document).on('click', '.delete1', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            var t = $(this);
+            var urlPath = $(this).attr('href');
+            var txt = $(this).attr('title');
+            swal({
+                    title: txt,
+                    text: "Voulez-vous vraiment effectué cette action?",
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Oui",
+                    cancelButtonText: "Annuler",
+                    closeOnConfirm: false,
+                    closeOnCancel: false,
+                    showLoaderOnConfirm: true
+                },
+                function (isConfirm) {
+
+                    if (isConfirm) {
+
+                        $.ajax({
+                            url: urlPath,
+                            type: 'GET',
+                            success: function (reponse) {
+                                if (reponse == 1) {
+
+                                    swal("suppression terminée", "", "success");
+
+                                    window.location = "";
+                                } else {
+
+                                    swal("erreur de suppression", "", "error");
+
+                                }
+                                ;
+                            },
+                            error: function (reponse) {
+                                swal("erreur de suppression", "", "error");
+
+                            }
+
+                        });
+
+                    } else {
+                        swal.close();
+                    }
+                });
+
+
+            return false;
+
+        });
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "12000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+{% endblock body_javascript %}

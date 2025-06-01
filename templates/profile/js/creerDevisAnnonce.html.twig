@@ -1,0 +1,55 @@
+<script type="text/javascript">
+    $('#msform').on('submit', function (e) {
+        e.preventDefault();
+        $('#prix').val($('#prix').val());
+        $('#send').addClass('running');
+        let temp = tinymce.activeEditor.getContent();
+        $('#description').val(temp);
+        let $form = $(this);
+        let formdata = (window.FormData) ? new FormData($form[0]) : null;
+        console.log(temp)
+        let data = (formdata !== null) ? formdata : $form.serialize() + '&description=' + temp;
+        console.log(data);
+        $.ajax({
+            url: $form.attr('action'),
+            type: $form.attr('method'),
+            processData: false,
+            contentType: false,
+            data: data,
+            success: function (response) {
+                console.log(response);
+                if (response > 0) {
+                    toastr.clear();
+                    $('#body').hide();
+                    $('#succes').show();
+                    $('html,body').scrollTop(0);
+                    $('#send').removeClass('running');
+                    window.setTimeout(function () {
+                        window.location = "{{ path('profile_annonces') }}";
+                    }, 1000);
+                } else if (response == 0) {
+                    toastr.clear();
+                    $('#send').removeClass('running');
+                    if ($("#nom_prenom_email").length) {
+                        if ($('#nom_prenom_email').val().trim() != "") {
+                            toastr.error('Erreur lors de l\'edition du devis...');
+                        }
+                    } else {
+                        toastr.error('Erreur lors de la creation de l\'annonce');
+                    }
+                }
+            },
+            error: function (response) {
+                toastr.clear();
+                $('#send').removeClass('running');
+                if ($("#nom_prenom_email").length) {
+                    if ($('#nom_prenom_email').val().trim() != "") {
+                        toastr.error('Erreur lors de l\'edition du devis...');
+                    }
+                } else {
+                    toastr.error('Erreur lors de la creation de l\'annonce');
+                }
+            }
+        });
+    });
+</script>

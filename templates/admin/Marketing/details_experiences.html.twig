@@ -1,0 +1,192 @@
+{% extends '@EasyAdmin/default/layout.html.twig' %}
+{% block page_title %}
+	Parcours utilisateur - Details Experiences
+{% endblock %}
+
+{% block content %}
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}">
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+	<link href="{{asset('assets/css/camroll/camroll_slider.css')}}" rel="stylesheet" type="text/css">
+	<link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+	
+	<link rel="stylesheet" href="{{ asset('assets/css/img-picker/image-picker.css')}}">
+	<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+	<link href="{{asset('assets/font/file-input-font/font/font-fileuploader.css')}}" rel="stylesheet">
+	<!-- file input styles -->
+	<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+	<style>
+	/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+
+.file_upload {
+    min-width: 200px;
+    width: 100%;
+    height: 200px
+}
+
+.created-announce-elements{
+	display: flex;
+}
+
+.label-perso{
+	text-align:left !important;
+	font-size:1.5rem !important;
+}
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.form-group label{
+	flex: none;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+	<div class="content">
+		<div class="animated fadeIn">
+			<div class="clearfix"></div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header">
+							<h4 class="box-title">Details Experience</h4>
+						</div>
+						<div class="modal-body">
+								<div class="row">
+									<div class="col-md-6 form-group">
+										<label class="col-md-12 label-perso">Libelle</label>
+										<div class="container border border-info rounded p-2">{{ops.titre}} </div>
+									</div>
+
+									<div class="col-md-6 form-group">
+										<label class="col-md-12 label-perso">Youtube</label>
+										<div class="container border border-info rounded p-2">{{ops.youtube}} </div>
+									</div>
+
+									<div class="col-md-6 form-group">
+										<label class="col-md-12 label-perso">Titre Meta</label>
+										<div class="container border border-info rounded p-2">{{ops.meta_titre}} </div>
+									</div>
+									
+									<div class="col-md-6 form-group">
+										<label class="col-md-12 label-perso">Meta description</label>
+										<div class="container border border-info rounded p-2">{{ops.meta_description}}</div>
+									</div>
+
+									<div class="col-md-6 form-group">
+										<label class="col-md-12 label-perso">URL</label>
+										<a href="{{absolute_url(path('marketing_details_univers_trust',{slug: ops.slug}))}}" target="_blank" class="container border border-info rounded p-2" id="url">{{absolute_url(path('marketing_details_univers_trust',{slug: ops.slug}))}}</a>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-md-6 form-group">
+										<label class="col-md-6 label-perso" for="description">Contenu textuel</label>
+										<div class="container border border-info rounded p-3">{{ops.contenu|raw}}</div>
+									</div>
+									<div class="col-md-6 form-group">
+										<label class="col-md-6 label-perso" for="chapeau" >Liens rapides</label>
+										<div class="container border border-info rounded p-3" id="chapeau">{{ops.lien_acces_rapides|raw}}</div>
+									</div>
+								</div>
+									<div class="col-md-6 form-group">
+										<label class="col-md-6 label-perso" for="chapeau" >Image de couverture</label>
+										<img src="{{ops.image_couverture}}" alt="" style="width:100px; height:100px; border-radius:10px">
+									</div>
+								</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block body_javascript %}
+{{parent()}}
+
+<!-- jQuery plugin for camroll slider -->
+<script type="text/javascript" src="{{ prerender(asset('assets/js/camroll/camroll_slider.js')) }}"></script>
+<!-- jQuery plugin for spartan image picker -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js">
+</script><script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+<script src="{{asset('assets/js/img-picker/image-picker.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/spartan-image-picker/spartan-multi-image-picker-min.js') }}"></script>
+
+<!-- Tinymce editor -->
+<script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+<script type="text/javascript">
+		function copyToClipboard(text) {
+			var inputc = document.body.appendChild(document.createElement("input"));
+			inputc.value = document.getElementById('url').textContent;
+			inputc.focus();
+			inputc.select();
+			document.execCommand('copy');
+			inputc.parentNode.removeChild(inputc);
+			alert("URL Copiee avec succes.");
+		}
+</script>
+
+{% endblock body_javascript %}

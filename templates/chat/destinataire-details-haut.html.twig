@@ -1,0 +1,11 @@
+<div class="col-md-7 text-right">
+  <img src="{% if destinataire.avatar %} {{destinataire.avatar|first}}{% else %} {{asset('assets/img/profile/avatar-profile.png')}} {% endif %}" class="img-fluid rounded-circle header-chat-img" alt="">&nbsp;&nbsp;<span class="header-chat-name">{{destinataire.first_name}}
+    {{ destinataire.last_name }}</span>
+</div>
+<div class="col-md-5 text-right">
+  <a href="#" class="lightblue">
+    <i class="fa fa-download fs-18" aria-hidden="true"></i>
+  </a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="lightblue">
+    <i class="fa fa-question-circle fs-19" aria-hidden="true"></i>
+  </a>
+</div>

@@ -1,0 +1,58 @@
+<script>
+    $('.brouillon').on('click', function (e) {
+        $('#state').val('brouillon');
+        if ($('#nom').val() == '') {
+            $('#nom').val('--');
+        }
+        if ($('#description').val() == '') {
+            $('#description').val('--');
+        }
+
+        let $form = $('#msform');
+        let formdata = (window.FormData) ? new FormData($form[0]) : null;
+        let data = (formdata !== null) ? formdata : $form.serialize();
+
+        $('#state').val('brouillon');
+        $.ajax({
+            url: $form.attr('action'),
+            type: $form.attr('method'),
+            processData: false,
+            contentType: false,
+            data: data,
+            success: function (response) {
+
+                if (response > 0) {
+                    toastr.clear();
+                    $('#body').hide();
+                    $('#succes').show();
+                    $('html,body').scrollTop(0);
+                    $('#send').removeClass('running');
+                    toastr.clear();
+                    toastr.success('Sauvegarde effectué avec succes');
+                    if ($("#nom_prenom_email").length) {
+                        if ($('#nom_prenom_email').val().trim() != "") {
+                            window.setTimeout(function () {
+                                window.location = "{{ path('profile_annoncesTag',{tag:'devis-en-brouillon'}) }}";
+                            }, 1000);
+                        }
+                    } else {
+                        window.setTimeout(function () {
+                            window.location = "{{ path('profile_annoncesTag',{tag:'annonces-en-brouillon'}) }}";
+                        }, 1000);
+                    }
+                }
+            },
+            error: function (response) {
+                toastr.clear();
+                $('#send').removeClass('running');
+                if ($("#nom_prenom_email").length) {
+                    if ($('#nom_prenom_email').val != "") {
+                        toastr.error('Erreur lors de la Sauvegarde du devis');
+                    }
+                } else {
+                    toastr.error('Erreur lors de la Sauvegarde de l\'annonce');
+                }
+            }
+        });
+    });
+</script>

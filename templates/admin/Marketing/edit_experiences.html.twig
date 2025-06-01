@@ -1,0 +1,327 @@
+	{% extends '@EasyAdmin/default/layout.html.twig' %}
+{% block page_title %}
+	Parcours utilisateur - Editer une expérience
+{% endblock %}
+
+{% block content %}
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}">
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/dropzone.css') }}">
+	<link href="{{asset('assets/css/camroll/camroll_slider.css')}}" rel="stylesheet" type="text/css">
+	<link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+	
+	<link rel="stylesheet" href="{{ asset('assets/css/img-picker/image-picker.css')}}">
+	<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+	<link href="{{asset('assets/font/file-input-font/font/font-fileuploader.css')}}" rel="stylesheet">
+	<!-- file input styles -->
+	<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+	<style>
+	/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+
+.file_upload {
+    min-width: 200px;
+    width: 100%;
+    height: 200px
+}
+
+.created-announce-elements{
+	display: flex;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.form-group label{
+	flex: none;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+	<div class="content">
+		<div class="animated fadeIn">
+			<div class="clearfix"></div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header">
+							<h4 class="box-title">Editer une expérience</h4>
+						</div>
+						<div class="modal-body">
+							<form action="{{path('marketing_experiences_edit')}}" method="POST" id="save_ops_speciale">
+								<input type="hidden" name="id" value="{{ops.id}}" id="id">
+								<div class="row">
+									<div class="col-md-8 form-group">
+										<label style="text-align:left;" for="titre">Titre de la page</label>
+										<input class="form-control" value="{{ops.titre}}" type="text" name="titre" id="titre" required/>
+									</div>
+									
+									<div class="col-md-4 form-group">
+										<label style="text-align:left;" for="titre">Identifiant youtube</label>
+										<input class="form-control" value="{{ops.youtube}}" type="text" name="youtube" id="youtube" required/>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-12 form-group">
+										<label style="text-align:left;" for="titre">Titre méta</label>
+										<input class="form-control" value="{{ops.meta_titre}}" name="meta_title" id="meta_title" required/>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-md-12 form-group">
+										<label style="text-align:left;" for="titre">Méta description</label>
+										<textarea class="form-control" placeholder="Meta description" name="meta_description" id="meta_description" required>{{ops.meta_description}}</textarea>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-md-12 form-group">
+										<label style="text-align:left;" class="col-md-3" for="liens">Liens accès rapides</label>
+										<textarea class="col-md-12 form-control border-form-control" name="liens" id="liens">{{ops.lien_acces_rapides|raw}}</textarea>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-md-12 form-group">
+										<label style="text-align:left;" class="col-md-3" for="contenu">Contenu textuel</label>
+										<textarea class="col-md-12 form-control border-form-control" name="contenu" id="contenu">{{ops.contenu|raw}}</textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									{% if ops.image_couverture %}
+										<p>Image de couverture actuel
+											<br>
+											<img src="{{ops.image_couverture}}" alt="" style="width:100px; height:100px; border-radius:10px">
+										</p><br>
+									{% endif %}
+									<div class="dropzone" style="width:95%"></div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" id="send" class="btn btn-success waves-effect waves-light ld-over-inverse ">{{'admin.categorie.enregistrer'|trans}}<i class="ld ld-ring ld-spin"></i>
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block body_javascript %}
+{{parent()}}
+
+<!-- jQuery plugin for camroll slider -->
+<script type="text/javascript" src="{{ prerender(asset('assets/js/camroll/camroll_slider.js')) }}"></script>
+<!-- jQuery plugin for spartan image picker -->
+<script src="{{ asset('admin/assets/js/vendor/jquery-2.1.4.min.js') }}" type="text/javascript"></script>
+</script><script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+<script src="{{ asset('admin/assets/js/dropzone.js') }}"></script>
+
+<!-- Tinymce editor -->
+<script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    tinymce.init({
+		selector: 'textarea#contenu',
+		height: 350,
+		plugins: [
+		'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+		],
+
+		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+		browser_spellcheck: true,
+		contextmenu: false,
+		language : 'fr_FR',
+		});
+
+
+		tinymce.init({
+		selector: 'textarea#liens',
+		height: 200,
+		plugins: [
+		'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+		],
+
+		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+		browser_spellcheck: true,
+		contextmenu: false,{% if lang=='fr' %}
+		language : 'fr_FR',{% endif %}
+		});
+
+	var myDropzone = new Dropzone("div.dropzone",
+	{
+	url: "{{path('upload')}}",
+	paramName: "file", // The name that will be used to transfer the file
+	maxFilesize: 1, // MB
+	uploadMultiple: true,
+	parallelUploads: 1, // use it with uploadMultiple
+	maxFiles: 1,
+	autoProcessQueue: false,
+	addRemoveLinks: true,
+	acceptedFiles: "image/*",
+	dictDefaultMessage: "Image de couverture",
+	dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+	dictRemoveFile: "{{'admin.article.remove'|trans}}",
+	success: function(file, response){
+		suc=1;
+		}
+	});
+
+    $('#save_ops_speciale').on('submit', function(e) { // On emp�che le navigateur de soumettre le formulaire
+		e.preventDefault();
+		let contenu = tinymce.get("contenu").getContent();
+		$('#contenu').val(contenu);
+		let liens = tinymce.get("liens").getContent();
+		$('#liens').val(liens);
+
+		$('#send').addClass('running');
+		toastr.info('Envoie des données en cours...');
+
+		var $form = $(this);
+		var formdata = (window.FormData) ? new FormData($form[0]) : null;
+		var data = (formdata !== null) ? formdata : $form.serialize() + '&contenu=' + contenu + '&liens=' + liens;
+		
+		console.log(liens);
+	if (myDropzone.files != "") {
+		myDropzone.processQueue();
+		myDropzone.on("successmultiple", function(file, response) {
+			$.ajax({
+				url: $form.attr('action'),
+				type: $form.attr('method'),
+				contentType: false,
+				processData: false,
+				data: data,
+				success: function(reponse) {
+					if (reponse > 0) {
+						toastr.clear();
+						toastr.success("{{'systeme.requetes.succes'|trans}}");
+						window.location = "{{path('marketing_experiences_list')}}";
+					} else if (reponse == 0) {
+						toastr.clear();
+						toastr.error("{{'systeme.requetes.erreur'|trans}}");
+					}
+				},
+				error: function(reponse) {
+					$('#send').removeClass('running');
+					toastr.clear();
+					toastr.error("{{'general.error'|trans }}");
+				}
+			});
+		});
+	} else {
+		$.ajax({
+			url: $form.attr('action'),
+			type: $form.attr('method'),
+			contentType: false,
+			processData: false,
+			data: data,
+			success: function(reponse) {
+				if (reponse > 0) {
+					toastr.clear();
+					toastr.success("{{'systeme.requetes.succes'|trans}}");
+					window.location = "{{path('marketing_experiences_list')}}";
+				} else if (reponse == 0) {
+					toastr.clear();
+					toastr.error("{{'systeme.requetes.erreur'|trans}}");
+				}
+			},
+			error: function(reponse) {
+				$('#send').removeClass('running');
+				toastr.clear();
+				toastr.error('{{'erreur '|trans }}');
+			}
+
+		});
+	}
+		return false;
+    });
+
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "220",
+        "hideDuration": "600",
+        "timeOut": "900",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+
+})
+</script>
+
+{% endblock body_javascript %}

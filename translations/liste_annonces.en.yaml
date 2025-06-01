@@ -1,0 +1,17 @@
+titre: List of Announcements
+form:
+  titre: Filter by
+  prestation: Type of service
+  service: Proposed services
+  soumettre: SEARCH
+liste:
+  titre: Advertisement
+filtres:
+  annonce: Announces
+  titre: Filter by
+  prix: Price
+  croissant: Ascending
+  decroissant: Descending
+  date-ajout: Date Added
+  ancien: Old
+  recent: Recent

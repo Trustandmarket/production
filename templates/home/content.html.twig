@@ -1,0 +1,178 @@
+{% extends 'descriptiveContent.html.twig' %}
+
+{% block head %}
+	{{ parent() }}
+	<link rel="apple-touch-icon-precomposed" href="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png') }}"/>
+	<meta name="msapplication-TileImage" content="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')}}"/>
+	<meta name="title" content="{% if app.request.locale == 'en' and contenu.postExcerpt != '' %}{{ contenu.postExcerpt }}{% else %}{{ contenu.getPostTitle }}{% endif %}">
+	<meta name="description" content="{% if meta_desc is not null %}{{meta_desc.getMetaValue}}{% endif %}">
+	<link rel="canonical" href="{% if contenu.getPostName == 'a-propos' or contenu.getPostName == 'le-centre-daide-trust-market' or contenu.getPostName == 'nos-conditions'  %}{{ absolute_url(path('site_navigation',{'navigation': idPage.getPostName })) }}{% else %}{{ absolute_url(path('page_navigation',{'idPage': idPage.getPostName, 'id': contenu.getPostName })) }}{% endif %}">
+	{# OG CONTENT #}
+	<meta property="og:title" content="{% if app.request.locale == 'en' and contenu.postExcerpt != '' %}{{ contenu.postExcerpt }}{% else %}{{ contenu.getPostTitle }}{% endif %}">
+	<meta property="og:description" content="{% if meta_desc is not null %}{{meta_desc.getMetaValue}}{% endif %}">
+	<meta property="og:image" content="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')}}">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="{% if contenu.getPostName == 'a-propos' or contenu.getPostName == 'le-centre-daide-trust-market' or contenu.getPostName == 'nos-conditions'  %}{{ absolute_url(path('site_navigation',{'navigation': idPage.getPostName })) }}
+	{% else %}{{ absolute_url(path('page_navigation',{'idPage': idPage.getPostName, 'id': contenu.getPostName })) }}{% endif %}">
+	{# END OG CONTENT #}
+
+	{# Twitter CARD #}
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:site" content="@trustandmarket">
+	<meta name="twitter:title" content="{% if app.request.locale == 'en' and contenu.postExcerpt != '' %}{{ contenu.postExcerpt }}{% else %}{{ contenu.getPostTitle }}{% endif %}">
+	<meta name="twitter:description" content="{% if meta_desc is not null %}{{meta_desc.getMetaValue}}{% endif %}">
+	<meta name="twitter:image" content="{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}">
+	<meta name="twitter:image:alt" content="{% if app.request.locale == 'en' and contenu.postExcerpt != '' %}{{ contenu.postExcerpt }}{% else %}{{ contenu.getPostTitle }}{% endif %}">
+	{# END Twitter Card #}
+
+	{# JSON LD #}
+	<script type="application/ld+json">
+	{
+		"@context": "http://schema.org",
+		"@type": "WebPage",
+		"name": "{{contenu.getPostName}}",
+		"description": "{% if meta_desc is not null %}{{meta_desc.getMetaValue}}{% endif %}"
+	}
+	</script>
+	{# END JSON LD #}
+{% endblock %}
+{% block title %}{{ parent() }} | {% if app.request.locale == 'en' and contenu.postExcerpt != '' %}{{ contenu.postExcerpt }}{% else %}{{ contenu.getPostTitle }}{% endif %}{% endblock %}
+{% block style %}
+	{{ parent() }}
+	<!-- Your custom styles (optional) -->
+	<link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+	<link href="{{ asset('assets/css/result.css')}}" rel="stylesheet">
+	<link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+	<style>
+		.chat-menu a {
+			border-radius: 50%;
+			background-color: transparent;
+			width: 100%;
+		}
+		.breadcrumb {
+			background-color: white;
+		}
+
+		.breadcrumb a {
+			color: #000000;
+		}
+		
+		.breadcrumb a:hover {
+			color: #f17c30;
+		}
+	</style>
+	<link href="{{ asset('assets/css/style-aide.css') }} " rel="stylesheet">
+{% endblock %}
+{% block header %}
+	{{ parent() }}
+{% endblock %}
+{% block navigation  %}{% endblock %}
+{% block body %}
+{{ parent() }}
+	<main class="text-center mt-5">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb pl-0">
+							<li class="breadcrumb-item"><a href="{{path('home')}}">Accueil</a></li>
+							<li class="breadcrumb-item"><a target="_blank" href="{{path('site_navigation', {navigation: idPage.getPostName})}}">{{idPage.getPostName|capitalize|replace({"-": " "})}}</a></li>
+						</ol>
+					</nav>
+					<ul class="list-group text-left">
+						{% if tsm==tsmp %}
+							{% for m in sous_menu %}
+								{% if m.postTitle|trim|length > 0 %}
+									<li class="list-group-item list-group-flush {% if id == m.id and navigation != 'nos-conditions' %} current-menu-item {% endif %}																																																																									                 ">
+										{% if m.id == 480 %}
+											<a class="prestation-list-item" href="{{ path('experience_index') }}">
+												{% if app.request.locale == 'en' and m.postExcerpt != '' %}{{ m.postExcerpt }}{% else %}{{ m.postTitle }}{% endif %}
+											</a>
+										{% elseif m.id == 3742 %}
+											<a class="prestation-list-item" href="{{ path('experience_envoyez_commentaires') }}">
+												{% if app.request.locale == 'en' and m.postExcerpt != '' %}{{ m.postExcerpt }}{% else %}{{ m.postTitle }}{% endif %}
+											</a>
+										{% else %}
+											<a class="prestation-list-item" href="{{ path('page_navigation', { idPage: idPage.postName ,id: m.postName }) }}">
+												{% if app.request.locale == 'en' and m.postExcerpt != '' %}{{ m.postExcerpt }}{% else %}{{ m.postTitle }}{% endif %}
+											</a>
+										{% endif %}
+									</li>
+								{% endif %}
+							{% endfor %}
+						{% else %}
+							{% for m in sous_menu_parent %}
+								<li class="list-group-item  {% if id == m.id and navigation == m.postName %} current-menu-item {% endif %}">
+									{% if m.postTitle != "" %}
+										<a class="prestation-list-item" href="{{ path('page_navigation', { idPage: menuParent.postName, id: m.postName }) }}">
+										{% if app.request.locale == 'en' and m.postExcerpt != '' %}{{ m.postExcerpt }}{% else %}{{ m.postTitle }}{% endif %}</a>
+									{% endif %}
+									<ul class="list-group list-group-flush text-left">
+										{% for m1 in sous_menu %}
+											{% if m1.postParent == m.id %}
+												<li class="list-group-item list-group-flush  {% if navigation == m1.postName %} current-menu-item {% endif %}">
+													<a class="prestation-list-item" href="{{ path('page_navigation', {idPage: menuParent.postName, id: m1.postName}) }}">
+														{% if app.request.locale == 'en' and m1.postExcerpt != '' %}{{ m1.postExcerpt }}{% else %}{{ m1.postTitle }}{% endif %}
+													</a>
+												</li>
+											{% endif %}
+										{% endfor %}
+									</ul>
+								</li>
+							{% endfor %}
+						{% endif %}
+					</ul>
+				</div>
+				<div class="col-md-9 text-left">
+					<div>
+						<div>
+							{#  {{dump(sous_menu_parent)}} #}
+							{% if app.request.locale == 'en' and contenu.postContentFiltered != '' %}{{ contenu.postContentFiltered | raw }}{% else %}{{ contenu.postContent | raw }}{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<!-- Full background slider jQuery plugin -->
+	<script type="text/javascript" src="{{ asset('assets/js/fullclip.min.js') }}"></script>
+	<script>
+$(document).ready(function () {
+var docWidth = document.documentElement.offsetWidth;
+
+[].forEach.call(document.querySelectorAll('*'), function (el) {
+if (el.offsetWidth > docWidth) {
+console.log(el);
+}
+});
+
+let url_background = "{{contenu.guid}}"
+if (url_background.includes('wp-content')) {
+	$('#imageHolder').css("background-image", url_background); 
+}
+
+// Hambuger menu icon
+$('.animated-button-icon').on('click', function () {
+$('.animated-icon2').toggleClass('open');
+});
+
+// Recherche avancer
+$("#recherche-avancer").click(function () {
+$("#sectionAvancer").toggleClass('d-none');
+});
+
+// first thing turn Hide Menu Search bar
+$("#searchMenu").hide();
+// toggle menu search bar on/off
+$("#searchMenuShowHide").click(function () {
+$("#searchMenu").toggle("slide");
+});
+});
+
+// Style Menu and SubMenu
+	</script>
+
+{% endblock %}

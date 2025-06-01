@@ -1,0 +1,325 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+	Creer une Actualite
+{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	{#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+ 	<link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+	<link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+	<style>
+	/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.form-group label{
+	flex: none;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+html, body, header, .view {
+    height: 3%;
+}
+</style>
+	<div class="content">
+		<div class="animated fadeIn">
+			<div class="clearfix"></div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header">
+							<h4 class="box-title">Creer une Actualite</h4>
+						</div>
+						<div class="modal-body">
+							<form action="{{path('marketing_actualite_create')}}" method="POST" id="save_actualite">
+								<div class="row">
+									<div class="col-md-8 form-group">
+										<label for="titre">Titre</label>
+										<input class="form-control" type="text" name="titre" id="titre" required/>
+									</div>
+									
+									<div class="col-md-4 form-group">
+										<label for="statut">Statut</label>
+										<select name="statut" id="statut" required class="form-control">
+											<option selected value="publish">Publier</option>
+											<option value="draft">Brouillon</option>
+										</select>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12 form-group">
+										<label style="text-align:left;" class="col-md-3" for="description">Description</label>
+										<textarea class="col-md-12 form-control border-form-control" name="description" id="description"  required></textarea>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6 form-group">
+										<label for="type">Type</label>
+										<select name="type" id="type" required class="form-control">
+											<option value="annonce">Annonce ou Produit</option>
+											<option value="blog">Article du Blog</option>
+											<option value="ops_speciale">Opération speciale</option>
+											<option value="promo_com">Promo & Com</option>
+											<option value="univers_trust">Univers Trust</option>
+										</select>
+									</div>
+
+									<div class="col-md-6 form-group">
+										<label for="name">Rechercher le contenu</label>
+										<input name="recherche_contenu" id="recherche_contenu" required class="form-control" />
+										<input hidden value="0" id="recherche_contenu_url" name="recherche_contenu_url"/>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" id="send" class="btn btn-success waves-effect waves-light ld-over-inverse ">{{'admin.categorie.enregistrer'|trans}}<i class="ld ld-ring ld-spin"></i>
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+{% endblock %}
+{% block body_javascript %}
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+{# <script src="{{ asset('admin/assets/js/vendor/jquery-2.1.4.min.js') }}" type="text/javascript"></script> #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!-- Tinymce editor -->
+	<script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+<script type="text/javascript">
+	$(document).ready(function () {
+		tinymce.init({
+		selector: 'textarea#description',
+		height: 350,
+		plugins: [
+		'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+		],
+
+		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+		browser_spellcheck: true,
+		contextmenu: false,{% if lang=='fr' %}
+		language : 'fr_FR',{% endif %}
+		});
+
+		
+		tinymce.init({
+		selector: 'input#titre',
+		height: 250,
+		plugins: [
+		'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+		],
+
+		toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+		browser_spellcheck: true,
+		contextmenu: false,{% if lang=='fr' %}
+		language : 'fr_FR',{% endif %}
+		});
+
+
+		$("#recherche_contenu").autocomplete({
+		source: "/{{ app.request.get("_locale") }}/admin/recherche_element" + '?type=' + $("#type").val(),
+		focus: function (event, ui) {
+		//$( "#recherche_contenu").val( ui.item.title ); // uncomment this line if you want to select value to search box
+		return false;
+		},
+		select: function (event, ui) {
+		//Complete linput masque
+			let temp = tinymce.get("description").getContent();
+			$('#description').val(temp);
+			temp = tinymce.get("titre").getContent();
+			$('#titre').val(temp);
+
+			$("#recherche_contenu").val(ui.item.name);
+			$("#recherche_contenu_url").val(ui.item.url);
+			return false;
+		},
+		search: function (event, ui) {
+		$('#ui-id-1').css("background-color","rgb(255 87 34 / 21%)");
+		},
+		close: function (event, ui) {
+		$('.ui-helper-hidden-accessible').hide();
+		}
+		}).data("ui-autocomplete")._renderItem = function (ul, item) {
+		$('.ui-helper-hidden-accessible').hide();
+		
+		let inner_html = `<a class="redirect_link" style="font-size:14px;color:#f17c30;" href="#">
+				<div style=" width:100%;height: 50px;float: left;"><div style="height: 50px;width: 15%;float: left;padding: 5px;">
+				<img style="width:40px;height:40px"src="` + item.image + `" ></div>
+				<div style="font-size: 11px;width: 85%;margin-left: 5px;text-align: left;padding: 10px;font-size:10px;">` + item.name + `</div></div></a>`;
+				console.log(item);
+		return $("<li></li>").data("item.autocomplete", item).append(inner_html).appendTo(ul);
+		};
+
+	$(document).on('change', '#type', function (e) {
+		let temp = tinymce.get("description").getContent();
+		$('#description').val(temp);
+		temp = tinymce.get("titre").getContent();
+		$('#titre').val(temp);
+
+		$("#recherche_contenu").autocomplete({
+		source: "/{{ app.request.get("_locale") }}/admin/recherche_element" + '?type=' + $("#type").val(),
+		focus: function (event, ui) {
+		//$( "#recherche_contenu").val( ui.item.title ); // uncomment this line if you want to select value to search box
+		return false;
+		},
+		select: function (event, ui) {
+			let temp = tinymce.get("description").getContent();
+			$('#description').val(temp);
+			temp = tinymce.get("titre").getContent();
+			$('#titre').val(temp);
+			
+			$("#recherche_contenu").val(ui.item.name);
+			$("#recherche_contenu_url").val(ui.item.url);
+			
+			return false;
+		},
+		search: function (event, ui) {
+		$('#ui-id-1').css("background-color","rgb(255 87 34 / 21%)");
+		},
+		close: function (event, ui) {
+		$('.ui-helper-hidden-accessible').hide();
+		}
+		}).data("ui-autocomplete")._renderItem = function (ul, item) {
+		$('.ui-helper-hidden-accessible').hide();
+		var inner_html = `<a class="redirect_link" style="font-size:14px;color:#f17c30;" href="#">
+				<div style=" width:100%;height: 50px;float: left;"><div style="height: 50px;width: 15%;float: left;padding: 5px;">
+				<img style="width:40px;height:40px"src="` + item.image + `" ></div>
+				<div style="font-size: 11px;width: 85%;margin-left: 5px;text-align: left;padding: 10px;font-size:10px;">` + item.name + `</div></div></a>`;
+		console.log(item);
+		return $("<li></li>").data("item.autocomplete", item).append(inner_html).appendTo(ul);
+		};
+		});
+
+	$(document).on('click', '.delete', function (e) {
+	e.preventDefault();
+	var t = $(this);
+	var urlPath = $(this).attr('href');
+	swal({
+	title: "Suppression de la categorie",
+	text: "Attention la catégorie sera Supprimée et n'apparaitra plus sur votre site",
+	type: "info",
+	showCancelButton: true,
+	confirmButtonClass: "btn-danger",
+	confirmButtonText: "Supprimer",
+	cancelButtonText: "Annuler",
+	closeOnConfirm: false,
+	closeOnCancel: false,
+	showLoaderOnConfirm: true
+	}, function (isConfirm) {
+	if (isConfirm) {
+	$.ajax({
+	url: urlPath,
+	type: 'GET',
+	success: function (reponse) {
+	if (reponse == 1) {
+	swal("Suppression terminée", "", "success");
+	t.parents('tr').hide();
+	} else if (reponse == 2) {
+	swal("La catégorie contient des produits", "", "warning");
+	} else {
+	swal("Erreur de suppression", "", "error");
+	};
+	},
+	error: function (reponse) {
+	swal("Erreur de suppression", "", "error");
+	}
+	});
+	} else {
+	swal.close();
+	}
+	});
+	return false;
+	});
+
+	toastr.options = {
+	"closeButton": true,
+	"debug": false,
+	"newestOnTop": false,
+	"progressBar": true,
+	"positionClass": "toast-top-center",
+	"preventDuplicates": false,
+	"onclick": null,
+	"showDuration": "300",
+	"hideDuration": "1000",
+	"timeOut": "12000",
+	"extendedTimeOut": "1000",
+	"showEasing": "swing",
+	"hideEasing": "linear",
+	"showMethod": "fadeIn",
+	"hideMethod": "fadeOut"
+	}
+	})
+</script>
+
+{% endblock body_javascript %}

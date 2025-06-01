@@ -1,0 +1,1618 @@
+{% extends 'profileTemplate.html.twig' %}
+
+{% block head %}
+	{{parent()}}
+
+	<link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}" sizes="32x32"/>
+	<link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}" sizes="192x192"/>
+	<link rel="apple-touch-icon-precomposed" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+	<meta name="msapplication-TileImage" content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+	<meta name="robots" content="noindex">
+
+{% endblock %}
+
+{% block title %}Trust &amp; Market | Profil Annonces{% endblock %}
+{% block  annonce %}
+	active
+{% endblock %}
+{% block style %}
+	{{parent()}}
+
+	<link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+
+<link href="{{ preload(asset('assets/css/custome.css'))}}" rel="stylesheet">
+<link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+
+	<link rel="stylesheet" href="{{ asset('assets/css/img-picker/image-picker.css')}}">
+	<link href="{{ asset('assets/css/style-moderation.css')}}" rel="stylesheet">
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ preload(asset('assets/css/tagsinput/tagify.css'))}}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+	<link
+	rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+
+	<!-- file input fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+	<link
+	href="{{asset('assets/font/file-input-font/font/font-fileuploader.css')}}" rel="stylesheet">
+	<!-- file input styles -->
+		<link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+		<link rel="stylesheet" href="{{ asset('assets/css/jquery.paginate.css') }}">
+
+
+	<style>
+		.image_picker_image {
+			width: 100px;
+			height: 100px
+		}
+		.tox-statusbar__branding {
+			display: none;
+		}
+		.btn-bg-primary {
+			color: #fff;
+			background: #f17b30 !important;
+		}
+		.btn-bg-primary:hover {
+			color: #fff;
+			background: #f4b279 !important;
+		}
+		.btn-bg-details-button {
+			color: #fff;
+			background: #008778 !important;
+		}
+		
+		.sub-msg{
+			color: #212529;
+			font-size: 11px;
+		}
+		span.fs-16{
+			font-family: 'Palanquin Dark', sans-serif;
+			font-weight: 300;
+		}
+
+		@media only screen and(min-width : 992px) {
+			.dashboard-menu {
+				margin-top: 12px !important;
+			}
+		}
+	</style>
+{% endblock %}
+
+
+{% block header %}
+
+	{{parent()}}
+
+{% endblock %}
+
+{% block navigation %}
+
+	{{parent()}}
+
+{% endblock %}
+
+{% block body %}
+	<div class="flex-fill container">
+		<main class="">
+
+			<div class="container">
+				{% include 'menuProfile.html.twig' %}
+				<div class="mt-2">
+					<!-- Modif des infos -->
+					<div id="modifInfo">
+						<div class="row">
+							<div hidden class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
+								<strong>Holy guacamole!</strong>
+								You should check in on some of those fields below.
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							{% include 'annonces/sousMenuAnnonces.html.twig' %}
+								<div class="col-md-8 mb-2">
+								{% if reservationsEnCoursCount != 0 and tag == "reservations-en-cours" %}
+									<!--Accordion wrapper Pour les reservations en Cours-->
+										<div class="accordion md-accordion  mb-5" id="accordionEx1" role="tablist" aria-multiselectable="true">
+											<!-- Accordion card -->
+											<div class="card">
+											<!-- Card header -->
+											<div class="card-header" role="tab">
+												<a data-toggle="collapse" id="headingOne1" data-parent="#accordionEx1" href="#collapseOne1" aria-expanded="true"
+												aria-controls="collapseOne1">
+												<div class="row col-md-12">
+													<div class="col-md-5">
+														<i class="fas fa-plus" style="font-size: 22px; color: black;" id="accordion_address2">
+														<span class="underline fs-16">{{'profil-utilisateur.annonces.reservations-en-cours'|trans}}
+															{{reservationsEnCoursCount}}
+														</span>
+														</i>
+													</div>
+													<div class="col-md-7">
+														<p class="fs-12 sub-msg">
+															{{'profil-utilisateur.annonces.message-en-attente'|trans}}</p>
+													</div>
+												</div>
+												</a>
+											</div>
+
+											<!-- Card body -->
+											<div id="collapseOne1" class="collapse md-12" role="tabpanel" aria-labelledby="headingOne1" data-parent="#accordionEx1">
+												<div class="card-body">
+													<div class="row">
+														<div class="col-md-12 row">
+															{% if reservationsEnCoursCount > 0 %}
+																<div class="col-md-12" id="dynamicPaginationReservationsEnCours">
+																	{% include "profile/partials/pagination_bloc_reservations_cours.html.twig" %}
+																</div>
+															{% endif %}
+														</div>
+														<div id="paginateReservationsEnCours" class="col-md-12">
+															{% for a in reservationsEnCours %}
+																{% if a.pinged == "devis" %}
+																	<div class="row mt-3" style="min-height: 200px">
+																		<div class="col-md-4 annonce-img" style="background: url('{% if a.affiche %}{{a.affiche}}{% else %}{{ asset('assets/images/empty_devis.jpg') }}{% endif %}')"></div>
+																		<div class="col-md-8 py-2 annonce-detail">
+																			<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+																				{{a.post_title}}</h4>
+																			<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:{{a.date_evenement}}</h4>
+																			{# <p class="fs-14">{{a.titre}}</p> #}
+																			<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+																				{{a.prenom_prestataire}}
+																				{{a.nom_prestataire}}</h4>
+																			{# <span class="texte-gris text-bold fs-14"><i class="fas fa-map-marker"></i> {{a.pays|country_name}}, {{a.etat}}, {{a.ville}}</span> <br> #}
+																			{# <span class="texte-gris text-bold fs-14"><i class="fas fa-calendar"></i> {{a.dates_devis}} </span> #}
+																			<div class="pt-4">
+																				<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+																					<div class="btn-group mr-2" role="group" aria-label="First group">
+																						<a class="btn btn btn-bg-primary btn-s annulerCommande" href="{{path('profile_cancelledReservationAnnounce',{id:a.id, state:'edition'})}}">
+																							{{'profil-utilisateur.annonces.annuler'|trans}}
+																						</a>
+																					</div>
+
+																					<div class="btn-group ml-4 " role="group" aria-label="Thirth group"></div>
+																				</div>
+																			</div>
+
+
+																		</div>
+																	</div>
+																{% elseif a.pinged == "product" %}
+																	{% for s in a.annonces %}
+																		{% if s %}
+																			<div class="row mt-3" style="min-height: 200px">
+																				<div class="col-md-4 annonce-img" style="background: url('{% if s.gallery|length > 0 and s.gallery is defined and s.gallery != '' %}{{s.gallery.0.guid}}{% else %}{{s.images_secondaires.0.guid}}{% endif %}')"></div>
+																				<div class="col-md-8 py-2 annonce-detail">
+																					<h3>{{s.first_name}}
+																						{{s.last_name}}</h3>
+																					<p class="fs-14">{{s.post_title}}</p>
+																					<h3>{{ a.post_parent }} €</h3>
+																					<span class="texte-gris text-bold fs-14">
+																						<i class="fas fa-map-marker"></i>
+																						{{s.pays|country_name}},
+																						{{s.etat}},
+																						{{s.ville}}</span>
+																					<br>
+																					<span class="texte-gris text-bold fs-14">
+																						<i class="fas fa-calendar"></i>
+																						{{a.date_evenement}}</span>
+
+																					<div class="pt-4">
+																						<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+																							<div class="btn-group mr-2" role="group" aria-label="First group">
+																								<a class="btn btn-bg-primary btn-sm" target="_blank" href="{% if s.slug|length > 8 %}{{path('annonces_detailsAnnonce',{id:s.slug})}}{% endif %}">
+																									{{'general.voir_annonce'|trans}}
+																								</a>
+																							</div>
+																							<div class="btn-group mr-2" role="group" aria-label="Second group">
+																								<a href="{{path('profile_cancelledReservationAnnounce',{id:a.id})}}" class="btn btn-bg-primary btn-sm editer annulerCommande">
+																									{{'profil-utilisateur.annonces.annuler'|trans}}
+																								</a>
+																							</div>
+																						</div>
+																					</div>
+
+																				</div>
+																			</div>
+																		{% endif %}
+																	{% endfor %}
+																{% endif %}
+															{% endfor %}
+														</div>
+													</div>
+												</div>
+											</div>
+											</div>
+											<!-- Accordion card -->
+										</div>
+									<!-- Accordion wrapper -->
+								{% endif %}
+
+								{% if reservationsTermineesCount != 0 and tag == "reservations-terminees"%}
+									<!--Accordion wrapper Pour les reservations terminees-->
+									<div class="accordion md-accordion  mb-5" id="accordionEx3" role="tablist" aria-multiselectable="true">
+										<!-- Accordion card -->
+										<div class="card">
+											<!-- Card header -->
+											<div class="card-header" role="tab">
+												<a data-toggle="collapse" id="headingOne3" data-parent="#accordionEx3" href="#collapseOne3" aria-expanded="true" aria-controls="collapseOne3">
+													<div class="row col-md-12">
+														<div class="col-md-5">
+															<i class="fas fa-plus" style="font-size: 22px; color: black;" id="accordion_address2">
+																<span class="underline fs-16">{{'profil-utilisateur.annonces.reservations-terminees'|trans}}
+																	({{reservationsTermineesCount}})
+																</span>
+															</i>
+														</div>
+														<div class="col-md-7">
+															<p class="fs-12 sub-msg">
+																{{'profil-utilisateur.annonces.message-en-attente'|trans}}</p>
+														</div>
+													</div>
+												</a>
+											</div>
+											<!-- Card body -->
+											<div id="collapseOne3" class="collapse md-12" role="tabpanel" aria-labelledby="headingOne3" data-parent="#accordionEx3">
+												<div class="card-body">
+													<div class="row">
+														<div class="col-md-12 row">
+															{% if reservationsTermineesCount > 0 %}
+																<div class="col-md-12" id="dynamicPaginationReservationsTerminees">
+																	{% include "profile/partials/pagination_bloc_reservations_terminees.html.twig" %}
+																</div>
+															{% endif %}
+														</div>
+														<div id="paginateReservationsTerminees" class="col-md-12">
+															{% for a in reservationsTerminees %}
+																{% if a.pinged == "devis" %}
+																	<div class="row mt-3" style="min-height: 200px">
+																		<div class="col-md-4 annonce-img" style="background: url('{% if a.affiche %}{{a.affiche}}{% else %}{{ asset('assets/images/empty_devis.jpg') }}{% endif %}')"></div>
+																		<div class="col-md-8 py-2 annonce-detail">
+																			<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+																				{{a.post_title}}</h4>
+																			<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:{{a.date_evenement}}</h4>
+																			<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+																				{{a.prenom_prestataire}}
+																				{{a.nom_prestataire}}</h4>
+																		</div>
+																	</div>
+																{% elseif a.pinged == "product" %}
+																	{% for s in a.annonces %}
+																		{% if s %}
+																			<div class="row mt-3" style="min-height: 200px">
+																				<div class="col-md-4 annonce-img" style="background: url('{% if s.gallery|length > 0 and s.gallery is defined and s.gallery != '' %}{{s.gallery.0.guid}}{% else %}{{s.images_secondaires.0.guid}}{% endif %}')"></div>
+																				<div class="col-md-8 py-2 annonce-detail">
+																					<h3>{{s.first_name}}
+																						{{s.last_name}}</h3>
+																					<p class="fs-14">{{s.post_title}}</p>
+																					<h3>{{ a.post_parent }} {{s.devise.metaValue}}</h3>
+																					<span class="texte-gris text-bold fs-14">
+																						<i class="fas fa-map-marker"></i>
+																						{{s.pays|country_name}},
+																						{{s.etat}},
+																						{{s.ville}}</span>
+																					<br>
+																					<span class="texte-gris text-bold fs-14">
+																						<i class="fas fa-calendar"></i>
+																						{{a.date_evenement}}</span>
+																				</div>
+																			</div>
+																		{% endif %}
+																	{% endfor %}
+																{% endif %}
+															{% endfor %}
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- Accordion card -->
+									</div>
+									<!-- Accordion wrapper -->
+								{% endif %}
+
+								{% if reservationsAnnuleesCount != 0 and tag == "reservations-annulees" %}
+									<!--Accordion wrapper Pour les reservations annules-->
+										<div class="accordion md-accordion  mb-5" id="accordionEx4" role="tablist" aria-multiselectable="true">
+											<!-- Accordion card -->
+											<div class="card">
+												<!-- Card header -->
+												<div class="card-header" role="tab">
+													<a data-toggle="collapse" id="headingOne4" data-parent="#accordionEx4" href="#collapseOne4" aria-expanded="true" aria-controls="collapseOne4">
+														<div class="row col-md-12">
+															<div class="col-md-5">
+																<i class="fas fa-plus" style="font-size: 22px; color: black;">
+																	<span class="underline fs-16">{{'profil-utilisateur.annonces.reservations-annulees'|trans}}
+																		({{reservationsAnnuleesCount}})
+																	</span>
+																</i>
+															</div>
+															<div class="col-md-7">
+																<p class="fs-12 sub-msg">
+																	{{'profil-utilisateur.annonces.message-en-attente'|trans}}</p>
+															</div>
+														</div>
+													</a>
+												</div>
+
+												<!-- Card body -->
+												<div id="collapseOne4" class="collapse md-12" role="tabpanel" aria-labelledby="headingOne4" data-parent="#accordionEx4">
+													<div class="card-body">
+														<div class="row">
+															<div class="col-md-12 row">
+																{% if reservationsAnnuleesCount > 0 %}
+																	<div class="col-md-12" id="dynamicPaginationReservationsAnnulees">
+																		{% include "profile/partials/pagination_bloc_reservations_annulees.html.twig" %}
+																	</div>
+																{% endif %}
+															</div>
+															<div id="paginateReservationsAnnulees" class="col-md-12">
+																{% for a in reservationsAnnulees %}
+																	{% if a.pinged == "devis" %}
+																		<div class="row mt-3" style="min-height: 200px">
+																			<div class="col-md-4 annonce-img" style="background: url('{% if a.affiche %}{{a.affiche}}{% else %}{{ asset('assets/images/empty_devis.jpg') }}{% endif %}')"></div>
+																			<div class="col-md-8 py-2 annonce-detail">
+																				<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+																					{{a.post_title}}</h4>
+																				<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:{{a.date_evenement}}</h4>
+																				{# <p class="fs-14">{{a.titre}}</p> #}
+																				<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+																					{{a.post_mime_type}}</h4>
+																			</div>
+																		</div>
+																	{% elseif a.pinged == "product" %}
+																		{% for s in a.annonces %}
+																			{% if s %}
+																				<div class="row mt-3" style="min-height: 200px">
+																					<div class="col-md-4 annonce-img" style="background: url('{% if s.gallery|length > 0 and s.gallery is defined and s.gallery != '' %}{{s.gallery.0.guid}}{% elseif s.images_secondaires is defined and s.images_secondaires.0 %}{{s.images_secondaires.0.guid}}{% endif %}')"></div>
+																					<div class="col-md-8 py-2 annonce-detail">
+																						<h3>{{s.first_name}}
+																							{{s.last_name}}</h3>
+																						<p class="fs-14">{{s.post_title}}</p>
+																						<h3>{{ a.post_parent }}
+																							{{s.devise.metaValue}}</h3>
+																						<span class="texte-gris text-bold fs-14">
+																							<i class="fas fa-map-marker"></i>
+																							{{s.pays|country_name}},
+																							{{s.etat}},
+																							{{s.ville}}</span>
+																						<br>
+																						<span class="texte-gris text-bold fs-14">
+																							<i class="fas fa-calendar"></i>
+																							{{a.date_evenement}}</span>
+																					</div>
+																				</div>
+																			{% endif %}
+																		{% endfor %}
+																	{% endif %}
+																{% endfor %}
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- Accordion card -->
+										</div>
+									<!-- Accordion wrapper -->
+								{% endif %}
+
+								{% if reservationsDevisEnAttenteCount != 0 and tag == "reservation-devis-en-attente" %}
+									<!--Accordion wrapper Pour les reservation-devis-en-attente-->
+										<div class="accordion md-accordion  mb-5" id="accordionEx2" role="tablist" aria-multiselectable="true">
+											<!-- Accordion card -->
+											<div
+												class="card">
+												<!-- Card header -->
+												<div class="card-header" role="tab">
+													<a data-toggle="collapse" id="headingOne2" data-parent="#accordionEx2" href="#collapseOne2" aria-expanded="true" aria-controls="collapseOne2">
+														<div class="row col-md-12">
+															<div class="col-md-5">
+																<i class="fas fa-plus" style="font-size: 22px; color: black;">
+																	<span class="underline fs-16">{{'profil-utilisateur.annonces.devis-en-attente'|trans}}
+																		({{reservationsDevisEnAttenteCount}})
+																	</span>
+																</i>
+															</div>
+															<div class="col-md-7">
+																<p class="fs-12 sub-msg">
+																	{{'profil-utilisateur.annonces.message-en-attente'|trans}}</p>
+															</div>
+														</div>
+													</a>
+												</div>
+
+												<!-- Card body -->
+												<div id="collapseOne2" class="collapse md-12" role="tabpanel" aria-labelledby="headingOne2" data-parent="#accordionEx2">
+													<div class="card-body">
+														<div class="row">
+															<div class="col-md-12 row">
+																{% if reservationsDevisEnAttenteCount > 0 %}
+																	<div class="col-md-12" id="dynamicPaginationReservationsDevisEnAttente">
+																		{% include "profile/partials/pagination_bloc_reservations_devis_attente.html.twig" %}
+																	</div>
+																{% endif %}
+															</div>
+															<div id="paginateReservationsDevisEnAttente" class="col-md-12">
+																{% for a in reservationsDevisEnAttente %}
+																	<div class="row mt-3" style="min-height: 200px">
+																		<div class="col-md-4 annonce-img" style="background: url('{% if a.gallery|length > 0 and a.gallery and a.gallery != '' %}{{ a.gallery.0.guid }}{% elseif a.images_secondaires|length > 0 and a.images_secondaires.0 %}{{ a.images_secondaires.0.guid }}{% endif %}')"></div>
+																		<div class="col-md-8 py-2 annonce-detail">
+																			<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+																				{{a.titre}}</h4>
+																			<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:
+																				{{a.dates_devis}}</h4>
+																			{# <p class="fs-14">{{a.titre}}</p> #}
+																			<div class="col-md-12 row">
+																				<div class="col-md-8 pl-0">
+																					<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+																						{{a.prenom_prestataire}}
+																						{{a.nom_prestataire}}</h4>
+																				</div>
+																				<div class="col-md-4">
+																					<span class="texte-gris text-bold fs-14">
+																						<i class="fas fa-money-bill"></i>
+																						{{a.price}}
+																						{{a.devise}}</span>
+																				</div>
+																			</div>
+																			<br>
+
+																			{# <span class="texte-gris text-bold fs-14"><i class="fas fa-calendar"></i> {{a.dates_devis}} </span> #}
+																			<div class="pt-4">
+																				<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+																					<div class="btn-group mr-2" role="group" aria-label="First group">
+																						<a class="btn btn btn-bg-primary btn-s annuler-devis" href="{{path('devis_annulerDevis',{id:a.id, state:'edition'})}}">
+																							{{'profil-utilisateur.annonces.annuler'|trans}}
+																						</a>
+																					</div>
+																					<div class="btn-group mr-2" role="group" aria-label="Second group">
+																						<a href="{{path('devis_detailsDevis',{id:a.id})}}" class="btn btn-bg-details-button btn-s">{{'profil-utilisateur.annonces.voir-accepter'|trans}}</a>
+																					</div>
+
+																					<div class="btn-group ml-4 " role="group" aria-label="Thirth group"></div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																{% endfor %}
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- Accordion card -->
+										</div>
+									<!-- Accordion wrapper -->
+								{% endif %}
+
+								{% if annoncesBrouillonCount != 0 and tag == "annonces-en-brouillon" %}
+									<!--Accordion wrapper Pour les annonces en brouillon -->
+									<div class="accordion md-accordion  mb-5" id="accordionEx5" role="tablist" aria-multiselectable="true">
+										<!-- Accordion card -->
+										<div class="card">
+											<!-- Card header -->
+											<div class="card-header" role="tab">
+												<a data-toggle="collapse" id="headingOne5" data-parent="#accordionEx5" href="#collapseOne5" aria-expanded="true" aria-controls="collapseOne5">
+													<div class="row col-md-12">
+														<div class="col-md-5">
+															<i class="fas fa-plus" style="font-size: 22px; color: black;" id="accordion_address2">
+																<span class="underline fs-16">{{'profil-utilisateur.annonces.annonces-en-brouillon'|trans}}
+																	({{annoncesBrouillonCount}})
+																</span>
+															</i>
+														</div>
+														<div class="col-md-7">
+															<p class="fs-12 sub-msg">
+																{{'profil-utilisateur.annonces.message-en-attente'|trans}}</p>
+														</div>
+													</div>
+												</a>
+											</div>
+
+											<!-- Card body -->
+											<div id="collapseOne5" class="collapse md-12" role="tabpanel" aria-labelledby="headingOne5" data-parent="#accordionEx5">
+												<div class="card-body">
+													<div class="row">
+														<div class="col-md-12 row">
+															{% if annoncesBrouillonCount > 0 %}
+																<div class="col-md-12" id="dynamicPaginationAnnonceBrouillon">
+																	{% include "profile/partials/pagination_bloc_annonces_brouillon.html.twig" %}
+																</div>
+															{% endif %}
+														</div>
+														<div id="paginateAnnoncesEnBrouillon" class="col-md-12">
+															{% for a in annoncesBrouillon %}
+																<div class="row mt-3" style="min-height: 200px">
+																	<div class="col-md-4 annonce-img" style="background: url('{% if a.gallery|length > 0 and a.gallery is defined and a.gallery != '' %}{{a.gallery.0.guid}}{% elseif a.images_secondaires|length > 0 and a.images_secondaires.0  %}{{a.images_secondaires.0.guid}}{% endif %}')"></div>
+																	<div class="col-md-8 py-2 annonce-detail">
+																		<h3>{{a.first_name}}
+																			{{a.last_name}}</h3>
+																		<p class="fs-14">
+																			{% if app.request.locale == 'en' and a.titre_en != '' %}
+																				{{a.titre_en}}
+																			{% else %}
+																				{{a.titre}}
+																			{% endif %}
+																		</p>
+																		<h3>{{ a.price }}
+																			{{a.devise}}</h3>
+																		<span class="texte-gris text-bold fs-14">
+																			<i class="fas fa-map-marker"></i>
+																			{{a.pays|country_name}},
+																			{{a.etat}},
+																			{{a.ville}}</span>
+																		<br>
+																		<span class="texte-gris text-bold fs-14">
+																			<i class="fas fa-calendar"></i>
+																			{{a.calendrier|first}}
+																			-
+																			{{a.calendrier|last}}
+																			({{a.calendrier|length}}
+																			dates dispo.)</span>
+																		<div class="pt-4">
+																			<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+																				<div class="btn-group mr-2" role="group" aria-label="First group">
+																					<a class="btn btn-bg-primary btn-sm editer" href="{{path('profile_EditDraftAnnounce',{id:a.id})}}">
+																						<i class="fas fa-edit"></i>
+																					</a>
+																				</div>
+																				<div class="btn-group mr-2" role="group" aria-label="Second group">
+																					<a href="{{path('profile_deleteDraftAnnounce',{id:a.id})}}" class="btn btn-bg-primary btn-sm editer supprimer">
+																						<i class="fas fa-trash-alt"></i>
+																					</a>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																</div>
+															{% endfor %}
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- Accordion card -->
+									</div>
+									<!-- Accordion wrapper -->
+								{% endif %}
+
+								{% if annoncesModerationCount != 0 and tag == "annonces-en-moderation"  %}
+									<!--Accordion wrapper Pour les annonces en moderation -->
+										<div class="accordion md-accordion  mb-5" id="accordionEx6" role="tablist" aria-multiselectable="true">
+											<!-- Accordion card -->
+											<div class="card">
+												<!-- Card header -->
+												<div class="card-header" role="tab">
+													<a data-toggle="collapse" id="headingOne6" data-parent="#accordionEx6" href="#collapseOne6" aria-expanded="true" aria-controls="collapseOne6">
+														<div class="row col-md-12">
+															<div class="col-md-5">
+																<i class="fas fa-plus" style="font-size: 22px; color: black;" id="accordion_address2">
+																	<span class="underline fs-16">{{'profil-utilisateur.annonces.annonces-en-moderation'|trans}}
+																		({{annoncesModerationCount}})
+																	</span>
+																</i>
+															</div>
+															<div class="col-md-7">
+																<p class="fs-12 sub-msg">
+																	{{'profil-utilisateur.annonces.message-en-attente'|trans}}</p>
+															</div>
+														</div>
+													</a>
+												</div>
+												<!-- Card body -->
+												<div id="collapseOne6" class="collapse md-12" role="tabpanel" aria-labelledby="headingOne6" data-parent="#accordionEx6">
+													<div class="card-body">
+														<div class="row">
+															<div class="col-md-12 row">
+																{% if annoncesModerationCount > 0 %}
+																	<div class="col-md-12" id="dynamicPaginationAnnonceModeration">
+																		{% include "profile/partials/pagination_bloc_annonces_moderation.html.twig" %}
+																	</div>
+																{% endif %}
+															</div>
+															<div id="paginateAnnoncesEnModeration" class="col-md-12">
+																{% for a in annoncesModeration %}
+																	<div class="row mt-3" style="min-height: 200px">
+																		<div class="col-md-4 annonce-img" style="background: url('{% if a.gallery|length > 0 and a.gallery is defined and a.gallery != '' %}{{a.gallery.0.guid}}{% elseif a.images_secondaires|length > 0 and a.images_secondaires.0  %}{{a.images_secondaires.0.guid}}{% endif %}')"></div>
+																		<div class="col-md-8 py-2 annonce-detail">
+																			<h3>{{a.first_name}}
+																				{{a.last_name}}</h3>
+																			<p class="fs-14">
+																				{% if app.request.locale == 'en' and a.titre_en != '' %}
+																					{{a.titre_en}}
+																				{% else %}
+																					{{a.titre}}
+																				{% endif %}
+																			</p>
+																			<h3>{{ a.price }}
+																				{{a.devise}}</h3>
+																			<span class="texte-gris text-bold fs-14">
+																				<i class="fas fa-map-marker"></i>
+																				{{a.pays|country_name}},
+																				{{a.etat}},
+																				{{a.ville}}</span>
+																			<br>
+																			<span class="texte-gris text-bold fs-14">
+																				<i class="fas fa-calendar"></i>
+																				{{a.calendrier|first}}
+																				-
+																				{{a.calendrier|last}}
+																				({{a.calendrier|length}}
+																				dates dispo.)</span>
+																		</div>
+																	</div>
+																{% endfor %}
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- Accordion card -->
+											</div>
+										</div>
+									<!-- Accordion wrapper -->
+								{% endif %}
+
+								{% if annoncesRejeteesCount != 0 and tag == "annonces-rejetees" %}
+									<!--Accordion wrapper Pour les annonces en rejetees -->
+										<div class="accordion md-accordion  mb-5" id="accordionEx7" role="tablist" aria-multiselectable="true">
+											<!-- Accordion card -->
+											<div class="card">
+												<!-- Card header -->
+												<div class="card-header" role="tab">
+													<a data-toggle="collapse" id="headingOne7" data-parent="#accordionEx7" href="#collapseOne7" aria-expanded="true" aria-controls="collapseOne7">
+														<div class="row col-md-12">
+															<div class="col-md-5">
+																<i class="fas fa-plus" style="font-size: 22px; color: black;">
+																	<span class="underline fs-16">{{'profil-utilisateur.annonces.annonces-rejetees'|trans}}
+																		({{annoncesRejeteesCount}})
+																	</span>
+																</i>
+															</div>
+															<div class="col-md-7">
+																<p class="fs-12 sub-msg">
+																	{{'profil-utilisateur.annonces.message-en-attente'|trans}}</p>
+															</div>
+														</div>
+													</a>
+												</div>
+
+												<!-- Card body -->
+												<div id="collapseOne7" class="collapse md-12" role="tabpanel" aria-labelledby="headingOne7" data-parent="#accordionEx7">
+													<div class="card-body">
+														<div class="row">
+															<div class="col-md-12 row">
+																{% if annoncesRejeteesCount > 0 %}
+																	<div class="col-md-12" id="dynamicPaginationAnnonceRejetees">
+																		{% include "profile/partials/pagination_bloc_annonces_rejetees.html.twig" %}
+																	</div>
+																{% endif %}
+															</div>
+															<div id="paginateAnnoncesRejetees" class="col-md-12">
+																{% for a in annoncesRejetees %}
+																	<div class="row mt-3" style="min-height: 200px">
+																		<div class="col-md-4 annonce-img" style="background: url('{% if a.gallery|length > 0 and a.gallery is defined and a.gallery != '' %}{{a.gallery.0.guid}}{% elseif a.images_secondaires|length > 0 and a.images_secondaires.0  %}{{a.images_secondaires.0.guid}}{% endif %}')"></div>
+																		<div class="col-md-8 py-2 annonce-detail">
+																			<h3>{{ a.first_name}}
+																				{{a.last_name}}</h3>
+																			<p class="fs-14">
+																				{% if app.request.locale == 'en' and a.titre_en != '' %}
+																					{{a.titre_en}}
+																				{% else %}
+																					{{a.titre}}
+																				{% endif %}
+																			</p>
+																			<h3>{{ a.price }}
+																				{{a.devise}}</h3>
+																			<span class="texte-gris text-bold fs-14">
+																				<i class="fas fa-map-marker"></i>
+																				{{a.pays|country_name}},
+																				{{a.etat}},
+																				{{a.ville}}</span>
+																			<br>
+																			<span class="texte-gris text-bold fs-14">
+																				<i class="fas fa-calendar"></i>
+																				{{a.calendrier|first}}
+																				-
+																				{{a.calendrier|last}}
+																				({{a.calendrier|length}}
+																				dates dispo.)</span>
+																		</div>
+																	</div>
+																{% endfor %}
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<!-- Accordion card -->
+										</div>
+									<!-- Accordion wrapper -->
+								{% endif %}
+
+								{% if annoncesPublieesCount != 0 and tag == "annonces-publiees" %}
+									<!--Accordion wrapper Pour les annonces publiees -->
+										<div class="accordion md-accordion  mb-5" id="accordionEx8" role="tablist" aria-multiselectable="true">
+											<!-- Accordion card -->
+											<div class="card">
+												<!-- Card header -->
+												<div class="card-header" role="tab">
+													<a data-toggle="collapse" id="headingOne8" data-parent="#accordionEx8" href="#collapseOne8" aria-expanded="true" aria-controls="collapseOne8">
+														<div class="row col-md-12">
+															<div class="col-md-5">
+																<i class="fas fa-plus" style="font-size: 22px; color: black;">
+																	<span class="underline fs-16">{{'profil-utilisateur.annonces.annonces-publiees'|trans}}
+																		({{annoncesPublieesCount}})
+																	</span>
+																</i>
+															</div>
+															<div class="col-md-7">
+																<p class="fs-12 sub-msg">
+																	{{'profil-utilisateur.annonces.message-en-attente'|trans}}</p>
+															</div>
+														</div>
+													</a>
+												</div>
+
+												<!-- Card body -->
+												<div id="collapseOne8" class="collapse md-12" role="tabpanel" aria-labelledby="headingOne8" data-parent="#accordionEx8">
+													<div class="card-body">
+														<div class="row">
+															<div class="col-md-12 row">
+																{% if annoncesPublieesCount > 0 %}
+																	<div class="col-md-12" id="dynamicPaginationAnnoncesPubliees">
+																		{% include "profile/partials/pagination_bloc_annonces_publiees.html.twig" %}
+																	</div>
+																{% endif %}
+															</div>
+
+															<div id="paginateAnnoncesPubliees" class="col-md-12">
+																{% for a in annoncesPubliees %}
+																	<div class="row mt-3" style="min-height: 200px">
+																		<div class="col-md-4 annonce-img" style="background: url('{% if a.gallery|length > 0 and a.gallery is defined and a.gallery != '' %}{{a.gallery.0.guid}}{% elseif a.images_secondaires|length > 0 and a.images_secondaires.0  %}{{a.images_secondaires.0.guid}}{% endif %}')"></div>
+																		<div class="col-md-8 py-2 annonce-detail">
+																			<h3>{{a.first_name}}
+																				{{a.last_name}}</h3>
+																			<p class="fs-14">
+																				{% if app.request.locale == 'en' and a.titre_en != '' %}
+																					{{a.titre_en}}
+																				{% else %}
+																					{{a.titre}}
+																				{% endif %}
+																			</p>
+																			<h3>{{ a.price }}
+																				{{a.devise}}</h3>
+																			<span class="texte-gris text-bold fs-14">
+																				<i class="fas fa-map-marker"></i>
+																				{{a.pays|country_name}},
+																				{{a.etat}},
+																				{{a.ville}}</span>
+																			<br>
+																			<span class="texte-gris text-bold fs-14">
+																				<i class="fas fa-calendar"></i>
+																				{{a.calendrier|first}}
+																				-
+																				{{a.calendrier|last}}
+																				({{a.calendrier|length}}
+																				dates dispo.)</span>
+																			<div class="pt-4">
+																				<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+																					<div class="btn-group mr-2" role="group" aria-label="First group">
+																						<a class="btn btn-bg-primary btn-sm editer" href="{{path('profile_EditDraftAnnounce',{id:a.id, state:'edition'})}}">
+																							<i class="fas fa-edit"></i>
+																						</a>
+																					</div>
+																					<div class="btn-group mr-2" role="group" aria-label="Second group">
+																						<a href="{{path('profile_deleteDraftAnnounce',{id:a.id})}}" class="btn btn-bg-primary btn-sm editer supprimer">
+																							<i class="fas fa-trash-alt"></i>
+																						</a>
+																					</div>
+
+																					<div class="btn-group mt-2" role="group" aria-label="Thirth group">
+																						{% if a.slug|length > 8 %}
+																							<a href="{% if a.slug|length > 8 %}{{path('annonces_detailsAnnonce',{id:a.slug})}}{% endif %}" class="btn btn-bg-primary btn-sm ">
+																								<i class="fas fa-eye"></i>
+																								{{'general.voir_annonce'|trans}}
+																							</a>
+																						{% endif %}
+																					</div>
+
+																					<div {% if a.categorieParentType == 'product_cat' %} hidden {% else %} fa-minus {% endif %} class="btn-group mt-2 ml-2" role="group" aria-label="Thirth group">
+																						<a id="mise_en_rupture" href="{% if a.slug|length > 8 %}{{path('annonces_rupture',{slug:a.slug})}}{% endif %}" class="btn btn-bg-primary btn-sm ">
+																							<i class="fas {% if a.rupture == 0 %}fa-plus{% else %}fa-minus{% endif %}"></i>
+																							{% if a.rupture == 0 %}
+																								{{'general.produit_disponible'|trans}}
+																							{% else %}
+																								{{'general.rupture'|trans}}
+																							{% endif %}
+																						</a>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																{% endfor %}
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- Accordion card -->
+										</div>
+									<!-- Accordion wrapper -->
+
+								{% endif %}
+
+								{% if devisEnAttenteCount != 0 and tag == "devis-en-attente" %}
+									<!--Accordion wrapper Pour les reservations en Cours-->
+										<div class="accordion md-accordion  mb-5" id="accordionEx9" role="tablist" aria-multiselectable="true">
+											<!-- Accordion card -->
+											<div class="card">
+											<!-- Card header -->
+												<div class="card-header" role="tab">
+													<a data-toggle="collapse" id="headingOne9" data-parent="#accordionEx9" href="#collapseOne9" aria-expanded="true"
+													aria-controls="collapseOne9">
+													<div class="row col-md-12">
+														<div class="col-md-5">
+															<i class="fas fa-plus" style="font-size: 22px; color: black;">
+															<span class="underline fs-16">{{'profil-utilisateur.annonces.devis-en-attente'|trans}} ({{devisEnAttenteCount}})
+															</span>
+															</i>
+														</div>
+														<div class="col-md-7">
+															<p class="fs-12 sub-msg">
+																{{'profil-utilisateur.annonces.message-en-attente'|trans}}</p>
+														</div>
+													</div>
+													</a>
+												</div>
+
+											<!-- Card body -->
+												<div id="collapseOne9" class="collapse md-12" role="tabpanel" aria-labelledby="headingOne9" data-parent="#accordionEx9">
+													<div class="card-body">
+														<div class="row">														
+															<div class="col-md-12 row">
+																{% if devisEnAttenteCount > 0 %}
+																	<div class="col-md-12" id="dynamicPaginationDevisEnAttente">
+																		{% include "profile/partials/pagination_bloc_devis_attente.html.twig" %}
+																	</div>
+																{% endif %}
+															</div>
+															<div id="paginateDevisEnAttente" class="col-md-12">		
+																{% for a in devisEnAttente %}
+																	<div class="row mt-3" style="min-height: 200px">
+																		<div class="col-md-4 annonce-img" style="background: url('{% if a.gallery|length > 0 and a.gallery is defined and a.gallery != '' %}{{a.gallery.0.guid}}{% elseif a.images_secondaires|length > 0 and a.images_secondaires.0  %}{{a.images_secondaires.0.guid}}{% endif %}')"></div>
+																		<div class="col-md-8 py-2 annonce-detail">
+																			<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+																				{{a.titre}}</h4>
+																			<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:
+																				{{a.dates_devis}}</h4>
+																			{# <p class="fs-14">{{a.titre}}</p> #}
+																			<div class="col-md-12 row">
+																				<div class="col-md-8 pl-0">
+																				<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+																				{{a.first_name}}
+																				{{a.last_name}}</h4>
+																				</div>
+																				<div class="col-md-4">
+																					<span class="texte-gris text-bold fs-14">
+																						<i class="fas fa-money-bill"></i>
+																						{{a.price}} {{a.devise}}</span>
+																				</div>
+																			</div>
+																			<br>
+
+																			{# <span class="texte-gris text-bold fs-14"><i class="fas fa-calendar"></i> {{a.dates_devis}} </span> #}
+																			<div class="pt-4">
+																				<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+																					<div class="btn-group mr-2" role="group" aria-label="First group">
+																						<a class="btn btn-bg-primary btn-sm editer" href="{{path('profile_EditDraftAnnounce',{id:a.id, state:'edition'})}}">
+																							<i class="fas fa-edit"></i>
+																						</a>
+																					</div>
+																					<div class="btn-group mr-2" role="group" aria-label="Second group">
+																						<a href="{{path('profile_deleteDraftAnnounce',{id:a.id})}}" class="btn btn-bg-primary btn-sm editer supprimer">
+																							<i class="fas fa-trash-alt"></i>
+																						</a>
+																					</div>
+
+																					<div class="btn-group ml-4 " role="group" aria-label="Thirth group"></div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																{% endfor %}
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- Accordion card -->
+										</div>
+									<!-- Accordion wrapper -->
+								{% endif %}
+
+								{% if devisEnBrouillonCount != 0 and tag == "devis-en-brouillon" %}
+									<!--Accordion wrapper Pour les reservations en Cours-->
+										<div class="accordion md-accordion  mb-5" id="accordionEx10" role="tablist" aria-multiselectable="true">
+											<!-- Accordion card -->
+											<div class="card">
+											<!-- Card header -->
+											<div class="card-header" role="tab">
+												<a data-toggle="collapse" id="headingOne10" data-parent="#accordionEx10" href="#collapseOne10" aria-expanded="true"
+												aria-controls="collapseOne10">
+												<div class="row col-md-12">
+													<div class="col-md-5">
+														<i class="fas fa-plus" style="font-size: 22px; color: black;">
+														<span class="underline fs-16">{{'profil-utilisateur.annonces.devis-en-brouillon'|trans}} ({{devisEnBrouillonCount}})
+														</span>
+														</i>
+													</div>
+													<div class="col-md-7">
+														<p class="fs-12 sub-msg">
+															{{'profil-utilisateur.annonces.message-en-attente'|trans}}</p>
+													</div>
+												</div>
+												</a>
+											</div>
+
+											<!-- Card body -->
+											<div id="collapseOne10" class="collapse md-12" role="tabpanel" aria-labelledby="headingOne10" data-parent="#accordionEx10">
+												<div class="card-body">
+													<div class="row">
+														<div class="col-md-12 row">
+															{% if devisEnBrouillonCount > 0 %}
+																<div class="col-md-12" id="dynamicPaginationDevisEnBrouillon">
+																	{% include "profile/partials/pagination_bloc_devis_brouillon.html.twig" %}
+																</div>
+															{% endif %}
+														</div>
+														<div id="paginateDevisEnBrouillon" class="col-md-12">
+															{% for a in devisEnBrouillon %}
+																<div class="row mt-3" style="min-height: 200px">
+																	<div class="col-md-4 annonce-img" style="background: url('{% if a.gallery|length > 0 and a.gallery is defined and a.gallery != '' %}{{a.gallery.0.guid}}{% elseif a.images_secondaires|length > 0 and a.images_secondaires.0  %}{{a.images_secondaires.0.guid}}{% endif %}')"></div>
+																	<div class="col-md-8 py-2 annonce-detail">
+																		<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+																			{{a.titre}}</h4>
+																		<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:
+																			{{a.dates_devis}}</h4>
+																		{# <p class="fs-14">{{a.titre}}</p> #}
+																		<div class="col-md-12 row">
+																			<div class="col-md-8 pl-0">
+																				<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+																					{{a.first_name}}
+																					{{a.last_name}}</h4>
+																			</div>
+																			<div class="col-md-4">
+																				<span class="texte-gris text-bold fs-14">
+																					<i class="fas fa-money-bill"></i>
+																					{{a.price}}
+																					{{a.devise}}</span>
+																			</div>
+																		</div>
+
+																		<br>
+																		{# <span class="texte-gris text-bold fs-14"><i class="fas fa-calendar"></i> {{a.dates_devis}} </span> #}
+																		<div class="pt-4">
+																			<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+																				<div class="btn-group mr-2" role="group" aria-label="First group">
+																					<a class="btn btn-bg-primary btn-sm editer" href="{{path('profile_EditDraftAnnounce',{id:a.id, state:'edition'})}}">
+																						<i class="fas fa-edit"></i>
+																					</a>
+																				</div>
+																				<div class="btn-group-devis mr-2" role="group" aria-label="Second group">
+																					<a href="{{path('profile_deleteDraftAnnounce',{id:a.id})}}" class="btn btn-bg-primary btn-sm editer supprimer">
+																						<i class="fas fa-trash-alt"></i>
+																					</a>
+																				</div>
+
+																				<div class="btn-group ml-4" role="group" aria-label="Thirth group"></div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															{% endfor %}
+														</div>
+													</div>
+												</div>
+											</div>
+											</div>
+											<!-- Accordion card -->
+										</div>
+									<!-- Accordion wrapper -->
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					<!-- Fin des modifs -->
+				</div>
+			</div>
+			{% include("partials/project.html.twig") %}
+			{% include("partials/otherPagesVideoModal.html.twig") %}
+		</main>
+	</div>
+{% endblock %}
+
+
+{% block footer %}
+	{{parent()}}
+
+{% endblock %}
+
+{% block javascripts %}
+	{{parent()}}
+	<!-- jQuery plugin for datepicker -->
+	<script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+	<script src="{{ prerender(asset('assets/js/img-picker/image-picker.min.js')) }}"></script>
+	<script src="{{ prerender(asset('assets/js/tagsinput/jQuery.tagify.min.js')) }}"></script>
+	<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+	<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+
+	{# Text editor #}
+
+	<script>
+	$(document).ready(function () {
+// CKEDITOR.replace( 'description' );
+// CKEDITOR.replace( 'description1' );
+
+var docWidth = document.documentElement.offsetWidth;
+
+[].forEach.call(document.querySelectorAll('*'), function (el) {
+if (el.offsetWidth > docWidth) {
+console.log(el);
+}
+});
+
+
+$(function () {
+	let text = `{% if infos_bulle %}{{infos_bulle.optionValue|raw}}{% endif %}`;
+	$('.popover_infos').data('content', text);
+ 	$('[data-toggle="popover"]').popover()
+})
+// Hambuger menu icon
+$('.animated-button-icon').on('click', function () {
+$('.animated-icon2').toggleClass('open');
+});
+// first thing turn Hide Menu Search bar
+$("#searchMenu").hide();
+// toggle menu search bar on/off
+$("#searchMenuShowHide").click(function () {
+$("#searchMenu").toggle("slide");
+});
+
+// Initialize the object
+$("#photos").imagepicker();
+$("#videos").imagepicker();
+// Retrieve the picker
+$("#photos").data('picker');
+$("#videos").data('picker');
+
+$('.date').datepicker({multidate: true, format: 'dd-mm-yyyy'});
+
+
+
+$('#headingOne1').click(function() {
+	let accordion = $(this).find('i');
+	if(accordion.attr("class").split(/\s+/).includes('fa-plus')){
+  		accordion.removeClass('fa-plus');
+  		accordion.addClass('fa-minus');
+	}else{
+  		accordion.removeClass('fa-minus');
+		accordion.addClass('fa-plus');
+	}
+});
+
+$('#headingOne2').click(function() {
+	let accordion = $(this).find('i');
+	
+	if(accordion.attr("class").split(/\s+/).includes('fa-plus')){
+  		accordion.removeClass('fa-plus');
+  		accordion.addClass('fa-minus');
+	}else{
+  		accordion.removeClass('fa-minus');
+		accordion.addClass('fa-plus');
+	}
+});
+
+$('#headingOne3').click(function() {
+	let accordion = $(this).find('i');
+	
+	if(accordion.attr("class").split(/\s+/).includes('fa-plus')){
+  		accordion.removeClass('fa-plus');
+  		accordion.addClass('fa-minus');
+	}else{
+  		accordion.removeClass('fa-minus');
+		accordion.addClass('fa-plus');
+	}
+});
+
+$('#headingOne4').click(function() {
+	let accordion = $(this).find('i');
+	
+	if(accordion.attr("class").split(/\s+/).includes('fa-plus')){
+  		accordion.removeClass('fa-plus');
+  		accordion.addClass('fa-minus');
+	}else{
+  		accordion.removeClass('fa-minus');
+		accordion.addClass('fa-plus');
+	}
+});
+
+$('#headingOne5').click(function() {
+	let accordion = $(this).find('i');
+	
+	if(accordion.attr("class").split(/\s+/).includes('fa-plus')){
+  		accordion.removeClass('fa-plus');
+  		accordion.addClass('fa-minus');
+	}else{
+  		accordion.removeClass('fa-minus');
+		accordion.addClass('fa-plus');
+	}
+});
+
+$('#headingOne6').click(function() {
+	let accordion = $(this).find('i');
+	
+	if(accordion.attr("class").split(/\s+/).includes('fa-plus')){
+  		accordion.removeClass('fa-plus');
+  		accordion.addClass('fa-minus');
+	}else{
+  		accordion.removeClass('fa-minus');
+		accordion.addClass('fa-plus');
+	}
+});
+
+$('#headingOne7').click(function() {
+	let accordion = $(this).find('i');
+	
+	if(accordion.attr("class").split(/\s+/).includes('fa-plus')){
+  		accordion.removeClass('fa-plus');
+  		accordion.addClass('fa-minus');
+	}else{
+  		accordion.removeClass('fa-minus');
+		accordion.addClass('fa-plus');
+	}
+});
+
+$('#headingOne8').click(function() {
+	let accordion = $(this).find('i');
+	if(accordion.attr("class").split(/\s+/).includes('fa-plus')){
+  		accordion.removeClass('fa-plus');
+  		accordion.addClass('fa-minus');
+	}else{
+  		accordion.removeClass('fa-minus');
+		accordion.addClass('fa-plus');
+	}
+});
+
+$('#headingOne9').click(function() {
+	let accordion = $(this).find('i');
+	if(accordion.attr("class").split(/\s+/).includes('fa-plus')){
+  		accordion.removeClass('fa-plus');
+  		accordion.addClass('fa-minus');
+	}else{
+  		accordion.removeClass('fa-minus');
+		accordion.addClass('fa-plus');
+	}
+});
+
+$('#headingOne10').click(function() {
+	let accordion = $(this).find('i');
+	if(accordion.attr("class").split(/\s+/).includes('fa-plus')){
+  		accordion.removeClass('fa-plus');
+  		accordion.addClass('fa-minus');
+	}else{
+  		accordion.removeClass('fa-minus');
+		accordion.addClass('fa-plus');
+	}
+});
+
+$('#accordionEx1').on('click', '.page-item', function(e) {
+    e.preventDefault();
+	var url = $(this).children().attr('href');
+	$.ajax({
+	url: url,
+	method: "get",
+		success: function (data) {
+			if (data.html) {
+				$('#paginateReservationsEnCours').html(data.html);
+			}
+			$('#dynamicPaginationReservationsEnCours').html(data.pagination);
+		},
+		error: function (xhr) {
+			console.error(xhr);
+		}
+	});
+});
+
+$('#accordionEx2').on('click', '.page-item', function(e) {
+    e.preventDefault();
+	var url = $(this).children().attr('href');
+	$.ajax({
+	url: url,
+	method: "get",
+		success: function (data) {
+			if (data.html) {
+				$('#paginateReservationsDevisEnAttente').html(data.html);
+			}
+			$('#dynamicPaginationReservationsDevisEnAttente').html(data.pagination);
+		},
+		error: function (xhr) {
+			console.error(xhr);
+		}
+	});
+});
+
+$('#accordionEx3').on('click', '.page-item', function(e) {
+    e.preventDefault();
+	var url = $(this).children().attr('href');
+	$.ajax({
+	url: url,
+	method: "get",
+		success: function (data) {
+			if (data.html) {
+				$('#paginateReservationsTerminees').html(data.html);
+			}
+			$('#dynamicPaginationReservationsTerminees').html(data.pagination);
+		},
+		error: function (xhr) {
+			console.error(xhr);
+		}
+	});
+});
+
+$('#accordionEx4').on('click', '.page-item', function(e) {
+    e.preventDefault();
+	var url = $(this).children().attr('href');
+	$.ajax({
+	url: url,
+	method: "get",
+		success: function (data) {
+			console.log(data);
+			if (data.html) {
+				$('#paginateReservationsAnnulees').html(data.html);
+			}
+			$('#dynamicPaginationReservationsAnnulees').html(data.pagination);
+		},
+		error: function (xhr) {
+			console.error(xhr);
+		}
+	});
+});
+
+$('#accordionEx5').on('click', '.page-item', function(e) {
+    e.preventDefault();
+	var url = $(this).children().attr('href');
+	$.ajax({
+	url: url,
+	method: "get",
+		success: function (data) {
+			if (data.html) {
+				$('#paginateAnnoncesEnBrouillon').html(data.html);
+			}
+			$('#dynamicPaginationAnnonceBrouillon').html(data.pagination);
+		},
+		error: function (xhr) {
+			console.error(xhr);
+		}
+	});
+});
+
+$('#accordionEx6').on('click', '.page-item', function(e) {
+    e.preventDefault();
+	var url = $(this).children().attr('href');
+	$.ajax({
+	url: url,
+	method: "get",
+		success: function (data) {
+			console.log(data);
+			if (data.html) {
+				$('#paginateAnnoncesEnModeration').html(data.html);
+			}
+			$('#dynamicPaginationAnnonceModeration').html(data.pagination);
+		},
+		error: function (xhr) {
+			console.error(xhr);
+		}
+	});
+});
+
+$('#accordionEx7').on('click', '.page-item', function(e) {
+    e.preventDefault();
+	var url = $(this).children().attr('href');
+	$.ajax({
+	url: url,
+	method: "get",
+		success: function (data) {
+			if (data.html) {
+				$('#paginateAnnoncesRejetees').html(data.html);
+			}
+			$('#dynamicPaginationAnnonceRejetees').html(data.pagination);
+		},
+		error: function (xhr) {
+			console.error(xhr);
+		}
+	});
+});
+
+$('#accordionEx8').on('click', '.page-item', function(e) {
+    e.preventDefault();
+	var url = $(this).children().attr('href');
+	$.ajax({
+	url: url,
+	method: "get",
+		success: function (data) {
+			console.log(data);
+			if (data.html) {
+				$('#paginateAnnoncesPubliees').html(data.html);
+			}
+			$('#dynamicPaginationAnnoncesPubliees').html(data.pagination);
+		},
+		error: function (xhr) {
+			console.error(xhr);
+		}
+	});
+});
+
+$('#accordionEx9').on('click', '.page-item', function(e) {
+    e.preventDefault();
+	var url = $(this).children().attr('href');
+	$.ajax({
+	url: url,
+	method: "get",
+		success: function (data) {
+			if (data.html) {
+				$('#paginateDevisEnAttente').html(data.html);
+			}
+			$('#dynamicPaginationDevisEnAttente').html(data.pagination);
+		},
+		error: function (xhr) {
+			console.error(xhr);
+		}
+	});
+});
+
+$('#accordionEx10').on('click', '.page-item', function(e) {
+    e.preventDefault();
+	var url = $(this).children().attr('href');
+	$.ajax({
+	url: url,
+	method: "get",
+		success: function (data) {
+			if (data.html) {
+				$('#paginateDevisEnBrouillon').html(data.html);
+			}
+			$('#dynamicPaginationDevisEnBrouillon').html(data.pagination);
+		},
+		error: function (xhr) {
+			console.error(xhr);
+		}
+	});
+});
+// jQuery time
+var current_fs,
+
+_fs,
+previous_fs; // fieldsets
+var left,
+opacity,
+scale; // fieldset properties which we will animate
+var animating; // flag to prevent quick multi-click glitches
+
+$(".next").click(function () {
+if (animating) 
+return false;
+
+animating = true;
+current_fs = $(this).parent();
+next_fs = $(this).parent().next();
+
+// activate next step on progressbar using the index of next_fs
+$("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+// show the next fieldset
+next_fs.show();
+// hide the current fieldset with style
+current_fs.animate({
+opacity: 0
+}, {
+step: function (now, mx) {
+// as the opacity of current_fs reduces to 0 - stored in "now"
+// 1. scale current_fs down to 80%
+scale = 1 - (1 - now) * 0.2;
+// 2. bring next_fs from the right(50%)
+left = (now * 50) + "%";
+// 3. increase opacity of next_fs to 1 as it moves in
+opacity = 1 - now;
+current_fs.css({
+'transform': 'scale(' + scale + ')',
+'position': 'absolute'
+});
+next_fs.css({'left': left, 'opacity': opacity});
+},
+duration: 800,
+complete: function () {
+current_fs.hide();
+animating = false;
+},
+// this comes from the custom easing plugin
+easing: 'easeInOutBack'
+});
+});
+
+$(".previous").click(function () {
+if (animating) 
+return false;
+
+animating = true;
+current_fs = $(this).parent();
+previous_fs = $(this).parent().prev();
+// de-activate current step on progressbar
+$("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+// show the previous fieldset
+previous_fs.show();
+// hide the current fieldset with style
+current_fs.animate({
+opacity: 0
+}, {
+step: function (now, mx) {
+// as the opacity of current_fs reduces to 0 - stored in "now"
+// 1. scale previous_fs from 80% to 100%
+scale = 0.8 + (1 - now) * 0.2;
+// 2. take current_fs to the right(50%) - from 0%
+left = ((1 - now) * 50) + "%";
+// 3. increase opacity of previous_fs to 1 as it moves in
+opacity = 1 - now;
+current_fs.css({'left': left});
+previous_fs.css({
+'transform': 'scale(' + scale + ')',
+'opacity': opacity
+});
+},
+duration: 800,
+complete: function () {
+current_fs.hide();
+animating = false;
+},
+// this comes from the custom easing plugin
+easing: 'easeInOutBack'
+});
+});
+
+
+
+
+// Supprimer annonce
+
+$(document).on('click', '.supprimer', function (e) { // On emp�che le navigateur de soumettre le formulaire
+e.preventDefault();
+var t = $(this);
+var urlPath = $(this).attr('href');
+swal({
+title: "Suppression de l'objet",
+text: "Attention l'objet sera Supprimeé et n'apparaitra plus sur le site",
+type: "info",
+showCancelButton: true,
+confirmButtonClass: "btn-danger",
+confirmButtonText: "Supprimer",
+cancelButtonText: "Annuler",
+closeOnConfirm: false,
+closeOnCancel: false,
+showLoaderOnConfirm: true
+}, function (isConfirm) {
+
+if (isConfirm) {
+
+$.ajax({
+url: urlPath,
+type: 'GET',
+success: function (reponse) {
+if (reponse == 1) {
+
+swal("suppression terminée", "", "success");
+window.setTimeout(function () {
+window.location = "";
+}, 1000);
+t.parents('li').hide();
+} else {
+
+swal("erreur de suppression", "", "error");
+
+}
+},
+error: function (reponse) {
+swal("erreur de suppression", "", "error");
+
+}
+
+});
+
+} else {
+swal.close();
+}
+});
+return false;
+});
+
+
+$(document).on('click', '.annuler-devis', function (e) { // On emp�che le navigateur de soumettre le formulaire
+e.preventDefault();
+var t = $(this);
+var urlPath = $(this).attr('href');
+swal({
+title: "Annulation de la reservation",
+text: "{{'commande.annuler.confirmer_annulation'|trans}}",
+
+type: "info",
+showCancelButton: true,
+confirmButtonClass: "btn-danger",
+confirmButtonText: "Annuler Reservation",
+cancelButtonText: "Annuler",
+closeOnConfirm: false,
+closeOnCancel: false,
+showLoaderOnConfirm: true
+}, function (isConfirm) {
+
+if (isConfirm) {
+
+$.ajax({
+url: urlPath,
+type: 'GET',
+success: function (reponse) {
+if (reponse == 1) {
+
+swal("{{'commande.annuler.succes'|trans}}", "", "success");
+
+window.setTimeout(function () {
+window.location = "";
+}, 1000);
+t.parents('li').hide();
+} else {
+
+swal("commande.annuler.erreur'|trans}}", "", "error");
+
+
+}
+},
+error: function (reponse) {
+swal("{{'commande.annuler.erreur'|trans}}", "", "error");
+
+
+}
+
+});
+
+} else {
+swal.close();
+}
+});
+return false;
+});
+
+
+toastr.options = {
+"closeButton": true,
+"debug": false,
+"newestOnTop": false,
+"progressBar": true,
+"positionClass": "toast-top-center",
+"preventDuplicates": false,
+"onclick": null,
+"showDuration": "300",
+"hideDuration": "1000",
+"timeOut": "30000",
+"extendedTimeOut": "1000",
+"showEasing": "swing",
+"hideEasing": "linear",
+"showMethod": "fadeIn",
+"hideMethod": "fadeOut"
+}
+});
+
+</script>
+{% include("profile/js/annulerCommande.js.twig") %}
+{% include("profile/js/brouillonDevisAnnonce.html.twig") %}
+{% include("profile/js/creerDevisAnnonce.html.twig") %}{% endblock %}
+

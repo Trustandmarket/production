@@ -1,0 +1,345 @@
+<style>
+    [type=button],
+    [type=reset],
+    [type=submit],
+    button {
+        -webkit-appearance: initial !important;
+    }
+
+    .image-header {
+        width: 35px;
+        height: 35px;
+        object-fit: cover;
+    }
+
+    .navbar {
+        box-shadow: none !important;
+    }
+
+    .searchDiv {
+        width: 461px;
+        background: white;
+        padding: 1.8px 4px;
+        border-radius: 30px;
+    }
+
+    .searchDiv .homeFilterFormButton {
+        font-size: 11px;
+    }
+
+    .searchDiv .form-control {
+        font-size: 11px;
+    }
+
+    .customRow {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-field {
+        width: 25%;
+        /* font-family: 'Palanquin Dark',sans-serif; */
+        padding-right: 10px;
+        padding-left: 10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    /* .form-field>label{
+					position: absolute;
+				} */
+
+    .form-field select,
+    .form-field select:focus,
+    .form-field select:focus-visible,
+    .form-field .code_postal_ville,
+    .form-field .code_postal_ville:focus,
+    .form-field .code_postal_ville:focus-visible {
+        border: transparent !important;
+        box-shadow: none !important;
+        -moz-appearance: none;
+        /* Firefox */
+        -webkit-appearance: none;
+        /* Safari and Chrome */
+        appearance: none;
+        background: none;
+        padding: 0px;
+    }
+
+    .form-field .code_postal_ville::-webkit-input-placeholder {
+        color: #000;
+    }
+
+    /* .type_prestation_search>button{
+					display: none !important;
+				} */
+
+    /* .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn){
+					margin: 0 !important;
+					padding: 0 !important;
+					height: 0 !important;
+					width: 0 !important;
+				} */
+
+    .barre_verticale {
+        width: 1px;
+        height: 30px;
+        background-color: gray;
+    }
+
+    .customRow .bootstrap-select {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .customRow .bootstrap-select>.dropdown-toggle.bs-placeholder,
+    .customRow .bootstrap-select>.dropdown-toggle.bs-placeholder:active,
+    .customRow .bootstrap-select>.dropdown-toggle.bs-placeholder:focus,
+    .customRow .bootstrap-select>.dropdown-toggle.bs-placeholder:hover,
+    .customRow .bootstrap-select>.dropdown-toggle {
+        color: #000;
+        background: transparent !important;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border: 0px;
+        font-family: 'Palanquin Dark', sans-serif !important;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: 1.5;
+        text-transform: none;
+        outline: none !important;
+    }
+
+    .customRow .bootstrap-select .dropdown-menu {
+        top: 1.3rem !important;
+        border-radius: 15px;
+    }
+
+    .customRow .bootstrap-select .dropdown-menu li a span.text,
+    .customRow .bootstrap-select .dropdown-menu li {
+        font-family: 'Source Sans Pro', sans-serif !important;
+        font-size: 12px !important;
+    }
+
+    .customRow .bootstrap-select .dropdown-menu li:hover {
+        background-color: #f7f7f7;
+    }
+
+    .customRow .bootstrap-select .dropdown-toggle .filter-option-inner-inner::-webkit-scrollbar {
+        width: 0;
+        /* Remove scrollbar space */
+        background: transparent;
+        /* Optional: just make scrollbar invisible */
+    }
+
+    .customRow .bootstrap-select .dropdown-toggle .filter-option-inner-inner {
+        overflow: auto;
+        text-overflow: clip;
+        white-space: initial;
+    }
+
+    .customRow .dropdown-toggle::after {
+        display: none;
+    }
+
+    a.link-card-actu {
+        display: block;
+        text-decoration: none;
+        width: 329px;
+        margin-top: 2rem;
+        max-width: 100%;
+        background-color: black;
+        border-radius: 15px;
+        border: 1px solid #f17c30;
+        min-height: 5rem;
+        padding: 15px;
+        color: white;
+        margin-bottom: 3rem;
+        box-sizing: content-box;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .homeLayout header {
+            height: auto !important;
+        }
+
+        .mobile_filter {
+            display: block !important;
+        }
+
+        #imageHolder {
+            height: 100% !important;
+        }
+
+        .searchDiv {
+            border: 1px solid black;
+            width: 100%;
+            display: none;
+        }
+
+        .titre_filter h1 {
+            display: none;
+        }
+
+        .titre_filter {
+            width: 90% !important;
+            margin-top: 0px !important;
+            place-items: center;
+        }
+
+        .block_conjoint {
+            margin-top: 0rem;
+        }
+
+        .block_conjoint .block_lien .col-md-12 {
+            min-height: 197px !important;
+            margin-bottom: 1rem;
+            width: 100% !important;
+        }
+
+        .logoButtonHeader {
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .block_conjoint .block_lien a {
+            text-align: left !important;
+        }
+
+        .block_conjoint .block_lien p {
+            margin-top: 5rem !important;
+        }
+
+        .block_conjoint .block_lien a:hover {
+            text-decoration: none;
+        }
+
+        .block_conjoint h3 {
+            font-size: 25px;
+        }
+
+        .form-field {
+            padding-bottom: 15px;
+            padding-top: 15px;
+            border-right: transparent;
+            /* border-bottom: 1px solid black; */
+        }
+
+        #custom-filter {
+            border: 0px solid #f17c30;
+            background: transparent;
+            padding: 0px;
+        }
+
+        .searchDiv .homeFilterFormButton {
+            margin-top: 5px !important;
+            margin: 5px !important;
+            font-size: 6px !important;
+        }
+
+        .searchDiv .form-field {
+            padding-bottom: 0;
+            padding-top: 0;
+        }
+
+        #custom-filter input[type=text] {
+            margin-top: 0;
+        }
+
+        a.link-card-actu {
+            width: 100% !important;
+            margin-left: 0rem;
+            box-sizing: inherit !important;
+        }
+    }
+
+    @media only screen and (max-width: 767px) {
+        a.link-card-actu {
+            margin-top: 2rem !important;
+        }
+    }
+
+    @media only screen and (max-width: 490px) {
+
+        a.link-card-actu {
+            margin-top: 0rem !important;
+            margin-bottom: 0rem !important;
+        }
+    }
+
+    @media only screen and (min-width: 769px) and (max-width: 922px) {
+        .searchDiv {
+            width: 90%;
+        }
+    }
+
+    @media only screen and (min-width: 1300px) {
+        .searchDiv {
+            position: relative;
+            left: 4rem;
+        }
+    }
+
+    .navbar-collapse {
+        flex-grow: 0;
+    }
+
+    .search-title-mob {
+        text-align: center;
+    }
+
+    .titre_filter {
+        width: 37%;
+        place-items: center;
+    }
+
+    .block_conjoint {
+        margin-top: 2rem;
+    }
+
+    .block_conjoint .block_lien .col-md-12 {
+        background-color: white;
+        border: 1px solid #FF7E10;
+        padding: 10px;
+        min-height: 275px;
+        border-radius: 7px;
+    }
+
+    .block_conjoint .block_lien a {
+        text-align: center;
+        color: #000;
+        font-family: 'Palanquin', sans-serif;
+    }
+
+    .block_conjoint .block_lien a:hover {
+        text-decoration: none;
+    }
+
+    .searchDiv .dropdown-menu.inner.show {
+        position: relative !important;
+        top: 0px !important;
+    }
+
+    .searchDiv .dropdown-menu {
+        left: 0px !important;
+    }
+
+    .block_lien h3 {
+        font-weight: bold;
+    }
+</style>
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar pr-5 pl-5"
+    style="display: flex;justify-content: space-between;">
+    <div style="display: flex;" class="logoButtonHeader">
+        <a class="navbar-brand" href="/{{ app.request.getLocale() }}">
+            <img src="{{prerender(asset('assets/img/logo_tm.svg'))}}" width="40" height="40" alt="logo">
+        </a>
+        {% include("headerMenuSite.html.twig") %}
+    </div>
+    {% include("headerMenuSite.html.twig") %}
+    <!-- Collapsible content -->
+</nav>

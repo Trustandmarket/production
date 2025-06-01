@@ -1,0 +1,109 @@
+<style>
+    .playVideoButton {
+        display: block;
+        position: fixed;
+        width: 100px;
+        height: 100px;
+        bottom: 150px;
+        right: 20px;
+        z-index: 9999999999;
+        cursor: pointer;
+        font-size: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #f17c30;
+    }
+
+    .playVideoButton i {
+        font-size: 60px;
+    }
+
+    #topBtn {
+        bottom: 60px;
+    }
+
+    .p-pop-up1 {
+        margin-bottom: 2rem;
+    }
+
+    .p-pop-titre1,
+    .p-pop-titre2 {
+        font-family: "Palanquin Dark";
+    }
+
+    .p-pop-content1 {
+        background: #53b4a6;
+        color: white;
+        padding: 10px;
+        text-decoration: none;
+        font-family: "Source Sans Pro";
+    }
+
+    .p-pop-content2 {
+        background: black;
+        color: white;
+        padding: 10px;
+        text-decoration: none;
+        font-family: "Source Sans Pro";
+    }
+
+    @media only screen and (max-width: 500px) {
+        #dialoguons {
+            width: 70%;
+        }
+    }
+
+    @media only screen and (min-width: 501px) {
+        #dialoguons {
+            width: 40%;
+        }
+    }
+
+    @media only screen and (min-width: 769) and (max-width: 1024px) {
+        #dialoguons {
+            width: 30%;
+        }
+    }
+
+    @media only screen and (min-width: 1025px) {
+        #dialoguons {
+            width: 19%;
+        }
+    }
+    
+</style>
+<div>
+    {# {{path('project_index')}} #}
+{#     <div id="dialoguons">
+        <div class="" style="background:#ed7c3d;padding:5px;">
+            <div class="col-md-12">
+                <h5 style="color:#fff; font-family:Palanquin Dark; font-style:normal">
+                    <center>Expérience Trust & Market</center>
+                </h5>
+            </div>
+            <div class="col-md-1" style="position:absolute;top: 0rem;right: 0;cursor:pointer;" id="fermeur">
+                <span style="color:#fff;">X</span>
+            </div>
+        </div>
+        <div style="padding:20px;">
+            <p align="center" class="p-pop-up1">
+                <span class="p-pop-titre1">{{ 'projet-pop-up.titre1'|trans }}</span><br><br><br>
+                <a target='_blank' class="p-pop-content1"
+                   href="{{ path('annonces_listeAnnonces', {type_prestation: 'photographe',services_proposes: '',code_postal_ville: ''}) }}">{{ 'projet-pop-up.sous-titre1'|trans }}</a>
+            </p>
+            <p align="center">
+                <span class="p-pop-titre2">{{ 'projet-pop-up.titre2'|trans }}</span><br><br><br>
+                <a target='_blank' class="p-pop-content2"
+                   href="{{ path('experiences_index') }}">{{ 'projet-pop-up.sous-titre2'|trans }}</a>
+            </p>
+        </div>
+    </div> 
+    {% if youtube_url is defined %}
+        {% if youtube_url.autoload == 'yes' %}
+            <p class="playVideoButton">
+                <i class="fas fa-play"></i>
+            </p>{% endif %}
+    {% endif %}
+    <a href="{{ path('experiences_index') }}" id="yourproject-iconed-link">{{ 'general.projet'|trans }}</a>#}
+</div>

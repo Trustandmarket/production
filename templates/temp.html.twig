@@ -1,0 +1,1311 @@
+{# templates/generalLayout.html.twig #}
+<!DOCTYPE html>
+<html lang="{{ app.request.getLocale() }}">
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-101016741-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-101016741-2');
+</script>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  {% block head %}
+
+  {% endblock %}
+    <title>{% block title %}Trust And Market {% endblock %}</title>
+    {% block style %}
+
+   <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="{{ prerender(asset('assets/css/mdb.min.css')) }} " rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/0.8.2/css/flag-icon.min.css" rel="stylesheet">
+  <!-- Toastr Js -->
+  <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+  <!-- Gijgo datepicker css -->
+  <link rel="stylesheet" href="{{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+  <!-- Daterange picker css-->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   <link href="{{ asset('assets/css/result.css')}}" rel="stylesheet">
+  <link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+
+  <style >
+    .ui-widget-content{
+      max-height: 400px;
+      width: 335px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 2000;
+    }
+
+    .new-srch.active {
+      display: inline-block;
+    }
+
+    .new-srch {
+      display: none;
+      width: 100%;
+      border: 0.1em solid #e0e0e0;
+      border-top: 0;
+      padding: 1em 1em 1em 1em;
+
+      background: #fff;
+    }
+    .new-srch .field-section {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .custom-item {
+      border: 0.09em solid #e0e0e0;
+      border-radius: 0.2em;
+      padding: 0.3em 0.5em;
+      font-family: 'Palanquin Dark', sans-serif;
+      color: #000;
+      font-size: 0.8em;
+      cursor: pointer;
+    
+      min-width: 70px;
+      width: 150px;
+      word-break: break-word;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 2px;
+
+      position: relative;
+    }
+    .input-type-prestation, .input-type-besoins {
+      position: absolute;
+      left: 0px;
+      visibility: hidden;
+    }
+
+    .type-prestatation, .ville-region {
+      width: 150px;
+    }
+    .dates-fld {
+      width:158px;
+    }
+    .date_range_picker {
+      width:100%;
+      height:100%;
+      left:0px;
+      border: none;
+    }
+    .date_range_picker::placeholder {
+      color: #000;
+    }
+    .date_range_picker:focus {
+      outline: none;
+    }
+
+    .ville-region::placeholder{
+      color: #000;
+    }
+    .ville-region:focus{
+      border: 0.09em solid #e0e0e0;
+      outline: none;
+    }
+    .btn--container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+
+    .btn--go{
+      margin-left: 2em;
+      color: #fff;
+      background: #000;
+
+      padding: 0.5em 1.5em;
+      font-family: 'Palanquin Dark', sans-serif;
+      font-size: 0.8em;
+      cursor: pointer;
+    }
+
+    /**
+    * dropdown pour type de prestation
+    */
+    .type-prestation-dropdown {
+      display: none;
+      position: absolute;
+      width: 130%;
+      text-align: left;
+      background: #fff;
+      border: 0.09em solid #e0e0e0;
+      top: 100%;
+      left: 0px;
+      height: 100px;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .type-prestation-dropdown .prestation-scroll-item {
+      width: 110%;
+      height: 100%;
+      overflow-y: scroll;
+    }
+    .type-prestation-dropdown .prestation-scroll-item .item-option {
+      margin-bottom: 2px;
+      max-width: 95%;
+      padding: 0.2em 0.5em;
+    }
+
+    .type-prestation-dropdown .prestation-scroll-item .item-option:hover {
+      background: #f17c30;
+      color: #fff;
+    }
+    .type-prestatation:hover .type-prestation-dropdown {
+      display: inline-block;
+    }
+
+    /**
+    * dropdown pour type de besoins
+    */
+    .besoin-fld-dropdown {
+      display: none;
+      position: absolute;
+      width: 260px;
+      text-align: left;
+      background: #fff;
+      border: 0.09em solid #e0e0e0;
+      top: 100%;
+      left: 0px;
+      height: 100px;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .besoin-fld-dropdown .besoin-fld-scroll-item {
+      width: 110%;
+      height: 100%;
+      overflow-y: scroll;
+    }
+    .besoin-fld-dropdown .besoin-fld-scroll-item .item-option {
+      margin-bottom: 2px;
+      max-width: 95%;
+      padding: 0.2em 0.5em;
+    }
+    .besoin-fld-dropdown .besoin-fld-scroll-item .item-option:hover {
+      background: #f17c30;
+      color: #fff;
+    }
+    .besoin-fld:hover .besoin-fld-dropdown {
+      display: inline-block;
+    }
+
+    #custom-filter .btn.btn-lg {
+      padding: 0.5em 1em;
+    }
+
+    #custom-filter{
+      border:1px solid #f17c30;
+      background: white;
+    }
+
+    #custom-filter .container{
+      margin-top: 0;
+      padding-top: 10px;
+      padding-bottom: 50px;
+      border:none;
+    }
+
+    .custom-form-color {
+        margin-left: 4vw;
+    }
+
+    .box-prestation {
+        height: 150px;
+        object-fit: cover;
+    }
+
+     @media only screen and (min-width : 425px) {
+      .col-md-3 {
+      flex: 0 0 25%;
+      max-width: 30%;
+    }
+      #custom-filter-mob
+      {
+          display: none;
+      }
+    }
+
+    @media only screen and (min-width : 1199px) {
+      #custom-filter{
+        margin-top: 5rem !important;
+      }
+    #custom-filter-mob
+    {
+        display: none;
+    }
+    }
+    @media only screen and (max-width : 1199px) {
+      .btn--container.pl-2{
+        padding-left: unset !important;
+      }
+      .btn--go {
+        margin-left: unset;
+      }
+      #custom-filter-mob
+      {
+          display: none;
+      }
+    }
+    @media only screen and (max-width : 545px) {
+      .besoin-fld-dropdown{
+        left: unset;
+        right: 0px;
+      }
+      #custom-filter
+      {
+          display: none;
+      }
+      #custom-filter-mob
+      {
+          display: block;
+      }
+      .btn.btn-lg {
+          padding: 1rem 3.4rem;
+          font-size: 0.88rem;
+      }
+    }
+    /* iPhone X ----------- */
+    @media only screen and (min-device-width: 375px) and (max-device-height: 812px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 3){
+    /* Styles */
+
+      .py-5 {
+          padding-top: 17rem!important;
+          /* margin-top: 250px; */
+      }
+      .view {
+          height: 161% !important;
+      }
+      #custom-filter .container h4{
+        font-size: 1rem !important;
+      }
+      #custom-filter .btn.btn-lg {
+        /*margin-left: -1.2em !important;*/
+      }
+    }
+    /* Galaxy Note III ----------- */
+    @media only screen and (min-device-width: 640px) and (max-device-height: 360px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 3){
+    /* Styles */
+
+      #custom-filter .btn.btn-lg {
+        margin-left: -1.05em !important;
+      }
+    }
+    /* Galaxy SIII ----------- */
+    @media only screen and (min-device-width: 640px) and (max-device-height: 360px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 2){
+    /* Styles */
+
+      .py-5 {
+          padding-top: 16rem!important;
+          /* margin-top: 250px; */
+      }
+      .view {
+          height: 161% !important;
+      }
+      #custom-filter .container h4{
+        font-size: 1rem !important;
+      }
+      #custom-filter .btn.btn-lg {
+        margin-left: -1.2em !important;
+      }
+    }
+    /* Pixel 2 XL----------- */
+    @media only screen and (min-device-width: 823px) and (max-device-height: 411px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 3.5){
+    /* Styles */
+
+      .py-5 {
+          padding-top: 16rem!important;
+          /* margin-top: 250px; */
+      }
+      .view {
+          height: 161% !important;
+      }
+      #custom-filter .container h4{
+        font-size: 1rem !important;
+      }
+      #custom-filter .btn.btn-lg {
+        /*margin-left: -1.2em !important;*/
+      }
+    }
+    /* Pixel 2 ----------- */
+    @media only screen and (min-device-width: 731px) and (max-device-height: 411px) and (orientation : landscape){
+    /* Styles */
+
+      .py-5 {
+          padding-top: 16rem!important;
+          /* margin-top: 250px; */
+      }
+      .view {
+          height: 153% !important;
+      }
+      #custom-filter .container h4{
+        font-size: 1rem !important;
+      }
+      #custom-filter .btn.btn-lg {
+        /*margin-left: -1.2em !important;*/
+      }
+    }
+    /* iPhone   6 ----------- */
+    @media only screen and (min-device-width: 667px) and (max-device-height: 375px) and (orientation : landscape){
+    /* Styles */
+
+      .py-5 {
+          padding-top: 16rem!important;
+          /* margin-top: 250px; */
+      }
+      .view {
+          height: 153% !important;
+      }
+      #custom-filter .container h4{
+        font-size: 1rem !important;
+      }
+      #custom-filter .btn.btn-lg {
+        margin-left: -1.2em !important;
+      }
+    }
+    /* iPhone   5 ----------- */
+    @media only screen and (min-device-width: 568px) and (max-device-height: 320px) and (orientation : landscape){
+    /* Styles */
+
+      .py-5 {
+          padding-top: 17rem!important;
+          /* margin-top: 250px; */
+      }
+      .view {
+          height: 178% !important;
+      }
+      #custom-filter .container h4{
+        font-size: 1rem !important;
+      }
+      #custom-filter .btn.btn-lg {
+        margin-left: -1.7em !important;
+      }
+    }
+    
+    .chat-menu i{
+      font-size: 1.5em;
+    }
+
+    .chat-menu i.new-message{
+      color: #febb33;
+      -webkit-animation: ring 2s ease infinite;
+      animation: ring 2s ease infinite;
+      transform-origin-x: 50%;
+      transform-origin-y: 0px;
+      transform-origin-z: initial;
+    }
+
+    .chat-menu a {
+      border-radius: 50%;
+      background: black;
+      width: 100%;
+    }
+
+    @-webkit-keyframes ring {
+      0% {
+        -webkit-transform: rotate(-15deg);
+        transform: rotate(-15deg);
+      }
+
+      2% {
+        -webkit-transform: rotate(15deg);
+        transform: rotate(15deg);
+      }
+
+      4% {
+        -webkit-transform: rotate(-18deg);
+        transform: rotate(-18deg);
+      }
+
+      6% {
+        -webkit-transform: rotate(18deg);
+        transform: rotate(18deg);
+      }
+
+      8% {
+        -webkit-transform: rotate(-22deg);
+        transform: rotate(-22deg);
+      }
+
+      10% {
+        -webkit-transform: rotate(22deg);
+        transform: rotate(22deg);
+      }
+
+      12% {
+        -webkit-transform: rotate(-18deg);
+        transform: rotate(-18deg);
+      }
+
+      14% {
+        -webkit-transform: rotate(18deg);
+        transform: rotate(18deg);
+      }
+
+      16% {
+        -webkit-transform: rotate(-12deg);
+        transform: rotate(-12deg);
+      }
+
+      18% {
+        -webkit-transform: rotate(12deg);
+        transform: rotate(12deg);
+      }
+
+      20% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+    }
+
+    @keyframes ring {
+      0% {
+        -webkit-transform: rotate(-15deg);
+        -ms-transform: rotate(-15deg);
+        transform: rotate(-15deg);
+      }
+
+      2% {
+        -webkit-transform: rotate(15deg);
+        -ms-transform: rotate(15deg);
+        transform: rotate(15deg);
+      }
+
+      4% {
+        -webkit-transform: rotate(-18deg);
+        -ms-transform: rotate(-18deg);
+        transform: rotate(-18deg);
+      }
+
+      6% {
+        -webkit-transform: rotate(18deg);
+        -ms-transform: rotate(18deg);
+        transform: rotate(18deg);
+      }
+
+      8% {
+        -webkit-transform: rotate(-22deg);
+        -ms-transform: rotate(-22deg);
+        transform: rotate(-22deg);
+      }
+
+      10% {
+        -webkit-transform: rotate(22deg);
+        -ms-transform: rotate(22deg);
+        transform: rotate(22deg);
+      }
+
+      12% {
+        -webkit-transform: rotate(-18deg);
+        -ms-transform: rotate(-18deg);
+        transform: rotate(-18deg);
+      }
+
+      14% {
+        -webkit-transform: rotate(18deg);
+        -ms-transform: rotate(18deg);
+        transform: rotate(18deg);
+      }
+
+      16% {
+        -webkit-transform: rotate(-12deg);
+        -ms-transform: rotate(-12deg);
+        transform: rotate(-12deg);
+      }
+
+      18% {
+        -webkit-transform: rotate(12deg);
+        -ms-transform: rotate(12deg);
+        transform: rotate(12deg);
+      }
+
+      20% {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+    }
+
+  </style>
+
+    {% endblock %}
+</head>
+<body>
+
+    {% block header %}
+
+<header>
+
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar pr-5 pl-5">
+        <a class="navbar-brand" href="/{{ app.request.getLocale() }}">
+            <img src="{{ prerender(asset('assets/img/logo-TM-470x468-1.png')) }}" width="40" height="40" alt="">
+        </a>
+        <button class="navbar-toggler animated-button-icon" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- <span class="navbar-toggler-icon"></span> -->
+            <div class="animated-icon2"><span></span><span></span><span></span><span></span></div>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+         {#  {{dump(header)}} #}
+            <ul class="nav navbar-nav nav-flex-icons ml-auto ">
+           {% for m in header %}
+            {% if m.postTitle != "Connexion/Inscription" %}
+              {% if m.id  != 1038 %}
+               {% if m.id  == 7460 %}
+                <li class="nav-item nos-prestation-menu">
+                   <a class="nav-link" href="{{ path('project_index') }}">{{m.postTitle}}</a>
+                </li>
+                  {% else %}
+                <li class="nav-item nos-prestation-menu">
+                   <a class="nav-link" href="{{ path('site_navigation', {navigation: m.postName}) }}">{{m.postTitle}}</a>
+                </li>
+
+            {% endif %}
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+
+             {% if app.user %}
+                  {% set newmessages = render(controller('App\\Controller\\ChatController::iHaveNewMessages'))|json_decode %}
+                  <li class="nav-item nos-prestation-menu chat-menu">
+                    <a class="nav-link" href="{{ path('chat_chat') }}"><i class="fas fa-envelope {% if newmessages.statut == "yes" %}new-message{% endif %}"></i></a>
+                  </li>
+                  <li class="nav-item ml-auto avatar nav-flex-icons dropdown pl-2">
+                        <a class="nav-link p-0 dropdown-toggle" href="#" id="profilDropdown" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <img src="{% if app.session.get('avatar')!='' %} {{app.session.get('avatar')}}{% else %} {{asset('assets/img/profile/avatar-profile.png')}}
+                        {% endif %}"  class="rounded-circle z-depth-0"
+                            alt="avatar image" height="35">
+                        {% for r in app.user.roles %}
+
+                        <div class="dropdown-menu border-warning dropdown-menu-custom " aria-labelledby="profilDropdown">
+
+                            <a class="dropdown-item" href="{% if r=='ROLE_SUPER_ADMIN' %} /{{ app.request.get('_locale')}}/admin {% else %}{{ path('profile_dashboard' )}}  {% endif %}">{{'profil-utilisateur.liens.dashboard'|trans}}</a>
+
+                            <a class="dropdown-item" href="{% if r=='ROLE_ABONNE' %}{{ path('profile_home_profil' )}}{% else %}{{ path('profile_profile' )}}{% endif %}">{{'profil-utilisateur.liens.profil'|trans}}</a>
+                            <a class="dropdown-item" href="{% if r=='ROLE_ABONNE' %}{{ path('profile_parameters_abonne' )}}{% else %}{{ path('profile_parameters' )}}{% endif %}">{{'profil-utilisateur.liens.parametres'|trans}}</a>
+
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ path('fos_user_security_logout') }}">{{'profil-utilisateur.liens.deconnexion'|trans}}</a>
+                        </div>
+                            {% endfor %}
+                    </li>
+                      {% else %}
+
+                 <li class="nav-item connexion-menu">
+                    <a class="nav-link" href="{{ path('app_login') }}">{{'home.menu.lien-inscription-connexion'|trans}}<span class="sr-only">(current)</span></a>
+              </li>
+                {% endif %}
+                 <li class="nav-item dropdown lang-selector">
+                       <a class="nav-link dropdown-toggle" href="#" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                         {% if app.request.get('_locale')=='fr' %}
+                             <span class="flag-icon flag-icon-fr"> </span> FR
+                         {% else %}
+                             <span class="flag-icon flag-icon-gb"> </span> EN
+                         {% endif %}
+
+                       </a>
+                       <div class="dropdown-menu dropdown-menu-custom border-warning" aria-labelledby="dropdownLang">
+                         {% if app.request.get('_locale')=='fr' %}
+                           <a  class="dropdown-item" href="{{ path(app.request.get('_route'),app.request.get('_route_params')|merge({'_locale': 'en'}))}}"><span class="flag-icon flag-icon-gb"> </span>  EN</a>
+                            {% endif %}
+                            {% if app.request.get('_locale')=='en' %}
+                           <a  class="dropdown-item" href="{{ path(app.request.get('_route'),app.request.get('_route_params')|merge({'_locale': 'fr'}))}}"><span class="flag-icon flag-icon-fr"> </span>  FR</a>
+                           {% endif %}
+                       </div>
+                   </li>
+                    <li id="shopping-link" class="nav-item">
+                    <a class="nav-link" href="{{path('annonces_panier_user')}}">
+                      <div class="icon-wrapper">
+                        <i id="shopping-bag" class="fas fa-shopping-bag fa-lg"></i>
+                        <span class="badge badge-over badge-warning" id="panier">
+                        {% if app.session.has('nombreAnnonce') %}
+                            {{app.session.get('nombreAnnonce')}}
+                        {% else %}
+                            0
+                        {% endif %}</span>
+                      </div>
+                    </a>
+                </li>
+          
+            </ul>
+        </div>
+            <!-- Collapsible content -->
+  </nav>
+
+    {% endblock %}
+
+    {% block navigation %}
+
+    <div id="imageHolder" class="view intro-2" {# style="background-repeat: no-repeat; background-position: center center; background-size: cover" #}>
+        <div class="full-bg-img">
+            <div style="background-image: url('{{asset('assets/img/prestations/cover.jpg')}}');align-items: flex-start;" class="mask rgba-purple-light flex-center fullBackground pt-5">
+
+            <div class="col-md-3 col-lg-3 col-xl-3 col-12 custom-filter ml-4 mt-5" id="custom-filter">
+             
+              <div class="container">
+                <h4 style="text-align: left;margin-bottom: 1.5rem;">{{'home.texte.slogan'|trans}}</h4>
+                <form method="get" action="{{path('annonces_listeAnnonces')}}">
+                  <select required="required" name="type_prestation" id="type_prestation" class="browser-default custom-select mr-2 mb-2">
+                    <option value="all">Type de prestation</option>
+                    {% for prestation in prestations %}
+                    <option value="{{ prestation.termTaxonomyId }}">{{ prestation.name }}</option>
+                    {% endfor %}
+                  </select>
+                  <select name="services_proposes" id="services_proposes" class="browser-default custom-select mr-2 mb-2">
+                    <option value="all">Services proposés</option>
+                  </select>
+                  <input type="text" class="form-control" id="code_postal_ville" name="code_postal_ville" placeholder="Code postal et/ou Ville" value="{{ villeA | default('') }}">
+                  <button class="btn btn-lg btn-primary waves-effect waves-light" type="sumbit">RECHERCHER</button>
+                </form>
+              </div>
+            </div>
+
+                <div class="container text-center white-text wow fadeInUp">
+                  {# <div class="row">
+                    <div class="offset-md-2 col-md-8">
+                        <h4 class="header-link"><a class="header-a" href="{{path('page_navigation',{idPage:'nos-prestations',id:'studio-denregistrement'})}}">{{'home.liens.studio-enregistrement'|trans}}</a>, {{'home.liens.mixage'|trans}},<br>
+                            <a class="header-a" href="{{path('page_navigation',{idPage:'nos-prestations',id:'groupe-de-musique'})}}">{{'home.liens.groupe-de-musique'|trans}}</a>, <a class="header-a" href="{{path('page_navigation',{idPage:'nos-prestations',id:'chorale-gospel'})}}">{{'home.liens.chorale'|trans}}</a>, {{'home.liens.sonorisation'|trans}}, {{'home.liens.dj'|trans}},<br>
+                            {{'home.liens.video-mariage'|trans}}, <a class="header-a" href="{{path('page_navigation',{idPage:'nos-prestations',id:'studio-photo'})}}">{{'home.liens.shooting-photo'|trans}}</a>, {{'home.liens.photographe'|trans}}, <a class="header-a" href="{{path('page_navigation',{idPage:'nos-prestations',id:'realisation-video'})}}">{{'home.liens.videaste'|trans}}</a>...
+                        </h4>
+                    </div>
+                  </div> #}
+                   {#  <br>
+                    <h2>{{'home.texte.slogan'|trans}}</h2>
+                    <br> #}
+                    <!-- Search form -->
+                    <div class="row">
+                        <div class="m-auto col-md-9 col-xs-12">
+
+{#                             <form id="SearchBar-menu1" action="{{path('annonces_listeAnnonces')}}" method="get" class="form-inline form-lg active-cyan-2 mt-2">
+                                <div class="input-group col-12">
+
+                                    <input id="searchBar" type="text" name="query" class="form-control form-control-lg w-75 autocomplete-ajax" placeholder="{{'home.menu.formulaire-texte'|trans}}" aria-label="{{'home.menu.formulaire-texte'|trans}}">
+                                    <div class="lds-ring " style="display:none"><div></div><div></div><div></div><div></div></div>
+
+                                    <div class="input-group-append icon-search-item">
+                                      <span class="input-group-text"><i class="fas fa-search fa-lg" aria-hidden="true"></i></span>
+                                    </div>
+
+                                    <div class="new-srch">
+                                      <div class="field-section">
+                                        <div class="type-prestatation custom-item">
+                                          <input type="text" class="input-type-prestation" >
+                                          <span class="type-pres-span">{{'home.formulaire-champs.prestation'|trans}}</span>
+                                          <div class="type-prestation-dropdown">
+                                            <div class="prestation-scroll-item">
+                                              {% for c in categorieParent %}
+                                                <div class="prestation-i item-option" data-id="{{c.termTaxonomyId}}" data-name="{{c.name}}">{{c.name}}</div>
+                                              {% endfor %}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="besoin-fld custom-item">
+                                          <input type="text" class="input-type-besoins" name="sous_categorie">
+                                          <span class="besoins-span-text">{{'home.formulaire-champs.besoin'|trans}}</span>
+                                          <div class="besoin-fld-dropdown">
+                                            <div class="besoin-fld-scroll-item">
+
+                                             </div>
+                                          </div>
+                                        </div>
+                                        <input class="ville-region custom-item" type="text" name="villeA" placeholder="Ville, Region, Pays">
+                                        <div class="dates-fld custom-item" id="dateContainer">
+                                      
+                                          <input type="text" id="daterangeSrch" name="dates" class="date_range_picker" placeholder="Dates">
+                                        </div>
+                                        <div class="pl-2 btn--container">
+                                          <input type="submit" class="btn--go" value="GO">
+                                        </div>
+                                      </div>
+                                    </div>
+                                </div>
+                                
+                                </form> #}
+                        </div>
+                     <div id="sectionAvancer" class="col-md-12 d-none">
+                            <!-- Material inline form -->
+                           {#  <form method="post" action="{{path('annonces_listeAnnonces')}}">
+                              <!-- Grid row - Not for small screens -->
+                              <div id="notForPhone-AdvanceSearch" class="form-row align-items-center ">
+
+                                <!-- Grid column -->
+                                <div class="col-auto">
+                                    <!-- Default input -->
+                                    <select class="form-control browser-default custom-select mb-2 categorieParent">
+                                     <option value="" selected>Type de prestation</option>
+                                        {% for c in categorieParent %}
+                                        <option value="{{c.termTaxonomyId}}">{{c.name}}</option>
+                                      {% endfor %}
+                                    </select>
+                                </div>
+                                <!-- Grid column -->
+
+                                <!-- Grid column -->
+                                <div class="col-auto">
+                                    <!-- Default input -->
+                                    <select required class="form-control browser-default custom-select mb-2 sous_category" name="sous_categorie">
+                                      <option disabled selected>Besoin</option>
+                                    </select>
+                                </div>
+                                <!-- Grid column -->
+
+                              <!-- Grid column -->
+                                <div class="col-auto">
+                                  <!-- Default input -->
+                                  <label class="sr-only" for="villeA">Pays, Région, Ville</label>
+                                  <input type="text" class="form-control mb-2" name="villeA" id="villeA" placeholder="Pays, région, ville ...">
+                                </div>
+                                <!-- Grid column -->
+
+                                <!-- Grid column -->
+                                <div class="col-auto">
+                                  <!-- Default input -->
+                                  <label class="sr-only" for="DateDeDebut">Date de début</label>
+                                  <input type="text" class="form-control mb-2 date_debut" name="date_debut" id="DateDeDebut" placeholder="Date de début">
+                                </div>
+                                <!-- Grid column -->
+
+                                <!-- Grid column -->
+                                <div class="col-auto">
+                                  <!-- Default input -->
+                                  <label class="sr-only" for="DateDeFin">Date de fin</label>
+                                  <input type="text" class="form-control mb-2 date_fin" name="date_fin" id="DateDeFin" placeholder="Date de fin">
+                                </div>
+                                <!-- Grid column -->
+
+                                <!-- Grid column -->
+                                <div class="col-auto">
+                                  <button type="submit" class="btn btn-primary btn-md mt-0 custom-search-button">Rechercher</button>
+                                </div>
+                              </div>
+                              <!-- End Grid row - Not for small screens-->
+
+                              <!-- Grid row - For small screens -->
+                              <div id="ForPhone-AdvanceSearch" class="form-row align-items-center">
+
+                                  <!-- Grid column -->
+                                  <div class="col-auto">
+                                      <!-- Default input -->
+                                      <select class="form-control browser-default custom-select mb-2 categorieParent">
+                                      <option selected value="">Type de prestation</option>
+                                      {% for c in categorieParent %}
+                                        <option value="{{c.termTaxonomyId}}">{{c.name}}</option>
+                                      {% endfor %}
+                                      </select>
+                                  </div>
+                                  <!-- Grid column -->
+
+                                  <!-- Grid column -->
+                                  <div class="col-auto">
+                                      <!-- Default input -->
+                                      <select class="form-control browser-default custom-select mb-2 sous_category" name="sous_categorie">
+                                        <option disabled selected>Besoin</option>
+                                      </select>
+                                  </div>
+                                  <!-- Grid column -->
+
+
+                                  <!-- Grid column -->
+                                  <div class="col-auto">
+                                    <!-- Default input -->
+                                    <label class="sr-only" for="PaysRegionVille-xs">Pays, Région, Ville</label>
+                                    <input type="text" class="form-control mb-2" name="ville" id="PaysRegionVille-xs" placeholder="Pays, région, ville ...">
+                                  </div>
+                                  <!-- Grid column -->
+
+                                  <!-- Grid column -->
+                                  <div class="col-auto">
+                                    <!-- Default input -->
+                                    <label class="sr-only" for="DateDeDebut-xs">Date de début</label>
+                                    <input type="text" class="form-control mb-2 date_debut" id="DateDeDebut-xs" name="date_debut" placeholder="Date de début">
+                                  </div>
+                                  <!-- Grid column -->
+
+                                  <!-- Grid column -->
+                                  <div class="col-auto">
+                                    <!-- Default input -->
+                                    <label class="sr-only" for="DateDeFin-xs">Date de fin</label>
+                                    <input type="text" class="form-control mb-2 date_fin" id="DateDeFin-xs" name="date_fin" placeholder="Date de fin">
+                                  </div>
+                                  <!-- Grid column -->
+
+                                  <!-- Grid column -->
+                                  <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary btn-md mt-0 custom-search-button">Rechercher</button>
+                                  </div>
+                                </div>
+                                <!-- End Grid row - For small screens-->
+                            </form> #}
+                            <!-- Default auto-sizing form -->
+                            <!-- Material inline form -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</header>
+<!--Main Navigation-->
+
+    {% endblock %}
+
+    {% block body %}
+
+
+    {% endblock %}
+
+
+</div>
+
+{% block footer %}
+
+<div>
+  <div class="footer">
+    <div class="container">
+      <div class="row">
+          <div class="col-md-4">
+               <h4 style="color:#fff; font-family: 'Palanquin Dark', sans-serif; font-size: 14px;">
+            {{'home.pied-de-page.titre'|trans}}
+            </h4>
+            <!-- Material auto-sizing form -->
+            <!-- Material auto-sizing form -->
+          <form action="{{path('newsletterUser')}}" id="newsletterForm" type="post">
+              <!-- Grid row -->
+              <div class="form-row align-items-center">
+                <!-- Grid column -->
+                <div class="col-auto">
+                  <!-- Material input -->
+                  <div class="md-form">
+                    <input type="text" class="form-control mb-2 newsletter-nom" name="nomVisiteur" id="inlineFirstName" title="Votre prénom" required>
+                    <label for="inlineFirstName">{{'home.pied-de-page.formulaire-champ-prenom'|trans}}</label>
+                  </div>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-auto">
+                  <!-- Material input -->
+                  <div class="md-form">
+                    <input type="email" class="form-control pl-0 rounded-0 newsletter-email" name="adresseEmailVisiteur" id="inlineEmail" title="Votre email" required>
+                    <label for="inlineEmail">{{'home.pied-de-page.formulaire-champ-email'|trans}}</label>
+                  </div>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-auto">
+                  <button type="submit" id="abonner" class="btn btn-primary newsletter-submit mb-0">{{'home.pied-de-page.formulaire-boutton-valider'|trans}}</button>
+                </div>
+                <!-- Grid column -->
+              </div>
+              <!-- Grid row -->
+            </form>
+          <!-- Material auto-sizing form -->
+            <!-- Material auto-sizing form -->
+          </div>
+          <div class="col-md-4">
+            <ul class="footer-link">
+                 {% for n in footer%}
+                    {% if n.id == 7453 %}
+                  <li><a href="{{ path('blog_index') }}">{{ n.postTitle }}</a></li>
+                    {% elseif n.id == 4683 %}
+                  <li><a href="{{ path('experience_envoyez_commentaires') }}">{{ n.postTitle }}</a></li>
+                    {% else %}
+                  <li><a href="{{ path('site_navigation', {navigation: n.postName}) }}">{{ n.postTitle }}</a></li>
+                    {% endif %}
+                 {% endfor %}
+              <li><a href="{{ path('home_ausiteodit') }}">{{'footer.ausiteodit.libelle-lien'|trans }}</a></li>
+              </ul>
+          </div>
+          <div class="col-md-4">
+            <div class="row justify-content-md-center">
+              <div class="col-md-12">
+                <ul class="footer-ul-social-icons text-right">
+                  <li><a href="#"><i class="fab fa-facebook"></i></a></li>
+                  <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                  <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                </ul>
+              </div>
+              <div class="col-md-12 text-right">
+               <img src="{{ asset('assets/img/payment-methods/seine-marne_couleur-1.png') }}" alt="">
+               <img src="{{ asset('assets/img/payment-methods/mongo-470x56.png') }}" alt=""> </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#1d1d1d; color:#fff; padding: 20px; font-family: 'Palanquin Dark', sans-serif;">
+    <div class="col-md-12 text-center">
+      &copy;&nbsp;Trust &amp; Market {{ "now"|date("Y") }}, {{'home.pied-de-page.contrat'|trans}}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+  <!-- JQuery -->
+  <script type="text/javascript" src="{{ asset('assets/js/jquery-3.4.1.min.js') }}"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="{{ asset('assets/js/popper.min.js') }}"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="{{ asset('assets/js/mdb.min.js') }}"></script>
+ <!-- Lazy load -->
+  <!-- cdnjs for lazy load -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+ {#    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> #}
+
+  <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+  <script src="{{ asset('assets/js/fullclip.min.js') }}"></script>
+  <script src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}"></script>
+
+  <!-- Daterange picker jQuery -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var docWidth = document.documentElement.offsetWidth;
+
+      [].forEach.call(
+        document.querySelectorAll('*'),
+        function(el) {
+          if (el.offsetWidth > docWidth) {
+            console.log(el);
+          }
+        }
+      );
+
+      /**
+      * On click event on searchbar to add class active to advance search and click outside the box to close advance section
+      */
+      $('#searchBar').on('click', function() {
+        $('.new-srch').addClass('active');
+      });
+      /****************************************/
+      $(document).mouseup(function (e) {
+        if($(e.target).closest("#SearchBar-menu1 .input-group").length === 0) {
+          $('.new-srch').removeClass('active');
+        }
+      });
+
+      /**
+      * Manipulate data from data-id and data-name attributes in "Types de prestation"
+      */
+      $('.prestation-i').on('click', function (e) {
+         e.preventDefault();
+        var pres_id = $(this).attr('data-id');
+        var pres_name=$(this).attr('data-name');
+
+      $('.type-pres-span').html(pres_name);
+        $('.input-type-prestation').val(pres_id);
+
+       var url1='{{app.request.get("_locale")}}/home/sous_categorie1?id='+pres_id;
+      toastr.info('Recherche des sous catégories...');
+       $.ajax({
+           url: url1,
+           type: 'get',
+           success: function (reponse) {
+             toastr.clear();
+             console.log(reponse);
+
+             $('.besoin-fld-scroll-item').html(reponse);
+                },
+                error: function (reponse) {
+                  toastr.clear();
+                }
+
+       });
+       
+      });
+
+
+
+
+      /**
+      * Manipulate data from data-id and data-name attributes in "Besoins"
+      */
+      $(document).on('click', '.besoins-i', function () {
+        
+        var pres_id = $(this).attr('data-id');
+        var pres_name = $(this).attr('data-name');
+        
+        $('.besoins-span-text').html(pres_name);
+        $('.input-type-besoins').val(pres_id);
+        var b = $('.input-type-besoins').val();
+        console.log(pres_id+" "+pres_name+" "+b);
+      });
+      /**
+      * Date range picker for search
+      */
+      $('#daterangeSrch').daterangepicker({
+        autoUpdateInput: false,
+        locale: {
+            cancelLabel: 'Clear'
+        }
+      }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+      });
+
+      $('#daterangeSrch').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+  });
+      //Date fields
+            $('.date_debut').datepicker({
+            uiLibrary: 'bootstrap4',
+            format: 'dd-mm-yyyy',
+            showRightIcon: false,
+            iconsLibrary: 'fontawesome'
+        });
+
+              $('.date_fin').datepicker({
+            uiLibrary: 'bootstrap4',
+            showRightIcon: false,
+            format: 'dd-mm-yyyy',
+            iconsLibrary: 'fontawesome'
+        });
+
+      // Lazy Loading initializer
+      $(function() {
+          $('.lazy').lazy();
+      });
+
+      //Hambuger menu icon
+      $('.animated-button-icon').on('click', function () {
+        $('.animated-icon2').toggleClass('open');
+      });
+
+      //first thing turn Hide Menu Search bar
+      $("#frLang").hide();
+      //toggle language for English
+      $( "#enLang" ).click(function() {
+        $( "#dropdownLang" ).html( "<span class='flag-icon flag-icon-us'> </span>  EN" );
+        $( "#enLang" ).hide();
+        $( "#frLang" ).toggle( "slide" );
+      });
+      //toggle language for French
+      $( "#frLang" ).click(function() {
+        $( "#dropdownLang" ).html( "<span class='flag-icon flag-icon-fr'> </span>  FR" );
+        $( "#frLang" ).hide();
+        $ ("#enLang" ).toggle( "slide" );
+      });
+
+      //background image slider
+     /* $('.fullBackground').fullClip({
+        images: ['img/home-slider/home-slider-o1.png',
+                 'img/home-slider/home-slider-o2.png',
+                 'img/home-slider/home-slider-o3.png',
+                 'img/home-slider/home-slider-o4.png',
+                 'img/home-slider/home-slider-o5.png',
+                 'img/home-slider/home-slider-o6.png',
+                 'img/home-slider/home-slider-o7.png',
+                 'img/home-slider/home-slider-o8.png',
+                 'img/home-slider/home-slider-o9.png',
+                 'img/home-slider/home-slider-o11.png',
+                 'img/home-slider/home-slider-o12.png'
+                ],
+        transitionTime: 1000,
+        wait: 3000
+      });*/
+  $(document).on('change', '.categorieParent', function (e) {
+ 
+     e.preventDefault();
+       var url1='{{app.request.get("_locale")}}/home/sous_categorie?id='+$(this).val();
+      toastr.info('Recherche des sous catégories...');
+       $.ajax({
+           url: url1,
+           type: 'get',
+           success: function (reponse) {
+             toastr.clear();
+             console.log(reponse);
+             $('.sous_category').removeAttr('disabled');
+
+             $('.sous_category').html(reponse);
+                },
+                error: function (reponse) {
+                  toastr.clear();
+                }
+
+       });
+
+   });
+
+  //Script to create user for newsletter
+
+     $('#newsletterForm').on('submit', function (e) {
+         e.preventDefault();
+       
+         toastr.info('{{'newsletter.inscription.attente'|trans}}');
+         var $form = $(this);
+         $.ajax({
+             url: $form.attr('action'),
+             type: $form.attr('method'),
+             data:$form.serialize(),
+             success: function (reponse) {
+
+               if(reponse==1){
+                 toastr.clear();
+                    $('#body').hide();
+                     $('#succes').show();
+                     $('html,body').scrollTop(0);
+                     $('#send').removeClass('running');
+                     toastr.success('{{'newsletter.inscription.succes'|trans}}');
+                 }else if(reponse==0) {
+                     toastr.clear();
+                 $('#send').removeClass('running');
+                  toastr.warning('{{'newsletter.inscription.email_occupe'|trans}}');
+                 }
+                  },
+                  error: function (reponse) {
+                      toastr.clear();
+                 $('#send').removeClass('running');
+                  toastr.error('{{'newsletter.inscription.echec'|trans}}');
+                  }
+         });
+         return false;
+     });
+
+        toastr.options = {
+   "closeButton": true,
+   "debug": false,
+   "newestOnTop": false,
+   "progressBar": true,
+   "positionClass": "toast-top-center",
+   "preventDuplicates": false,
+   "onclick": null,
+   "showDuration": "300",
+   "hideDuration": "1000",
+   "timeOut": "30000",
+   "extendedTimeOut": "1000",
+   "showEasing": "swing",
+   "hideEasing": "linear",
+   "showMethod": "fadeIn",
+   "hideMethod": "fadeOut"
+   }
+
+    });
+  </script>
+{#  <script type="text/javascript" src="{{ prerender(asset('autocomplete/scripts/jquery.mockjax.js')) }}"></script>
+ <script type="text/javascript" src="{{ prerender(asset('autocomplete/src/jquery.autocomplete.js')) }}"></script>
+ <script type="text/javascript" src="{{ prerender(asset('autocomplete/scripts/countries.js')) }}"></script>
+ <script type="text/javascript" src="{{ prerender(asset('autocomplete/scripts/demo.js')) }}"></script> #}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      /*  $("#searchBar").autocomplete({
+            source: "/fr/recherche",
+                focus: function( event, ui ) {
+                //$( "#search" ).val( ui.item.title ); // uncomment this line if you want to select value to search box
+                return false;
+              },
+              select: function( event, ui ) {
+                  window.location.href = "/annonces/details/{{app.request.get("_locale")}}/'+ item.id +'";
+                  $('.lds-ring').hide();
+              },
+              search: function( event, ui ) {$('.lds-ring').show();},
+              close: function( event, ui ) {$('.lds-ring').hide();}
+           })
+          .data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            $('.lds-ring').hide();
+              var inner_html = `<a style="font-size:14px" href="/annonces/details/{{app.request.get("_locale")}}/`+ item.id +`" >
+              <div style="   width:100%;height: 50px;float: left;"><div style="  height: 50px;width: 15%;float: left;padding: 5px;">
+              <img style="width:40px;height:40px"src="` + item.image + `" ></div>
+              <div style="  font-size: 11px;width: 85%;margin-left: 5px;text-align: left;padding: 10px;font-size:10px;">` + item.name + `</div></div></a>`;
+              return $( "<li></li>" )
+                      .data( "item.autocomplete", item )
+                      .append(inner_html)
+                      .appendTo( ul );
+        };*/
+
+        $('#type_prestation').on('change',function(){
+         
+        var id = $(this).val();
+        var url = "{{ path('annonces_get_sous_categories_xhr',{ _locale : app.request.get('_locale') }) }}";
+
+        $.ajax({
+          url : url,
+          method : "get",
+          data : {
+            type_prestation : id
+          },
+          success : function(data){
+
+            $('#services_proposes').empty();
+            $('#services_proposes').append("<option value='all' disabled='disabled' selected='selected'>Services proposés</option>");
+            
+            if(data.sous_categories){
+              data.sous_categories.forEach(function(e){
+                $('#services_proposes').append("<option value='"+e.termTaxonomyId+"'>"+e.name+"</option>");
+              });
+            }
+            // for (var i = 0; i < data.sous_categories.length; i++) { 
+            //   $('#services_proposes').append("<option value='"+data[i].termTaxonomyId+"'>"+data[i].name+"</option>");
+            // }
+
+          },
+          error : function(xhr){
+            console.error(xhr);
+          }
+        });
+
+      });
+
+         $('#type_prestation_mob').on('change',function(){
+         
+        var id = $(this).val();
+        var url = "{{ path('annonces_get_sous_categories_xhr',{ _locale : app.request.get('_locale') }) }}";
+
+        $.ajax({
+          url : url,
+          method : "get",
+          data : {
+            type_prestation : id
+          },
+          success : function(data){
+
+            $('#services_proposes_mob').empty();
+            $('#services_proposes_mob').append("<option value='all' disabled='disabled' selected='selected'>Services proposés</option>");
+            
+            if(data.sous_categories){
+              data.sous_categories.forEach(function(e){
+                $('#services_proposes_mob').append("<option value='"+e.termTaxonomyId+"'>"+e.name+"</option>");
+              });
+            }
+
+          },
+          error : function(xhr){
+            console.error(xhr);
+          }
+        });
+
+      });
+
+    });
+  </script>
+
+ <!-- End Lazy load -->
+ {% include 'ws/script.html.twig' %}
+
+{% endblock %}
+</body>
+</html>

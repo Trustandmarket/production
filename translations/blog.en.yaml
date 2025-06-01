@@ -1,0 +1,11 @@
+commentaires: Comments
+form:
+  titre1: Be the first to comment on this article.
+  titre2: Be the next to comment on this article.
+  commentaire: Your Comment
+  nom: Your name (required)
+  email: Your e-mail (required but not published)
+  site: Your Website (optional)
+  publier: Publish
+retour-blog: Back to Blog
+articles-cat: These articles might interest you

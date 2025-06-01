@@ -1,0 +1,266 @@
+/* Footer new style */
+.fb_iframe_widget iframe {
+    bottom: 10rem !important;
+}
+.fb_dialog iframe {
+    bottom: 6rem !important;
+}
+
+main, main>.container {
+  padding-bottom: 82px !important;
+}
+
+/* Your project element */
+#yourproject-iconed-link {
+    display: block;
+    position: fixed;
+    width: 100px;
+    height: 100px;
+    background: url("/public/assets/img/project-icon.png") no-repeat center center transparent;
+    bottom: 80px;
+    right: 20px;
+    z-index: 9999999999;
+    background-size: cover;
+    cursor: pointer;
+    font-size: 0;
+}
+
+#dialoguons {
+    bottom: 85px;
+    right: 10%;
+    position: fixed;
+    z-index: 9999999999;
+    background: white;
+    border: 1px solid black;
+    width: 17%;
+    display: none;
+}
+
+#cookie-msg{
+    z-index: 1200;
+}
+
+/* Top btn element */
+#topBtn {
+    position: fixed;
+    bottom: 60px;
+    right: 50px;
+    font-size: 22px;
+    width: 40px;
+    height: 40px;
+    background: none;
+    color: #f17c30;
+    border: none;
+    cursor: pointer;
+    display: none;
+}
+
+#topBtn:hover {
+    border: 1px solid;
+    border-radius: 5px;
+}
+
+.inline-footer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 4rem;
+    padding-right: 4rem;
+}
+.copyright-links{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.copyright-links p{
+    margin-bottom: 0;
+}
+.footer-links{
+    margin-left: 1rem;
+}
+.footer-links a{
+    color: #fff;
+    text-decoration: none;
+    margin-right: 10px;
+    position: relative;
+}
+.footer-links a:hover{
+    color: #f17c30;
+}
+.footer-links a:not(:first-child):before{
+    position: absolute;
+    color: #fff;
+    background-color: #fff;
+    width: 5px;
+    height: 5px;
+    top: 8px;
+    content: "";
+    border-radius: 50%;
+    left: -8.5px;
+}
+.footer-ul-social-icons{
+    margin: 0;
+    display: flex !important;
+    align-items: center !important;
+    margin-block-start: 0 !important;
+    margin-block-end: 0 !important;
+}
+.responsive-footer-links{
+    display: none;
+}
+.modal-body {
+    padding: 0px;
+}
+.modal-dialog .modal-content .modal-header{
+    border-bottom: 0px;
+    padding-inline: initial;
+}
+.closeBtnModal{
+    padding: 13px;
+    background: #ff7e10;
+    display: flex;
+    border-radius: 50%;
+    color: white;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    top: 10px;
+}
+.form-column{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.form-column .md-form{
+    width: 100%;
+    margin-bottom: 0;
+}
+.form-column input{
+    background-color: white !important;
+    border-radius: 5px !important;
+    padding: 20px 10px !important;
+}
+.form-column .md-form label{
+    top: 9px;
+    left: 10px;
+}
+.form-column button{
+    padding: 1rem 4rem;
+}
+
+
+.newsletter-form>h4{
+    color:#fff;
+    font-family: 'Palanquin Dark', sans-serif;
+    font-size: 23px;
+    text-align: center;
+}
+.new-footer{
+    background:#262626;
+    color:#fff;
+    padding: 0px;
+    font-family: 'source sans pro', sans-serif;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+}
+.mangopay-without-powered{
+    display: none;
+}
+.mangopay-with-powered{
+    display: block;
+    width: auto;
+    height: 3rem;
+    object-fit: contain;
+}
+.footer-ul-social-icons i{
+    font-size: 20px;
+}
+#newsletterForm .md-form .form-control {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+
+.newsletter-submit {
+    color: #fff;
+    background: #f17c30 !important;
+    font-size: large;
+}
+
+@media only screen and (max-width: 500px){
+
+    .newsletter-submit {
+        font-size: smaller;
+    }
+}
+@media only screen and (max-width: 860px){
+    .inline-footer{
+        padding-left: 0;
+    }
+    .copyright-links {
+        display: none;
+    }
+    .footer-links-desktop{
+        display: none;
+    }
+    .responsive-footer-links{
+        display: flex;
+        justify-content: center;
+        text-align: center;
+    }
+    .new-footer{
+        padding: 10px 0px;
+    }
+    .logos-footer {
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        display: none;
+    }
+    .footer-ul-social-icons img{
+        width: 7rem;
+        object-fit: contain;
+    }
+    .footer-ul-social-icons i{
+        font-size: 15px;
+    }
+    .comma-to-display{
+        display: none;
+    }
+    .footer-ul-social-icons{
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        padding: 0 !important;
+        margin: 0;
+    }
+    .newsletter-form>h4{
+        font-size: 16px;
+    }
+    .form-column button{
+        padding: 0.8rem 1rem;
+    }
+    .mangopay-without-powered{
+        display: block;
+    }
+    .mangopay-with-powered{
+        display: none;
+    }
+    .footer-ul-social-icons > li > a {
+        font-size: 15px !important;
+    }
+    .form-column input {
+        padding: 13px 10px !important;
+    }
+
+    .newsletter-submit {
+        font-size: small;
+    }
+}

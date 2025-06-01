@@ -1,0 +1,353 @@
+{% extends 'profileTemplate.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+          sizes="32x32"/>
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}"
+          sizes="192x192"/>
+    <link rel="apple-touch-icon-precomposed"
+          href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+    <meta name="msapplication-TileImage"
+          content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+    <meta name="robots" content="noindex">
+
+{% endblock %}
+
+{% block title %}Trust &amp; Market | Profil Tableau de bord{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+
+    <!-- Gijgo datepicker css -->
+    <link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+
+    <link href="{{ preload(asset('assets/css/custome.css')) }}" rel="stylesheet">
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+    <link href="{{ preload(asset('assets/css/style-profile.css')) }}" rel="stylesheet">
+    <link href="{{ preload(asset('assets/css/style-dashboarduser.css')) }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+
+
+    <style>
+        .image_picker_image {
+            width: 100px;
+            height: 100px
+        }
+
+        .tox-statusbar__branding {
+            display: none;
+        }
+
+        .btn-bg-primary {
+            color: #fff;
+            background: #f17b30 !important;
+        }
+
+        .btn-bg-primary:hover {
+            color: #fff;
+            background: #f4b279 !important;
+        }
+
+        .custome-text {
+            font-size: 18px;
+            font-family: 'Palanquin', sans-serif;
+        }
+
+        .card-text {
+            font-size: 16px;
+            font-family: 'Palanquin', sans-serif;
+        }
+
+        .card-title {
+            color: inherit;
+        }
+
+        a, .card-block {
+            color: inherit;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .card {
+            border: 1px solid #9e9e9e;
+            border-color: #ff7e10;
+            margin-bottom: 2rem;
+            min-height: 172px;
+        }
+        .menu_item{
+            display: flex;
+            flex:1 0 auto;
+        }
+
+        .center {
+            margin: auto;
+            width: 50%;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .modal-title{
+            font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            text-align: center;
+        }
+
+        .modal-content{
+            border-radius: 5px;
+        }
+
+        .modal-body{
+            width: 95%;
+            margin: auto;
+        }
+
+        .modal-footer{
+            display: block;
+        }
+
+        .modal-footer .btn-warning{
+            float: left;
+            background-color: #262626 !important;
+        }
+
+        .modal-footer .btn-primary{
+            float: right;
+        }
+
+        .flex-fill {
+            min-height: 50vh;
+        }
+        /* Extra small devices (portrait phones, less than 576px) */
+        @media (max-width: 575.98px) {
+            main, .container{
+                margin-top: 70px;
+            }
+
+            .center {
+                width: 85%;
+            }
+            .custome-text. {
+                font-size: 16px;
+            }
+
+            .card-text {
+                font-size: 14px;
+            }
+        }
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            main, .container{
+                margin-top: 100px;
+            }
+
+            .center {
+                width: 60%;
+            }
+            .custome-text {
+                font-size: 16px !important;
+            }
+
+            .card-text {
+                font-size: 14px;
+            }
+        }
+
+    </style>
+{% endblock %}
+
+
+{% block header %}
+
+    {{ parent() }}
+
+{% endblock %}
+
+{% block navigation %}{% endblock %}
+
+{% block body %}
+    {# <div id="trustBody" class="container"> #}
+    <div class="flex-fill container">
+        <main class="">
+            <div class="container py-4">
+                <h1 class="custom-title">Compte</h1>
+                <p class="custome-text mt-2">Bonjour <strong>{{ user_name }}</strong>, bienvenue dans votre profil <strong>{% if  'ROLE_SOCIETE' in app.user.roles or 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles %}professionnel{% else %}abonné{% endif %}</strong>.
+                    <strong><a href="{{ path('profile_detailsProfessionnel', {'id': app.user.id}) }}" target="_blank">Visualisez votre profil</a></strong></p>
+                <div class="row menu_item">
+                    <div class="col-12 col-md-4 col-sm-6 col-lg-4">
+                        <div class="card px-2 py-4">
+                            <a class="card-block stretched-link text-decoration-none"
+                               href="{% if  'ROLE_SOCIETE' in app.user.roles or 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles %}{{ path('profile_profile') }}{% else %}{{ path('profile_home_profil') }}{% endif %}">
+                                <h4 class="card-title">Profil et informations personnelles</h4>
+                                <p class="card-text mt-2">Renseignez vos informations personnelles pour nous aider a
+                                    vous connaitre.</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 col-sm-6 col-lg-4">
+                        <div class="card px-2 py-4">
+                            <a class="card-block stretched-link text-decoration-none"
+                               href="{{ path('profile_annonces' ) }}">
+                                <h4 class="card-title">Annonces</h4>
+                                <p class="card-text mt-2">Retrouvez ici vos prestations réservées et/ou celles que vous proposez.</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 col-sm-6 col-lg-4">
+                        <div class="card px-2 py-4">
+                            <a class="card-block stretched-link text-decoration-none"
+                               href="{% if'ROLE_ABONNE' in app.user.roles %}{{ path('profile_fournisseursAbonne') }}{% else %}
+                {{ path('profile_fournisseurs') }}{% endif %}">
+                                <h4 class="card-title">Fournisseur de services</h4>
+                                <p class="card-text mt-2">Vous etes ou devenez professionnel et renseignez vos
+                                    informations professionnelles.</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 col-sm-6 col-lg-4">
+                        <div class="card px-2 py-4">
+                            <a class="card-block stretched-link text-decoration-none"
+                               href="{{ path('profile_parameters' ) }}">
+                                <h3 class="card-title">Paramètres</h3>
+                                <p class="card-text mt-2">Notifications, historiques de transactions... Paramétrez
+                                    ici votre profil en toute simplicité.</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 col-sm-6 col-lg-4">
+                        <div class="card px-2 py-4">
+                            <a class="card-block stretched-link text-decoration-none"
+                               href="{{ path('experiences_liste_experience' ) }}">
+                                <h4 class="card-title">Mes expériences</h4>
+                                <p class="card-text mt-2">Retrouvez ici vos différentes expériences crées sur Trust
+                                    & market.</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 col-sm-6 col-lg-4">
+                        <div class="card px-2 py-4">
+                            <a class="card-block stretched-link text-decoration-none" href="{{ path('app_abonnement') }}">
+                                <h4 class="card-title">Mes abonnements</h4>
+                                <p class="card-text mt-2">Retrouvez ici vos abonnements et vos informations de
+                                    facturation.</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="center mt-2 small">
+                    <p>Vous souhaitez supprimer votre profil et toutes <br>ses données?</p>
+                    <a style="font-weight: bold" id="deleteProfile" data-toggle="modal" data-target="#deleteTarget" href="">Supprimer mon profil</a>
+                </div>
+                <div class="modal fade right" id="deleteTarget" tabindex="-1" role="dialog" aria-labelledby="deleteTarget"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="row">
+                                <div class="col-md-6 px-0" style="background-size: cover">
+                                    <img src="{{ asset('assets/img/modal/img-log.png') }}" alt="" class="img-fluid"
+                                         style="width: fit-content">
+                                </div>
+                                <div class="col-md-6 px-0 right-section-modal">
+                                    <div class="modal-header border-bottom-0">
+                                        <h5 class="modal-title" id="exampleModalPreviewLabel">{{ 'profil-utilisateur.liens.effacer-compte'|trans }}</h5>
+                                    </div>
+                                    <div class="modal-body"
+                                         style='padding-left: 1rem;padding-right: 1rem; padding-top: 0rem; padding-bottom: 0rem;'>
+                                        <div class="effacer-definitivement">
+                                            <div>
+                                                <input type="checkbox" id="horns" name="horns"/>
+                                            </div>
+                                            <div>
+                                                <label for="horns">{{ 'profil-utilisateur.liens.effacer-compte-donnees'|trans }}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-top-0 pb-0">
+                                        <div class="btn-group btn-group-lg" role="group" aria-label="Basic example">
+                                            <button type="button" class="btn btn-lg firstletter-capital logout-no"
+                                                    data-dismiss="modal">{{ 'general.non'|trans }}</button>
+                                            <button type="button"
+                                                    class="btn btn-lg btn-primary firstletter-capital logout-yes delete_port2">{{ 'general.oui'|trans }}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- Modal -->
+                <input id="hornsUrlDelete" hidden value="{{ path('profile_delete_profil',{id:app.user.id}) }}"/>
+                <input id="hornsUrlDeleteAll" hidden value="{{ path('profile_delete_profil_all',{id:app.user.id}) }}"/>
+                {% include("partials/videoButton.html.twig") %}
+                {% include("partials/otherPagesVideoModal.html.twig") %}
+        </main>
+    </div>
+{% endblock %}
+
+
+	{% block footer %}
+        {{ parent() }}
+
+    {% endblock %}
+
+	{% block javascripts %}
+        {{ parent() }}
+
+        <!-- jQuery plugin for datepicker -->
+        <script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+        <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+
+
+        <script>
+            $(document).ready(function () {
+                var docWidth = document.documentElement.offsetWidth;
+
+                [].forEach.call(document.querySelectorAll('*'), function (el) {
+                    if (el.offsetWidth > docWidth) {
+                        console.log(el);
+                    }
+                });
+// Hambuger menu icon
+                $('.animated-button-icon').on('click', function () {
+                    $('.animated-icon2').toggleClass('open');
+                });
+// first thing turn Hide Menu Search bar
+                $("#searchMenu").hide();
+// toggle menu search bar on/off
+                $("#searchMenuShowHide").click(function () {
+                    $("#searchMenu").toggle("slide");
+                });
+
+                $(document).on('click', '.delete_port2', function (e) {
+                    let urlPath = '';
+                    e.preventDefault();
+                    toastr.info("{{ 'systeme.compte.en-cours'|trans }}");
+                    if ($('#horns:checkbox:checked').length > 0) {
+                        urlPath = $("#hornsUrlDeleteAll").val();
+                    } else {
+                        urlPath = $("#hornsUrlDelete").val();
+                    }
+                    $.ajax({
+                        url: urlPath,
+                        type: 'GET',
+                        success: function (response) {
+                            if (response > 0) {
+                                toastr.clear();
+                                toastr.success("{{ 'systeme.compte.succes'|trans }}");
+                                window.setTimeout(function () {
+                                    window.location = "";
+                                }, 200);
+                            }
+                        },
+                        error: function (response) {
+                            toastr.clear();
+                            toastr.error("{{ 'systeme.compte.error'|trans }}");
+                        }
+                    });
+                });
+
+            });
+        </script>
+
+    {% endblock %}

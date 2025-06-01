@@ -1,0 +1,569 @@
+{% extends 'otherLayout.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+          sizes="32x32"/>
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}"
+          sizes="192x192"/>
+    <link rel="apple-touch-icon-precomposed"
+          href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+    <meta name="msapplication-TileImage"
+          content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+{% endblock %}
+
+{% block title %}Trust &amp; Market | Détails du Profil{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+
+    <!-- Gijgo datepicker css -->
+    <link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+
+    <link href="{{ asset('assets/css/custome.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/mon-profil.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/result.css') }}" rel="stylesheet">
+    <!-- Custom css for camroll -->
+    <link href="{{ asset('assets/css/camroll/camroll_slider.css') }}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <!-- owl carousel css -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <link href="http://rawgit.com/gjunge/rateit.js/master/scripts/rateit.css" rel="stylesheet" type="text/css">
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .col-md-12 h5 {
+            font-style: normal;
+        }
+
+        hr {
+            margin-top: 0.1rem;
+            margin-bottom: 0.1rem;
+        }
+
+        h2.user-info {
+            font-family: 'Source Sans Pro', "Helvetica Neue", Helvetica, Arial, sans-serif;
+            word-break: break-word;
+            line-height: 1rem;
+        }
+
+        h2.bloc-title {
+            font-size: larger !important;
+        }
+
+        h5.user-info {
+            font-family: 'Source Sans Pro', "Helvetica Neue", Helvetica, Arial, sans-serif;
+            word-break: break-word;
+            /* line-height: 1rem; */
+        }
+        .card-footer {
+            text-align: end;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #f17b30;
+        }
+
+        .img-fluid {
+            height: auto;
+            width: auto;
+            border-radius: 5%;
+        }
+
+        @media only screen and (max-width: 768px) {
+            .profile-data-container {
+                margin: auto 1rem;
+            }
+
+            #lectureInfo {
+                display: flex;
+                flex-flow: column;
+                align-items: center;
+            }
+
+            .img-fluid {
+                height: auto;
+                width: auto;
+                border-radius: 5%;
+            }
+        }
+
+        @media only screen and(min-width: 768px) and (max-width: 992px) {
+            .med-flex {
+                display: flex;
+                flex-flow: row;
+                align-items: center;
+            }
+
+            .profile-data-container {
+                margin: auto 0rem;
+            }
+        }
+
+        @media only screen and (min-width: 992px) {
+            .profile-data-container {
+                margin: auto 8rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navigation %}{% endblock %}
+{% block body %}
+    <!--Main Layout-->
+    <main class="mt-3 pt-5">
+        <div class="container">
+            <div class="profile-data-container">
+                <!-- Vu du profil -->
+                <div id="lectureInfo" class="row">
+                    <div class="row med-flex col-12">
+                        <div class="col-md-4 pb-2">
+                            <img class="img-fluid" width="100% \9"
+                                 src="{% if avatar %}{{ avatar }}{% else %}{{ asset('assets/img/profile/avatar-profile.png') }}{% endif %}"
+                                 alt="{{ detailsPro.first_name }} {{ detailsPro.last_name }}"/>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row ml-0">
+                                <h1 class=""
+                                    style="margin-bottom: 0.2rem;">{% if detailsPro.nom_commercial == '' %}{{ detailsPro.first_name }}{% else %}{{ detailsPro.nom_commercial }}{% endif %} </h1>
+                                {% if statut_kyc is defined and statut_kyc %}<img title="Profil fournisseur validé" style="width: 50px; height: auto;" src="{{ absolute_url(asset('assets/img/svg/check-mark-3280.svg')) }}"/>
+                                {% elseif statut_kyc is defined and not statut_kyc %}<img
+                                    title="Profil fournisseur non validé" style="width: 50px; height: auto;"
+                                    src="{{ absolute_url(asset('assets/img/svg/yellow-check-mark-circular-tick-16216.svg')) }}"/>{% endif %}
+                            </div>
+                            {% if principal_activity %}<h2 class="mt-1" style="margin-bottom: 0px;font-size:large;">{{ principal_activity.description }}</h2>{% endif %}
+                            {% if detailsPro.experience is defined %}
+                                {{ detailsPro.experience }}
+                                <h5 class="user-info">{{ 'profil-utilisateur.mon-profil.experience'|trans }} :
+                                    <strong>{{ 'profil-utilisateur.mon-profil.annee'|trans }}</strong>
+                                </h5>
+                            {% else %}
+                            {% endif %}
+
+                            <div class="pt-1 mt-4 row">
+                                <a href="#" style="color:#fff;background-color:black;"
+                                   class="btn btn-md ml-0 col-md-4">{% if user.getUserUniqueData %}{% for dep in departements %}
+                                        {% if user.getUserUniqueData.getDepartement and dep.id == user.getUserUniqueData.getDepartement.id %}{{ dep.departement }}{% endif %}
+                                    {% endfor %}{% endif %}</a>
+                                <a target="_blank" href="{{ path('chat_chat', {'destinataire': detailsPro.id }) }}"
+                                   class="btn btn-md btn-primary ml-0 col-md-4">{{ 'profil-utilisateur.mon-profil.message'|trans }}</a>
+                                <button data-toggle="modal" data-target=".modal-skills"
+                                        style="color:#fff;background-color:#53b4a6;" class="btn btn-md ml-0 col-md-4">
+                                    Mes compétences
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row col-12 mt-3">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div
+                                        class="col-md-12 mt-4">
+                                    <!-- <h5>{{ detailsPro.first_name|raw }} en quelques mots</h5> -->
+                                    <h2 class="no-oblique bloc-title">{{ 'profil-utilisateur.mon-profil.description'|trans }}</h2>
+                                    <hr>
+                                    <div class="p-2">
+                                        <div>
+                                            {{ detailsPro.description|raw }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 my-2">
+                                    <h2 class="bloc-title">{{ 'profil-utilisateur.mon-profil.reference'|trans }}</h2>
+                                    <hr>
+                                    <div class="p-2">
+                                        <div>
+                                            {{ detailsPro.reference|raw }}</div>
+                                    </div>
+                                </div>
+                                <div id="monPortfolio" class="col-md-12 my-2">
+                                    <h2 class="bloc-title">{{ 'profil-utilisateur.mon-profil.portfolio'|trans }}</h2>
+                                    <hr class="mb-2">
+                                    <div class="owl-carousel owl-theme">
+                                        {% for s in detailsPro.portfolio|slice(0, 10) %}
+                                            <div class="item" data-merge="2">
+                                                <div class="portfolio-bg lazy" data-src="{{ s }}"></div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div id="mesVideos" class="col-md-12 my-2">
+                                    <h2 class="bloc-title">{{ 'profil-utilisateur.mon-profil.videos'|trans }}</h2>
+                                    <hr class="mb-2">
+                                    <div class="owl-carousel owl-theme">
+                                        {% for v in detailsPro.videos|slice(0, 10) %}
+                                            <div class="item-video" data-merge="3">
+                                                <a class="owl-video"
+                                                   href="https://www.youtube.com/embed/{% if v != null %}{{ v }}{% endif %}"></a>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div id="mesAnnonces" class="col-md-12 my-4">
+                                    <h2 class="py-4 mb-2 bloc-title">Mon univers de prestations</h2>
+                                    <hr class="mb-3">
+                                    <div class="owl-theme col-md-12 row">
+                                        {% for liste in detailsPro.annonces %}
+                                            <div class="col-lg-4 col-md-6 col-sm-6 mb-5 clearfix isotope-grid">
+                                                <!-- Card -->
+                                                <div class="card">
+                                                    <!-- Card image -->
+                                                    {% if liste.gallery is not null %}
+                                                        <div class="view overlay isotope-item"
+                                                             style="height:160px; border-bottom: 4px solid #f17b30">
+                                                            <img loading="lazy" class="card-img-top lazy" width="100%"
+                                                                 src="{% if liste.gallery|first %}{{ liste.gallery.0.guid|replace({'www.': ''}) }}{% elseif liste.images_secondaires|first %}{{ liste.images_secondaires.0.guid|replace({'www.': ''}) }}{% else %}https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).jpg{% endif %}"
+                                                                 alt="Card image cap">
+                                                            {#<div class="btnh1-display">
+                                                                <button class="btn-wish btnh1" data-id="{{ liste.id }}">
+                                                                    {% if liste.id in text_wishlist %}<i style="color: red;"
+                                                                                                         class="fas fa-heart"></i> {% else %}
+                                                                        <i class="far fa-heart"></i> {% endif %}</button>
+                                                            </div>#}
+                                                            <a href="{% if liste.post_name != '' %}{{ path('annonces_detailsAnnonce', { id:liste.post_name }) }}{% endif %}">
+                                                                <div class="mask rgba-white-slight"></div>
+                                                            </a>
+                                                        </div>
+                                                    {% endif %}
+                                                    <!-- Card content -->
+                                                    <div class="card-body">
+                                                        <!-- Title -->
+                                                        <h4 class="card-title fs-18">
+                                                            {% if app.request.locale == 'en' and liste.titre_en != '' %}
+                                                                {{ liste.titre_en }}
+                                                            {% else %}
+                                                                {{ liste.titre }}
+                                                            {% endif %}
+                                                        </h4>
+                                                        <!-- Category -->
+                                                        <h5 class="card-sub-title fs-15">
+                                                            <a href="{% if liste.categorieParent|lower == 'produits' %}{{ path('annonces_listeAnnonces',{type_prestation:'produits',services_proposes: '',code_postal_ville: ''}) }} {% else %}{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: '',code_postal_ville: ''}) }} {% endif %}">
+                                                                {% if app.request.locale == 'en' and liste.categorieParent_en != '' %}
+                                                                    {{ liste.categorieParent_en }}
+                                                                {% else %}
+                                                                    {{ liste.categorieParent }}
+                                                                {% endif %}
+                                                            </a>
+                                                        </h5>
+                                                        <!-- Sub Category -->
+                                                        <h5 class="card-sub-category fs-18">
+                                                            <a href="{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: liste.sousCategorieSlug,code_postal_ville: ''}) }}">
+                                                                {% if app.request.locale == 'en' and liste.sousCategorie_en != '' %}
+                                                                    {{ liste.sousCategorie_en }}
+                                                                {% else %}
+                                                                    {{ liste.sousCategorie }}
+                                                                {% endif %}
+                                                            </a>
+                                                        </h5>
+                                                        <!-- Price -->
+                                                        <p class="annonce-price fs-24 mb-0">
+                                                    <span data-stars="{{ liste.price|round(0) }}"
+                                                          class="number">{{ liste.price }}</span>
+                                                            {% if liste.devise != null %}
+                                                                {{ liste.devise }}{% else %}€
+                                                            {% endif %}
+                                                        </p>
+                                                    </div>
+                                                    <div class="card-footer bg-transparent">
+                                                        <a target="_blank"
+                                                           href="{{ path('annonces_listeAnnoncesCommercial', {nom_commercial: liste.nom_commercial, id_commercial: liste.post_author}) }}">{{ liste.nom_commercial }}</a>
+                                                    </div>
+                                                </div>
+                                                <!-- Card -->
+                                            </div>
+                                        {% endfor %}
+                                        {#{% for s in detailsPro.annonces %}
+                                            <div class="col-md-4 mb-5 clearfix isotope-grid">
+                                                <div class="card">
+                                                    <a href="{{path('annonces_detailsAnnonce',{id:s.slug})}}" target="_blank">
+                                                        <div class="item-box-blog-image annonces-title">
+                                                            <figure>
+                                                                <img alt="{% if s.post_title is defined %}{{s.post_title}}{% else %}{{s.titre}}{% endif %}"
+                                                                src="{% if s.gallery|length > 0 and s.gallery != '' %}{{s.gallery.0.guid}}{% elseif s.images_secondaires|length > 0 and s.images_secondaires != '' %}{{s.images_secondaires.0.guid}}{% endif %}">
+                                                            </figure>
+                                                        </div>
+                                                    </a>
+
+                                                    <div class="item-box-blog-body annonces-body">
+                                                        <!--Heading-->
+                                                        <div class="item-box-blog-heading annonces-head">
+                                                            <a href="#" tabindex="0">
+                                                                <h6 class="mt-2 primary-colour">{% if s.post_title is defined %}{{s.post_title}}{% else %}{{s.titre}}{% endif %}</h6>
+                                                            </a>
+                                                        </div>
+                                                        <!--Data-->
+                                                        <div class="item-box-blog-data" style="padding: 15px;">
+                                                            <p class="mt-1">{{s.price}}
+                                                                {% if s.devise == "" %}€
+                                                                {% else %}
+                                                                    {{s.devise}}
+                                                                {% endif %}
+                                                            </p>
+                                                        </div>
+                                                        <!--Read More Button-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}#}
+                                    </div>
+                                    {% if detailsPro.annonces|length > 0 %}
+                                        <nav aria-label="...">
+                                            <ul class="pagination justify-content-center">
+                                                <li class="page-item {% if noPage == 1 %}disabled{% endif %}">
+                                                    <a class="page-link"
+                                                       href="{{ path('profile_detailsProfessionnel',{ id:'infos-profil-' ~ detailsPro.id,
+                                                           noPage:noPage-1}) }}"
+                                                       tabindex="-1">{{ 'filtres.precedent'|trans({}, 'liste_annonces') }}</a>
+                                                </li>
+
+                                                {% if noPage > 1 %}
+                                                    <li class="page-item">
+                                                        <a class="page-link"
+                                                           href="{{ path('profile_detailsProfessionnel',
+                                                               {id: 'infos-profil-' ~ detailsPro.id , noPage: 1}) }}">1<span
+                                                                    class="sr-only"></span></a>
+                                                    </li>
+                                                {% endif %}
+                                                {% if noPage > 2 %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="">...<span
+                                                                    class="sr-only"></span></a>
+                                                    </li>
+                                                {% endif %}
+                                                <li class="page-item active">
+                                                    <a class="page-link" href="{{ path('profile_detailsProfessionnel',
+                                                        {id: 'infos-profil-' ~ detailsPro.id , noPage: noPage}) }}">{{ noPage }}
+                                                        <span class="sr-only"></span>
+                                                    </a>
+                                                </li>
+                                                {% if pages - noPage > 1 %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="">...<span
+                                                                    class="sr-only"></span></a>
+                                                    </li>
+                                                    </li>
+                                                {% endif %}
+                                                {% if pages - noPage > 0 %}
+                                                    <li class="page-item">
+                                                        <a class="page-link"
+                                                           href="{{ path('profile_detailsProfessionnel',
+                                                               {id:'infos-profil-' ~ detailsPro.id, noPage: pages}) }}">{{ pages }}
+                                                            <span class="sr-only"></span>
+                                                        </a>
+                                                    </li>
+                                                {% endif %}
+                                                <li class="page-item {% if noPage == pages %}disabled{% endif %}">
+                                                    <a class="page-link"
+                                                       href="{{ path('profile_detailsProfessionnel',{id:'infos-profil-' ~ detailsPro.id,
+                                                           noPage:noPage+1}) }}">{{ 'filtres.suivant'|trans({}, 'liste_annonces') }}</a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Vu du profil -->
+            </div>
+        </div>
+        <div class="modal fade modal-skills" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content" style="background-color:#008779;border-radius: 15px;padding: 1rem;">
+                    <h5 class="modal-title" style="color: #fff;font-size: larger;" id="exampleModalLongTitle">MES
+                        DOMAINES D'EXPERTISES</h5>
+                    {% for key,item in detailsPro.competence %}
+                        <span style="text-align:left !important;"
+                              class="text-center competence-item pb-2">{{ item }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% include("partials/videoButton.html.twig") %}
+        {% include("partials/otherPagesVideoModal.html.twig") %}
+    </main>
+    <!--Main Layout-->
+
+{% endblock %}
+
+
+{% block footer %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+
+    <!-- jQuery plugin for camroll slider -->
+    <script type="text/javascript" src="{{ asset('assets/js/camroll/camroll_slider.js') }}"></script>
+    {# Text editor #}
+    <script src="//cdn.ckeditor.com/4.13.0/standard/ckeditor.js"></script>
+    <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+    <!-- jQuery plugin for date picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+    <!-- jQuery plugin for input tags -->
+    <script src="{{ asset('assets/js/tagsinput/jQuery.tagify.min.js') }}"></script>
+    <!-- owl carousel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <!-- RateIt Js -->
+    <script type="text/javascript" src="{{ asset('assets/js/rateit/jquery.rateit.min.js') }}"></script>
+    <!-- cdnjs for lazy load -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            var docWidth = document.documentElement.offsetWidth;
+            [].forEach.call(document.querySelectorAll('*'), function (el) {
+                if (el.offsetWidth > docWidth) {
+                    console.log(el);
+                }
+            });
+
+// Lazy Loading initializer
+            $(function () {
+                $('.lazy').lazy();
+            });
+//Smooth scroll
+            if ("{{ noPage }}" > 1) {
+                window.location = "#mesAnnonces";
+            }
+//End
+// Portfolio owlcarousel
+            $('#monPortfolio .owl-carousel').owlCarousel({
+                items: 1,
+                nav: true,
+                lazyLoad: true,
+                loop: true,
+                margin: 10
+            });
+// Video owlcarousel
+            $('#mesVideos .owl-carousel').owlCarousel({
+                items: 1,
+                merge: true,
+                loop: true,
+                margin: 10,
+                nav: true,
+                video: true,
+                lazyLoad: false,
+                center: true
+            });
+
+// Annonces owlcarousel
+            $('#mesAnnonces .owl-carousel').owlCarousel({loop: false, margin: 10, nav: true});
+// input tags
+            $('#competencesModif').tagify();
+// list images from portfolio and video
+            $('.portfolio-ul').on('click', 'li span:first-child', function () {
+                $(this).parent().fadeOut(300, function () {
+                    $(this).remove();
+                });
+            });
+            $('.videos-ul').on('click', 'li span:first-child', function () {
+                $(this).parent().fadeOut(300, function () {
+                    $(this).remove();
+                });
+            });
+
+// add/remove new video in the update section
+            var scntDiv = $('#newVideosRow');
+            var i = $('#newVideosRow .col-md-4').length + 1;
+
+            $('#addScnt').on('click', function () {
+                $('<div class="col-md-4"><div class="md-form"> <input type="text" class="form-control border p-2" name="new_vid_' + i + '" placeholder="Add new YouTube video link"><div class="valid-feedback">OK!</div><div class="invalid-feedback">Ce champ contient une erreur!</div></div> <a class="btn btn-md btn-danger" id="retirerSec">Rétirer</a></div>').appendTo(scntDiv);
+                i++;
+                return false;
+            });
+
+            $('#newVideosRow').on('click', '#retirerSec', function () { // console.log("Am here");
+                if (i > 2) {
+                    $(this).parents('.col-md-4').remove();
+                    i--;
+                }
+                return false;
+            });
+
+
+// Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+// first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+// toggle menu search bar on/off
+            $("#searchMenuShowHide").click(function () {
+                $("#searchMenu").toggle("slide");
+            });
+
+// first thing turn Hide "Update section" input field
+// $("#lectureInfo").hide();
+            $("#modifInfo").hide();
+
+// toggle on/off using "Mofier mon profile"
+            $("#modifierProfile").click(function () {
+                $("#lectureInfo").toggle("slide");
+                $("#modifInfo").toggle("slide");
+            });
+// toggle on/off using "Annuler les modification"
+            $("#annulerModif").click(function () {
+                $("#modifInfo").toggle("slide");
+                $("#lectureInfo").toggle("slide");
+            });
+
+            $('#date').datepicker({
+                uiLibrary: 'bootstrap4',
+                size: 'large',
+                showRightIcon: false,
+                iconsLibrary: 'fontawesome'
+            });
+
+            $("div[role='wrapper']").append("<label for='date'>Date de naissance</label><div class='valid-feedback'>OK!</div><div class='invalid-feedback'>Ce champ contient une erreur!</div>");
+
+
+// Set card title and card-body equal height
+            let maxHeightTitle = 0;
+            let maxHeightbody = 0;
+// card body
+            $(".card-body").each(function () {
+                if ($(this).height() > maxHeightbody) {
+                    maxHeightbody = $(this).height();
+                }
+            });
+            $(".card-body").height(maxHeightbody);
+
+        });
+    </script>
+
+    <script>
+
+        function switchButtons(button, oppositeButton) {
+            button.disabled = false;
+            button.style.display = 'none';
+            oppositeButton.style.display = 'block';
+        }
+
+    </script>
+
+{% endblock %}

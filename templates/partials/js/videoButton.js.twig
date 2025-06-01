@@ -1,0 +1,16 @@
+{% if youtube_url is defined %}
+    {% if youtube_url.autoload == 'yes' %}
+        $("#youtubeVideoModal").modal("hide");
+
+        $(".closeVideoBtnModal").click(function (e) {
+            e.preventDefault();
+            $("#youtubeVideoModal").modal('hide');
+            $(".hs-responsive-embed-youtube iframe").attr("src", "");
+        });
+
+        $(".playVideoButton i").click(function () {
+            $("#youtubeVideoModal").modal('toggle');
+            $(".hs-responsive-embed-youtube iframe").attr("src", 'https://www.youtube.com/embed/' + $("#youtubeVideoModal #youtube_url").val());
+        });
+    {% endif %}
+{% endif %}

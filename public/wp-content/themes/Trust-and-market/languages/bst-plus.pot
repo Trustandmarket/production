@@ -1,0 +1,247 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-08-23 23:28+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/"
+
+#. Name of the template
+msgid "Full Width Page"
+msgstr ""
+
+#: 404.php:10
+msgid "Error"
+msgstr ""
+
+#: 404.php:11
+msgid "The page you were looking for does not exist."
+msgstr ""
+
+#. Name of the template
+msgid "Home Page"
+msgstr ""
+
+#: search.php:9
+msgid "Search Results for"
+msgstr ""
+
+#. Name of the template
+msgid "Page with Cover"
+msgstr ""
+
+#. Name of the template
+msgid "Custom Login"
+msgstr ""
+
+#: templates/custom-login.php:24
+msgid "Connexion"
+msgstr ""
+
+#. Name of the template
+msgid "Custom Register"
+msgstr ""
+
+#: functions/widgets.php:9
+msgid "Sidebar"
+msgstr ""
+
+#: functions/widgets.php:11
+msgid "The sidebar widget area"
+msgstr ""
+
+#: functions/widgets.php:22
+msgid "Footer"
+msgstr ""
+
+#: functions/widgets.php:24
+msgid "The footer widget area"
+msgstr ""
+
+#: functions/woocommerce-setup.php:64
+msgid "View your shopping cart"
+msgstr ""
+
+#: functions/woocommerce-setup.php:65
+msgid "Start shopping"
+msgstr ""
+
+#: functions/woocommerce-setup.php:69
+#, php-format
+msgid "%d item"
+msgid_plural "%d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: functions/feedback.php:28
+msgid "at"
+msgstr ""
+
+#: functions/feedback.php:30
+msgid "Your comment is awaiting moderation."
+msgstr ""
+
+#: functions/feedback.php:41
+msgid "Edit"
+msgstr ""
+
+#: functions/navbar.php:171
+msgid "Upper navbar (left)"
+msgstr ""
+
+#: functions/navbar.php:172
+msgid "Upper navbar (right)"
+msgstr ""
+
+#: functions/navbar.php:175
+msgid "Lower navbar (left)"
+msgstr ""
+
+#: functions/navbar.php:176
+msgid "Lower navbar (right)"
+msgstr ""
+
+#: functions/search.php:5
+msgid "Recherchez un musicien, un photographe, "
+msgstr ""
+
+#: functions/search.php:6
+msgid "Search"
+msgstr ""
+
+#: functions/setup.php:16
+msgid "Read more"
+msgstr ""
+
+#: includes/loops/content-single.php:16 includes/loops/content-resource.php:18
+#: includes/loops/content.php:22
+msgid "By"
+msgstr ""
+
+#: includes/loops/content-single.php:21 includes/loops/content-resource.php:23
+msgid "Filed under"
+msgstr ""
+
+#: includes/loops/content-single.php:22 includes/loops/comments.php:20
+#: includes/loops/content-resource.php:24 includes/loops/content.php:35
+msgid "Comments"
+msgstr ""
+
+#: includes/loops/content-single.php:22 includes/loops/comments.php:20
+#: includes/loops/content-resource.php:24 includes/loops/content.php:35
+msgid "None"
+msgstr ""
+
+#: includes/loops/content-search.php:22
+msgid "Sorry, your search yielded no results."
+msgstr ""
+
+#: includes/loops/comments.php:8
+msgid "This post is password protected. Enter the password to view comments."
+msgstr ""
+
+#: includes/loops/comments.php:17
+msgid "Feedback"
+msgstr ""
+
+#: includes/loops/comments.php:34
+msgid "Be the first to write a comment."
+msgstr ""
+
+#: includes/loops/comments.php:36
+msgid "Comments are closed for this post."
+msgstr ""
+
+#: includes/loops/comments.php:43
+msgid "Your feedback"
+msgstr ""
+
+#: includes/loops/comments.php:43
+#, php-format
+msgid "Responses to %s"
+msgstr ""
+
+#: includes/loops/comments.php:46
+#, php-format
+msgid "You must be <a href=\"%s\">logged in</a> to post a comment."
+msgstr ""
+
+#: includes/loops/comments.php:51
+msgid "Logged in as"
+msgstr ""
+
+#: includes/loops/comments.php:52
+msgid "Log out of this account"
+msgstr ""
+
+#: includes/loops/comments.php:52
+msgid "Log out"
+msgstr ""
+
+#: includes/loops/comments.php:56 includes/loops/comments.php:57
+msgid "Your name"
+msgstr ""
+
+#: includes/loops/comments.php:60 includes/loops/comments.php:61
+msgid "Your email address"
+msgstr ""
+
+#: includes/loops/comments.php:60
+msgid "(required, but will not be published)"
+msgstr ""
+
+#: includes/loops/comments.php:64
+msgid "Your website"
+msgstr ""
+
+#: includes/loops/comments.php:64
+msgid "if you have one (not required)"
+msgstr ""
+
+#: includes/loops/comments.php:69 includes/loops/comments.php:70
+msgid "Your comment"
+msgstr ""
+
+#: includes/loops/comments.php:72
+msgid "Submit comment"
+msgstr ""
+
+#: includes/loops/content.php:34
+msgid "Category"
+msgstr ""
+
+#: includes/loops/content.php:45
+msgid "Previous"
+msgstr ""
+
+#: includes/loops/content.php:46
+msgid "Next"
+msgstr ""
+
+#. Name of the theme
+msgid "Trust and Market"
+msgstr ""
+
+#. Description of the theme
+msgid "Bootstrap Starter Theme for WordPress. Using Twitter Bootstrap 3.3.5"
+msgstr ""
+
+#. URI of the theme
+msgid "https://github.com/BST-Plus/BST-Plus"
+msgstr ""
+
+#. Author of the theme
+msgid "Simon Padbury &amp; Ciaran Whelan"
+msgstr ""
+
+#. Author URI of the theme
+msgid "http://simonpadbury.com%20&%20http://cmwwebfx.com.au"
+msgstr ""

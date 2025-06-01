@@ -1,0 +1,72 @@
+<h5 class="py-4 mb-4 border-bottom">Annonces({{ listeAnnonces|length }})</h5>
+<div class="row mb-4">
+    <div class="col-md-12 text-right">
+        <form action="" class="form-inline float-right">
+            <h6 class="filter-text mr-2">{{ 'filtres.titre'|trans({}, 'liste_annonces')|raw }}</h6>
+            <select name="prix" id="triPrix" class="browser-default custom-select mr-2 mb-2">
+                <option value="all">{{ 'filtres.prix'|trans({}, 'liste_annonces')|raw }}</option>
+                <option value="0">{{ 'filtres.croissant'|trans({}, 'liste_annonces')|raw }}</option>
+                <option value="1">{{ 'filtres.decroissant'|trans({}, 'liste_annonces')|raw }}</option>
+            </select>&nbsp;
+            <select name="date-dajout" id="triDate" class="browser-default custom-select mr-2 mb-2">
+                <option value="all">{{ 'filtres.date-ajout'|trans({}, 'liste_annonces')|raw }}</option>
+                <option value="1">{{ 'filtres.recent'|trans({}, 'liste_annonces')|raw }}&gt;
+                    {{ 'filtres.ancien'|trans({}, 'liste_annonces')|raw }}</option>
+                <option value="0">{{ 'filtres.ancien'|trans({}, 'liste_annonces')|raw }}
+                    &lt;{{ 'filtres.recent'|trans({}, 'liste_annonces')|raw }}</option>
+            </select>
+        </form>
+    </div>
+</div>
+<div class="row isotope">
+    {% if listeAnnonces is not null %}
+        {#  {{dump(listeAnnonces)}} #}
+        {% for liste in listeAnnonces %}
+            <div class="col-md-4 mb-5 clearfix isotope-grid">
+                <!-- Card -->
+                <div class="card">
+                    <!-- Card image -->
+                    {% if liste.gallery is not null %}
+                        <div class="view overlay isotope-item" style="height:160px; border-bottom: 4px solid #f17b30">
+                            <img loading="lazy" class="card-img-top" width="100%"
+                                 src="{% if liste.gallery|first %}{{ liste.gallery.0.guid|replace({'www.': ''}) }}{% elseif liste.images_secondaires|first %}{{ liste.images_secondaires.0.guid|replace({'www.': ''}) }}{% else %}https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).jpg{% endif %}"
+                                 alt="Card image cap">
+                            <a href="{% if liste.post_name != '' %}{{ path('annonces_detailsAnnonce', { id:liste.post_name }) }}{% endif %}">
+                                <div class="mask rgba-white-slight"></div>
+                            </a>
+                        </div>
+                    {% endif %}
+                    <!-- Card content -->
+                    <div class="card-body">
+                        <!-- Title -->
+                        <h4 class="card-title fs-18">{% if app.request.locale == 'en' and liste.titre_en != '' %}{{ liste.titre_en }}{% else %}{{ liste.titre }}{% endif %}</h4>
+                        <!-- Category -->
+                        <h5 class="card-sub-title fs-15"><a
+                                    href="{% if liste.categorieParent|lower == 'produits' %}{{ path('annonces_listeAnnonces',{type_prestation:'produits',services_proposes: '',code_postal_ville: ''}) }}
+										{% else %}{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: '',code_postal_ville: ''}) }}
+										{% endif %}">{% if app.request.locale == 'en' and liste.categorieParent_en != '' %}{{ liste.categorieParent_en }}{% else %}{{ liste.categorieParent }}{% endif %}</a>
+                        </h5>
+                        <!-- Sub Category -->
+                        <h5 class="card-sub-category fs-21"><a
+                                    href="{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: liste.sousCategorieSlug,code_postal_ville: ''}) }}"> {% if app.request.locale == 'en' and liste.sousCategorie_en != '' %}{{ liste.sousCategorie_en }}{% else %}{{ liste.sousCategorie }}{% endif %}</a>
+                        </h5>
+                        <!-- Price -->
+                        <p class="annonce-price fs-24"><span data-stars="{{ liste.price|round(0) }}"
+                                                             class="number">{{ liste.price }}</span> {% if liste.devise != null %}{{ liste.devise }}{% else %}€{% endif %}
+                        </p>
+                        <!-- address -->
+
+                        <span hidden class="tri-dates">{{ liste.id }}</span>
+                        <!-- calendar -->
+                        <p class="card-text" hidden>
+                            <i class="fas fa-calendar"></i>&nbsp;{{ liste.calendrier|first }}
+                            - {{ liste.calendrier|last }} ({{ liste.calendrier|length }} dates dispo.)
+                        </p>
+                    </div>
+                </div>
+                <!-- Card -->
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+<!-- list des prestations

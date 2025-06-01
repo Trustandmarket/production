@@ -1,0 +1,349 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+    {{ 'admin.menu.modifier-menu'|trans }}
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <style>
+        #main-menu {
+            font-size: 14px;
+        }
+    </style>
+    <div class="content">
+        <div class="animated fadeIn">
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="box-title">{{ 'admin.menu.menu-entete'|trans }}<a
+                                        class="badge badge-complete right1" data-toggle="modal"
+                                        data-target="#add-category" href="#" title="Nouveau menu">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </h4>
+                        </div>
+                        <div class="card-body--">
+                            <div class="table-stats order-table ov-h">
+                                <table class="table ">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>{{ 'admin.menu.libelle'|trans }}</th>
+                                        <th>{{ 'admin.menu.menu-page'|trans }}</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for m in header %}
+                                        <tr>
+                                            <td>
+                                                {{ m.id }}</td>
+                                            <td>
+                                                <span class="name">{% if app.request.locale == "en" %}{{ m.postExcerpt }}{% else %}{{ m.postTitle }}{% endif %}</span>
+                                                <input type="text" name="titre"
+                                                       value="{% if app.request.locale == "en" %}{{ m.postExcerpt }}{% else %}{{ m.postTitle }}{% endif %}"
+                                                       class="form-control titre" style="display:none">
+                                                <input type="hidden" name="id" class="id" value="{{ m.id }}">
+                                            </td>
+                                            <td>
+
+                                                {% set index_url = ea_url({ id: m.id })
+                                                    .setController('App\\Controller\\Admin\\MenusPages\\Pages\\WpPostsCrudController')
+                                                    .setAction('index') %}
+                                                <a class="badge badge-complete "
+                                                   href="{{ index_url }}"
+                                                   title="{{ 'admin.menu.sous-menu'|trans }}">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a class="badge badge-pending update" href="#"
+                                                   title="{{ 'admin.menu.modifier'|trans }}">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                <a class=" red delete" href="/admin/delete_post?id={{ m.id }}&statut=draft"
+                                                   title="Supprimer le menu">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="box-title">{{ 'admin.menu.menu-pied'|trans }}
+                                <a class="badge badge-complete right1" href="#" data-toggle="modal"
+                                   data-target="#add-category" title="Nouveau menu">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </h4>
+                        </div>
+                        <div class="card-body--">
+                            <div class="table-stats order-table ov-h">
+                                <table class="table ">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>{{ 'admin.menu.libelle'|trans }}</th>
+                                        <th>{{ 'admin.menu.menu-page'|trans }}</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for m in footer %}
+
+                                        <tr>
+
+                                            <td>
+                                                {{ m.id }}
+                                            </td>
+                                            <td>
+                                                <span class="name">{% if app.request.locale == "en" %}{{ m.postExcerpt }}{% else %}{{ m.postTitle }}{% endif %}</span>
+                                                <input type="text" name="titre"
+                                                       value="{% if app.request.locale == "en" %}{{ m.postExcerpt }}{% else %}{{ m.postTitle }}{% endif %}"
+                                                       class="form-control titre" style="display:none">
+                                                <input type="hidden" class="id" name="id" value="{{ m.id }}">
+                                            </td>
+
+                                            <td>
+                                                {% set index_url = ea_url({ id: m.id })
+                                                    .setController('App\\Controller\\Admin\\MenusPages\\Pages\\WpPostsCrudController')
+                                                    .setAction('index') %}
+                                                <a class="badge badge-complete "
+                                                   href="{{ index_url }}"
+                                                   title="{{ 'admin.menu.sous-menu'|trans }}">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a class="badge badge-pending update" href="#"
+                                                   title="{{ 'admin.menu.modifier'|trans }}">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                <a class=" red delete" href="delete_post?id={{ m.id }}&statut=draft"
+                                                   title="Supprimer le menu">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="modal fade none-border" id="add-category">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">
+                            <strong>{{ 'admin.menu.add-menu'|trans }}
+                            </strong>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ path('admin_new_menu')}}" method="post" id="register">
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <input class="form-control" placeholder="{{ 'admin.menu.libelle'|trans }}"
+                                           type="text" name="name" id="cat_name" required/>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <select class="form-control " name="type" required>
+                                        <option value="" disabled selected>{{ 'admin.menu.type'|trans }}</option>
+                                        <option value="10">Pages libres</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close
+                                </button>
+                                <button type="submit" id="send"
+                                        class="btn btn-success waves-effect waves-light ld-over-inverse ">{{ 'admin.categorie.send'|trans }}
+                                    <i class="ld ld-ring ld-spin"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block body_javascript %}
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+            integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).on("click", ".update", function (e) {
+            // On empeche le navigateur de soumettre le formulaire
+
+            e.preventDefault();
+            $(this).parents("tr").find(".titre").show();
+            $(this).parents("tr").find(".name").hide();
+            $(this).parents("tr").find(".titre").focus();
+        });
+
+        $(document).on("blur", ".titre", function (e) {
+            // On empeche le navigateur de soumettre le formulaire
+            e.preventDefault();
+            $(this).parents("tr").find(".name").html($(this).val());
+            t = $(this);
+            var url1 =
+                "/admin/update_menu?id=" +
+                $(this).parents("td").find(".id").val() +
+                "&t=titre&description=" +
+                $(this).val();
+            toastr.info("Modification en cours...");
+
+            $.ajax({
+                url: url1,
+                type: "get",
+                success: function (reponse) {
+                    toastr.clear();
+                    t.parents("tr").find(".name").show();
+                    t.hide();
+                    toastr.success("Modification Terminée");
+                },
+                error: function (reponse) {
+                    toastr.clear();
+                    t.parents("tr").find(".name").show();
+                    t.hide();
+                },
+            });
+        });
+
+
+        $(document).on("click", ".delete", function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            var t = $(this);
+            var urlPath = $(this).attr("href");
+            swal(
+                {
+                    title: "Suppression definitif du menu",
+                    text: "Attention le menu sera Supprimer et n'apparaitra plus sur votre site",
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Supprimer",
+                    cancelButtonText: "Annuler",
+                    closeOnConfirm: false,
+                    closeOnCancel: false,
+                    showLoaderOnConfirm: true,
+                },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: urlPath,
+                            type: "GET",
+                            success: function (reponse) {
+                                if (reponse == 1) {
+                                    swal("suppression terminée", "", "success");
+
+                                    t.parents("tr").hide();
+                                } else {
+                                    swal("erreur de suppression", "", "error");
+                                }
+                            },
+                            error: function (reponse) {
+                                swal("erreur de suppression", "", "error");
+                            },
+                        });
+                    } else {
+                        swal.close();
+                    }
+                }
+            );
+
+            return false;
+        });
+        $("#register").on("submit", function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+
+            if ($("#cat_name").val() != "") {
+                $("#send").addClass("running");
+                var $form = $(this);
+                $.ajax({
+                    url: $form.attr("action"),
+                    type: $form.attr("method"),
+                    data: $form.serialize(),
+                    success: function (reponse) {
+                        if (reponse > 0) {
+                            toastr.clear();
+                            $("#send").removeClass("running");
+                            toastr.success("Ajout Terminé");
+                            window.location = "";
+                        } else if (reponse == 0) {
+                            toastr.clear();
+                            $("#send").removeClass("running");
+                            toastr.error("Erreur d'ajout");
+                        }
+                    },
+                    error: function (reponse) {
+                        toastr.clear();
+                        $("#send").removeClass("running");
+                        toastr.error("Erreur d'ajout");
+                    },
+                });
+            }
+            return false;
+        });
+
+        toastr.options = {
+            closeButton: true,
+            debug: false,
+            newestOnTop: false,
+            progressBar: true,
+            positionClass: "toast-top-center",
+            preventDuplicates: false,
+            onclick: null,
+            showDuration: "300",
+            hideDuration: "1000",
+            timeOut: "12000",
+            extendedTimeOut: "1000",
+            showEasing: "swing",
+            hideEasing: "linear",
+            showMethod: "fadeIn",
+            hideMethod: "fadeOut",
+        };
+    </script>
+{% endblock body_javascript %}

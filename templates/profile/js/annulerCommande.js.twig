@@ -1,0 +1,42 @@
+<script>
+$(document).on('click', '.annulerCommande', function (e) { // On emp�che le navigateur de soumettre le formulaire
+    e.preventDefault();
+    var t = $(this);
+    var urlPath = $(this).attr('href');
+    swal({
+        title: "Annulation de la reservation",
+        text: "{{'commande.annuler.confirmer_annulation'|trans}}",
+        type: "info",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Annuler Reservation",
+        cancelButtonText: "Annuler",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+        showLoaderOnConfirm: true
+    }, function (isConfirm) {
+    if (isConfirm) {
+    $.ajax({
+        url: urlPath,
+        type: 'GET',
+        success: function (reponse) {
+            if (reponse == 1) {
+                swal("{{'commande.annuler.succes'|trans}}", "", "success");
+                window.setTimeout(function () {
+                window.location = "";
+            }, 1000);
+                t.parents('li').hide();
+            } else {
+                swal("commande.annuler.erreur'|trans }}", "", "error");
+            };
+        },
+    error: function (reponse) {
+    swal("{{'commande.annuler.erreur'|trans }}", "", "error");
+    }
+});
+} else {
+    swal.close();
+}
+});
+});
+</script>

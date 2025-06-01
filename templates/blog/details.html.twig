@@ -1,0 +1,554 @@
+{% extends 'generalLayout.html.twig' %}
+
+
+{% block head %}
+    {{ parent() }}
+    <meta name="title"
+          content="{% if app.request.locale == 'en' and post.postExcerpt != '' %} {{ post.postExcerpt }} {% else %} {{ post.postTitle }} {% endif %}">
+    <meta name="description" content="{% if meta_desc is not null %}{{ meta_desc.getMetaValue }}{% endif %}">
+    <link rel="canonical" href="{{ absolute_url(path('blog_details_postBlog', {slug: post.postName})) }}">
+    <link rel="shortlink" href="{{ absolute_url(path('blog_details_postBlog', {slug: post.postName})) }}">
+    <meta property="og:title"
+          content="{% if app.request.locale == 'en' and post.postExcerpt != '' %} {{ post.postExcerpt }} {% else %} {{ post.postTitle }} {% endif %}">
+    <meta property="og:description" content="{% if meta_desc is not null %}{{ meta_desc.getMetaValue }}{% endif %}">
+
+    <meta property="og:image" content="{{ post.guid }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ absolute_url(path('blog_details_postBlog', {slug: post.postName})) }}">
+    <meta property="og:locale" content="fr"/>
+    <meta property="og:locale:alternate" content="en"/>
+
+    {# Twitter CARD #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="Kbr Global">
+    <meta name="twitter:site" content="@trustandmarket">
+    <meta name="twitter:title"
+          content="{% if app.request.locale == 'en' and post.postExcerpt != '' %} {{ post.postExcerpt }} {% else %} {{ post.postTitle }} {% endif %}">
+    <meta name="twitter:description" content="{% if meta_desc is not null %}{{ meta_desc.getMetaValue }}{% endif %}">
+    <meta name="twitter:image" content="{{ post.guid }}">
+    <meta name="twitter:image:alt"
+          content="{% if app.request.locale == 'en' and post.postExcerpt != '' %} {{ post.postExcerpt }} {% else %} {{ post.postTitle }} {% endif %}">
+    {# END Twitter Card #}
+
+    <script type="application/ld+json">
+		{
+			"@context": "https://schema.org", 
+			"@type": "Article",
+			"headline": "{% if app.request.locale == 'en' and post.postExcerpt != '' %} {{ post.postExcerpt }} {% else %} {{ post.postTitle }} {% endif %}",
+			"alternativeHeadline": "Blog Trust&Market",
+			"image": "{{ post.guid }}",
+			"author": "Kalide Brassier",
+			"editor": "Kbr Global", 
+			"genre": "Event", 
+			"keywords": "", 
+			"wordcount": "{% if app.request.locale == 'en' and post.postContentFiltered != '' %}{{ post.postContentFiltered|striptags()|length }}{% else %}{{ post.postContent|striptags()|length }}{% endif %}",
+			"publisher": {
+				"@type": "Organization",
+				"name": "Google",
+				"logo": {
+				"@type": "ImageObject",
+				"url": "{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+				}
+			},
+			"url": "{{ absolute_url(path('blog_details_postBlog', {slug: post.postName})) }}",
+			"mainEntityOfPage": {
+				"@type": "WebPage",
+				"@id": "{{ absolute_url(path('blog_details_postBlog', {slug: post.postName})) }}"
+			},
+			"datePublished": "{{ post.getPostDate|date("d/m/Y") }}",
+			"dateCreated": "{{ post.getPostDate|date("d/m/Y") }}",
+			"dateModified": "{{ post.getPostDate|date("d/m/Y") }}",
+			"description": "{% if meta_desc is not null %}{{ meta_desc.getMetaValue }}{% endif %}",
+			"sameAs": [
+				"https://www.facebook.com/trustandmarket",
+				"https://twitter.com/trustandmarket",
+				"https://www.instagram.com/trustandmarket/",
+				"https://www.linkedin.com/company/trustandmarket",
+				"https://www.youtube.com/channel/UC-jLvu82KNM6DnFOp2Nvk_A"
+			]
+		}
+
+    </script>
+
+{% endblock %}
+
+{% block title %} Blog T&M | {% if app.request.locale == 'en' and post.postExcerpt != '' %}{{ post.postExcerpt|raw|u.truncate(45, '...', false) }}{% else %}{{ post.postTitle|raw| u.truncate(45, '...', false) }}{% endif %}{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+    <!-- Gijgo datepicker css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gijgo/1.9.13/combined/css/gijgo.min.css"
+          integrity="sha512-oCuecFHHGu/Y4zKF8IoSoj5hQq1dLNIiUCwN08ChNW1VoMcjIIirAJT2JmKlYde6DeLN6JRSgntz6EDYDdFhCg=="
+          crossorigin="anonymous"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <!-- Your custom styles (optional) -->
+    <link rel="stylesheet" href="{{ asset('assets/css/custome.css') }}">
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="{{ asset('assets/css/single-post.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.css">
+    <style>
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: "|";
+        }
+
+        .breadcrumb {
+            background-color: white;
+        }
+
+        .breadcrumb a {
+            color: #000000;
+        }
+
+        .breadcrumb a:hover {
+            color: #f17c30;
+        }
+        strong {
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+
+{% block header %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block navigation %}
+
+    <div id="imageHolder" class="view intro-2">
+        <div class="full-bg-img">
+            <div class="mask rgba-purple-light flex-center">
+                <div class="container text-left align-items-end white-text wow fadeInUp">
+                    <h2 class="page-title"></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block body %}
+
+    <!--Main layout-->
+    <main class="mt-5 pt-5">
+        <div class="container">
+            <!--Section: Post-->
+            <section class="mt-4">
+                <!--Grid row-->
+                <div class="row">
+
+                    <!--Grid column-->
+                    <div class="col-md-12 mb-4">
+                        <div class="article-container">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb pl-0">
+                                    <li class="breadcrumb-item"><a href="{{ path('home') }}">Accueil</a></li>
+                                    <li class="breadcrumb-item"><a target="_blank" href="{{ path('blog_index') }}">Blog</a></li>
+                                    <li class="breadcrumb-item"><a href="{{ path('blog_index',{'categorie':categorie.slug}) }}">{{ categorie.slug|capitalize }}</a></li>
+                                </ol>
+                            </nav>
+                            {#<p class="h1 mb-2">{% if app.request.locale == 'en' and post.postExcerpt != '' %}
+                                    {{ post.postExcerpt|raw }}
+                                {% else %}
+                                    {{ post.postTitle|raw }}
+                                {% endif %}</p>#}
+                            <h1 class="">{% if app.request.locale == 'en' and post.postExcerpt != '' %}
+                                    {{ post.postExcerpt|raw }}
+                                {% else %}
+                                    {{ post.postTitle|raw }}
+                                {% endif %}</h1>
+
+                            <!--Featured Image-->
+                            {% if post.guid != "" and post.guid != null %}
+                                <div class="card mb-4 wow fadeIn">
+                                    <img src="{{ post.guid }}" class="img-fluid" alt="{{ post.postTitle }}">
+                                </div>
+                            {% endif %}
+                            <!--/.Featured Image-->
+
+                            <!--Card-->
+                            <div class="card mb-4 wow fadeIn">
+                                <!--Card content-->
+                                <div class="card-body">
+                                    {% if app.request.locale == 'en' and post.postContentFiltered != '' %}
+                                        {{ post.postContentFiltered|raw }}{% else %}{{ post.postContent|raw }}{% endif %}
+                                </div>
+
+                            </div>
+                            {#  {{dump(listeCommentaires)}} #}
+                            <!--Comments-->
+                            <div class="card card-comments mb-3 wow fadeIn">
+                                <div class="card-header font-weight-bold">{{ nbrComments }} {{ 'commentaires'|trans({}, 'blog')|raw }}</div>
+                                <div class="card-body">
+                                    {% for c in listeCommentaires %}
+                                        {% if c.comment_parent == 0 %}
+                                            <div class="media d-block d-md-flex mt-4"
+                                                 data-comment="{{ c.comment_post_ID }}"
+                                                 data-comment-user="{{ c.user_id }}">
+                                                {% if c.comment_agent == false %}
+                                                    <img class="d-flex mb-3 mx-auto" src="/assets/img/profile/avatar-profile.png" alt="Generic placeholder image">
+                                                {% else %}
+                                                    <img class="d-flex mb-3 mx-auto " src="{{ c.comment_agent|first }}" alt="profile photo">
+                                                {% endif %}
+                                                <div class="media-body text-center text-md-left ml-md-3 ml-0">
+                                                    {% if c.comment_parent == 0 %}
+                                                        <h5 class="mt-0 font-weight-bold">{{ c.comment_author }}
+                                                            <a href="#" class="pull-right reply"
+                                                               data-comment="{{ c.comment_post_ID }}"
+                                                               data-form="{{ c.comment_ID }}"
+                                                               data-comment-user="{{ c.user_id }}">
+                                                                <i class="fas fa-reply"></i>
+                                                            </a>
+                                                        </h5>
+                                                        <div class="d-flex pb-3 timer">
+                                                            <time class="timeago"
+                                                                  datetime="{{ c.comment_date }}">{{ c.comment_date }}</time>
+                                                        </div>
+                                                    {% endif %}
+
+                                                    {{ c.comment_content|raw }}
+
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        {% if c.comment_parent != 0 %}
+                                            <div class="media d-block d-md-flex mt-4 ml-6 border-left">
+                                                {% if c.comment_agent == false %}
+                                                    <img class="d-flex mb-3 mx-auto "
+                                                         src="{% if app.session.get('avatar')!='' %} {{ app.session.get('avatar') }}{% else %} {{ asset('assets/img/profile/avatar-profile.png') }} {% endif %}"
+                                                         alt="Generic placeholder image">
+                                                {% else %}
+                                                    <img class="d-flex mb-3 mx-auto " src="{{ c.comment_agent|first }}"
+                                                         alt="Generic placeholder image">
+                                                {% endif %}
+                                                <div class="media-body text-center text-md-left ml-md-3 ml-0">
+                                                    <h5 class="mt-0 font-weight-bold">{{ c.comment_author }}
+                                                        <a href="#" class="pull-right reply"
+                                                           data-comment="{{ c.comment_post_ID }}"
+                                                           data-form="{{ c.comment_ID }}"
+                                                           data-comment-user="{{ c.user_id }}">
+                                                            <i class="fas fa-reply"></i>
+                                                        </a>
+                                                    </h5>
+                                                    <div class="d-flex pb-3 timer">
+                                                        <time class="timeago"
+                                                              datetime="{{ c.comment_date }}">{{ c.comment_date }}</time>
+                                                    </div>
+                                                    {{ c.comment_content|raw }}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <div class="form_reply_{{ c.comment_ID }}  d-none"></div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <!--/.Comments-->
+
+                            <!--Reply-->
+                            <div class="card mb-3 wow fadeIn">
+                                <div class="card-header font-weight-bold">
+                                    {% if listeCommentaires|length == 0 %}{{ nbrComments }} {{ 'form.titre1'|trans({}, 'blog')|raw }}
+                                    {% else %}
+                                        {{ 'form.titre2'|trans({}, 'blog')|raw }}
+                                    {% endif %}
+                                </div>
+                                <div class="card-body">
+
+                                    <!-- Default form reply -->
+                                    <form id="addComment" method="post"action="{{ path('blog_addComment',{id:post.id}) }}">
+                                        <!-- Comment -->
+                                        <div class="form-group">
+                                            <label for="replyFormComment">{{ 'form.commentaire'|trans({}, 'blog')|raw }}</label>
+                                            <textarea class="form-control" name="commentaire" id="replyFormComment" rows="5" required></textarea>
+                                        </div>
+                                        {% if app.user == null %}
+                                            <!-- Name -->
+                                            <label for="replyFormName">{{ 'form.nom'|trans({}, 'blog')|raw }}</label>
+                                            <input type="text" name="nom" id="replyFormName" class="form-control" required>
+                                            <br>
+                                            <!-- Email -->
+                                            <label for="replyFormEmail">{{ 'form.email'|trans({}, 'blog')|raw }}</label>
+                                            <input type="email" name="emailAuthor" id="replyFormEmail" class="form-control" required>
+                                        {% endif %}
+                                        <br>
+
+                                        <!-- Site internet -->
+                                        <label for="replyFormSite">{{ 'form.site'|trans({}, 'blog')|raw }}</label>
+                                        <input type="text" id="replyFormSite" name="site" class="form-control">
+                                        <div class="text-center mt-4">
+                                            <button class="btn btn-primary first-letter-is-uppercase btn-md sendComment" type="submit">{{ 'form.publier'|trans({}, 'blog')|raw }}</button>
+                                        </div>
+                                    </form>
+                                    <!-- Default form reply -->
+                                </div>
+                            </div>
+                            <!--/.Reply-->
+                        </div>
+                        <div style="margin-top: 6rem;">
+                            <h4>ARTICLES DISPONIBLES</h4>
+                            <a href="{{ path('blog_index') }}" target="_blank"
+                               style="color: #f17b30;text-decoration: underline;">Consulter le blog<i class="fa fa-chevron-right"></i></a>
+                            <div class="col-md-12" style="padding: 0;">
+                                <div id="news-slider" class="owl-carousel">
+                                    {% for s in lastArticles %}
+                                        <div class="post-slide item">
+                                            <a class="hover-orange" target="_blank"
+                                               href="{{ path('blog_details_postBlog',{slug:s.post_name}) }}">
+                                                <img class="box-prestation box-photograph overlay lazy"
+                                                     alt="{{ s.post_title }}" src="{{ s.imagePost }}"
+                                                     style="background-image: url({{ s.imagePost }});">{{ s.post_title }}
+                                            </a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <!-- <div
+						class="col-md-4 mb-4 fixage">
+						<a href="{{ path('blog_index') }}">
+							<h5 class="mt-0 mb-1 font-weight-bold">{{ 'retour-blog'|trans({}, 'blog')|raw }}</h5>
+						</a>
+						<div class="card mb-4 wow fadeIn">
+							<div class="card-header">{{ 'articles-cat'|trans({}, 'blog')|raw }}</div>
+							<div class="card-body carteArticle">
+								<ul class="list-unstyled">
+									{% for s in relatedPost %}
+										{% if loop.index <= 5 %}
+											<li class="media listeInterest">
+												<img class="d-flex mr-3 liArticle" width="80" height="auto" src="{{ s.imagePost }}" alt="{{ s.title }}">
+												<div class="media-body">
+													<a href="{{ path('blog_details_postBlog',{slug:s.post_name}) }}">
+														<h5 class="mt-0 mb-1 font-weight-bold">{% if app.request.locale == 'en' and s.title_en != '' %}{{ s.title_en|raw }}{% else %}{{ s.title|raw }}{% endif %}</h5>
+													</a>
+													{% if app.request.locale == 'en' and s.content_en != '' %}{{ s.content_en|striptags('<p><h2><a><em>')|raw }}(...){% else %}{{ s.descriptionPost|striptags('<p>')|raw }}(...){% endif %}
+												</div>
+											</li>
+										{% endif %}
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+					</div> -->
+                    <!--Grid column-->
+                </div>
+                <!--Grid row-->
+            </section>
+            <!--Section: Post-->
+        </div>
+    </main>
+    <!--Main layout-->
+
+    {% include("partials/videoButton.html.twig") %}
+    {% include("partials/otherPagesVideoModal.html.twig") %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <!-- Full background slider jQuery plugin -->
+    <script type="text/javascript" src="{{ asset('assets/js/fullclip.min.js') }}"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.2/jquery-ui.min.js"
+            integrity="sha256-FgiaQnQazF/QCrF9qSvpRY6PACn9ZF8VnlgqfqD1LsE=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ absolute_url(asset('assets/js/fullclip.min.js')) }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.js" defer></script>
+    <script>
+        window.onload = verifSize();
+        function verifSize() {
+            $('.fixage').css('bottom', '');
+        }
+        $(window).resize(function () {
+
+        });
+        $(document).ready(function () {
+
+            {% include("partials/js/videoButton.js.twig") %}
+
+            $("#news-slider").owlCarousel({
+                center: true,
+                items: 4,
+                itemsDesktop: [
+                    1199, 4
+                ],
+                itemsDesktopSmall: [
+                    980, 3
+                ],
+                itemsMobile: [
+                    600, 1
+                ],
+                navigation: true,
+                navigationText: [
+                    "", ""
+                ],
+                pagination: true,
+                autoPlay: true,
+                lazyLoad: true,
+                autoplaySpeed: 1000
+            });
+        });
+
+        function checkOffset() {
+            var a = $(document).scrollTop() + window.innerHeight;
+            var b = $('.footer').offset().top;
+            if (a < b) {
+                $('.fixage').css('bottom', '');
+            } else {
+                $('.fixage').css('bottom', (100 + (a - b)) + 'px');
+            }
+        }
+
+        $(document).ready(checkOffset);
+        $(document).scroll(checkOffset);
+        $(document).ready(function () {
+            $("time.timeago").timeago();
+            var i = 0;
+            var form = `<form class="reply_comment"  method="post" action="{{ path('blog_rapid_add_Comment') }}">
+                    <div class="form-group mt-4">
+                      <label for="quickReplyFormComment">Votre commentaire</label>
+                      <input  type="hidden" name="parent_id" value="" class="parent_id"  />
+                      <input  type="hidden" name="comment_id" value="" class="comment_id"  />
+                      <textarea required  name="commentaire" class="form-control" id="quickReplyFormComment" rows="5"></textarea>
+                      <div class="text-center">
+                        <button class="btn btn-primary first-letter-is-uppercase btn-sm" id="rapidSendComment" type="submit">Publier</button>
+                      </div>
+                    </div>
+                  </form>`;
+
+            $('.reply').click(function (e) {
+                e.preventDefault();
+                let is_ident = $(this).data('form');
+                let comment = $(this).data('comment');
+                let user = $(this).data('comment-user');
+
+                $('.form_reply_' + is_ident).html(form);
+                $('.parent_id').val(user);
+                $('.comment_id').val(comment);
+                $(this).attr('data-active', '1');
+                $('.form_reply_' + is_ident).toggleClass('d-none');
+
+            })
+
+            var docWidth = document.documentElement.offsetWidth;
+
+            [].forEach.call(document.querySelectorAll('*'), function (el) {
+                if (el.offsetWidth > docWidth) {
+                    console.log(el);
+                }
+            });
+// Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+
+// Recherche avancer
+            $("#recherche-avancer").click(function () {
+                $("#sectionAvancer").toggleClass('d-none');
+            });
+            // first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+            // toggle menu search bar on/off
+            $("#searchMenuShowHide").click(function () {
+                $("#searchMenu").toggle("slide");
+            });
+            // Ajout rapide commentaire
+            $('form .reply_comment').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                e.preventDefault();
+                $('#reply_comment').addClass('running');
+                toastr.info('{{ 'systeme.requetes.requete-en-cours'|trans }}');
+                var $form = $(this);
+                var formdata = (window.FormData) ? new FormData($form[0]) : null;
+                var data = (formdata !== null) ? formdata : $form.serialize();
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (reponse) {
+                        if (reponse != 0) {
+                            toastr.clear();
+                            toastr.success('{{'systeme.requetes.succes'|trans}}');
+                            window.location = "";
+                        } else if (reponse == 0) {
+                            $('#rapidSendComment').removeClass('running');
+                            toastr.clear();
+                            toastr.error('{{'systeme.requetes.erreur'|trans}}');
+                        }
+                    },
+                    error: function (reponse) {
+                        $('#rapidSendComment').removeClass('running');
+                        toastr.clear();
+                        toastr.error('{{'systeme.requetes.erreur'|trans}}');
+                    }
+                });
+                return false;
+            });
+            // Ajout commentaire
+            $('#addComment').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                e.preventDefault();
+                $('#sendComment').addClass('running');
+                toastr.info('{{'systeme.requetes.requete-en-cours'|trans}}');
+                var $form = $(this);
+                var formdata = (window.FormData) ? new FormData($form[0]) : null;
+                var data = (formdata !== null) ? formdata : $form.serialize();
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (reponse) {
+                        if (reponse != 0) {
+                            toastr.clear();
+                            toastr.success('{{'systeme.requetes.succes'|trans}}');
+                            window.location = "";
+                        } else if (reponse == 0) {
+                            $('#sendComment').removeClass('running');
+                            toastr.clear();
+                            toastr.error('{{'systeme.requetes.erreur'|trans}}');
+                        }
+                    },
+                    error: function (reponse) {
+                        $('#sendComment').removeClass('running');
+                        toastr.clear();
+                        toastr.error('{{'systeme.requetes.erreur'|trans}}');
+                    }
+                });
+                return false;
+            });
+        });
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "12000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+        {% for flashMessage in app.session.flashbag.get('success') %}
+        toastr.success('{{ 'systeme.requetes.succes'|trans }}');{% endfor %}
+    </script>
+{% endblock %}
+
+{% block footer %}
+    {{ parent() }}
+{% endblock %}

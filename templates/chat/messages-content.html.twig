@@ -1,0 +1,36 @@
+{% set date = null %}
+{% for message in messages %}
+  {% if date != message.getSentDate | date("d/m/Y") %}
+    {% set date = message.getSentDate | date("d/m/Y") %}
+    <!-- Date of day chatting -->
+    <div class="col-md-12 text-center my-3 today-date">
+      <p> {{ date }} </p>
+    </div>
+  {% endif %}
+  {% if message.getSender.id == destinateur.id %}
+    <!-- From message -->
+    <div class="offset-md-4 col-md-8 receiver">
+      <div class="row receiver-msg mb-2 float-right">
+        <div class="col-left pl-2 rounded m-2 p-2">
+          <p class="text-msg">{{ message.getContent | nl2br }}</p>
+        </div>
+        <div class="col-right">
+          <img src="{% if destinateur.avatar %} {{destinateur.avatar|first}}{% else %} {{asset('assets/img/profile/avatar-profile.png')}} {% endif %}" class="img-fluid rounded-circle avatar-message" alt="">
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <!-- I'm receiver -->
+    <div class='col-md-8 sending'>
+      <div class='row sender-msg mb-2'>
+        <div class='col-left'>
+          <img src="{% if destinataire.avatar %} {{destinataire.avatar|first}}{% else %} {{asset('assets/img/profile/avatar-profile.png')}} {% endif %}" class='img-fluid rounded-circle avatar-message' alt=''>
+        </div>
+        <div class='col-right pl-2 rounded m-2 p-3'>
+          <p class='text-msg'>{{ message.getContent | nl2br }}</p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}
+<input type="hidden" name="destinataire-img" id="destinataire-img" value="{% if destinataire.avatar %} {{destinataire.avatar|first}}{% else %} {{asset('assets/img/profile/avatar-profile.png')}} {% endif %}">

@@ -1,0 +1,15 @@
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<!-- We use 2 tag. -->
+{% if app.environment == 'prod' %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-101016741-2"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9935968722687690"
+          crossorigin="anonymous"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-101016741-2');
+  gtag('config', 'G-ENT89LQ6KB');
+</script>
+{% endif %}

@@ -1,0 +1,45 @@
+<nav aria-label=" ...">
+		<ul class="pagination">
+			<li class="page-item">
+				<a class="page-link {% if noPage == 1 %}disabled{% endif %}" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage-1,
+				nombreDeLignes: reservationsAnnuleesCount, tag: 'wc-cancelled'})}}" tabindex="-1">{{'filtres.precedent'|trans({}, 'liste_annonces') }}</a>
+			</li>
+			{% if noPage > 1  %}
+				<li class="page-item">
+					<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: 1,
+					nombreDeLignes: reservationsAnnuleesCount, tag: 'wc-cancelled'})}}">1<span class="sr-only"></span>
+					</a>
+				</li>
+			{% endif %}
+			{% if noPage > 2  %}
+				<li class="page-item">
+					<a class="page-link" href="">...<span class="sr-only"></span>
+					</a>
+				</li>
+			{% endif %}
+			<li class="page-item active">
+				<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage,
+				nombreDeLignes: reservationsAnnuleesCount, tag: 'wc-cancelled'})}}">{{noPage}}<span class="sr-only"></span>
+				</a>
+			</li>
+			{% if pages_reservations_cancelled - noPage > 1  %}
+				<li class="page-item">
+					<a class="page-link" href="">...<span class="sr-only"></span>
+					</a>
+				</li>
+			</li>
+		{% endif %}
+		{% if pages_reservations_cancelled - noPage > 0  %}
+			<li class="page-item">
+				<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: pages_reservations_cancelled,
+				nombreDeLignes: reservationsAnnuleesCount, tag: 'wc-cancelled'})}}">{{pages_reservations_cancelled}}<span class="sr-only"></span>
+				</a>
+			</li>
+		{% endif %}
+		<li class="page-item {% if noPage == pages_reservations_cancelled %}disabled{% endif %}">
+			<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage+1,
+			nombreDeLignes: reservationsAnnuleesCount, tag: 'wc-cancelled'})}}">{{'filtres.suivant'|trans({}, 'liste_annonces') }}
+			</a>
+		</li>
+	</ul>
+</nav>

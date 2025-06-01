@@ -1,0 +1,968 @@
+general:
+  titre: "Wedding,private Events and corporates"
+  accueil: Home
+  email: "Email adress"
+  more: More
+  projet: "Your Project"
+  create-password: "Secure your account with a password"
+  envoyer: Send
+  logout: Logout
+  add: Add
+  homme: Male
+  femme: Female
+  autre: Other
+  add-portfolio: "Load image"
+  add-youtube-link: "Add Youtube link"
+  supprimer: delete
+  sure: "Are you sure you want to do this?"
+  voir_annonce: "See the announcement"
+  nationalite: Nationality
+  lieu-de-naissance: "Birth place"
+  cookie-message: "This site uses cookies to optimize your user experience. By using Trust & Market, you accept our <a style='font-color:#ff7e10' href='https://www.trustandmarket.com/en/nos-conditions/politique-de-confidentialite'> Use of cookies</a>"
+  cookie-accepter: "Ok"
+  error: "An error has occurred!"
+  rupture: "Product Finished"
+  produit_disponible: "Make Avaible"
+  rechercher_produits: "Search Products"
+  rechercher_services: "Search for Services"
+  produits_offres: "PRODUCTS AND OFFERS"
+  decouvrez_les_produits: "Discover our products"
+  decouvrez_les_services: "Discover our services"
+  decouvrez_musique: 'MUSIC AND SERVICES'
+  derniers_articles: "Our latest articles"
+  oui: "Yes"
+  non: "No"
+homme: Male
+femme: Female
+autre: Other
+connexion:
+  titre: "Log in"
+  passe: Password
+  souvenir: "Remember me"
+  passe-oublier: "Forgot your password?"
+  creer-compte: "Create an account"
+  erreur: Error
+inscription:
+  adresse: Address
+  titre: Registration
+  prenom: "First name"
+  nom: "Last name"
+  categorie-utilisateur: "User category"
+  abonne: Subscriber
+  societe: Society
+  auto-entrepreneur: "Self Entrepreuneur"
+  code-postal: "Postal code, city or region"
+  passe: Password
+  confirmation: "Password Confirmation"
+  date-naissance: "Birth date"
+  condition-utilisation: "By sending my registration,"
+  accepter-condition: "I accept the terms of service and the privacy and security policy."
+  newsletter: "I wish to receive promotional coupons by email."
+  connecte: "To log in"
+  erreur:
+    {
+      titre: Error,
+      email: "invalid Email Address",
+      date: "Incorrect Date format",
+      email-utilisee: "Email address already used",
+      verification-mot-de-passe: "Le mot de passe ne correspond pas",
+      erreur: "incorrect field!",
+      ob: "This field is required",
+      ok: OK,
+    }
+passe-oublier:
+  titre: "Forgot your password"
+  description: "Please enter your e-mail address below:"
+  valider: Validate
+verification-email:
+  message-accueil: "Welcome, an email has just been sent to you!"
+  conseil: "Please click on the link in the email to validate your registration."
+  bouton-accueil: "Discover Trust & Market"
+changer-mot-de-passe:
+  message-accueil: "An email has been sent to you !"
+  conseil: "Please click on the link in the email to change your password."
+  bouton-accueil: "Discover Trust & Market"
+email-confirmation:
+  sujet: "Account activation"
+  titre-email: "Welcome "
+  titre: "Your account has been created!"
+  descriptif: "Welcome to Trust & Market. To confirm your registration on our site, please click on the link and your account will be created."
+  descriptif-lp: "Welcome to Trust & Market. Your business account has been successfully created."
+  bouton-valider: "Discover Trust & Market"
+  saluer: "Hello,"
+  message: "Thank you for your interest in our market place, you will be able to connect with your identifiers and benefit from all our services!"
+  remerciements-entete: "Yours truly, "
+  remerciements: "Your Trust & Market Customer Service Team"
+  connect: "Log In"
+email-changer-mot-de-passe:
+  sujet: "Change password"
+  titre: "Password change"
+  titre-email: "Password change"
+  descriptif: "Reset your password now by clicking on the button below."
+  bouton-valider: "Change your password"
+  saluer: "Hello,"
+  message: "Someone requested the renewal of their password for the next account"
+  avertissement: "If it is an error, ignore this message and the request will not be taken into account."
+  remerciements-entete: "Yours truly,"
+  remerciements: "Your Trust & Market Customer Service Team"
+  email-inexistant: "Cette adresse email n'est pas enregistrée"
+reinitialiser-mot-de-passe:
+  titre: "New Password"
+  description: "Please enter your new password below"
+  texte-mot-de-passe: "New Password"
+  texte-repeter-mot-de-passe: "Confirm the new password"
+  valider: "Reset password"
+  succes: "Your password has been reset"
+admin:
+  menu:
+    {
+      edit-page: "Edition d'une page",
+      create-page: "Create a new page",
+      all-pages: "All pages",
+      manage-page: "Manage pages",
+      manage-category: "Manage Category",
+      gerer-livraisons: "Manage Deliveries",
+      type-prestation: "Prestation type",
+      type-de-livraison: "Type of deliveries",
+      seuil-livraison-gratuite: 'Operations free delivery',
+      demande-de-referencement: "Products references requests",
+      gerer-criteres: "Manage criterias",
+      categorie-produit: "Product Category",
+      emailing: Emailing,
+      dashboard: Dashboard,
+      landing_pages: "Landings Pages",
+      manage-user: "Manage users",
+      all-user: "All users",
+      add-user: "Add a user",
+      manage-post: "Manage ads",
+      all-post: "All ads",
+      all-devis: "All quote",
+      add-post: "Add an ad",
+      all-categories: "All categories",
+      all-activities: 'All activities',
+      manage-oders: "Manage orders",
+      all-orders: "All orders",
+      manage-article: "Manage posts",
+      all-article: "All post",
+      writte-article: "Writte an post",
+      message: Comments,
+      setting: Settings,
+      language: Language,
+      deconnexion: Logout,
+      traduction: "Update translation file",
+      nouvelle-page: "Create page",
+      modifier-page: "Update page",
+      pages: "All pages",
+      home-page: "Update home page",
+      update-category: "Update category",
+      new-category: "Add new category",
+      modifier-menu: "Manage menu ",
+      menu-page: "Associated sub menu",
+      sous-menu: "See related submenus",
+      menu-entete: "Gestion du menu d'entete",
+      menu-pied: "Gestion du menu du pied de page",
+      libelle: Name,
+      modifie-page: "Update page",
+      add-menu: "Add menu",
+      type: "Menu type",
+      add-page: "Add new Page",
+      accueil: "Back to home page",
+      configure-email: "Email configuration",
+      add-email: "Add email",
+      gerer-marketing: "Marketing",
+      actualite: "News",
+      frais-livraison: "Shipping cost",
+      ops-speciales: "Special Ops",
+      ops-brouillon: "Draft",
+      promo-com: "Promo & com",
+      offre: 'Professional Offers',
+      abonnement: 'Subscription'
+    }
+  dashboard:
+    {
+      users: Useurs,
+      annonce: Ads,
+      orders: Orders,
+      article: "Written post",
+      photographes: Photographes,
+      videastes: Vidéastes,
+      studio-audio: "Studio audio",
+      musiciens: Musiciens,
+      chorales: Chorales,
+      studio-photo: "Studio de shooting photo",
+      evenementiel: Evenementiels,
+      tournage-video: "Studio de tournage vidéo",
+    }
+  user:
+    {
+      update-user: "Edit user",
+      status: "Account status",
+      last-login: "Last login",
+      newsletter: "Subscribed the user to the newsletter",
+      creer-compte: "Create account",
+      admin: Administrator,
+      detail: "User Details",
+      lieu-naissance: "Lieu de naissance",
+      sexe: Gender,
+    }
+  article:
+    {
+      titre: "Post label",
+      categorie: "Post category",
+      cover: "Cover Image",
+      remove: Supprimer,
+      post: Post,
+    }
+  categorie:
+    {
+      type-prestation: "Add prestation type",
+      add-categorie: "Add a category",
+      add-critere: "add condition",
+      libelle: "Category name",
+      categorie-parent: "Parent category",
+      aucune: Aucune,
+      send: Send,
+      enregistrer: Save,
+      fermer: Close,
+    }
+  livraison:
+    nom-type-livraison: "Add delivery type"
+    nom-critere: "Condition name"
+    texte-critere: "Condition text"
+    valeur-inferieure: "minus value"
+    valeur-superieure: "sup value"
+    condition-inferieure: "Inferior condition"
+    condition-superieure: "Superior condition"
+    duree: "Delivery estimated time"
+    choisir-critere: "Select a delivery Condition"
+    aucune: empty
+    send: Send
+    fermer: Close
+  slider: { titre: "Manage Home page" }
+  annonce:
+    {
+      statut: Status,
+      draft: Draft,
+      devis-draft: "Quote Draft",
+      moderation: Moderation,
+      trash: Rejected,
+      publish: Publish,
+      reserved: Reserved,
+      ended: Ended,
+      drop: Drop,
+      pending: Pending,
+      devis-pending: "Quotation Pending",
+      in-progress: "In progress",
+      success: Success,
+      cancel: Cancelled,
+      supprimer: Remove,
+    }
+  page:
+    {
+      title: Pages,
+      key: Key,
+      titre: Title,
+      desc: Description,
+      create-button: "Create a page",
+      edit-button: "Edit the page",
+      login_register: "Login / Register",
+    }
+  infos-bulle:
+    {
+      titre: "Tooltip",
+      titre-formulaire: "Configuration of the bubble text",
+      enregistrer: "Save",
+    }
+home:
+  menu:
+    {
+      lien-des-prestations: "Our services",
+      lien-des-projets: "Your Project",
+      lien-inscription-connexion: "Login / Register",
+      formulaire-texte: "Search by profession or type of service ...",
+      lien-recherche-avancee: "Advanced search",
+    }
+  pied-de-page:
+    {
+      titre: "Subscribe to our newsletter to discover the latest Trust & Market news",
+      blog: Blog,
+      a-propos: About,
+      aide: Help,
+      nos-conditions: "Our Terms and Conditions",
+      retour-experience: "Feedback from experience",
+      formulaire-champ-prenom: "Your firstname",
+      formulaire-champ-email: "Your email",
+      formulaire-boutton-valider: Subscribe,
+      contrat: "All rights reserved",
+      subscribe-newsletter: "subscribe",
+    }
+  bouton:
+    {
+      studio-video: "Video Studio",
+      evenementiel: "Special Events",
+      realisation-video: "Video production",
+      studio-photo: "Photo studio",
+      chorale: Choral,
+      groupe-de-musique: "Music groups",
+      production-musicale: "Musical production",
+      musicien: Musician,
+      photographe: Photographer,
+      studio-enregistrement: "Recording studio",
+    }
+  liens:
+    {
+      studio-enregistrement: "Recording studio",
+      mixage: "Audio mixing and mastering",
+      groupe-de-musique: "Music Group",
+      chorale: Choral,
+      sonorisation: "sound system",
+      dj: Dj,
+      video-mariage: "Wedding video",
+      shooting-photo: "Photo shooting",
+      photographe: photographer,
+      videaste: videographer,
+    }
+  texte: { slogan: "Find and book services around music and events." }
+  formulaire-champs:
+    {
+      type-de-prestation: "Type of benefits",
+      services-proposes: "Types of services",
+      code-postal-ville: "Postal code and/or city",
+      bouton-recherche: SEARCH,
+      prestation: Features,
+      besoin: Needs,
+      recherche-sous-categories: "Search for subcategories ...",
+    }
+projet:
+  titre: "Describe your project"
+  sous-titre: "You and your project (required)"
+  description: "Give us all the details of your project. We will bring you the best offer in line with your expectations, and will accompany you with professionals adapted to your project. Whatever your questions, you can also contact us at "
+  telephone: "01 85 42 14 91"
+  form:
+    {
+      titre: "You and your project (* required)",
+      nom: "first name",
+      prenom: "last name",
+      telephone: "Phone number",
+      votre-projet: "your project",
+      calendrier: calendar,
+      lieu: "place*",
+      nombre-personne: "nb of persons",
+      votre-budget: "your budget",
+    }
+  titre-formulaire-case-a-cocher:
+    {
+      titre: "Your needs (minimum one selection)",
+      kit-sonorisation: "Sound kit",
+      kit-lumiere: "Light kit",
+      prestation-dj: "DJ Benefit",
+      groupe-de-musique: "Music Group",
+      studio-enregistrement: "Recording studio",
+      mixage-audio: "Audio mixing",
+      matering-audio: "Audio mastering",
+      cherche-musicien: "Seeking musician",
+      production-audio: "Audio production",
+      chorale-gospel: "Gospel choir",
+      shooting-photo: "Shooting photo",
+      photo-mariage: "Wedding photo",
+      shooting-packshoot: Packshot,
+      shooting-corporate: "Shooting corporate",
+      tournage-clip: "Clip shoot",
+      video-mariage: "Wedding video",
+      film-corporate: "Corporate movie",
+      tournage-ext-int: "Out/In filming",
+      recherche-studio-photo: "Photo studio search",
+      recherche-studio-video: "Video Studio Search",
+      autres: Other...,
+      autres-description: "other needs...",
+    }
+  formulaire-message:
+    {
+      titre: "your message",
+      description: "A message and / or details about your project",
+      newsletter: "I agree to the newsletter",
+      contrat: "By sending my request, I accept ",
+      contrat-lien: "UGC and the privacy and security policy",
+      bouton-valider: SEND,
+    }
+  annonce:
+    {
+      titre: "Announcement label",
+      categorie: "Category of the ad",
+      prix: "Daily price",
+      description: "Ad Description",
+      date: "Available until",
+      galerie: "Picture Gallery",
+      remove: Remove,
+      post: "Post ad",
+      sous-categorie: "Associated categories",
+      adresse: Adress,
+      code-postal: "Postal code",
+      ville: city,
+      succes: "Ad successfully added",
+      error: "Error adding ad",
+    }
+profil-utilisateur:
+  liens:
+    {
+      titre-page: "Dashboard Profile",
+      titre: "Your profile",
+      dashboard: Dashboard,
+      annonces: Announces,
+      profil: Profile,
+      fournisseur-de-services: "Services provider",
+      parametres: Parameters,
+      commentaires: Comments,
+      deconnexion: "Log Out",
+      mes-commandes: "My orders",
+      effacer-compte: "Are you sure you want to delete your account?",
+      effacer-compte-donnees: "Permanently erase my data.",
+    }
+  formulaire-profil:
+    {
+      nom: "Last name",
+      prenom: "First name",
+      nom_commercial: "Nom commercial",
+      sexe: Gender,
+      date-de-naissance: Birthday,
+      lieu-de-naissance: "Birth place",
+      lieu-de-residence: "Residence address",
+      lieu-de-livraison: "Delivery address",
+      adresses: "Address",
+      adresse-email: "Email Address",
+      telephone: "Phone Number",
+      raison-sociale: "Social reason",
+      siret: SIRET,
+      tva: TVA,
+      titre: Occupation,
+      activite: Principal activity,
+      competence: Skills,
+      description: "A few words about you",
+      region: Region,
+      reference: "Your references",
+      video: Videos,
+      voir-profil: "See my profile",
+      ajouter-photo-profil: "Select a file (400*400 format)",
+      bouton-modifier: "CHANGE MY PROFILE",
+      bouton-supprimer: "DELETE MY PROFILE",
+      devenir-pro: "Become professional",
+      domicile: "Domicile",
+      livraison: "Livraison",
+      departement: Departement
+    }
+  formulaire-modification-profil:
+    { bouton-modifier: "Save Changes", bouton-annuler: "Discard changes" }
+  dashboard:
+    {
+      rapport-dernieres-annonces: "Latest ads published",
+      rapport-reservations-en-cours: "Bookings in progress",
+      bouton-profil: "SEE MY PROFILE",
+      bouton-annonces: "MY ADS",
+    }
+  commentaire:
+    {
+      menu-commentaires-recus: "Comments received",
+      menu-commentaires-postes: "Comments posted",
+      tableau-titre-commentaires-recus: "Comments received",
+      tableau-titre-commentaires-postes: "Comments posted",
+      tableau-message-recus-pour-liste-vide: "You have not received any comments",
+      tableau-message-postes-pour-liste-vide: "You have not posted any comments",
+    }
+  parametres:
+    {
+      titre: Parameters,
+      menu-notifications: Notifications,
+      menu-historique-de-transactions: "Transaction History",
+      menu-mot-de-passe: Password,
+      demande-referencement-produit: "Product listing request",
+      formulaire-notifications-titre: Notifications,
+      formulaire-notifications-description: "We want to keep in touch with you, in the way that suits you best",
+      formulaire-transactions-versees: "Transactions paid",
+      formulaire-transactions-recus: "Transactions received",
+      formulaire-revenus-generes: "Revenue generated",
+      formulaire-messages-revenus-generes: "At the moment, you have won",
+      formulaire-mot-de-passe-titre: "Password",
+      bouton-enregistrer: "Save",
+      formulaire-mot-de-passe-messages-astuce: 'Tip: The password should contain at least 12 characters. To make it safer, use uppercase and lowercase letters, numbers, and symbols such as! "" ? $% ^ &.',
+      formulaire-referencement-titre: "Do you want to list your products on Trust & Market? It is simple and convenient. Send us your request.",
+      formulaire-referencement-attente: "Your request is being processed by the Trust & Market teams.",
+      formulaire-referencement-accepte: "Your request has been accepted, you can now publish your products on Trust & Market.",
+      formulaire-referencement-description-rejet: "Your request has been rejected, all your KYC documents are not velid. Please submit them and then renew your product listing request on Trust&Market.",
+      formulaire-referencement-referencer-mes-produits: "I want to list my products on Trust&Market",
+      email-titre: "Product listing request",
+      email-description: "Your profile will be studied in order to grant you access to the product store on Trust&Market.",
+      email-bouton-connectez-vous: "Log in",
+      email-message: "The user %name% made a product referencing request on Trust&Market",
+      email-demande-accepte-message: "%name%, your product listing request on Trust & Market has been accepted",
+      email-demande-rejete-message: "%name%, your product listing request on Trust & Market has been rejected. Please have your documents validated by Mangopay then resubmit this request.",
+    }
+  calendrier:
+    {
+      titre: Calendar,
+      conseil: "Keep your calendar up-to-date regularly by selecting your availability periods.",
+    }
+  parametres-notifications:
+    {
+      reservation-de-service-client: "Reservation of Services (Client)",
+      reservation-de-service-annonceur: "Service Reservation (s) (Supplier)",
+      annulation-de-reservation: "Reservation cancellation",
+      annonce-en-brouillon: "Announcement in draft",
+      annonce-en-moderation: "Announcement in moderation",
+      annonce-rejete: "Ad rejected",
+      annonce-publiee: "Published ad",
+      newsletter: "Newsletter subscription",
+    }
+  parametres-transaction:
+    {
+      date: Date,
+      type: Type,
+      nom-prestation: "Prestation name",
+      etat: State,
+      montant: Amount,
+      versement: Payment,
+    }
+  parametres-mot-de-passe:
+    {
+      mot-de-passe-actuel: "Type your current password",
+      nouveau-mot-de-passe: "Type your new password",
+      confirmer-mot-de-passe-actuel: "Confirm your new password",
+    }
+  fournisseurs:
+    {
+      titre: "You are a service provider",
+      description: "Before posting an ad on Trust & Market, you must enter your supplier details. This will allow us to pay you the amounts corresponding to your service reservations.",
+      formulaire-fournisseurs-titre: Parameters,
+      formulaire-fournisseurs-informations-bancaires: "Banking information",
+      formulaire-fournisseurs-nom: "Name of the account holder (required)",
+      formulaire-fournisseurs-adresse: "Adresse du détenteur du compte(obligatoire)",
+      formulaire-fournisseurs-ville: "Account holder's address (required)",
+      formulaire-fournisseurs-code-postal: "Postal code of the account holder (required)",
+      formulaire-fournisseurs-code-postal2: "Postal code *",
+      formulaire-fournisseurs-pays: "Choice of countries ...",
+      formulaire-fournisseurs-region: "Account holder's region",
+      formulaire-fournisseurs-bouton-enregistrer: Save,
+      formulaire-details-facture-titre: "Detail of your invoice",
+      formulaire-details-facture-prenom: "first name",
+      formulaire-details-facture-nom: "last name",
+      formulaire-details-facture-nom-entreprise: "Company Name",
+      formulaire-details-facture-pays: Country,
+      formulaire-details-facture-numero-rue: "Number and street name",
+      formulaire-details-facture-code-postal: "Postal code",
+      formulaire-details-facture-ville: City,
+      formulaire-details-facture-etat-comte: "State / County",
+      formulaire-details-facture-telephone: Phone,
+      formulaire-details-facture-email: e-mail,
+      formulaire-details-facture-preuve-identite: "Proof of identity",
+      formulaire-details-facture-preuve-adresse: localisation,
+      formulaire-details-facture-preuve-enregistrement: "Proof of registration",
+      formulaire-details-facture-kbis: KBIS,
+      formulaire-details-facture-statuts: Status,
+      formulaire-details-facture-shareholder: Shareholder,
+      formulaire-details-facture-preuve-message-envoyé: sent,
+      formulaire-details-facture-preuve-message-pas-envoye: "Not sent yet",
+      formulaire-details-facture-titre-envoyer-document: "Send a new document",
+      formulaire-details-facture-selectionner-fichiers: "Send a new document",
+      formulaire-details-facture-bouton-confirmer: "To confirm",
+      bouton-societe: "BECOME A FIRM",
+      avertissement: "You must upload the following documents to complete the compliance checks",
+    }
+  annonces:
+    {
+      reservations-titre: "My reservations",
+      reservations-en-cours: "Bookings in progress",
+      reservations-terminees: "Completed reservations",
+      reservations-annulees: "Canceled reservations",
+      message-reservations-en-cours: "These Reservations are currently being processed by our services.",
+      message-reservations-terminees: "These ads ended.",
+      message-reservations-annulees: "These announcements are canceled.",
+      annonces-titre: "My ads",
+      annonces-en-brouillon: "Announcements in draft",
+      message-brouillon: "Ces annonces sont actuellement en brouillon.",
+      annonces-en-moderation: "Ads in moderation",
+      annonces-rejetees: "Rejected ads",
+      annonces-publiees: "Published ads",
+      message-publies: "Ces annonces ont été publiées",
+      annonces-reservees: "Reserved ads",
+      annonces-terminees: "Ads completed",
+      annonces-annulees: "Canceled ads",
+      annonces-publier: "Post ad",
+      message-en-attente: "These announcements are currently being processed by our services before their final publication.",
+      devis-en-attente: "Quote pending",
+      reservation-devis-en-attente: "Quote received pending",
+      devis-en-brouillon: "Draft Quote",
+      devis-message-en-attente: "Those quote are currently pending validation.",
+      devis-service: SERVICE,
+      devis-date: "DATES AND TIMES",
+      devis-prestataire: "SERVICE PROVIDER",
+      voir-accepter: "See and Accept",
+      annuler: Cancel,
+    }
+  annonces-details:
+    {
+      titre: "Listing Details",
+      disponibilites: Availability,
+      selectionner-dates: "Select one or more dates among those offered by the service provider.",
+      ajouter-panier: "Add to Cart",
+      caracteristiques: Characteristics,
+      dates-disponibles: "dates available",
+      publie-le: "Posted on",
+      maj-le: "updated on",
+      commentaires: Comments,
+      details-profil: "View profile",
+      envoyer-message: "Send a message",
+      supprimer-ammomcer: "Delete the ad",
+      description-devis: "Description of the quote",
+      description-prestation: "Description of service",
+      videos: Videos,
+      ajouter-commentaire: "Add a comment",
+      quantite: "Quantity",
+      publier: Publish,
+      rupture: "Product Finished",
+    }
+  formulaire-creer-annonce:
+    {
+      type-de-prestations: "TYPE OF BENEFITS",
+      prestation-proposee: "PROPOSED SERVICE",
+      creer-un-devis: "Create a quote",
+      champs-trouver-client: "Trouvez votre client",
+      dates-horaires-prestations: "Dates and times of the service",
+      contrainte-de-choix: "1 choice only",
+      presence-reseau-sociaux: "Your presence on the social network",
+      champs-pays: "YOUR ADDRESS",
+      champs-adresse: "Postal address (N °, street)",
+      champs-localisation: "Precision (building, floor ...)",
+      champs-code-postal: "Postal code",
+      champs-ville: City,
+      equipements: "Equipment available",
+      champs-autres: Other,
+      case-a-cocher-wi-fi: WI-FI,
+      case-a-cocher-cafe: "Coffee, Tea",
+      case-a-cocher-bureau: "Office / Workspace",
+      autres: Others,
+      bouton-suivant: next,
+      bouton-precedent: Previous,
+      onglet-prestations: BENEFITS,
+      onglet-adresse: ADDRESS,
+      onglet-service: SERVICE,
+      onglet-photos-videos: PHOTOS/VIDEOS,
+      onglet-prix: PRICE,
+      onglet-conditions: CONDITIONS,
+      titre-onglet-annonces: "My announces",
+      titre-onglet-reservations: "My reservations",
+    }
+  formulaire-creer-annonce-3:
+    {
+      entete-nom-service: "Give a name to your service",
+      champs-titre-service: "Title of service",
+      entete-description-service: "Description of your service",
+      champs-description-service: "(Brief description of your techniques, your equipment, your skills ...)",
+    }
+  formulaire-creer-annonce-4:
+    {
+      entete-portfolio: PORTFOLIO,
+      contrainte-ajout-portfolio: "(1 photo required, maximum size: L 1000 px H 700 px)",
+      entete-video: VIDEO,
+      contrainte-ajout-video: "(Optional, exclusively YouTube links, 3 links maximum)",
+      telecharger-image: "Ipload Image",
+    }
+  formulaire-creer-annonce-5:
+    {
+      entete-prix-prestation: "PRICE OF SERVICES",
+      description-prix-prestation: "Your price is fixed flat rate or daily",
+      entete-prix-ttc: "Project-event-packages - The price including tax",
+    }
+  formulaire-creer-annonce-6:
+    {
+      entete-legislation-et-conditions-utilisation: "Legislation and Reminder of the conditions of use of the platform",
+      texte: "By finalizing your ad, you confirm that you have read, understood and accepted our terms and conditions and our privacy policy. By accepting our terms and conditions and placing an advertisement online, you agree to abide by your local laws and regulations. Find out about the laws that apply in your country before publishing your ad",
+      bouton-accepter: "I accept",
+    }
+  fournisseurs-abonne:
+    {
+      passez-societe: "Go to company profile",
+      passez-auto-entrepreneur: "Go to the auto-entrepreneur profile",
+      texte: "Your account is not configured to be a seller. To be able to publish ads on Trust & Market, you must become a service provider. <br> It's quick and easy. <br> Choose one of the options below:",
+      auto-entrepreneur: "<strong>Auto-entrepreneur</strong>",
+      ou: or,
+      societe: "<strong>FIRM</strong>",
+    }
+  status:
+    {
+      validation_demandee: "Validation Pending",
+      valide: "Document validated",
+      validation_refusee: "Document rejected",
+    }
+  mon-profil:
+    {
+      region: Region,
+      description: "A few words about me",
+      reference: "Some project references",
+      portfolio: Portfolio,
+      videos: Videos,
+      avis: "Reviews and Comments",
+      bouton-recommander: "I RECOMMENDED",
+      bouton-ne-pas-recommander: "I DO NOT RECOMMEND",
+      liste-annonces: "Ads from",
+      bouton-voir-annonce: "SEE AD",
+      competences: Skills,
+      message: "SEND A MESSAGE",
+      experience: Expérience,
+      annee: years,
+    }
+systeme:
+  requetes:
+    {
+      erreur: "Error while backing up",
+      requete-en-cours: "Backup in progress",
+      succes: "Registration successfully completed",
+      alerte_formulaire: "The data in the form are not correct",
+      taille_fichier: "The maximum file size is 1 Mb",
+      taille_fichier_avatar: "Profile photo must be < 1 MB",,
+      remplir_annonces: "You have to fill out ads."
+    }
+  email:
+    {
+      erreur: "Erreur lors de l'envoie",
+      requete-en-cours: "Envoie du mail en cours",
+      succes: "Envoie effectué avec succès",
+    }
+  compte:
+    {
+      succes: "Your account has been successfully deleted",
+      error: "Error deleting the account",
+      en-cours: "Operation in progress",
+    }
+blog:
+  notre-blog: "Our Blog"
+  titre: "THE BLOG"
+  details-article: "Continue Reading"
+  menu:
+    {
+      liste-articles: "All Posts",
+      musique: Music,
+      photographie: Photography,
+      video: Vidéo,
+      experiences: Experiences,
+    }
+footer:
+  ausiteodit:
+    {
+      libelle-lien: "About Ausiteodit",
+      titre: "About the web agency ausiteodit",
+      titre-header-page: "ABOUT <br> WEB AGENCY - AUSITEODIT",
+      sous-titre: "Who is the Ausiteodit agency?",
+      avis-titre: "Our opinion on the agency",
+      avis: "AUSITEODIT is a french web and mobile agency located in Paris (21 Allée des Dahlias, 92320 Châtillon). Founded in 2017, the agency specializes in website design, applications and audiovisual engineering. Today, the company has diversified its field of action, covering all digital computing professions. Endowed with a proven know-how in the field of development (certifications or winning prices), Ausiteodit offers a complete support to its customers: from the design through the management of websites and applications, to the promotion of services on the Internet.",
+      visiter: "VISIT THE SITE",
+      valeur-ajoutee-titre: "Add value to your web projects",
+      valeur-ajoutee-description: "Ausiteodit offers its expertise in the areas of web development (website, web applications and hosting), mobile development (Android & iOS) and digital marketing (SEO, social networking, blogging) at comfortable prices. This web and mobile agency accompanies its clients in designing web projects, drafting specifications, creating and redesigning websites and applications. Ausiteodit primarily prioritizes customer satisfaction. As a result, the company listens carefully to the customer's deep needs in order to offer applications that resemble them. <br> Our values ​​: <br> Vision: the difference in the service of creativity on digital transformation <br> Innovation: the thirst for innovation and the unflagging need to mark the spirits <br> Solidarity: teamwork and internal cohesion <br> Respect: the respect of customer requirements and deadlines <br> Commitment: Strong commitment to customer satisfaction ",
+    }
+error:
+  experiences: "Trust & Market Experience"
+  experience: Experience
+  contenu:
+    {
+      text1: "never ends, you thought you were at the end of the trip.",
+      text3: "No, it was just a runway excursion.",
+      text4: "We offer you two mystery keys to join your experience.",
+      text5: "It is now up to you to play",
+      text6: "Which one to choose?",
+      text7: "An unexpected error has occurred on our infrastructure. We apologize for the inconvenience. We are doing everything we can to restore service as soon as possible."
+    }
+paiement:
+  explication: "In order to finalize your order, please fill in the details related to your invoice (whether you are an individual or a company) and select your method of payment"
+  titre-page: Bill
+  titre: "Bill details"
+  formulaire:
+    {
+      prenom: "First name",
+      nom: "Last name",
+      entreprise: "Company Name",
+      numero-rue: "name and street Number",
+      code-postal: "postal Code",
+      ville: City,
+      pays: Country,
+      email: "Email address",
+      telephone: "Phone number",
+    }
+  reservation:
+    {
+      titre: "Your reservation",
+      total: Total,
+      sous-total: "Subtotal",
+      prix-total: "Initial total price",
+      type-de-paiement: "Online payment",
+      type-de-carte-de-credit: "Credit Card Type",
+      conditions-utilisation: "I have read and accepted the general conditions of use of the site",
+      commander: Order,
+      prestations: "Prestation (détails)",
+      dates: "date(s) réservée(s)",
+      paiement-attente: "Waiting for payment",
+      frais-type-de-livraison: "Shipping costs for your products",
+    }
+newsletter:
+  titre-page: 'NEWSLETTER SUBSCRIBE'
+  titre-page-reponse: 'Thank you for your registration!'
+  succes: "Subscription to the newsletter successfull"
+  attente: "Proceding to subscription..."
+  robot: "You have submitted several requests, are you human?"
+  echec: "Sorry, your subscription to the newsletter was not successfull"
+  email_occupe: "Yhis Email addressis already used"
+commande:
+  annuler:
+    { confirmer_annulation: "Are you sure you want to cancel this order?" }
+panier:
+  titre: Card
+  message: "In order to allow proper management of the advertisements and with respect for other users, each reservation added to your basket is kept for a period of <strong> 30 min </strong>."
+  tableau:
+    {
+      annonces: Products,
+      prix/u: Price/u,
+      quantite: "Qty - Dates",
+      total: Total,
+      bouton-editer: Edit,
+      bouton-supprimer: Delete,
+      vendu-par: Sold by,
+    }
+  recapitulatif-tableau:
+    {
+      total: Total,
+      montant-initial: "AT. INITIAL",
+      frais-de-service: "SERVICE CHARGE",
+      message-frais-de-dervice: "These costs finance the operation of the platform and all of its services. They include PST.",
+      montant-final: "AT. FINAL",
+      bouton-commande: "Place an order",
+      addServ: "Add services",
+      ajouter_produits: "Add products",
+    }
+chat:
+  titre-de-page: Messaging
+  sous-titre-bloc-conversations: Conversations
+  message-accueil: "<h2>Welcome to the messaging of Trust &amp; Market!</h2>"
+  descriptif: "<p>This secure space helps you to exchange messages and documents with your future customers or service providers. <br> This space allows you to have a history of your exchanges and to build a lasting relationship.</p>"
+  message-avertissement: "Please choose a recipient before viewing their ads"
+  filtre-utilisateurs:
+    {
+      tout: All,
+      utilisateurs-connectes: Connected,
+      utilisateur-deconnectes: "Not Connected",
+    }
+  profil-vendeur: { voir-avis: "See reviews" }
+  annonces: Ads
+  annonces-en-cours: "Current Ads"
+  envoyer-un-devis: "Send a quote"
+  messages-erreur:
+    {
+      serveur-ferme: "Server closed",
+      erreur: "An error has occurred with the chat server",
+      non-connecte: "You are currently offline",
+    }
+  barre-laterale: { statut-interlocuteur: "No contact for the moment" }
+projet-pop-up:
+  titre1: "Diversified services to meet your needs."
+  sous-titre1: "Search for services"
+  titre2: "Create and personalize a unique experience."
+  sous-titre2: "Create an experience"
+landing_page:
+  intro: "Great and beautiful stories take time and patience.<br> Trust & Market, an independent alternative that <br> allows you to stay <span style='color:#54b4a6; -webkit-text-stroke:0.3px;'> AUTHENTIC </span> and <span style ='color:#ed7c3d; -webkit-text-stroke: 0.3px;'> FREE</span>."
+  photographes:
+    {
+      bouton-experience: "Create your Experience",
+      message-paragraphe1: "Are you <span style = 'color:#54b4a6;'> photographer </span>? So you've come to the right place at the right time.",
+      message-paragraphe2: "Discover an ecosystem where you are <span style='color:#ed7c3d;'> master </span> of your <span style='color:#ed7c3d;'> story </span>.",
+      titre-connaissance: "What if we got to know each other?",
+      texte-connaissance: "Join our community, develop your services.",
+      form-prenom: "First name",
+      form-nom: Name,
+      form-email: "E-mail adress",
+      form-categorie-user: "User Category",
+      form-auto-entrepreneur: "Auto entrepreneur",
+      form-societe: Society,
+      form-naissance: "Date of Birth",
+      form-pays: Nationality,
+      form-pays-residence: "Country of residence",
+      form-mot-de-passe: Password,
+      form-confirmer-mot-de-passe: "Confirm password",
+      form-titre-conditions: "By sending my registration,",
+      form-conditions: "I accept the terms of service and the privacy and security policy.",
+      form-precedent: Previous,
+      form-suivant: Next,
+      form-a-propos: "About Trust & Market",
+      form-en-cours: "Account creation in progress ...",
+      form-succes: "Your account has been successfully created",
+      form-doublon: "This account already exists",
+      form-erreur: "Error when creating your account",
+    }
+  chorales:
+    {
+      message-paragraphe1: "Are you <span style='color:#54b4a6;'> a choir or gospel choir </span>? So you've come to the right place at the right time.",
+    }
+  evenementiels:
+    {
+      message-paragraphe1: "Are you <span style='color:#54b4a6;'> an event professional </span>? So you've come to the right place at the right time.",
+    }
+  studio-audio:
+    {
+      message-paragraphe1: "Are you <span style='color:#54b4a6;'> a recording, mixing, mastering studio </span>? So you've come to the right place at the right time.",
+    }
+  studio-de-tournage:
+    {
+      message-paragraphe1: "Are you renting <span style='color:#54b4a6;'> your photo or video studio </span>? So you've come to the right place at the right time.",
+    }
+  musiciens:
+    {
+      message-paragraphe1: "Are you <span style='color:#54b4a6;'> a professional musician or band </span>? So you've come to the right place at the right time.",
+    }
+  videastes:
+    {
+      message-paragraphe1: "Are you <span style='color:#54b4a6;'> a professional videographer </span>? So you've come to the right place at the right time.",
+    }
+newsletter-abonne:
+  notification-texte: "Thank you for subscribing to our newsletter. We will keep you informed of our latest news"
+  a-propos-titre: About
+  a-propos-message: "Trust & Market is a service platform dedicated to music productions and events."
+  adresse-titre: Address
+  liens-titre: "Usefull links"
+  lien-accueil: Home
+  lien-a-propos: Address
+  lien-annonces: Advertisement
+  lien-projet: "Your project"
+nous-contacter:
+  titre: Contact Us
+  titre-formulaire: "Contact Trust & Market"
+  nom: Name
+  email: Email
+  message: Message
+  envoyer: SEND
+feedback:
+  titre-menu: "Send us your comments"
+  titre-bloc: "Send us a comment or a review, a suggestion or report a bug?"
+  sous-titre-bloc: "Via this form below, send us your opinions or comments, your suggestions, your experiences on the Trust & Market platform."
+  label-menu-deroulant: "What are your remarks about?"
+  menu-deroulant:
+    {
+      choisir: "Please choose",
+      compte: "User account",
+      reservation: "Reservation / Payment",
+      annulation: "Cancellation / Refund",
+      versement: Payment,
+      design: "Design and Ergonomics",
+      technologie: Technological,
+      experience: "User experiences",
+      service: "User services",
+      bug: "Application bugs",
+      divers: Various,
+      infos: "The information to be filled in is mandatory.",
+    }
+  condition: "You must be logged in to use the form."
+  texte: Description
+  envoyer: Send
+details-annonces:
+    titre-livraison-standard: 'Standard delivery'
+    contenu-livraison-standard: '3 to 6 business days'
+    titre-livraison-prioritaire: 'Priority delivery'
+    contenu-livraison-prioritaire: '48 to 72 hours'
+    titre-livraison-express: 'Express delivery'
+    contenu-livraison-express: '24 hours'
+    titre-infos: "Besoin d'info ?"
+    contenu-infos: 'Tous savoir sur les livraisons'

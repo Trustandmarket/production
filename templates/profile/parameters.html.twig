@@ -1,0 +1,796 @@
+{% extends 'profileTemplate.html.twig' %}
+{% block head %}
+    {{ parent() }}
+    <meta name="robots" content="noindex">
+
+{% endblock %}
+{% block title %}
+    Trust &amp; Market | Paramètres
+{% endblock %}
+{% block style %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <link href="{{ preload(asset('assets/css/style-parametres.css')) }}" rel="stylesheet">
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+{% endblock %}
+{% block header %}
+    {{ parent() }}
+    <style>
+        .image_picker_image {
+            width: 100px;
+            height: 100px
+        }
+
+        .tox-statusbar__branding {
+            display: none;
+        }
+
+        .param-li {
+            min-height: 90px;
+            background: none;
+        }
+
+        .btn-bg-primary {
+            color: #fff;
+            background: #f17b30 !important;
+        }
+        #exportBtn{
+            background-color: #008799;
+        }
+        .btn-bg-primary:hover {
+            color: #fff;
+            background: #f4b279 !important;
+        }
+
+        .table_bg_primary {
+            background: #f17b30;
+        }
+
+        .grey_table {
+            background: #ededed;
+        }
+
+        .table_head_font,
+        .table_tr_font {
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        @media (max-width: 575.98px) {
+            main, .container {
+                margin-top: 70px;
+            }
+        }
+
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            main, .container {
+                margin-top: 100px;
+            }
+        }
+    </style>
+{% endblock %}
+{% block navigation %}{% endblock %}
+{% block body %}
+    <div class="flex-fill container">
+    <main class="">
+        <div class="container mt-2 pt-4">
+            {% include 'menuProfile.html.twig' %}
+            <div class="mt-2">
+                <!-- Modif des infos -->
+                <div id="modifInfo">
+                    <div class="row">
+                        {% for message in app.flashes('notice') %}
+                            <div class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
+                                <strong>{{ message }}</strong>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+
+                        <div class="col-md-4 mb-2">
+                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"
+                                 aria-orientation="vertical">
+                                <a class="nav-link active" id="v-pills-notification-tab" data-toggle="pill"
+                                   href="#v-pills-notification" role="tab" aria-controls="v-pills-notification"
+                                   aria-selected="true">{{ 'profil-utilisateur.parametres.menu-notifications'|trans }}</a>
+                                <a class="nav-link" id="v-pills-transactions-tab" data-toggle="pill"
+                                   href="#v-pills-transactions" role="tab" aria-controls="v-pills-transactions"
+                                   aria-selected="false">{{ 'profil-utilisateur.parametres.menu-historique-de-transactions'|trans }}</a>
+                                <a class="nav-link" id="v-pills-passe-tab" data-toggle="pill" href="#v-pills-passe"
+                                   role="tab" aria-controls="v-pills-passe"
+                                   aria-selected="false">{{ 'profil-utilisateur.parametres.menu-mot-de-passe'|trans }}</a>
+
+                                {% if 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles or 'ROLE_SOCIETE' in app.user.roles %}
+                                    <a class="nav-link" id="v-pills-calendrier-tab" data-toggle="pill"
+                                       href="#v-pills-calendrier" role="tab" aria-controls="v-pills-calendrier"
+                                       aria-selected="false">Calendrier</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-8 mb-2">
+                            <div class="tab-content" id="v-pills-tabContent">
+                                <div class="tab-pane fade show active" id="v-pills-notification" role="tabpanel"
+                                     aria-labelledby="v-pills-notification-tab">
+                                    <h4>{{ 'profil-utilisateur.parametres.formulaire-notifications-titre'|trans }}</h4>
+                                    <div class="row">
+                                        <p class="col-12 custome-text">{{ 'profil-utilisateur.parametres.formulaire-notifications-description'|trans }}</p>
+                                    </div>
+                                    <form class="row px-3 custome-text" id="userNewsletterData"
+                                          action="{{ path('profile_userNotificationData') }}" method="post">
+                                        <div class="col-md-6">
+                                            <!-- Default unchecked -->
+                                            <div class="custom-control custom-checkbox p-2">
+                                                <input type="checkbox" {% if reservationServiceClient is not null %} {% if reservationServiceClient.metaValue==1 %} checked {% endif %} {% endif %}
+                                                       class="custom-control-input" id="rServicesClient"
+                                                       name="reservationServiceClient">
+                                                <label class="custom-control-label"
+                                                       for="rServicesClient">{{ 'profil-utilisateur.parametres-notifications.reservation-de-service-client'|trans }}</label>
+                                            </div>
+
+                                            <!-- Default unchecked -->
+                                            <div class="custom-control custom-checkbox p-2">
+                                                <input type="checkbox" {% if reservationServiceAnnonceur is not null %} {% if reservationServiceAnnonceur.metaValue==1 %} checked {% endif %} {% endif %}
+                                                       class="custom-control-input" id="rServicesFournisseur"
+                                                       name="reservationServiceAnnonceur">
+                                                <label class="custom-control-label"
+                                                       for="rServicesFournisseur">{{ 'profil-utilisateur.parametres-notifications.reservation-de-service-annonceur'|trans }}</label>
+                                            </div>
+
+                                            <!-- Default unchecked -->
+                                            <div class="custom-control custom-checkbox p-2">
+                                                <input type="checkbox" {% if annulationReservation is not null %} {% if annulationReservation.metaValue==1 %} checked {% endif %} {% endif %}
+                                                       class="custom-control-input" id="rAnnulation"
+                                                       name="annulationReservation">
+                                                <label class="custom-control-label"
+                                                       for="rAnnulation">{{ 'profil-utilisateur.parametres-notifications.annulation-de-reservation'|trans }}</label>
+                                            </div>
+
+                                            <!-- Default unchecked -->
+                                            <div class="custom-control custom-checkbox p-2">
+                                                <input type="checkbox" {% if annonceBrouillon is not null %} {% if annonceBrouillon.metaValue==1 %} checked {% endif %} {% endif %}
+                                                       class="custom-control-input" id="annonceBrouillon"
+                                                       name="annonceBrouillon">
+                                                <label class="custom-control-label"
+                                                       for="annonceBrouillon">{{ 'profil-utilisateur.parametres-notifications.annonce-en-brouillon'|trans }}</label>
+                                            </div>
+                                        </div>
+                                        <div
+                                                class="col-md-6">
+                                            <!-- Default unchecked -->
+                                            <div class="custom-control custom-checkbox p-2">
+                                                <input type="checkbox" {% if annonceModeration is not null %} {% if annonceModeration.metaValue==1 %} checked {% endif %} {% endif %}
+                                                       class="custom-control-input" id="annonceModeration"
+                                                       name="annonceModeration">
+                                                <label class="custom-control-label"
+                                                       for="annonceModeration">{{ 'profil-utilisateur.parametres-notifications.annonce-en-moderation'|trans }}</label>
+                                            </div>
+
+                                            <!-- Default unchecked -->
+                                            <div class="custom-control custom-checkbox p-2">
+                                                <input type="checkbox" {% if annonceRejete is not null %} {% if annonceRejete.metaValue==1 %} checked {% endif %} {% endif %}
+                                                       class="custom-control-input" id="annonceRejete"
+                                                       name="annonceRejete">
+                                                <label class="custom-control-label"
+                                                       for="annonceRejete">{{ 'profil-utilisateur.parametres-notifications.annonce-rejete'|trans }}</label>
+                                            </div>
+
+                                            <!-- Default unchecked -->
+                                            <div class="custom-control custom-checkbox p-2">
+                                                <input type="checkbox" {% if annoncePublie is not null %} {% if annoncePublie.metaValue==1 %} checked {% endif %} {% endif %}
+                                                       class="custom-control-input" id="annoncePubliee"
+                                                       name="annoncePublie">
+                                                <label class="custom-control-label"
+                                                       for="annoncePubliee">{{ 'profil-utilisateur.parametres-notifications.annonce-publiee'|trans }}</label>
+                                            </div>
+
+                                            <!-- Default unchecked -->
+                                            <div class="custom-control custom-checkbox p-2">
+                                                <input type="checkbox" {% if adhesionNewsletter is not null %} {% if adhesionNewsletter.metaValue==1 %} checked {% endif %} {% endif %}
+                                                       class="custom-control-input" id="adhesionNewsletter"
+                                                       name="adhesionNewsletter">
+                                                <label class="custom-control-label"
+                                                       for="adhesionNewsletter">{{ 'profil-utilisateur.parametres-notifications.newsletter'|trans }}</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 md-form">
+                                            <button id="enregNotifs" class="btn btn-md btn-success float-right"
+                                                    type="submit">{{ 'profil-utilisateur.parametres.bouton-enregistrer'|trans }}</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="tab-pane fade" id="v-pills-transactions" role="tabpanel"
+                                     aria-labelledby="v-pills-transactions-tab">
+                                    <h4>
+                                        {{ 'profil-utilisateur.parametres.formulaire-transactions-versees'|trans }}
+                                        (<span id="transactionVersees">{{ transactionsVersees|length }}</span>)</h4>
+                                    <div class="row">
+                                        <div class="col-md-12" id="table1" style="overflow-x:scroll">
+
+                                            <table class="table">
+                                                <thead class="grey lighten-2">
+                                                <tr>
+                                                    <th scope="col"
+                                                        class="font-weight-bold border-right border-white table_head_font">{{ 'profil-utilisateur.parametres-transaction.date'|trans }}</th>
+                                                    <th scope="col"
+                                                        class="font-weight-bold border-right border-white table_head_font">{{ 'profil-utilisateur.parametres-transaction.type'|trans }}</th>
+                                                    <th scope="col"
+                                                        class="font-weight-bold border-right border-white table_head_font">{{ 'profil-utilisateur.parametres-transaction.nom-prestation'|trans }}</th>
+                                                    <th scope="col"
+                                                        class="font-weight-bold border-right border-white table_head_font">{{ 'profil-utilisateur.parametres-transaction.etat'|trans }}</th>
+                                                    <th scope="col"
+                                                        class="font-weight-bold border-right border-white table_head_font">{{ 'profil-utilisateur.parametres-transaction.montant'|trans }}</th>
+                                                    <th scope="col"
+                                                        class="font-weight-bold border-right border-white white-text table_bg_primary table_head_font">{{ 'profil-utilisateur.parametres-transaction.versement'|trans }}</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for a in transactionsVersees %}
+                                                    {% if a.pinged == "product" %}
+                                                        <tr>
+                                                            <th scope="row"
+                                                                class="border-right border-white grey_table table_tr_font">
+                                                                {% for s in a.post_content %}
+                                                                    {{ s.dates }}
+                                                                {% endfor %}
+                                                            </th>
+
+                                                            <td class="border-right border-white grey_table table_tr_font">
+                                                                {{ 'paiement.reservation.type-de-paiement'|trans }}
+                                                                {% if a.livraison %} &
+                                                                    {% if app.request.locale == 'fr' %}{{ a.livraison.postTitle }}{% else %}
+                                                                        {{ a.livraison.postExcerpt }}{% endif %} {{ a.livraison.guid }} {{ a.post_content.0.devise }}
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="border-right border-white grey_table table_tr_font text-uppercase">
+                                                                <ul class="list-group">
+                                                                    {% for s in a.post_content %}
+                                                                        <li class="list-group-item param-li">{% if s.categorie is defined %}
+                                                                                {{ s.categorie }}
+                                                                            {% endif %}
+                                                                            {% if s.categorie is defined and s.categorie != '' %}||{% endif %}
+                                                                            {% if s.sousCategorie is defined and s.sousCategorie != '' %}{{ s.sousCategorie }} ||{% endif %}
+                                                                            {{ s.libelle }}*{{ s.qte }}</li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </td>
+                                                            <td class="border-right border-white grey_table table_tr_font">
+                                                                {% if a.post_status == 'wc-in-progress' %}
+                                                                    {{ 'admin.annonce.in-progress'|trans }}
+                                                                {% endif %}
+                                                                {% if a.post_status == 'wc-cancelled' or  a.post_status == 'wc-failed' %}
+                                                                    {{ 'admin.annonce.cancel'|trans }}
+                                                                {% endif %}
+                                                                {% if a.post_status == 'wc-completed' %}
+                                                                    {{ 'admin.annonce.success'|trans }}
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="border-right font-weight-bold border-white grey_table table_tr_font">
+                                                                <ul class="list-group">
+                                                                    {% for s in a.post_content %}
+                                                                        <li class="list-group-item param-li">{{ s.prixu }}
+                                                                            {{ s.devise }}</li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </td>
+                                                            <td class="font-weight-bold white-text table_bg_primary table_tr_font">
+                                                                {{ a.prix_total }}
+                                                                {{ a.post_content.0.devise }}
+                                                            </td>
+                                                        </tr>
+                                                    {% elseif a.pinged == "devis" %}
+                                                        <tr>
+                                                            <th scope="row"
+                                                                class="border-right border-white grey_table table_tr_font">
+                                                                {{ a.post_content.dates_horaires }}
+                                                            </th>
+
+                                                            <td class="border-right border-white grey_table table_tr_font">{{ 'paiement.reservation.type-de-paiement'|trans }}</td>
+                                                            <td class="border-right border-white grey_table table_tr_font text-uppercase">
+                                                                {{ a.post_title }}
+                                                            </td>
+                                                            <td class="border-right border-white grey_table table_tr_font">
+                                                                {% if a.post_status == 'wc-in-progress' %}
+                                                                    {{ 'admin.annonce.in-progress'|trans }}
+                                                                {% endif %}
+                                                                {% if a.post_status == 'wc-cancelled' or  a.post_status == 'wc-failed' %}
+                                                                    {{ 'paiement.reservation.paiement-attente'|trans }}
+                                                                {% endif %}
+                                                                {% if a.post_status == 'wc-completed' %}
+                                                                    {{ 'admin.annonce.success'|trans }}
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="border-right font-weight-bold border-white grey_table table_tr_font">
+                                                                {{ a.post_content.prix_devis }}
+                                                                {% if a.post_content.devise =='' %}
+                                                                    &euro;
+                                                                {% else %}
+                                                                    {{ a.post_content.devise }}
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="font-weight-bold white-text table_bg_primary table_tr_font">
+                                                                {{ a.post_content.prix_devis }}
+                                                                {% if a.post_content.devise =='' %}
+                                                                    &euro;
+                                                                {% else %}
+                                                                    {{ a.post_content.devise }}
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+
+                                                    {% endif %}
+
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                            <div id="index_native"></div>
+                                        </div>
+                                    </div>
+                                    {% if 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles or 'ROLE_SOCIETE' in app.user.roles %}
+                                        <h4>
+                                            {{ 'profil-utilisateur.parametres.formulaire-transactions-recus'|trans }}
+                                            (<span id="transactionRecues">{{ transactionsRecues|length }}</span>)</h4>
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="overflow-x:scroll" id="table2">
+                                                <table class="table" id="data-table-2">
+                                                    <thead class="grey lighten-2">
+                                                    <tr>
+                                                        <th scope="col" class="font-weight-bold border-right border-white table_head_font">{{ 'profil-utilisateur.parametres-transaction.date'|trans }}</th>
+                                                        <th scope="col" class="font-weight-bold border-right border-white table_head_font">{{ 'profil-utilisateur.parametres-transaction.type'|trans }}</th>
+                                                        <th scope="col" class="font-weight-bold border-right border-white table_head_font">{{ 'profil-utilisateur.parametres-transaction.nom-prestation'|trans }}</th>
+                                                        <th scope="col" class="font-weight-bold border-right border-white table_head_font">{{ 'profil-utilisateur.parametres-transaction.etat'|trans }}</th>
+                                                        <th scope="col" class="font-weight-bold border-right border-white table_head_font">{{ 'profil-utilisateur.parametres-transaction.montant'|trans }}</th>
+                                                        <th scope="col" class="font-weight-bold border-right border-white white-text table_bg_primary table_head_font">{{ 'profil-utilisateur.parametres-transaction.versement'|trans }}</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for a in transactionsRecues %}
+                                                        {% if a.pinged == "product" %}
+                                                            <tr>
+                                                                <td scope="row" class="border-right border-white grey_table table_tr_font">{{ a.post_date|date('d-m-Y') }}</td>
+                                                                <td class="border-right border-white grey_table table_tr_font">{{ 'paiement.reservation.type-de-paiement'|trans }}</td>
+                                                                <td class="border-right border-white grey_table table_tr_font text-uppercase"><ul class="list-group">{% for s in a.post_content %}<li class="list-group-item param-li">{{ s.libelle }}* {{ s.qte }}</li>{% endfor %}</ul></td>
+                                                                <td class="border-right border-white grey_table table_tr_font">
+                                                                    {% if a.post_status == 'wc-in-progress' %}
+                                                                        {{ 'admin.annonce.in-progress'|trans }}
+                                                                    {% endif %}
+                                                                    {% if a.post_status == 'wc-cancelled' %}
+                                                                        {{ 'admin.annonce.cancel'|trans }}
+                                                                    {% endif %}
+                                                                    {% if a.post_status == 'wc-completed' %}
+                                                                        {{ 'admin.annonce.success'|trans }}
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td class="border-right font-weight-bold border-white grey_table table_tr_font"><ul class="list-group">{% for s in a.post_content %}{% if loop.index > 1 %} | {% endif %}<li class="list-group-item param-li">{{ s.prixu }} {{ s.devise }}</li>{% endfor %}</ul></td>
+                                                                <td class="font-weight-bold white-text table_bg_primary table_tr_font">{{ a.prix_total }} {{ a.post_content.0.devise }}</td>
+                                                            </tr>
+                                                        {% elseif a.pinged == "devis" %}
+                                                            <tr>
+                                                                {# {{dump(a)}} #}
+                                                                <td scope="row" class="border-right border-white grey_table table_tr_font">{{ a.post_content.dates_horaires }}</td>
+                                                                <td class="border-right border-white grey_table table_tr_font">{{ 'paiement.reservation.type-de-paiement'|trans }}</td>
+                                                                <td class="border-right border-white grey_table table_tr_font text-uppercase">{{ a.post_title }}</td>
+                                                                <td class="border-right border-white grey_table table_tr_font">{% if a.post_status == 'wc-in-progress' %}{{ 'admin.annonce.in-progress'|trans }}{% endif %}{% if a.post_status == 'wc-cancelled' %}{{ 'admin.annonce.cancel'|trans }}{% endif %}{% if a.post_status == 'wc-completed' %}{{ 'admin.annonce.success'|trans }}{% endif %}</td>
+                                                                <td class="border-right font-weight-bold border-white grey_table table_tr_font">{{ a.post_content.prix_devis }}{% if a.post_content.devise =='' %}&euro;{% else %}{{ a.post_content.devise }}{% endif %}</td>
+                                                                <td class="font-weight-bold white-text table_bg_primary table_tr_font">{{ a.post_content.prix_devis }}{% if a.post_content.devise =='' %}&euro;{% else %}{{ a.post_content.devise }}{% endif %}</td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </tbody>
+                                                    </tbody>
+                                                </table>
+                                                <div class="row">
+                                                    <div id="index_native2"></div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <h4>
+                                            {{ 'profil-utilisateur.parametres.formulaire-revenus-generes'|trans }}
+                                        </h4>
+                                        <div class="row">
+                                            <p class="col-12 custome-text">
+                                                {{ 'profil-utilisateur.parametres.formulaire-messages-revenus-generes'|trans }}
+                                                :
+                                                <br>
+                                                <span id="revenueGeneres" class="mt-3">{{ revenueGeneres }}
+                                                    {% if transactionRecues is defined %}
+                                                        {% if transactionRecues.post_content.devise != "" %}
+                                                            {{ transactionRecues.post_content.devise }}{% else %}€
+                                                        {% endif %}
+                                                    {% endif %}
+											</span>
+                                            </p>
+                                        </div>
+
+                                        <div class="d-flex justify-content-center">
+                                            <button id="exportBtn" class="btn btn-round"><i class="fa fa-download"></i> Exporter vos ventes</button>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="tab-pane fade" id="v-pills-passe" role="tabpanel"
+                                     aria-labelledby="v-pills-passe-tab">
+                                    <h4>{{ 'profil-utilisateur.parametres.formulaire-mot-de-passe-titre'|trans }}</h4>
+                                    <div class="row">
+                                        <div class="col-8 custome-text">
+                                            <form action="{{ path('profile_updateUserPassword') }}"
+                                                  id="updateUserPassword" method="post">
+                                                <div class="md-form">
+                                                    <input type="password" id="passeActuel" name="oldUserPassword"
+                                                           class="form-control" required>
+                                                    <label for="passeActuel">{{ 'profil-utilisateur.parametres-mot-de-passe.mot-de-passe-actuel'|trans }}
+                                                        *</label>
+                                                </div>
+                                                <div class="md-form">
+                                                    <input type="password" id="nouveauPasse" name="newUserPassword"
+                                                           class="form-control" required>
+                                                    <label for="nouveauPasse">{{ 'profil-utilisateur.parametres-mot-de-passe.nouveau-mot-de-passe'|trans }}
+                                                        *</label>
+                                                    <div id="progress-container"></div>
+                                                </div>
+                                                <div class="md-form">
+                                                    <input type="password" id="confirmerNouveauPasse"
+                                                           name="newUserPasswordRetype" class="form-control" required>
+                                                    <label for="confirmerNouveauPasse">{{ 'profil-utilisateur.parametres-mot-de-passe.confirmer-mot-de-passe-actuel'|trans }}
+                                                        *</label>
+                                                </div>
+                                                <p class="text-justify">
+                                                    {{ 'profil-utilisateur.parametres.formulaire-mot-de-passe-messages-astuce'|trans }}
+                                                </p>
+                                                <div class="col-md-12 md-form">
+                                                    <button id="enregPasse" class="btn btn-md btn-success float-right"
+                                                            type="submit">{{ 'profil-utilisateur.parametres.bouton-enregistrer'|trans }}</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="v-pills-calendrier" role="tabpanel"
+                                     aria-labelledby="v-pills-calendrier-tab">
+                                    <h4>{{ 'profil-utilisateur.calendrier.titre'|trans }}</h4>
+                                    <div class="row">
+                                        <p class="col-12 custome-text">{{ 'profil-utilisateur.calendrier.conseil'|trans }}</p>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 custome-text">
+                                            <form action="{{ path('profile_calendrier_ajouter_date') }}" id="saveDate"
+                                                  method="post">
+                                                <div class="multipleDatePicker md-form date" value='' type='text'>
+                                                    <input type='hidden' name="date" class='DateField' value=''
+                                                           id="date">
+                                                </div>
+                                                <button id="send" type="button"
+                                                        class="btn btn-md btn-success ld-over-inverse ">{{ 'profil-utilisateur.parametres.bouton-enregistrer'|trans }}
+                                                    <i class="ld ld-ring ld-spin"></i>
+                                                </button>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fin des modifs -->
+            </div>
+        </div>
+        {% include("partials/project.html.twig") %}
+        {% include("partials/otherPagesVideoModal.html.twig") %}
+    </main>
+    </div>{% endblock %}{% block footer %}
+    {{ parent() }}{% endblock %}{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+
+    <!-- jQuery plugin for password meter -->
+    <script src="{{ asset('assets/js/password-meter/password-score.js') }}"></script>
+    <script src="{{ asset('assets/js/password-meter/password-score-options.js') }}"></script>
+    <script src="{{ asset('assets/js/password-meter/bootstrap-strength-meter.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+    <script src="{{ asset('assets/js/paginator.js') }}"></script>
+    <script src="{{ asset('assets/js/table-to-csv.min.js') }}"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            var docWidth = document.documentElement.offsetWidth;
+
+            [].forEach.call(document.querySelectorAll('*'), function (el) {
+                if (el.offsetWidth > docWidth) {
+                    console.log(el);
+                }
+            });
+// Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+// first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+// toggle menu search bar on/off
+            $("#searchMenuShowHide").click(function () {
+                $("#searchMenu").toggle("slide");
+            });
+
+// Configure password Meter
+            $('#nouveauPasse').strengthMeter('progressBar', {
+                container: $('#progress-container'),
+                base: 80,
+                hierarchy: {
+                    '0': 'progress-bar-striped progress-bar-animated bg-danger',
+                    '25': 'progress-bar-striped progress-bar-animated bg-warning',
+                    '50': 'progress-bar-striped progress-bar-animated bg-success'
+                },
+                passwordScore: {
+                    options: [],
+                    append: true
+                }
+            });
+
+// Modification des données newsletter de l'utilisateur
+
+            $('#userReferencementData').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                e.preventDefault();
+
+                $('#annoncePubliee').addClass('running');
+                toastr.info("{{ 'systeme.requetes.requete-en-cours'|trans }}");
+
+                let $form = $(this);
+                let formdata = (window.FormData) ? new FormData($form[0]) : null;
+                let data = (formdata !== null) ? formdata : $form.serialize();
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (response) {
+
+                        if (response != 0) {
+                            toastr.clear();
+                            toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                            window.location = "";
+                        } else if (response == 0) {
+                            $('#annoncePubliee').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{ 'systeme.requetes.erreur'|trans }}");
+
+                        }
+                    },
+                    error: function (response) {
+                        $('#annoncePubliee').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'systeme.requetes.erreur'|trans }}");
+                    }
+                });
+
+                return false;
+
+            });
+
+//Demande de referencement produit
+            $('#userNewsletterData').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                e.preventDefault();
+
+                $('#annoncePubliee').addClass('running');
+                toastr.info("{{ 'systeme.requetes.requete-en-cours'|trans }}");
+
+                let $form = $(this);
+                let formdata = (window.FormData) ? new FormData($form[0]) : null;
+                let data = (formdata !== null) ? formdata : $form.serialize();
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (response) {
+                        if (response != 0) {
+
+                            toastr.clear();
+                            toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                            window.location = "";
+                        } else if (response == 0) {
+                            $('#annoncePubliee').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{ 'systeme.requetes.erreur'|trans }}");
+                        }
+                    },
+                    error: function (response) {
+                        $('#annoncePubliee').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'systeme.requetes.erreur'|trans }}");
+                    }
+                });
+                return false;
+            });
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "12000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+
+
+// End Banking Form
+// multiple datepicker
+            $(".multipleDatePicker").datepicker({
+                multidate: true,
+                format: 'dd-mm-yyyy',
+                startDate: '{{ d|date("d-m-Y", false) }}',
+                endDate: '{{ d|date_modify("+1 year")|date("d-m-Y", false) }}',
+                language: '{{ app.request.getLocale() }}'
+            });
+            console.log('{{ userAvailabilityDates|join(',') }}');
+            $('.multipleDatePicker').datepicker('update', "{{ userAvailabilityDates | join('","') | raw }}");
+
+            $('#send').on('click', function (e) {
+                let d = $(".multipleDatePicker").datepicker("getFormattedDate");
+                $('#date').val(d);
+                $('#saveDate').submit();
+            });
+
+            $('#saveDate').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                e.preventDefault();
+                $('#send').addClass('running');
+                toastr.info("{{ 'systeme.requetes.succes'|trans }}");
+
+                let $form = $(this);
+                let formData = (window.FormData) ? new FormData($form[0]) : null;
+                let data = (formData !== null) ? formData : $form.serialize();
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (response) {
+                        if (response != 0) {
+                            toastr.clear();
+                            toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                            $('#send').removeClass('running');
+                        } else {
+                            $('#send').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{ 'systeme.requetes.erreur'|trans }}");
+                        }
+                    },
+                    error: function (response) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'systeme.requetes.erreur'|trans }}");
+                    }
+                });
+                return false;
+            });
+// $('#date').datepicker({
+//       uiLibrary: 'bootstrap4',
+//       size: 'large',
+//       showRightIcon: false,
+//       iconsLibrary: 'fontawesome'
+// });
+
+// Validations Password
+
+// Validate fields for Billing
+// First Name
+            $("#confirmerNouveauPasse").change(function () {
+                if ($("#confirmerNouveauPasse").val() == $("#nouveauPasse").val()) {
+                    $("#confirmerNouveauPasse").removeClass("is-invalid");
+                    $("#confirmerNouveauPasse").addClass("is-valid");
+                } else {
+                    $("#confirmerNouveauPasse").removeClass("is-valid");
+                    $("#confirmerNouveauPasse").addClass("is-invalid");
+                }
+            });
+
+// End validation
+
+// Modification des données mot de passe de l'utilisateur
+
+            $('#updateUserPassword').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                e.preventDefault();
+
+                $('#enregPasse').addClass('running');
+                toastr.info("{{ 'systeme.requetes.requete-en-cours'|trans }}");
+
+                var $form = $(this);
+                var formdata = (window.FormData) ? new FormData($form[0]) : null;
+                var data = (formdata !== null) ? formdata : $form.serialize();
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (response) {
+
+                        if (response != 0) {
+
+                            toastr.clear();
+                            toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                            window.location = "";
+                        } else if (response == 0) {
+                            $('#enregPasse').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{ 'systeme.requetes.erreur'|trans }}");
+                        }
+
+                    },
+                    error: function (response) {
+                        $('#enregPasse').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'systeme.requetes.erreur'|trans }}");
+                    }
+                });
+                return false;
+            });
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "12000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+// Get all table cells
+            const tableCells = document.querySelectorAll("td, th"); // Selects both data cells (<td>) and header cells (<th>)
+
+// Loop through each cell and trim its text content
+            tableCells.forEach(cell => {cell.textContent = cell.textContent.trim();});
+            paginator({
+                table: document.getElementById("table1").getElementsByTagName("table")[0],
+                box: document.getElementById("index_native"),
+                rows_per_page: 5,
+                active_class: "color_page"
+            });
+
+            paginator({
+                table: document.getElementById("table2").getElementsByTagName("table")[0],
+                box: document.getElementById("index_native2"),
+                rows_per_page: 5,
+                active_class: "color_page"
+            });
+            //Export code
+
+            const tableToCSV = new TableToCSV("#data-table-2", {
+                filename: "payment-report.csv",
+                delimiter: ";", //delimiter (optional) default value ","
+                ignoreColumns: [0], //column index (optional)
+            });
+            document.querySelector("#exportBtn").addEventListener("click", (e) => {
+                console.log(tableToCSV.toString());
+                tableToCSV.download();
+            });
+
+        });
+    </script>{% endblock %}

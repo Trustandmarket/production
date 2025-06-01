@@ -1,0 +1,234 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+    {% if app.request.locale == "en" %}
+        {{ menu.postExcerpt }}
+    {% else %}
+        {{ menu.postTitle }}
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/dropzone.css') }}">
+    <script>
+        tinymce.init({
+            selector: 'textarea#description',
+            height: 500,
+            width: '100%',
+            plugins: [
+                'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+            ],
+
+            toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+            browser_spellcheck: true,
+            contextmenu: false,{% if lang=='fr' %}
+            language: 'fr_FR',{% endif %}
+
+
+        });
+    </script>
+
+    <style type="text/css">
+        label[for="meta_desc"] {
+            flex: none;
+            padding-bottom: 1em;
+            font-size: initial;
+        }
+
+        #main-menu {
+            font-size: 14px;
+        }
+    </style>
+    <div class="content">
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>
+                            {% if app.request.locale == "en" %}
+                                {{ menu.postExcerpt }}
+                            {% else %}
+                                {{ menu.postTitle }}
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <div class="card-body card-block">
+                        <div class="sufee-alert alert with-close alert-success alert-dismissible fade show" id="success"
+                             style="display:none">
+                            <i class="fa fa-check"></i>
+                            <i class="fa fa-check"></i>
+                            Page Modifié avec succès<br>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <form action="{{ path('admin_update_page') }}" method="post" class="accueil_images"
+                              id="annonce">
+                            <div class="form-group">
+                                <b>Statut</b>
+                                <select class="form-control" name="statut" required>
+                                    <option value="" disabled selected>Statut</option>
+                                    <option value="publish" {% if menu.postStatus=='publish' %} selected {% endif %}>{{ 'admin.annonce.publish'|trans }}</option>
+                                    <option value="draft" {% if menu.postStatus=='draft' %} selected {% endif %}>{{ 'admin.annonce.draft'|trans }}</option>
+                                    <option value="trash" {% if menu.postStatus=='trash' %} selected {% endif %}>{{ 'admin.annonce.trash'|trans }}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="meta_desc">Titre</label>
+                                <input name="title" class="form-control border-form-control" id="title"
+                                       value="{% if app.request.locale == 'en' and page.postExcerpt != '' %}{{ page.postExcerpt }}{% else %}{{ page.postTitle }}{% endif %}"/>
+                            </div>
+
+                            <div class="form-group">
+                                <b>Méta description</b>
+                                <textarea name="meta_desc" class="form-control border-form-control" rows="3" cols="70"
+                                          id="meta_desc">{% if meta_desc is not null %}{{ meta_desc.getMetaValue }}{% endif %}</textarea>
+                            </div>
+                            <div class="form-group">
+								<textarea name="description" placeholder="{{ 'admin.annonce.description'|trans }}"
+                                          class="form-control" rows="8" cols="80" id="description">
+									{% if app.request.locale == "en" %}
+                                        {{ page.postContentFiltered }}
+                                    {% else %}
+                                        {{ page.postContent }}
+                                    {% endif %}
+								</textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <div class="dropzone" id="dropzone_element" style="width:100%"></div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy" style="border-radius: 5px;"
+                                             src="{% if 'wp-content' in page.guid %}{{ page.guid }}{% else %}{{ asset('assets/img/a-propos/a-propos-header.jpg') }}{% endif %}"
+                                             alt="" height="200"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="id" value="{{ page.id }}">
+                            <input type="hidden" name="id_menu" value="{{ menu.id }}">
+                            <input type="hidden" name="t" value="des">
+
+                            <div class="form-actions form-group">
+                                <button type="submit" id="send"
+                                        class="btn btn-success btn-sm btn-lg ld-over-inverse ">{{ 'admin.menu.modifier-page'|trans }}
+                                    <i class="ld ld-ring ld-spin"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+{% block body_javascript %}
+	<script src="https://code.jquery.com/jquery-3.6.1.min.js"
+			integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+	<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+			integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+			crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/dropzone.js') }}"></script>
+    <script type="text/javascript">
+
+        var myDropzone = new Dropzone("#dropzone_element",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        $('.accueil_images').on('submit', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            toastr.info('Envoie des données en cours...');
+            var $form = $(this);
+            var formdata = (window.FormData) ? new FormData($form[0]) : null;
+            var temp = tinymce.activeEditor.getContent();
+            var data = (formdata !== null) ? formdata : $form.serialize();
+
+            if (myDropzone.files != "") {
+                myDropzone.processQueue();
+                myDropzone.on("queuecomplete", function (file, response) {
+                    $.ajax({
+                        url: $form.attr('action'),
+                        type: $form.attr('method'),
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: function (reponse) {
+                            if (reponse != 0) {
+                                toastr.clear();
+                                toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                                window.location = '';
+                            } else if (reponse == 0) {
+                                $('#send').removeClass('running');
+                                toastr.clear();
+                                toastr.error("{{ 'admin.annonce.error'|trans }}");
+                            }
+                        },
+                        error: function (reponse) {
+                            $('#send').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{ 'admin.annonce.error'|trans }}");
+                        }
+                    });
+                });
+            } else {
+                toastr.clear();
+                toastr.info('Choisissez l\'image du bloc 1');
+            }
+            return false;
+        });
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "12000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+{% endblock body_javascript %}

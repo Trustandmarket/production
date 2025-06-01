@@ -1,0 +1,36 @@
+<script type="text/javascript">
+$(document).ready(function () { 
+	$('.type_prestation1,.type_prestation2').on('change', function () {
+		var lang = $('#page_lang').val();
+		var id = $(this).val();
+		var url = "{{ path('annonces_get_sous_categories_xhr',{ _locale : app.request.locale }) }}";
+		if (id != "") {
+			$.ajax({
+				url: url,
+				method: "get",
+				data: {
+				type_prestation: id
+			},
+			success: function (data) {
+				$('select.services_proposes').empty();
+				$('select.services_proposes').append("<option value='all' disabled='disabled' selected='selected'>{{'home.formulaire-champs.services-proposes'|trans}}</option>");
+				$('select.searchSelectPicker').selectpicker('refresh');
+				console.log(data.sous_categories);
+				if (data.sous_categories) {
+					data.sous_categories.forEach(function (e) {
+						if(lang=='fr'){
+							$('select.services_proposes').append("<option value='" + e.slug + "'>" + e.name + "</option>");
+						}else{
+							$('select.services_proposes').append("<option value='" + e.slug + "'>" + e.content + "</option>");
+						}
+					});
+				}
+				$('select.searchSelectPicker').selectpicker('refresh');
+
+			},
+				error: function (xhr) {console.error(xhr);}
+			});
+		}
+	});
+});
+</script>

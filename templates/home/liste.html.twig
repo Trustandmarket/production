@@ -1,0 +1,271 @@
+{% extends 'profileTemplate.html.twig' %}
+
+  {% block head %}
+  {{parent()}}
+
+  <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}" sizes="32x32" />
+  <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}" sizes="192x192" />
+  <link rel="apple-touch-icon-precomposed" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}" />
+  <meta name="msapplication-TileImage" content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}" />
+  {# OG CONTENT #}
+	<meta property="og:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'toutes-annonces'}) }}">
+	<meta property="og:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'toutes-annonces'}) }}">
+	<meta property="og:image" content="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')}}">
+	<meta propery="og:type" content="website">
+	{# END OG CONTENT #}
+	{# JSON LD #}
+  <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+        {% for liste in listeAnnonces %}
+        {
+            "@type": "ListItem",
+            "position":{{loop.index}},
+            "item": {
+            "@id": "{{absolute_url(path('annonces_detailsAnnonce', { id: liste.id }))}}",
+            "name": "{% if app.request.locale == 'en' and liste.titre_en != '' %}{{liste.titre_en}}{% else %}{{liste.titre}}{% endif %}",
+            "image": "{% if liste.gallery.0 == null  %}https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).jpg{% else %}{{liste.gallery.0.guid}}{% endif %}"
+            }
+        }
+        {% if loop.last != true %},{% endif %}
+    {% endfor %}]
+	}
+    </script>
+	{# END JSON LD #}
+  
+  {% endblock %}
+
+{% block title %}Trust &amp; Market | Liste des Annonces {% endblock %}
+
+
+    {% block style %}
+    {{parent()}}
+
+    <!-- Gijgo datepicker css -->
+  <link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <link href="{{ asset('assets/css/custome.css')}}" rel="stylesheet">
+     <link href="{{ asset('assets/css/mon-profil.css')}}" rel="stylesheet" type="text/css">
+   <link href="{{ asset('assets/css/result.css')}}" rel="stylesheet">
+    {% endblock %}
+
+
+    {% block header %}
+
+   {{parent()}}
+
+    {% endblock %}
+
+    {% block navigation %}
+
+
+    {% endblock %}
+
+    {% block body %}
+
+
+<!--Main Layout-->
+<div class="flex-fill container">
+<main class="">
+    <div class="container">
+        <div class="mt-5">
+          <!-- list des profil -->
+            <!-- list des prestations -->
+              <h5 class="py-4 mb-4 border-bottom">Annonces({{ listeAnnonces|length }})</h5>
+          <div class="row mb-4">
+            <div class="offset-md-6 col-md-6 ">
+              <form action="" class="form-inline float-right isotope-filter">
+                <h6 class="filter-text mr-2">Trier par</h6>
+                <select name="prix" id="triPrix" class="browser-default custom-select mr-2 mb-2">
+                  <option value="all">Prix</option>
+                  <option  value="0">Croissant</option>
+                  <option value="1">Décroissant</option>
+                </select>&nbsp;
+                <select name="date-dajout" id="triDate" class="browser-default custom-select mr-2 mb-2">
+                    <option value="all">Date d'ajout</option>
+                    <option value="1">Récent &gt; Ancien</option>
+                    <option value="0">Ancien &lt; Récent</option>
+                  </select>
+              </form>
+            </div>
+          </div>
+            <div class="row isotope">
+            {% if listeAnnonces is not null %}
+            {% for liste in listeAnnonces %}
+            <div class="col-md-4 mb-2 clearfix isotope-grid">
+                    <!-- Card -->
+                    <div class="card">
+                      <!-- Card image -->
+                      {% if liste.gallery is not null %}
+                      <div class="view overlay isotope-item" style="height:200px; border-bottom: 4px solid #f17b30">
+                        <img class="card-img-top lazy" width="100%" data-src="{% if liste.gallery.0 == null  %}https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).jpg{% else %}
+                        {{liste.gallery.0.guid}}{% endif %}" alt="Card image cap">
+                        <a href="#!">
+                          <div class="mask rgba-white-slight"></div>
+                        </a>
+                      </div>
+                      {% else %}
+
+                      {% endif %}
+
+                      <!-- Card content -->
+                      <div class="card-body">
+                        <!-- Title -->
+                        <h4 class="card-title fs-18">{{liste.titre}}</h4>
+                        <!-- Category -->
+                        <h5 class="card-sub-title fs-15"><a href="#">{{liste.categorieParent}}</a></h5>
+                        <!-- Sub Category -->
+                        <h5 class="card-sub-category fs-21"><a href="#"> {{liste.sousCategorie}} </a></h5>
+                        <!-- Price -->
+                        <p class="annonce-price fs-24"><span data-stars="{{liste.price|round(0)}}" class="number">{{liste.price}}</span> {% if liste.devise != null %}{{liste.devise}}{% else %}€{% endif %}</p>
+                        <!-- address -->
+                        <p class="card-text">
+                          <i class="fas fa-map-marker"></i>&nbsp; {{liste.pays}} {{liste.ville}} {{liste.etat}}
+                        </p>
+                      {#   {{dump(listeAnnonces)}} #}
+<span hidden class="tri-dates">{{liste.id}}</span>
+                        <!-- calendar -->
+                        <p class="card-text">
+                            <i class="fas fa-calendar"></i>&nbsp;{{ liste.calendrier|first}}  - {{ liste.calendrier|last}}  ({{ liste.calendrier|length}} dates dispo.)
+                          </p>
+                        <!-- Button -->
+                        <div class="text-center">
+                           <a href="{{path('annonces_detailsAnnonce', { id:liste.id }) }}" class="btn btn-md btn-primary lire-suite">Voir l'annonce</a>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Card -->
+                </div>
+
+            {% endfor %}
+            {% endif %}
+            </div>
+            <!-- list des prestations -->
+        </div>
+    </div>
+
+</main>
+<!--Main Layout-->
+</div>
+
+    {% endblock %}
+
+
+{% block footer %}
+{{parent()}}
+
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+
+<!-- jQuery plugin for datepicker -->
+  <script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+<!-- jQuery plugin for date picker -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+  <script src="{{asset('assets/js/drizzle.min.js')}}"></script>
+  
+  
+  <script>
+    $(document).ready(function() {
+      var docWidth = document.documentElement.offsetWidth;
+
+      [].forEach.call(
+        document.querySelectorAll('*'),
+        function(el) {
+          if (el.offsetWidth > docWidth) {
+            console.log(el);
+          }
+        }
+      );
+      //Hambuger menu icon
+      $('.animated-button-icon').on('click', function () {
+        $('.animated-icon2').toggleClass('open');
+      });
+      //first thing turn Hide Menu Search bar
+      $("#searchMenu").hide();
+      //toggle menu search bar on/off
+      $( "#searchMenuShowHide" ).click(function() {
+        $( "#searchMenu" ).toggle( "slide" );
+      });
+
+
+ // Set card title and card-body equal height
+      let maxHeightTitle = 0;
+      let maxHeightbody = 0;
+
+     // card body
+      $(".card-body").each(function(){
+        if ($(this).height() > maxHeightbody) { maxHeightbody = $(this).height(); }
+      });
+
+      $(".card-body").height(maxHeightbody);
+
+           // Modification des données newsletter de l'utilisateur
+
+        $('#triPrix').on('change', function(e) {
+        //  var instance = $('.isotope-grid').drizzle({child:'.isotope-item'});
+         // instance.sort('[data-stars]', {order: 'asc'}); #}
+         if($('#triPrix').val() == 0){
+          console.log($('#triPrix').val());
+          $('.isotope').each(function(){
+        $(this).html(
+          $(this).find('.isotope-grid').sort(function(a, b) {
+          let dsa = parseInt($(a).find('.number').eq(0).text()),
+          dsb = parseInt($(b).find('.number').eq(0).text());
+      return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+    })
+  );  
+});
+         }
+         else{
+          console.log($('#triPrix').val());
+             $('.isotope').each(function(){
+        $(this).html(
+          $(this).find('.isotope-grid').sort(function(a, b) {
+          let dsa = parseInt($(a).find('.number').eq(0).text()),
+          dsb = parseInt($(b).find('.number').eq(0).text());
+      return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+    })
+  );  
+});
+         }
+
+            });
+
+         $('#triDate').on('change', function(e) {
+            
+               if($('#triDate').val() == 0){
+          console.log($('#triDate').val());
+          $('.isotope').each(function(){
+        $(this).html(
+          $(this).find('.isotope-grid').sort(function(a, b) {
+          let dsa = parseInt($(a).find('.tri-dates').eq(0).text()),
+          dsb = parseInt($(b).find('.tri-dates').eq(0).text());
+      return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+              })
+            );  
+          });
+         }
+         else{
+          console.log($('#triDate').val());
+             $('.isotope').each(function(){
+        $(this).html(
+          $(this).find('.isotope-grid').sort(function(a, b) {
+          let dsa = parseInt($(a).find('.tri-dates').eq(0).text()),
+          dsb = parseInt($(b).find('.tri-dates').eq(0).text());
+      return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+            })
+          );  
+        });
+         }
+
+            });
+
+    });
+  </script>
+
+{% endblock %}

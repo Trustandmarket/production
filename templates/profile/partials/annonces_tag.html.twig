@@ -1,0 +1,67 @@
+{% for a in annonces %}
+	<div class="row mt-3" style="min-height: 200px">
+		<div class="col-md-4 annonce-img" style="background: url('{% if a.gallery.0 %}{{a.gallery.0.guid}}{% else %}{{a.images_secondaires.0.guid}}{% endif %}')"></div>
+		<div class="col-md-8 py-2 annonce-detail">
+			<h3>{{a.first_name}}
+				{{a.last_name}}</h3>
+			<p class="fs-14">
+				{% if app.request.locale == 'en' and a.titre_en != '' %}
+					{{a.titre_en}}
+				{% else %}
+					{{a.titre}}
+				{% endif %}
+			</p>
+			<h3>{{ a.price }}
+				{{a.devise}}</h3>
+			<span class="texte-gris text-bold fs-14">
+				<i class="fas fa-map-marker"></i>
+				{{a.pays|country_name}},
+				{{a.etat}},
+				{{a.ville}}</span>
+			<br>
+			<span class="texte-gris text-bold fs-14">
+				<i class="fas fa-calendar"></i>
+				{{a.calendrier|first}}
+				-
+				{{a.calendrier|last}}
+				({{a.calendrier|length}}
+				dates dispo.)</span>
+			<div class="pt-4">
+				<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+					<div class="btn-group mr-2" role="group" aria-label="First group">
+						<a class="btn btn-bg-primary btn-sm editer" href="{{path('profile_EditDraftAnnounce',{id:a.id})}}">
+							<i class="fas fa-edit"></i>
+						</a>
+					</div>
+					<div class="btn-group mr-2" role="group" aria-label="Second group">
+						<a href="{{path('profile_deleteDraftAnnounce',{id:a.id})}}" class="btn btn-bg-primary btn-sm editer supprimer">
+							<i class="fas fa-trash-alt"></i>
+						</a>
+					</div>
+
+					<div class="btn-group mt-2" role="group" aria-label="Thirth group">
+						{% if a.slug|length > 8 and tag == 'publish'  %}
+							<a href="{% if a.slug|length > 8 %}{{path('annonces_detailsAnnonce',{id:a.slug})}}{% endif %}" class="btn btn-bg-primary btn-sm ">
+								<i class="fas fa-eye"></i>
+								{{'general.voir_annonce'|trans}}
+							</a>
+						{% endif %}
+					</div>
+
+					<div {% if a.categorieParentType == 'product_cat' and tag == 'publish' %} hidden {% else %} fa-minus {% endif %} class="btn-group mt-2 ml-2" role="group" aria-label="Thirth group">
+						<a id="mise_en_rupture" href="{% if a.slug|length > 8 %}{{path('annonces_rupture',{slug:a.slug})}}{% endif %}" class="btn btn-bg-primary btn-sm ">
+							<i class="fas {% if a.rupture == 0 %}fa-plus{% else %}fa-minus{% endif %}"></i>
+							{% if a.rupture == 0 %}
+								{{'general.produit_disponible'|trans}}
+							{% else %}
+								{{'general.rupture'|trans}}
+							{% endif %}
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+{% endfor %}
+

@@ -1,0 +1,776 @@
+{% extends 'profileTemplate.html.twig' %}
+
+  {% block head %}
+  {{parent()}}
+
+  <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}" sizes="32x32" />
+  <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}" sizes="192x192" />
+  <link rel="apple-touch-icon-precomposed" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}" />
+  <meta name="msapplication-TileImage" content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}" />
+  {% endblock %}
+
+{% block title %}Trust &amp; Market | Profil Devis {% endblock %}
+
+{% block  annonce %} active{% endblock %}
+    {% block style %}
+    {{parent()}}
+    <!-- Gijgo datepicker css -->
+  <link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+   <link href="{{ preload(asset('assets/css/custome.css'))}}" rel="stylesheet">
+   <link rel="stylesheet" href="{{ asset('assets/css/img-picker/image-picker.css')}}">
+   <link href="{{ asset('assets/css/style-annonces.css')}}" rel="stylesheet">
+   <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+
+   <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+
+  <!-- file input fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+  <link href="{{asset('assets/font/file-input-font/font/font-fileuploader.css')}}" rel="stylesheet">
+  <!-- file input styles -->
+  <link href="{{asset('assets/css/file-input-css/jquery.fileuploader.min.css')}}" media="all" rel="stylesheet">
+
+   <style >
+     .image_picker_image{width: 100px;height: 100px}
+     .tox-statusbar__branding{
+     display: none;
+     }
+
+    .fletter-caps {
+        text-transform: lowercase;
+    }
+    .position-brouillon {
+       position: fixed-top;
+    }
+    .fletter-caps::first-letter {
+        text-transform: capitalize;
+    }
+    .btn-primary {
+        background-color: #eb6918!important;
+        color: #fff;
+        font-size: 0.8rem !important;
+    }
+    .btn-primary:not([disabled]):not(.disabled):active {
+        background-color: #eb6918 !important;
+    }
+
+   @media only screen and (min-width : 992px) {
+    /** #shopping-link{
+      width: 50px;
+      border-left: 1px solid #fff;
+      margin-left: 7px;
+    }
+    .icon-wrapper {
+      right: 35px;
+    }*/
+    .dashboard-menu{
+      margin-top: 130px !important;
+    }
+  }
+
+
+   </style>
+    {% endblock %}
+
+
+    {% block header %}
+
+   {{parent()}}
+
+    {% endblock %}
+
+    {% block navigation %}
+
+   {{parent()}}
+
+    {% endblock %}
+
+    {% block body %}
+<div class="flex-fill container">
+<main class="">
+
+    <div class="container">
+     {% include 'menuProfile.html.twig' %}
+    <div class="mt-2">
+        <!-- Modif des infos -->
+        <div id="modifInfo">
+            <div class="row">
+                <div hidden class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="col-md-4 mb-2">
+                    <ul class="list-group text-left">
+                         <li class="list-group-item"><a href="{{path('profile_reservations')}}" class="prestation-list-item list-grp-head">{{'profil-utilisateur.formulaire-creer-annonce.titre-onglet-reservations'|trans}}</a>
+                              <ul class="list-group list-group-flush text-left">
+                                <li class="list-group-item"><a class="rsv-list-item" href="{% if reservationsEnCours|length != 0  %}{{path('profile_annoncesTag',{'tag':'reservations-en-cours'})}}{% endif %}"> {{'profil-utilisateur.annonces.reservations-en-cours'|trans}} <span class="rsv-en-cours">({{reservationsEnCours|length}})</span></a></li>
+                                <li class="list-group-item"><a class="rsv-list-item" href="{% if reservationsTerminees|length != 0  %}{{path('profile_annoncesTag',{'tag':'reservations-en-brouillon'})}}{% endif %}"> {{'profil-utilisateur.annonces.reservations-terminees'|trans}} <span class="rsv-en-term">({{reservationsTerminees|length}})</span></a></li>
+                                <li class="list-group-item"><a class="rsv-list-item" href="{% if reservationsAnnulees|length != 0  %}{{path('profile_annoncesTag',{'tag':'reservations-annulees'})}}{% endif %}"> {{'profil-utilisateur.annonces.reservations-annulees'|trans}} <span class="rsv-en-annulees">({{reservationsAnnulees|length}})</span></a></li>
+                             </ul>
+                        </li>
+                         <li class="list-group-item"><a class="list-grp-head" href="{{path('profile_annonces')}}">{{'profil-utilisateur.formulaire-creer-annonce.titre-onglet-annonces'|trans}}</a>
+                            <ul class="list-group list-group-flush text-left">
+                                <li class="list-group-item"><a class="annonce-list-item" href="{% if annoncesBrouillon|length != 0  %}{{path('profile_annoncesTag',{'tag':'annonces-en-brouillon'})}}{% endif %}"> {{'profil-utilisateur.annonces.annonces-en-brouillon'|trans}} <span class="ann-brll">({{annoncesBrouillon|length}})</span></a></li>
+                                <li class="list-group-item"><a class="annonce-list-item" href="{% if annoncesModeration|length != 0  %}{{path('profile_annoncesTag',{'tag':'annonces-en-moderation'})}}{% endif %}"> {{'profil-utilisateur.annonces.annonces-en-moderation'|trans}} <span class="ann-mod">({{annoncesModeration|length}})</span></a></li>
+                                <li class="list-group-item"><a class="annonce-list-item" href="{% if annoncesRejetees|length != 0  %}{{path('profile_annoncesTag',{'tag':'annonces-rejetees'})}}{% endif %}"> {{'profil-utilisateur.annonces.annonces-rejetees'|trans}} <span class="ann-rej">({{annoncesRejetees|length}})</span></a></li>
+                                <li class="list-group-item"><a class="annonce-list-item" href="{% if annoncesPubliees|length != 0  %}{{path('profile_annoncesTag',{'tag':'annonces-publiees'})}}{% endif %}"> {{'profil-utilisateur.annonces.annonces-publiees'|trans}} <span class="ann-pub">({{annoncesPubliees|length}})</span></a></li>
+
+                                <li class="list-group-item current-menu-item"><a class="list-grp-head" href="{{path('profile_creerAnnonces')}}">  {{'profil-utilisateur.annonces.annonces-publier'|trans}}  </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-8 mb-2">
+
+                  <!-- multistep form -->
+                <form id="msform" action="{{path('profile_ajouter_annonce')}}" method="post">
+                    <!-- progressbar -->
+                    <ul id="progressbar">
+                      <li class="active">{{'profil-utilisateur.formulaire-creer-annonce.onglet-prestations'|trans}}</li>
+                      <li>{{'profil-utilisateur.formulaire-creer-annonce.onglet-adresse'|trans}}</li>
+                      <li>{{'profil-utilisateur.formulaire-creer-annonce.onglet-service'|trans}}</li>
+                      <li>{{'profil-utilisateur.formulaire-creer-annonce.onglet-photos-videos'|trans}}</li>
+                      <li>{{'profil-utilisateur.formulaire-creer-annonce.onglet-prix'|trans}}</li>
+                      <li>{{'profil-utilisateur.formulaire-creer-annonce.onglet-conditions'|trans}}</li>
+                    </ul>
+                    <!-- fieldsets -->
+
+                    <fieldset >
+
+                      <div class="row mb-4">
+                        <div class="col-md-6 text-left">
+                            <h2 class="fs-title">{{'profil-utilisateur.formulaire-creer-annonce.type-de-prestations'|trans}}*</h2>
+                          <h3 class="fs-subtitle">{{'profil-utilisateur.formulaire-creer-annonce.contrainte-de-choix'|trans}}</h3>
+                          <!-- Default unchecked -->
+
+                          {% for c in categorie %}
+                            <div  class="custom-control custom-radio mb-2">
+                              <input type="radio" {% if editedData is defined and c.name == editedData.categorieParent %}checked{% endif %} myUrl="{{path('profile_liste_sous_categorie',{'id':c.termTaxonomyId})}}" class="custom-control-input categorie" id="cat{{c.termTaxonomyId}}"  name="categorieParent" value="{{c.termTaxonomyId}}" required />
+                              <label class="custom-control-label" for="cat{{c.termTaxonomyId}}">{{c.name}}</label>
+                            </div>
+                          {% endfor %}
+                        </div>
+                        <div id="prestProposee" class="col-md-6 text-left">
+                            <div id="sous_categorie">
+                            {% if editedData is defined %}
+                            <h2 class="fs-title">{{'profil-utilisateur.formulaire-creer-annonce.type-de-prestations'|trans}}*</h2>
+                            <h3 class="fs-subtitle">{{'profil-utilisateur.formulaire-creer-annonce.contrainte-de-choix'|trans}}</h3>
+                            <div  class="custom-control custom-radio mb-2">
+                              <input type="radio" checked myUrl="{{path('profile_liste_sous_categorie',{'id':editedData.IdSousCategorie})}}" class="custom-control-input categorie" id="cat{{editedData.IdSousCategorie}}"  name="categorie" value="{{editedData.IdSousCategorie}}" required>
+                              <label class="custom-control-label" for="cat{{editedData.IdSousCategorie}}">{{editedData.sousCategorie}}</label>
+                            </div>
+                            {% endif %}
+                            </div>
+                        </div>
+                      </div>
+                        <input type="button" {% if editedData is defined %}{% else %}disabled{% endif %}  name="previous"  class="next action-button prestations" value="Suivant" />
+                    </fieldset>
+                    <fieldset >
+                      <h3 class="fs-subtitle text-left">{{'profil-utilisateur.formulaire-creer-annonce.presence-reseau-sociaux'|trans}}</h3>
+                      <div class="row mb-4">
+                        <div class="col-md-6 text-left">
+                            <h2 class="fs-title">{{'profil-utilisateur.formulaire-creer-annonce.champs-pays'|trans}}*</h2>
+                            <select class="browser-default custom-select" name="pays" required>
+                            {% if editedDataPays is defined and editedDataPays != ''  %}
+                            <option value="{{editedDataPays}}">{{editedDataPays|country_name}}</option>
+                            {% endif %}
+                                {% include 'country.html.twig' %}
+                              </select>
+                            <div class="md-form">
+                              <input type="text" id="addressePostale" {% if editedDataAdressePostale is defined and editedDataAdressePostale != '' %}
+                              value="{{editedDataAdressePostale}}"{% else %} value=""{% endif %} name="adresse_postale" class="form-control"
+                              placeholder="{{'profil-utilisateur.formulaire-creer-annonce.champs-adresse'|trans}}*"/>
+                            </div>
+                            <div class="md-form">
+                              <input type="text" id="precisions" name="precision" class="form-control"
+                              {% if editedDataPrecision is defined and editedDataPrecision != '' %}value="{{editedDataPrecision}}"{% else %}value=""{% endif %}
+                              placeholder="{{'profil-utilisateur.formulaire-creer-annonce.champs-localisation'|trans}}">
+                            </div>
+                            <div class="md-form">
+                              <input type="text" id="codePostale"
+                               {% if editedDataCodePostale is defined and editedDataCodePostale != '' %}value="{{editedDataCodePostale}}"{% else %}
+                              value=""{% endif %} name="code_postal" class="form-control"
+                               placeholder="{{'profil-utilisateur.formulaire-creer-annonce.champs-code-postal'|trans}}*"/>
+                            </div>
+                            <div class="md-form">
+                              <input type="text" id="ville"  {% if editedDataVille is defined and editedDataVille != '' %}value="{{editedDataVille}}"{% else %}
+                              value=""{% endif %} name="ville" class="form-control" placeholder="{{'profil-utilisateur.formulaire-creer-annonce.champs-ville'|trans}}*"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-left">
+                            <h2 class="fs-title">{{'profil-utilisateur.formulaire-creer-annonce.equipements'|trans}}</h2>
+                              <div class="custom-control custom-checkbox">
+                                <input type="checkbox" {% if editedDataWifi is defined and editedDataWifi != '' %}checked{% endif %} id="wifi"  name="wifi"  class="form-control custom-control-input">
+                                <label class="custom-control-label" for="wifi">{{'profil-utilisateur.formulaire-creer-annonce.case-a-cocher-wi-fi'|trans}}</label>
+                              </div>
+                              <div class="custom-control custom-checkbox">
+                                <input type="checkbox" {% if editedDataCafe is defined and editedDataCafe != '' %}checked{% endif %} id="cafeThe" name="cafe" class="form-control custom-control-input">
+                                <label class="custom-control-label" for="cafeThe">{{'profil-utilisateur.formulaire-creer-annonce.case-a-cocher-cafe'|trans}}</label>
+                              </div>
+                              <div class="custom-control custom-checkbox">
+                                <input type="checkbox" {% if editedDataBureau is defined and editedDataBureau != '' %}checked{% endif %} id="bureauEspace" name="bureau"  class="form-control custom-control-input">
+                                <label class="custom-control-label" for="bureauEspace">{{'profil-utilisateur.formulaire-creer-annonce.case-a-cocher-bureau'|trans}}</label>
+                              </div>
+                            <div class="md-form">
+                              <input type="text" {% if editedDataCafe is defined and editedDataCafe != '' %}value="{{editedDataCafe}}"{% else %}
+                              value=""{% endif %}  class="form-control" name="autre_equipement" placeholder="{{'profil-utilisateur.formulaire-creer-annonce.autres'|trans}}">
+                            </div>
+                        </div>
+                      </div>
+                      <input type="button" name="previous" class="previous action-button"
+                      value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
+                      <input type="button" {% if editedDataPays is defined and editedDataPays != '' and editedDataAdressePostale is defined and editedDataAdressePostale != ''
+                      and  editedDataCodePostale is defined and editedDataCodePostale != '' and editedDataVille is defined and editedDataVille != ''%}{% else %}disabled{% endif %} name="suivant" class="next action-button adresse"
+                       value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-suivant'|trans}}" />
+                    </fieldset>
+                    <fieldset class="mb-4">
+                      <h2 class="fs-title text-left">{{'profil-utilisateur.formulaire-creer-annonce-3.entete-nom-service'|trans}}*</h2>
+                      <div class="md-form">
+                        <input type="text" id="nom" class="form-control" {% if editedData is defined and editedData.post_title != '' %}value="{{editedData.post_title}}"
+                        {% else %}value=""{% endif %} name="titre"  placeholder="{{'profil-utilisateur.formulaire-creer-annonce-3.champs-titre-service'|trans}}"
+                        />
+                      </div>
+                      <h2 class="fs-title text-left">{{'profil-utilisateur.formulaire-creer-annonce-3.entete-description-service'|trans}}*</h2>
+                      <!-- <h3 class="fs-subtitle">Brève description de vos techniques, votre matériel, vos compétences...</h3> -->
+                      <div class="form-group text-left">
+                        <label for="briefDesc">{{'profil-utilisateur.formulaire-creer-annonce-3.champs-description-service'|trans}}</label>
+                        <textarea class="form-control" {% if editedData is defined and editedData.post_content != '' %}value="{{editedData.post_content}}"
+                        {% else %}value=""{% endif %} name="description" id="description" rows="5" style="display:none"></textarea>
+                      </div>
+
+                      <input type="button" name="previous" class="previous action-button"
+                      value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
+                      <input type="button" {% if editedData is defined and editedData.post_title != '' and editedData.post_content != '' %}{% else %}disabled{% endif %} name="next" class="next action-button nom"
+                      value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-suivant'|trans}}" />
+                    </fieldset>
+                    <fieldset>
+                      <div class="row mb-4">
+                        <div class="col-md-12">
+                          <h2 class="fs-title text-left">{{'profil-utilisateur.formulaire-creer-annonce-4.entete-portfolio'|trans}}*</h2>
+                          <h3 class="fs-subtitle text-left">{{'profil-utilisateur.formulaire-creer-annonce-4.contrainte-ajout-portfolio'|trans}}</h3>
+                          <select id="photos" class="image-picker show-html" name="portfolio[]" required data-limit="" multiple="multiple">
+                          <option selected value="" hidden></option>
+                            {% for p in portfolio %}
+                                <option {% if editedData is defined and editedData.gallery != null %}
+                                {% for v in editedData.gallery %}
+                                  {% if v.guid == p.guid %}selected {% endif %}
+                                  {% endfor %}{% endif %} data-img-src="{{p.guid}}" value="{{p.id}}"></option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="col-md-12 mt-4">
+                          <h2 class="fs-title text-left">{{'profil-utilisateur.formulaire-creer-annonce-4.entete-video'|trans}}</h2>
+                          <h3 class="fs-subtitle text-left">{{'profil-utilisateur.formulaire-creer-annonce-4.contrainte-ajout-video'|trans}}</h3>
+                          <select id="videos" class="image-picker show-html" name="videos[]" data-limit="" multiple="multiple">
+                            {% for v in imgid %}
+                                  <option  {% if editedData is defined and editedData.videos != null %}
+                                  {% for a in editedData.videos %}
+                                  {% if a == v %}selected {% endif %}
+                                  {% endfor %}
+                                  {% endif %}
+                                   data-img-src="https://img.youtube.com/vi/{{v}}/0.jpg" value="{{v}}"></option>
+                            {% endfor %}
+
+                          </select>
+                        </div>
+                      </div>
+                      <input type="button" name="previous" class="previous action-button"
+                      value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
+                      <input type="button" {% if editedData is defined and editedData.gallery != null %}{% else %}disabled{% endif %} name="previous" class="next action-button portfolio"
+                      value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-suivant'|trans}}" />
+                    </fieldset>
+
+                    <fieldset>
+                        <div class="row mb-4">
+                          <div class="col-md-12 text-left">
+                            <h2 class="fs-title">{{'profil-utilisateur.formulaire-creer-annonce-5.entete-prix-prestation'|trans}}*</h2>
+                            <h3 class="fs-subtitle text-left">{{'profil-utilisateur.formulaire-creer-annonce-5.description-prix-prestation'|trans}}</h3>
+                            <div class="md-form">
+                              <select name="devise" id="devise" class="form-control">
+                              {% if editedDataDevise is defined and editedDataDevise != '' %}
+                              <option value="{{editedDataDevise}}">{{editedDataDevise}}</option>
+                        {% else %}{% endif %}
+                                <option value="EUR">EURO</option>
+                                <option value="USD">United States Dollars</option>
+                                <option value="XAF">XAF</option>
+                                <option value="GBP">United Kingdom Pounds</option>
+                                <option value="DZD">Algeria Dinars</option>
+                                <option value="ARP">Argentina Pesos</option>
+                                <option value="AUD">Australia Dollars</option>
+                                <option value="ATS">Austria Schillings</option>
+                                <option value="BSD">Bahamas Dollars</option>
+                                <option value="BBD">Barbados Dollars</option>
+                                <option value="BEF">Belgium Francs</option>
+                                <option value="BMD">Bermuda Dollars</option>
+                                <option value="BRR">Brazil Real</option>
+                                <option value="BGL">Bulgaria Lev</option>
+                                <option value="CAD">Canada Dollars</option>
+                                <option value="CLP">Chile Pesos</option>
+                                <option value="CNY">China Yuan Renmimbi</option>
+                                <option value="CYP">Cyprus Pounds</option>
+                                <option value="CSK">Czech Republic Koruna</option>
+                                <option value="DKK">Denmark Kroner</option>
+                                <option value="NLG">Dutch Guilders</option>
+                                <option value="XCD">Eastern Caribbean Dollars</option>
+                                <option value="EGP">Egypt Pounds</option>
+                                <option value="FJD">Fiji Dollars</option>
+                                <option value="FIM">Finland Markka</option>
+                                <option value="FRF">France Francs</option>
+                                <option value="DEM">Germany Deutsche Marks</option>
+                                <option value="XAU">Gold Ounces</option>
+                                <option value="GRD">Greece Drachmas</option>
+                                <option value="HKD">Hong Kong Dollars</option>
+                                <option value="HUF">Hungary Forint</option>
+                                <option value="ISK">Iceland Krona</option>
+                                <option value="INR">India Rupees</option>
+                                <option value="IDR">Indonesia Rupiah</option>
+                                <option value="IEP">Ireland Punt</option>
+                                <option value="ILS">Israel New Shekels</option>
+                                <option value="ITL">Italy Lira</option>
+                                <option value="JMD">Jamaica Dollars</option>
+                                <option value="JPY">Japan Yen</option>
+                                <option value="JOD">Jordan Dinar</option>
+                                <option value="KRW">Korea (South) Won</option>
+                                <option value="LBP">Lebanon Pounds</option>
+                                <option value="LUF">Luxembourg Francs</option>
+                                <option value="MYR">Malaysia Ringgit</option>
+                                <option value="MXP">Mexico Pesos</option>
+                                <option value="NLG">Netherlands Guilders</option>
+                                <option value="NZD">New Zealand Dollars</option>
+                                <option value="NOK">Norway Kroner</option>
+                                <option value="PKR">Pakistan Rupees</option>
+                                <option value="XPD">Palladium Ounces</option>
+                                <option value="PHP">Philippines Pesos</option>
+                                <option value="XPT">Platinum Ounces</option>
+                                <option value="PLZ">Poland Zloty</option>
+                                <option value="PTE">Portugal Escudo</option>
+                                <option value="ROL">Romania Leu</option>
+                                <option value="RUR">Russia Rubles</option>
+                                <option value="SAR">Saudi Arabia Riyal</option>
+                                <option value="XAG">Silver Ounces</option>
+                                <option value="SGD">Singapore Dollars</option>
+                                <option value="SKK">Slovakia Koruna</option>
+                                <option value="ZAR">South Africa Rand</option>
+                                <option value="KRW">South Korea Won</option>
+                                <option value="ESP">Spain Pesetas</option>
+                                <option value="XDR">Special Drawing Right (IMF)</option>
+                                <option value="SDD">Sudan Dinar</option>
+                                <option value="SEK">Sweden Krona</option>
+                                <option value="CHF">Switzerland Francs</option>
+                                <option value="TWD">Taiwan Dollars</option>
+                                <option value="THB">Thailand Baht</option>
+                                <option value="TTD">Trinidad and Tobago Dollars</option>
+                                <option value="TRL">Turkey Lira</option>
+                                <option value="VEB">Venezuela Bolivar</option>
+                                <option value="ZMK">Zambia Kwacha</option>
+                                <option value="EUR">Euro</option>
+                                <option value="XCD">Eastern Caribbean Dollars</option>
+                                <option value="XDR">Special Drawing Right (IMF)</option>
+                                <option value="XAG">Silver Ounces</option>
+                                <option value="XAU">Gold Ounces</option>
+                                <option value="XPD">Palladium Ounces</option>
+                                <option value="XPT">Platinum Ounces</option>
+                              </select>
+                            </div>
+                            <h3 class="fs-subtitle text-left">{{'profil-utilisateur.formulaire-creer-annonce-5.entete-prix-ttc'|trans}}</h3>
+                            <div class="md-form">
+                              <input type="text" data-type="currency" {% if editedDataPrix is defined and editedDataPrix != '' %}
+                              value="{{editedDataPrix}}"{% else %} value="0"{% endif %} id="prix" name="prix" class="form-control" placeholder=""/>
+                            </div>
+                          </div>
+                        </div>
+                      <input type="button" name="previous" class="previous action-button"
+                      value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
+                      <input type="button" {% if editedDataPrix is defined and editedDataPrix != '' %}{% else %}disabled{% endif %}
+                       name="previous" class="next action-button devise" value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-suivant'|trans}}" />
+                    </fieldset>
+                    <fieldset>
+                    <div id="body">
+                      <h2 class="fs-title text-left mb-4">{{'profil-utilisateur.formulaire-creer-annonce-6.entete-legislation-et-conditions-utilisation'|trans}}</h2>
+                      <p class="text-left">{{'profil-utilisateur.formulaire-creer-annonce-6.texte'|trans}}</p>
+                      <input type="button" name="previous" class="previous action-button"
+                       value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
+                      <input type="submit" id="send"  class="submit action-button"
+                       value="{{'profil-utilisateur.formulaire-creer-annonce-6.bouton-accepter'|trans}}" />
+                    </div>
+                    <div id="succes" style="display:none">
+                      <div hiddden class="col-md-12 alert alert-success alert-dismissible fade show" role="alert">
+                          <strong>Felicitation!</strong> Votre annonce à été publier avec succès
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                    </div>
+                    </fieldset>
+
+
+                    {% if editedData is defined %}
+                    <input id="state"  name="state" hidden value="{% if state == "edition" %}edition{% endif %}{% if state == "creation" %}creation{% endif %}{% if state == "brouillon" %}brouillon{% endif %}" class="state"/>
+                    <input id="idPostEdited"  name="idPostEdited" hidden value="{{editedData.id}}" class="state"/>
+                    {% else %}
+                    <input id="state" name="state" hidden value="creation" class="state"/>{% endif %}
+                  </form>
+
+                 <div class="text-left ">
+                    <button {% if editedData is defined %}{% else %}disabled{% endif %} class="position-brouillon m-0 pl-3 pr-3 btn btn-md btn-primary fletter-caps brouillon">Sauvegarder en brouillon, publier plus tard</button>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin des modifs -->
+    </div>
+  </div>
+   {% include 'assistance.html.twig' %}
+  </main>
+  {#  {{dump(categorie.0.name)}}
+    {{dump(editedData.categorieParent)}} #}
+
+  </div>
+    {% endblock %}
+
+
+{% block footer %}
+{{parent()}}
+
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+
+<!-- jQuery plugin for datepicker -->
+<script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+<script src="{{ prerender(asset('assets/js/img-picker/image-picker.min.js')) }}"></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="//cdn.ckeditor.com/4.13.0/standard/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+
+<script>
+
+  $(document).ready(function() {
+       CKEDITOR.replace( 'description' );
+       {% if editedData is defined and editedData.post_title != '' %}
+       CKEDITOR.instances['description'].setData('{{editedData.post_title|raw}}');
+       {% endif %}
+
+      var docWidth = document.documentElement.offsetWidth;
+
+      [].forEach.call(
+        document.querySelectorAll('*'),
+        function(el) {
+          if (el.offsetWidth > docWidth) {
+            console.log(el);
+          }
+        }
+      );
+      //Hambuger menu icon
+      $('.animated-button-icon').on('click', function () {
+        $('.animated-icon2').toggleClass('open');
+      });
+      //first thing turn Hide Menu Search bar
+      $("#searchMenu").hide();
+      //toggle menu search bar on/off
+      $( "#searchMenuShowHide" ).click(function() {
+        $( "#searchMenu" ).toggle( "slide" );
+      });
+
+      // Initialize the object
+      $("#photos").imagepicker();
+      $("#videos").imagepicker();
+      // Retrieve the picker
+      $("#photos").data('picker');
+      $("#videos").data('picker');
+
+            //multiple datepicker
+        $('.date').datepicker({
+          multidate: true,
+          format: 'dd-mm-yyyy'
+        });
+
+
+        //jQuery time
+        var current_fs, next_fs, previous_fs; //fieldsets
+        var left, opacity, scale; //fieldset properties which we will animate
+        var animating; //flag to prevent quick multi-click glitches
+
+        $(".next").click(function(){
+          if(animating) return false;
+          animating = true;
+          
+          current_fs = $(this).parent();
+          next_fs = $(this).parent().next();
+          
+          //activate next step on progressbar using the index of next_fs
+          $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+          
+          //show the next fieldset
+          next_fs.show(); 
+          //hide the current fieldset with style
+          current_fs.animate({opacity: 0}, {
+            step: function(now, mx) {
+              //as the opacity of current_fs reduces to 0 - stored in "now"
+              //1. scale current_fs down to 80%
+              scale = 1 - (1 - now) * 0.2;
+              //2. bring next_fs from the right(50%)
+              left = (now * 50)+"%";
+              //3. increase opacity of next_fs to 1 as it moves in
+              opacity = 1 - now;
+              current_fs.css({
+                'transform': 'scale('+scale+')',
+                'position': 'absolute'
+              });
+              next_fs.css({'left': left, 'opacity': opacity});
+            }, 
+            duration: 800, 
+            complete: function(){
+              current_fs.hide();
+              animating = false;
+            }, 
+            //this comes from the custom easing plugin
+            easing: 'easeInOutBack'
+          });
+        });
+
+        $(".previous").click(function(){
+          if(animating) return false;
+          animating = true;
+          
+          current_fs = $(this).parent();
+          previous_fs = $(this).parent().prev();
+          
+          //de-activate current step on progressbar
+          $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+          
+          //show the previous fieldset
+          previous_fs.show(); 
+          //hide the current fieldset with style
+          current_fs.animate({opacity: 0}, {
+            step: function(now, mx) {
+              //as the opacity of current_fs reduces to 0 - stored in "now"
+              //1. scale previous_fs from 80% to 100%
+              scale = 0.8 + (1 - now) * 0.2;
+              //2. take current_fs to the right(50%) - from 0%
+              left = ((1-now) * 50)+"%";
+              //3. increase opacity of previous_fs to 1 as it moves in
+              opacity = 1 - now;
+              current_fs.css({'left': left});
+              previous_fs.css({'transform': 'scale('+scale+')', 'opacity': opacity});
+            }, 
+            duration: 800, 
+            complete: function(){
+              current_fs.hide();
+              animating = false;
+            }, 
+            //this comes from the custom easing plugin
+            easing: 'easeInOutBack'
+          });
+        });
+
+
+
+  });
+
+  $(document).on('change', '.souscategorie', function (e) {
+     $('.prestations').attr('name', "next");
+     $('.prestations').removeAttr('disabled');
+  });
+  $(document).on('blur', '#addressePostale, #codePostale, #ville', function (e) {
+    if ($('#addressePostale').val()!='' && $('#codePostale').val()!='' && $('#ville').val()!='') {
+      $('.adresse').attr('name', "next");
+      $('.adresse').removeAttr('disabled');
+       $('.brouillon').removeAttr('disabled');
+    }else {
+      $('.adresse').attr('disabled',"disabled");
+      $('.adresse').attr('name', "previous");
+       $('.brouillon').attr('disabled',"disabled");
+    }
+
+  });
+
+  $(document).on('blur', '#nom', function (e) {
+    if ($('#nom').val()!='') {
+      $('.nom').attr('name', "next");
+      $('.nom').removeAttr('disabled');
+    }else {
+      $('.nom').attr('disabled',"disabled");
+      $('.nom').attr('name', "previous");
+    }
+
+  });
+
+  $(document).on('change', '#photos', function (e) {
+    if ($('#photos').val()!='') {
+      $('.portfolio').attr('name', "next");
+      $('.portfolio').removeAttr('disabled');
+    }else {
+      $('.portfolio').attr('disabled',"disabled");
+      $('.portfolio').attr('name', "previous");
+    }
+
+  });
+  $(document).on('blur','#prix', function (e) {
+    if ($('#devise').val()!='' && $('#prix').val()!='') {
+      $('.devise').attr('name', "next");
+      $('.devise').removeAttr('disabled');
+    }else {
+      $('.devise').attr('disabled',"disabled");
+      $('.devise').attr('name', "previous");
+    }
+
+  });
+
+//Format price
+  $("input[data-type='currency']").on({
+    keyup: function() {
+      formatCurrency($(this));
+    },
+    blur: function() { 
+      formatCurrency($(this), "blur");
+    },
+    focus: function(){
+      let s = $(this).val();
+      while(s.charAt(0) === '0')
+      {
+       s = s.substr(1);
+       $(this).val(s);
+      }
+    }
+});
+
+
+  $(document).on('change', '.categorie', function (e) {
+   // On empeche le navigateur de soumettre le formulaire
+
+   e.preventDefault();
+   $('.prestations').attr('disabled',"disabled");
+   $('.prestations').attr('name', "previous");
+  // var url1='/profile/sous_categorie/{{app.request.get('_locale')}}?id='+$(this).val();
+  //console.log($(this).val());
+  var url1 = $(this).attr('myUrl');
+  toastr.info('Recherche des sous catégories...');
+   $.ajax({
+       url: url1,
+       type: 'get',
+       success: function (reponse) {
+         toastr.clear();
+         $('#sous_categorie').html(reponse);
+            },
+            error: function (reponse) {
+              toastr.clear();
+            }
+
+   });
+
+     });
+
+     $('#msform').on('submit', function (e) {
+         // On emp�che le navigateur de soumettre le formulaire
+         e.preventDefault();
+          //console.log($('#idPostEdited').val());
+          //console.log($('#state').val());
+           //console.log($('#videos').serialize());
+           $('#prix').val($('#prix').val());
+           $('#send').addClass('running');
+              for (instance in CKEDITOR.instances) {
+            CKEDITOR.instances[instance].updateElement();
+        }
+         toastr.info('création de l\'annonce en cours...');
+         var $form = $(this);
+         $.ajax({
+             url: $form.attr('action'),
+             type: $form.attr('method'),
+             data:$form.serialize(),
+             success: function (reponse) {
+
+               if(reponse>0){
+                 toastr.clear();
+                    $('#body').hide();
+                     $('#succes').show();
+                     $('html,body').scrollTop(0);
+                     $('#send').removeClass('running');
+                    window.setTimeout(function(){
+                     window.location="{{path('profile_annonces')}}";
+                    }, 1000);
+                 }else if(reponse==0) {
+                     toastr.clear();
+                 $('#send').removeClass('running');
+                  toastr.info('Erreur lors de la creation de l\'annonce');
+                 }
+                  },
+                  error: function (reponse) {
+                      toastr.clear();
+                 $('#send').removeClass('running');
+                  toastr.info('Erreur lors de la creation de l\'annonce');
+                  }
+         });
+         return false;
+     });
+
+          $('.brouillon').on('click', function (e) {
+
+          if ($('#nom').val() == '') {$('#nom').val('--');}
+          if ($('#description').val() == '') {$('#description').val('--');}
+             for (instance in CKEDITOR.instances) {
+            CKEDITOR.instances[instance].updateElement();
+        }
+
+          $('#state').val('brouillon');//console.log($(".state").val());
+          console.log($('#state').val());
+         toastr.info('Sauvegarde de l\'annonce en cours...');
+
+         var $form = $("#msform");
+         console.log($form.serialize());
+         $.ajax({
+             url: $form.attr('action'),
+             type: $form.attr('method'),
+             data:$form.serialize(),
+             success: function (reponse) {
+
+               if(reponse>0){
+                 toastr.clear();
+                    $('#body').hide();
+                     $('#succes').show();
+                     $('html,body').scrollTop(0);
+                     $('#send').removeClass('running');
+                   toastr.clear();
+                   toastr.success('Sauvegarde de l\'annonce effectuée');
+                    window.setTimeout(function(){
+                     window.location="{{path('profile_annoncesTag',{tag:'annonces-en-brouillon'})}}";
+                    }, 1000);
+                 }
+               },
+                  error: function (reponse) {
+                      toastr.clear();
+                 $('#send').removeClass('running');
+                  toastr.error('Erreur lors de la Sauvegarde de l\'annonce');
+                  }
+         });
+         return false;
+         });
+
+     toastr.options = {
+   "closeButton": true,
+   "debug": false,
+   "newestOnTop": false,
+   "progressBar": true,
+   "positionClass": "toast-top-center",
+   "preventDuplicates": false,
+   "onclick": null,
+   "showDuration": "300",
+   "hideDuration": "1000",
+   "timeOut": "30000",
+   "extendedTimeOut": "1000",
+   "showEasing": "swing",
+   "hideEasing": "linear",
+   "showMethod": "fadeIn",
+   "hideMethod": "fadeOut"
+   };
+
+</script>
+
+{% endblock %}

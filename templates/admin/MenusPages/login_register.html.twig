@@ -1,0 +1,509 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+    {{ 'admin.page.login_register'|trans }}
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link href="{{ asset('assets/css/style-blog.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/dropzone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <style media="screen">
+        header {
+            height: 3%;
+        }
+        .navbar {
+            background: none;
+        }
+
+        #main-menu {
+            font-size: 14px;
+        }
+    </style>
+    <style media="screen">
+        .form-actions {
+            align-content: center;
+        }
+    </style>
+
+    <div class="content">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        {{ 'admin.page.login_register'|trans }}
+                    </div>
+                    <div class="card-body">
+                        <div class="container row">
+                            <div class="col-md-6 mb-6 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc1 %}{{ bloc1.optionValue }}{% else %}{{ asset('assets/img/john-raptis.png') }}{% endif %}"
+                                             alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image Page Connexion</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="login_image">
+                                                    <input hidden name="option_name" value="login_image"/>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_1"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+                            <div class="col-md-6 mb-6 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc2 %}{{ bloc2.optionValue }}{% else %}{{ asset('assets/img/john-raptis.png') }}{% endif %}"
+                                             alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image Page Inscription</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="register_image">
+                                                    <input hidden name="option_name" value="register_image"/>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_2"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+                            <div class="col-md-6 mb-6 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc3 %}{{ bloc3.optionValue }}{% else %}{{ asset('assets/img/john-raptis.png') }}{% endif %}"
+                                             alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image Verifier Email Apres reinitialisation</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images"
+                                                      id="verifier_email_reinitialiser_compte_image">
+                                                    <input hidden name="option_name"
+                                                           value="verifier_email_reinitialiser_compte_image"/>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_3"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+                            <div class="col-md-6 mb-6 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc4 %}{{ bloc4.optionValue }}{% else %}{{ asset('assets/img/john-raptis.png') }}{% endif %}"
+                                             alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image Reinitialiser mot de passe</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="reinitialiser_mot_de_passe_image">
+                                                    <input hidden name="option_name"
+                                                           value="reinitialiser_mot_de_passe_image"/>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_4"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+                            <div class="col-md-6 mb-6 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc5 %}{{ bloc5.optionValue }}{% else %}{{ asset('assets/img/john-raptis.png') }}{% endif %}"
+                                             alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image Demande de reinitialisation du mot de passe</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images"
+                                                      id="requete_reinitialiser_mot_de_passe_image">
+                                                    <input hidden name="option_name"
+                                                           value="requete_reinitialiser_mot_de_passe_image"/>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_5"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+                            <div class="col-md-6 mb-6 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc6 %}{{ bloc6.optionValue }}{% else %}{{ asset('assets/img/john-raptis.png') }}{% endif %}"
+                                             alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image Verifier Email apres Creation de compte</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="verifier_email_creation_compte_image">
+                                                    <input hidden name="option_name"
+                                                           value="verifier_email_creation_compte_image"/>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_6"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+{% endblock %}
+{% block body_javascript %}
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+            integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('assets/js/lazyload.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('admin/assets/js/dropzone.js') }}"></script>
+    <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+
+    <script type="text/javascript">
+        var myDropzone1 = new Dropzone("#dropzone_element_1",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 3, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        var myDropzone2 = new Dropzone("#dropzone_element_2",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 3, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        var myDropzone3 = new Dropzone("#dropzone_element_3",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 3, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        var myDropzone4 = new Dropzone("#dropzone_element_4",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 3, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        var myDropzone5 = new Dropzone("#dropzone_element_5",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 3, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        var myDropzone6 = new Dropzone("#dropzone_element_6",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 3, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+
+        $('.accueil_images').on('submit', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            toastr.info('Envoie des données en cours...');
+
+            let $form = $(this);
+            let formdata = (window.FormData) ? new FormData($form[0]) : null;
+            let data = (formdata !== null) ? formdata : $form.serialize();
+            let myDropzone = '';
+            if ($form.attr('id') === 'login_image') {
+                myDropzone = myDropzone1;
+            } else if ($form.attr('id') === 'register_image') {
+                myDropzone = myDropzone2;
+            } else if ($form.attr('id') === 'verifier_email_reinitialiser_compte_image') {
+                myDropzone = myDropzone3;
+            } else if ($form.attr('id') === 'reinitialiser_mot_de_passe_image') {
+                myDropzone = myDropzone4;
+            } else if ($form.attr('id') === 'requete_reinitialiser_mot_de_passe_image') {
+                myDropzone = myDropzone5;
+            } else if ($form.attr('id') === 'verifier_email_creation_compte_image') {
+                myDropzone = myDropzone6;
+            }
+
+            if (myDropzone.files != "") {
+                myDropzone.processQueue();
+                myDropzone.on("queuecomplete", function (file, response) {
+                    $.ajax({
+                        url: $form.attr('action'),
+                        type: $form.attr('method'),
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: function (response) {
+                            if (response != 0) {
+                                toastr.clear();
+                                toastr.success('Modification effectuée avec succès');
+                                window.location = '';
+                            } else if (response == 0) {
+                                $('#send').removeClass('running');
+                                toastr.clear();
+                                toastr.error("{{ 'admin.annonce.error'|trans }}");
+                            }
+                        },
+                        error: function (response) {
+                            $('#send').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{ 'admin.annonce.error'|trans }}");
+                        }
+                    });
+                });
+            } else {
+                toastr.clear();
+                toastr.info('Choisissez l\'image du bloc 1');
+            }
+            return false;
+        });
+        (function () {
+            let ll = new LazyLoad({
+                elements_selector: ".lazy",
+            });
+        })();
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "12000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+{% endblock body_javascript %}
+

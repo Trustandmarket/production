@@ -1,0 +1,1271 @@
+{% extends 'profileTemplate.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block title %}
+    Trust &amp; Market | Fournisseur de services{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+    <link href="{{ preload(asset('assets/css/style-fournisseur.css')) }}" rel="stylesheet">
+    <link href="{{ preload(asset('assets/css/customeFournisseur.css')) }}" rel="stylesheet">
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/phone/css/intlTelInput.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+    <style>
+        .image_picker_image {
+            width: 100px;
+            height: 100px
+        }
+
+        .tox-statusbar__branding {
+            display: none;
+        }
+
+        .btn-bg-primary {
+            color: #fff;
+            background: #f17b30 !important;
+        }
+
+        .btn-bg-primary:hover {
+            color: #fff;
+            background: #f4b279 !important;
+        }
+
+        .swal2-icon {
+            color: #FF7E10 !important;
+            border-color: #FF7E10 !important;
+        }
+
+        .swal2-cancel {
+            background-color: #262626 !important;
+        }
+
+        .swal2-confirm {
+            background-color: #FF7E10 !important;
+        }
+
+        .swal2-container {
+            zoom: 0.7;
+        }
+
+
+        @media (max-width: 575.98px) {
+            main, .container {
+                margin-top: 70px;
+            }
+
+            .swal2-container {
+                zoom: 0.67 !important;
+            }
+
+            .swal2-title {
+                font-size: 1.275em !important;
+            }
+        }
+
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            main, .container {
+                margin-top: 100px;
+            }
+
+            .swal2-container {
+                zoom: 0.65 !important;
+            }
+
+            .swal2-title {
+                font-size: 1.475em !important;
+            }
+        }
+    </style>
+
+
+{% endblock %}
+
+{% block navigation %}{% endblock %}
+
+{% block body %}
+    <div class="flex-fill container">
+        <main class="">
+            <div class="container mt-2 pt-4">
+                {% include 'menuProfile.html.twig' %}
+                <div class="my-2">
+                    <p>
+                        {{ 'profil-utilisateur.fournisseurs.description'|trans }}
+                    </p>
+                </div>
+                <div class="mt-2">
+                    <!-- Modif des infos -->
+                    <div id="modifInfo">
+                        <div class="row">
+                            {% for message in app.flashes('notice') %}
+                                <div class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong>{{ message }}</strong>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                            <div class="col-md-4 mb-2">
+                                <h3>{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-titre'|trans }}</h3>
+                                <form action="{{ path('profile_updateBankingProfileData') }}"
+                                      id="updateBankingProfileData" method="post">
+                                    <div class="md-form">
+                                        <select id="bank" name="bank" class="browser-default custom-select " required>
+                                            <option value="no">Type de Compte</option>
+                                            <option value="IBAN" {% if typeCompte =='IBAN' %} selected {% endif %}>IBAN</option>
+                                            {# <option value="GB" {% if typeCompte =='GB' %} selected {% endif %}>
+                                                 GB
+                                             </option>
+                                             <option value="US" {% if typeCompte =='US' %} selected {% endif %}>
+                                                 US
+                                             </option>
+                                             <option value="CA" {% if typeCompte =='CA' %} selected {% endif %}>
+                                                 CA
+                                             </option>
+                                             <option value="autre" {% if typeCompte =='autre' %} selected {% endif %}>
+                                                 autre
+                                             </option>#}
+                                        </select>
+                                    </div>
+
+                                    {#Iban Account#}
+                                    <div class="md-form ibanAccount allBankElements" {% if typeCompte !='IBAN' %} hidden {% endif %}>
+                                        <input type="text" id="iban" name="iban"
+                                               class="form-control ibanAccountBankData">
+                                        <label for="iban">IBAN (OBLIGATOIRE)</label>
+                                    </div>
+                                    <div class="md-form ibanAccount allBankElements" {% if typeCompte !='IBAN' %} hidden {% endif %}>
+                                        <input type="text" id="bic" name="bic" class="form-control ibanAccountBankData">
+                                        <label for="bic">BIC (OBLIGATOIRE)</label>
+                                    </div>
+                                    {#Iban Account#}
+
+                                    {#GB Account#}
+                                    <div class="md-form gbAccount allBankElements" {% if typeCompte !='GB' %} hidden {% endif %}>
+                                        <input type="text" id="numeroDeCompte" name="numeroDeCompte"
+                                               class="form-control gbAccountBankData">
+                                        <label for="numeroDeCompte">Numéro De Compte (OBLIGATOIRE)</label>
+                                    </div>
+                                    <div class="md-form gbAccount allBankElements" {% if typeCompte !='GB' %} hidden {% endif %}>
+                                        <input type="text" id="sortCode" name="sortCode"
+                                               class="form-control gbAccountBankData">
+                                        <label for="sortCode">Sort Code (OBLIGATOIRE)</label>
+                                    </div>
+                                    {# Fin GB#}
+
+                                    {#US Account#}
+                                    <div class="md-form usAccount allBankElements" {% if typeCompte !='US' %} hidden {% endif %}>
+                                        <input type="text" id="numeroDeCompteUs" name="numeroDeCompteUs"
+                                               class="form-control UsAccountBankData">
+                                        <label for="numeroDeCompteUs">Numéro De Compte (OBLIGATOIRE)</label>
+                                    </div>
+                                    <div class="md-form usAccount allBankElements" {% if typeCompte !='US' %} hidden {% endif %}>
+                                        <input type="text" id="abaUs" name="abaUs"
+                                               class="form-control UsAccountBankData">
+                                        <label for="abaUs">ABA (OBLIGATOIRE)</label>
+                                    </div>
+                                    <div class="md-form usAccount allBankElements" {% if typeCompte !='US' %} hidden {% endif %}>
+                                        <strong>Type de Compte</strong>
+                                        <select id="typeDeCompteUs" name="typeDeCompteUs"
+                                                class="browser-default custom-select UsAccountBankData">
+                                            <option value="CHECKING">CHECKING</option>
+                                            <option value="SAVING">SAVING</option>
+                                        </select>
+                                    </div>
+                                    {# FIN US #}
+
+                                    {#Pour les comptes CA#}
+                                    <div class="md-form CaAccount allBankElements" {% if typeCompte !='CA' %} hidden {% endif %}>
+                                        <input type="text" id="nomDeLaBanqueCa" name="nomDeLaBanqueCa"
+                                               class="form-control CaAccountBankData">
+                                        <label for="nomDeLaBanqueCa">Nom de la banque (OBLIGATOIRE)</label>
+                                    </div>
+
+                                    <div class="md-form CaAccount allBankElements" {% if typeCompte !='CA' %} hidden {% endif %}>
+                                        <input type="text" id="numeroInstitutionCa" name="numeroInstitutionCa"
+                                               class="form-control CaAccountBankData">
+                                        <label for="numeroInstitutionCa">Numéro d'institution (OBLIGATOIRE)</label>
+                                    </div>
+
+                                    <div class="md-form CaAccount allBankElements" {% if typeCompte !='CA' %} hidden {% endif %}>
+                                        <input type="text" id="codeBrancheCa" name="codeBrancheCa"
+                                               class="form-control CaAccountBankData">
+                                        <label for="codeBrancheCa">Code de branche (OBLIGATOIRE)</label>
+                                    </div>
+
+                                    <div class="md-form CaAccount allBankElements" {% if typeCompte !='CA' %} hidden {% endif %}>
+                                        <input type="text" id="numeroDeCompteCa" name="numeroDeCompteCa"
+                                               class="form-control CaAccountBankData">
+                                        <label for="numeroDeCompteCa">
+                                            Numéro de compte (OBLIGATOIRE)</label>
+                                    </div>
+                                    {#Pour les comptes CA#}
+
+                                    {#Pour les comptes Other#}
+                                    <div class="md-form OtherAccount allBankElements" {% if typeCompte !='autre' %} hidden {% endif %}>
+                                        <strong>Pays</strong>
+                                        <select id="otherPays" name="otherPays"
+                                                class="browser-default custom-select OtherAccountBankData">
+                                            <option value="" selected>Sélectionnez un Pays ...</option>
+                                            {% include 'countryProfile.html.twig' %}
+                                        </select>
+                                    </div>
+                                    <div class="md-form OtherAccount allBankElements" {% if typeCompte !='autre' %} hidden {% endif %}>
+                                        <input type="text" id="numeroDeCompteOther" name="numeroDeCompteOther"
+                                               class="form-control OtherAccountBankData">
+                                        <label for="numeroDeCompteOther">
+                                            Numéro De Compte (OBLIGATOIRE)</label>
+                                    </div>
+
+                                    <div class="md-form OtherAccount allBankElements" {% if typeCompte !='autre' %} hidden {% endif %}>
+                                        <input type="text" id="bicOther" name="bicOther"
+                                               class="form-control OtherAccountBankData">
+                                        <label for="bicOther">
+                                            BIC (OBLIGATOIRE)</label>
+                                    </div>
+                                    {#FIN les comptes Other#}
+
+                                    <div class="md-form">
+                                        <input type="text" id="accountHolder" name="accountHolder" class="form-control"
+                                               value="{{ nomCompte }}" required>
+                                        <label for="accountHolder">{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-nom'|trans }}</label>
+                                    </div>
+                                    <div class="md-form">
+                                        <input type="text" id="addressHolder" name="addressHolder" class="form-control"
+                                               value="{{ adresseDetenteur }}" required>
+                                        <label for="addressHolder">{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-adresse'|trans }}</label>
+
+                                    </div>
+                                    <div class="md-form">
+                                        <input type="text" id="cityHolder" name="cityHolder" class="form-control"
+                                               value="{{ villeCompte }}" required>
+                                        <label for="cityHolder">{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-ville'|trans }}</label>
+                                    </div>
+                                    <div class="md-form">
+                                        <input type="text" id="codePostalHolder" name="codePostalHolder"
+                                               class="form-control" value="{{ codePostaleCompte }}" required>
+                                        <label for="codePostalHolder">{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-code-postal'|trans }}</label>
+                                    </div>
+                                    <div class="md-form">
+                                        <strong>{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-pays'|trans }}</strong>
+                                        <select id="countryHolder" name="countryHolder"
+                                                class="browser-default custom-select" value="{{ paysCompte }}" required>
+                                            <option value="" selected>Choix de Pays...</option>
+                                            {% include 'country.html.twig' %}
+                                        </select>
+                                    </div>
+                                    <div class="md-form">
+                                        <input type="text" id="regionHolder" name="regionHolder" class="form-control"
+                                               required value="{{ regionCompte }}">
+                                        <label for="regionHolder">{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-region'|trans }}</label>
+
+                                    </div>
+                                    <button id="enregProfile" class="btn btn-md btn-success p-3"
+                                            type="submit">{{ 'profil-utilisateur.fournisseurs.formulaire-fournisseurs-bouton-enregistrer'|trans }}</button>
+                                </form>
+                            </div>
+
+                            {#for BILLING DATA#}
+
+                            <form class="col-md-8 border-left border-dark"
+                                  action="{{ path('profile_updateBillingProfileData') }}" id="updateBillingProfileData"
+                                  method="post">
+                                <div class="row">
+                                    <h3 class="col-md-12">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-titre'|trans }}</h3>
+                                    <div class="col-md-6">
+                                        <div class="md-form">
+                                            <input type="text" id="siret" name="siret" class="form-control" required
+                                                   value="{{ siret }}">
+                                            <label for="siret">SIRET</label>
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="text" id="tva" name="tva" class="form-control"
+                                                   value="{{ tva }}">
+                                            <label for="tva">TVA</label>
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="text" id="nomEntreprise" name="nomEntreprise"
+                                                   class="form-control" value="{{ nomEntreprise }}">
+                                            <label for="nomEntreprise">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-nom-entreprise'|trans }}</label>
+                                        </div>
+                                        <div class="md-form">
+                                            <strong>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-pays'|trans }}
+                                                *</strong>
+                                            <select id="pays" name="pays" class="browser-default custom-select"
+                                                    required>
+                                                {% include 'countryProfile.html.twig' %}
+                                            </select>
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="text" id="numeroNomRue" name="numeroNomRue"
+                                                   class="form-control" required value="{{ numeroNomRue }}">
+                                            <label for="numeroNomRue">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-numero-rue'|trans }}
+                                                *</label>
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="text" id="codePostal" name="codePostal" class="form-control"
+                                                   required value="{{ codePostal }}">
+                                            <label for="codePostal">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-code-postal'|trans }}
+                                                *</label>
+
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="text" id="ville" name="ville" class="form-control" required
+                                                   value="{{ ville }}">
+                                            <label for="ville">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-ville'|trans }}
+                                                *</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="md-form">
+                                            <input type="text" id="etatComte" name="etatComte" class="form-control"
+                                                   required {% if etatComte is not null %} value="{{ etatComte }}" {% endif %}>
+                                            <label for="etatComte">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-etat-comte'|trans }}
+                                                *</label>
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="text" id="telephone" name="telephone" class="form-control"
+                                                   value="{{ telephone }}">
+                                            <label for="tel"
+                                                   class="active">{{ 'profil-utilisateur.formulaire-profil.telephone'|trans }}</label>
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="email" id="email" name="email" class="form-control" required
+                                                   value="{{ email }}">
+                                            <label for="email">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-email'|trans }}
+                                                *</label>
+                                        </div>
+                                        <strong class="bg-warning guide">Vous devez télécharger les documents suivants
+                                            pour effectuer les vérifications de conformité</strong>
+                                        {# Gestion des fichiers pour les Auto Entrepreneur #}
+                                        {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
+                                            <p class="mt-2 mb-3 guide">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-identite'|trans }}
+                                                -
+                                                <span>
+													{% if identite is not null and identite|length > 0 %}
+                                                        {% if identite|first.Status == "VALIDATION_ASKED" or identite|first.Status == "CREATED" %}
+                                                            {{ 'profil-utilisateur.status.validation_demandee'|trans }}
+                                                        {% endif %}
+                                                        {% if identite|first.Status == "VALIDATED" %}
+                                                            {{ 'profil-utilisateur.status.valide'|trans }}
+                                                        {% endif %}
+                                                        {% if identite|first.Status == "REFUSED" %}
+                                                            {{ 'profil-utilisateur.status.validation_refusee'|trans }}
+                                                        {% endif %}
+                                                    {% else %}
+                                                        Pas encore envoyé
+                                                    {% endif %}
+												</span><br>
+                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-enregistrement'|trans }}
+                                                -
+                                                <span>
+													{% if enregistrement is not null and enregistrement|length > 0 %}
+                                                        {% if enregistrement|first.Status == "VALIDATION_ASKED" or enregistrement|first.Status == "CREATED" %}
+                                                            {{ 'profil-utilisateur.status.validation_demandee'|trans }}
+                                                        {% endif %}
+                                                        {% if enregistrement|first.Status == "VALIDATED" %}
+                                                            {{ 'profil-utilisateur.status.valide'|trans }}
+                                                        {% endif %}
+                                                        {% if enregistrement|first.Status == "REFUSED" %}
+                                                            {{ 'profil-utilisateur.status.validation_refusee'|trans }}
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {% if enregistrement == null %}
+                                                        {% else %}
+                                                            Pas encore envoyé
+                                                        {% endif %}
+                                                    {% endif %}
+												</span><br>
+                                            <div class="md-form">
+                                                <select id="doc" name="doc" class="browser-default custom-select ">
+                                                    <option value="identite">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-identite'|trans }}</option>
+                                                    <option value="enregistrement">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-enregistrement'|trans }}</option>
+                                                </select>
+                                            </div>
+                                            <strong>
+                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-envoyer-document'|trans }}
+                                            </strong>
+                                            <div class="custom-file mb-3">
+                                                <input type="file"
+                                                       accept="image/png,image/jpeg,image/jpeg,.pdf,image/gif"
+                                                       class="custom-file-input" name="fileDoc" id="customFileLangg"
+                                                       lang="{{ app.request.getLocale() }}">
+                                                <label class="custom-file-label" for="customFileLangg">
+                                                    {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-selectionner-fichiers'|trans }}
+                                                </label>
+                                            </div>
+                                        {% endif %}
+                                        {#  Fin gestion pour Auto_Entrepreneur #}
+
+                                        {# Gestion des fichiers pour les Societe #}
+                                        {% if app.user.roles.0 == "ROLE_SOCIETE" %}
+                                            <p class="mt-2 mb-3 guide">
+                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-identite'|trans }}
+                                                -
+                                                <span>
+														{% if identite is not null and identite|length > 0 %}
+                                                            {% if identite|first.Status == "VALIDATION_ASKED" or identite|first.Status == "CREATED" %}
+                                                                {{ 'profil-utilisateur.status.validation_demandee'|trans }}
+                                                            {% endif %}
+                                                            {% if identite|first.Status == "VALIDATED" %}
+                                                                {{ 'profil-utilisateur.status.valide'|trans }}
+                                                            {% endif %}
+                                                            {% if identite|first.Status == "REFUSED" %}
+                                                                {{ 'profil-utilisateur.status.validation_refusee'|trans }}
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% if identite == null %}
+                                                            {% else %}
+                                                                Pas encore envoyé
+                                                            {% endif %}
+                                                        {% endif %}
+													</span><br>
+                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-enregistrement'|trans }}
+                                                -
+                                                <span>
+														{% if enregistrement is not null and enregistrement|length > 0 %}
+                                                            {% if enregistrement|first.Status == "VALIDATION_ASKED" or enregistrement|first.Status == "CREATED" %}
+                                                                {{ 'profil-utilisateur.status.validation_demandee'|trans }}
+                                                            {% endif %}
+                                                            {% if enregistrement|first.Status == "VALIDATED" %}
+                                                                {{ 'profil-utilisateur.status.valide'|trans }}
+                                                            {% endif %}
+                                                            {% if enregistrement|first.Status == "REFUSED" %}
+                                                                {{ 'profil-utilisateur.status.validation_refusee'|trans }}
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% if enregistrement == null %}
+                                                            {% else %}
+                                                                Pas encore envoyé
+                                                            {% endif %}
+                                                        {% endif %}
+													</span><br>
+                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-statut'|trans }}
+                                                -
+                                                <span>
+														{% if statuts is not null and statuts|length > 0 %}
+                                                            {% if statuts|first.Status == "VALIDATION_ASKED" or statuts|first.Status == "CREATED" %}
+                                                                {{ 'profil-utilisateur.status.validation_demandee'|trans }}
+                                                            {% endif %}
+                                                            {% if statuts|first.Status == "VALIDATED" %}
+                                                                {{ 'profil-utilisateur.status.valide'|trans }}
+                                                            {% endif %}
+                                                            {% if statuts|first.Status == "REFUSED" %}
+                                                                {{ 'profil-utilisateur.status.validation_refusee'|trans }}
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% if statuts == null %}
+                                                            {% else %}
+                                                                Pas encore envoyé
+                                                            {% endif %}
+                                                        {% endif %}
+													</span><br>
+                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-shareholder'|trans }}
+                                                -
+                                                <span>
+														{% if shareholder is not null and shareholder|length > 0 %}
+                                                            {% if shareholder|first.Status == "VALIDATION_ASKED" or shareholder|first.Status == "CREATED" %}
+                                                                {{ 'profil-utilisateur.status.validation_demandee'|trans }}
+                                                            {% endif %}
+                                                            {% if shareholder|first.Status == "VALIDATED" %}
+                                                                {{ 'profil-utilisateur.status.valide'|trans }}
+                                                            {% endif %}
+                                                            {% if shareholder|first.Status == "REFUSED" %}
+                                                                {{ 'profil-utilisateur.status.validation_refusee'|trans }}
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% if shareholder == null %}
+                                                            {% else %}
+                                                                Pas encore envoyé
+                                                            {% endif %}
+                                                        {% endif %}
+													</span>
+                                            </p>
+                                            {#  {{dump(kbis)}}  {{dump(shareholder)}} #}
+                                            <div class="md-form">
+                                                <select id="doc" name="doc" class="browser-default custom-select ">
+                                                    <option value="identite"
+                                                            selected>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-identite'|trans }}</option>
+                                                    <option value="enregistrement"
+                                                            selected>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-enregistrement'|trans }}</option>
+                                                    <option value="statuts"
+                                                            selected>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-statut'|trans }}</option>
+                                                    <option value="shareholder"
+                                                            selected>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-shareholder'|trans }}</option>
+                                                </select>
+                                            </div>
+                                            <strong>
+                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-envoyer-document'|trans }}
+                                            </strong>
+                                            <div class="custom-file mb-3">
+                                                <input type="file" class="custom-file-input" name="fileDoc"
+                                                       id="customFileLangg" lang="{{ app.request.getLocale() }}">
+                                                <label class="custom-file-label" for="customFileLangg">
+                                                    {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-selectionner-fichiers'|trans }}
+                                                </label>
+                                            </div>
+                                        {% endif %}
+                                        {#  Fin gestion pour Societe #}
+                                        {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
+                                            <div class="d-flex justify-content-between">
+                                                <a id="societe"
+                                                   class="btn btn-md float-left p-3 switch">{{ 'profil-utilisateur.fournisseurs-abonne.passez-societe'|trans }}</a>
+                                                <button id="enregProfile2"
+                                                        class="btn btn-md btn-success float-right  p-3" type="submit">
+                                                    {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-bouton-confirmer'|trans }}
+                                                </button>
+                                            </div>
+                                        {% else %}
+                                            <button id="enregProfile2" class="btn btn-md btn-success float-right p-3"
+                                                    type="submit">
+                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-bouton-confirmer'|trans }}
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Fin des modifs -->
+                </div>
+            </div>
+            {% include("partials/project.html.twig") %}
+            {% include("partials/otherPagesVideoModal.html.twig") %}
+        </main>
+    </div>
+{% endblock %}
+	{% block footer %}
+        {{ parent() }}
+    {% endblock %}
+
+	{% block javascripts %}
+        {{ parent() }}
+        <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+        <script src="{{ asset('assets/phone/js/intlTelInput.min.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.all.min.js"></script>
+
+        <script>
+            $(document).ready(function () {
+                var docWidth = document.documentElement.offsetWidth;
+                [].forEach.call(document.querySelectorAll('*'), function (el) {
+                    if (el.offsetWidth > docWidth) {
+                        console.log(el);
+                    }
+                });
+
+// Handle Account data
+
+                $('#bank').on('change', function () {
+                    $(".allBankElements").attr("hidden", true);
+                    $(".allBankElements").children("input").removeAttr('required');
+
+                    if ($('#bank').val() == "IBAN") {
+                        $('.ibanAccount').removeAttr('hidden');
+                        let xElements = document.getElementsByClassName("ibanAccountBankData");
+                        for (let i = 0; i < xElements.length; i++) {
+                            xElements[i].required = true;
+                        }
+                    }
+
+                    if ($('#bank').val() == "GB") {
+                        $('.gbAccount').removeAttr('hidden');
+                        let xElements = document.getElementsByClassName("GbAccountBankData");
+                        for (let i = 0; i < xElements.length; i++) {
+                            xElements[i].required = true;
+                        }
+                    }
+
+                    if ($('#bank').val() == "US") {
+                        $('.usAccount').removeAttr('hidden');
+                        let xElements = document.getElementsByClassName("UsAccountBankData");
+                        for (let i = 0; i < xElements.length; i++) {
+                            xElements[i].required = true;
+                        }
+                    }
+
+                    if ($('#bank').val() == "CA") {
+                        console.log('OK');
+                        $('.CaAccount').removeAttr('hidden');
+                        let xElements = document.getElementsByClassName("OtherAccountBankData");
+                        for (let i = 0; i < xElements.length; i++) {
+                            xElements[i].required = true;
+                        }
+                    }
+
+                    if ($('#bank').val() == "autre") {
+                        $('.OtherAccount').removeAttr('hidden');
+                        let xElements = document.getElementsByClassName("OtherAccountBankData");
+                        for (let i = 0; i < xElements.length; i++) {
+                            xElements[i].required = true;
+                        }
+                    }
+                });
+// Hamburger menu icon
+                $('.animated-button-icon').on('click', function () {
+                    $('.animated-icon2').toggleClass('open');
+                });
+// first thing turn Hide Menu Search bar
+                $("#searchMenu").hide();
+// toggle menu search bar on/off
+                $("#searchMenuShowHide").click(function () {
+                    $("#searchMenu").toggle("slide");
+                });
+
+// Validation for phone number
+                function validatePhoneNumber(phone) {
+                    let re = /^(\+|00)[0-9]{1,3}[0-9 ]{4,20}(?:x.+)?$/;
+                    return re.test(phone);
+                }
+
+                function validateEmail(email) {
+                    let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                    return re.test(email);
+                }
+
+                $(document).on('click', '.switch', function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: "Pour changer de profil, veuillez  renseigner l’adresse de votre entreprise",
+                        html: `<div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="adresse">Adresse *</label>
+                        <input type="text" id="adresse" value="{{ numeroNomRue }}" class="form-control" placeholder="Adresse"></div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="ville">Ville *</label>
+                        <input type="text" id="ville" value="{{ ville }}" class="form-control" placeholder="Ville"></div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <select id="pays" id="pays" class="form-control" style="border: 1px solid #d9d9d9;
+                            border-radius: 0.1875em;background: rgba(0,0,0,0); box-shadow: inset 0 1px 1px rgba(0,0,0,.06), 0 0 0 3px rgba(0,0,0,0);"><option value="">Pays de residence...</option>{% include 'countryProfile.html.twig' %}</select></select>
+                        </div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="postal_code">Code Postale *</label>
+                        <input type="text" id="postal_code" value="{{ codePostal }}" class="form-control" placeholder="Code Postale"></div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="region">Region *</label>
+                        <input type="text" id="region" value="{{ etatComte }}" class="form-control" placeholder="Region"></div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="compagny_number">Siret *</label>
+                        <input type="text" id="compagny_number" value="{{ siret }}" class="form-control" placeholder="Siret"></div>
+                        <div class="form-floating col-md-10 m-auto p-2">
+                        <label class="float-left" for="compagny_name">Dénomination sociale *</label>
+                        <input type="text" id="compagny_name" value="{{ nomEntreprise }}" class="form-control" placeholder="Dénomination sociale"></div>`,
+                        cancelButtonText: "Annuler",
+                        confirmButtonText: "Valider",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        reverseButtons: true,
+                        focusConfirm: false,
+                        preConfirm: () => {
+                            const adresse = Swal.getPopup().querySelector('#adresse').value
+                            const ville = Swal.getPopup().querySelector('#ville').value
+                            const pays = Swal.getPopup().querySelector('#pays').value
+                            const postal_code = Swal.getPopup().querySelector('#postal_code').value
+                            const region = Swal.getPopup().querySelector('#region').value
+                            const compagny_number = Swal.getPopup().querySelector('#compagny_number').value
+                            const compagny_name = Swal.getPopup().querySelector('#compagny_name').value
+                            if (!adresse || !ville || !pays || !postal_code || !region || !compagny_number || !compagny_name) {
+                                Swal.showValidationMessage(`Veuillez remplir les champs du formulaire`)
+                            }
+                            return {
+                                adresse: adresse,
+                                ville: ville,
+                                pays: pays,
+                                postal_code: postal_code,
+                                region: region,
+                                compagny_number: compagny_number,
+                                compagny_name: compagny_name,
+                                user_new_role: 'ROLE_SOCIETE'
+                            }
+                        }
+                    }).then((result) => {
+                        if (result.value) {
+                            $.ajax({
+                                url: "{{ path('profile_app_switch') }}",
+                                type: 'POST',
+                                processData: false,
+                                dataType: 'json',
+                                contentType: 'application/json',
+                                data: JSON.stringify(result.value),
+                                success: function (response) {
+                                    if (response.status == 200) {
+                                        console.log(JSON.stringify(result.value));
+                                        console.log(response);
+                                        swal.fire("Succès!", "Mise a jour du profil effectuée avec succès.", response.status);
+                                        window.location = '{{ path('profile_profile' ) }}';
+                                    } else {
+                                        swal.fire("Erreur!", "Un probleme est survenu", response.status);
+                                    }
+                                },
+                                error: function (response) {
+                                    swal.fire("Erreur!", "Un probleme est survenu", response.status);
+                                }
+                            });
+                        }
+                    })
+                });
+
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-center",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "12000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+
+// Validate fields for Billing
+// First Name
+                $("#siret").keyup(function () {
+                    let siret = $("#siret").val();
+                    siret = siret.replace(/[^A-Z0-9]+/ig, "");
+                    $("#siret").val(siret);
+                    if (siret != '') {
+                        $("#siret").removeClass("is-invalid");
+                        $("#siret").addClass("is-valid");
+                    } else {
+                        $("#siret").removeClass("is-valid");
+                        $("#siret").addClass("is-invalid");
+                    }
+                });
+
+// Last Name
+                $("#tva").change(function () {
+                    let tva = $("#tva").val();
+                    if (isNaN(tva)) {
+                        $("#tva").removeClass("is-invalid");
+                        $("#tva").addClass("is-valid");
+                    } else {
+                        $("#tva").removeClass("is-valid");
+                        $("#tva").addClass("is-invalid");
+                    }
+                });
+
+                $("#nomEntreprise").change(function () {
+                    let nomEntreprise = $("#nomEntreprise").val();
+                    if (isNaN(nomEntreprise)) {
+                        $("#nomEntreprise").removeClass("is-invalid");
+                        $("#nomEntreprise").addClass("is-valid");
+                    } else {
+                        $("#nomEntreprise").removeClass("is-valid");
+                        $("#nomEntreprise").addClass("is-invalid");
+                    }
+                });
+
+
+                $("#email").change(function () {
+                    let email = $("#email").val();
+                    if (validateEmail(email)) {
+                        $("#email").removeClass("is-invalid");
+                        $("#email").addClass("is-valid");
+                    } else {
+                        $("#email").removeClass("is-valid");
+                        $("#email").addClass("is-invalid");
+                    }
+
+                });
+
+                $("#telephone").keyup(function () {
+                    let phone = $("#telephone").val().replace(/\s|[a-zA-Z]/g, "");
+                    $("#telephone").val(phone);
+                    if (validatePhoneNumber(phone)) {
+                        $("#telephone").removeClass("is-invalid");
+                        $("#telephone").addClass("is-valid");
+                    } else {
+                        $("#telephone").removeClass("is-valid");
+                        $("#telephone").addClass("is-invalid");
+                    }
+                });
+
+                $("#pays").change(function () {
+                    let prenom = $("#pays").val();
+                    if (isNaN(prenom)) {
+                        $("#pays").removeClass("is-invalid");
+                        $("#pays").addClass("is-valid");
+                    } else {
+                        $("#pays").removeClass("is-valid");
+                        $("#pays").addClass("is-invalid");
+                    }
+                });
+
+                $("#numeroNomRue").change(function () {
+                    let numeroNomRue = $("#numeroNomRue").val();
+                    if (isNaN(numeroNomRue)) {
+                        $("#numeroNomRue").removeClass("is-invalid");
+                        $("#numeroNomRue").addClass("is-valid");
+                    } else {
+                        $("#numeroNomRue").removeClass("is-valid");
+                        $("#numeroNomRue").addClass("is-invalid");
+                    }
+                });
+
+                $("#codePostal").on("input", function () {
+                    let codePostal = $(this).val().replace(/\s/g, ""); // Remove spaces
+                    $(this).val(codePostal);
+
+                    let country = $("#pays").val(); // Get selected country
+                    let regexPatterns = {
+                        "FR": /^\d{5}$/,                  // France: 75001
+                        "US": /^\d{5}(-\d{4})?$/,         // USA: 12345 or 12345-6789
+                        "UK": /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i, // UK: SW1A 1AA
+                        "DE": /^\d{5}$/,                  // Germany: 12345
+                        "CA": /^[A-Z]\d[A-Z] ?\d[A-Z]\d$/i, // Canada: A1A 1A1
+                        "IN": /^\d{6}$/,                  // India: 110011
+                        "IT": /^\d{5}$/,                  // Italy: 00100
+                        "ES": /^\d{5}$/,                  // Spain: 28001
+                        "AU": /^\d{4}$/,                  // Australia: 2000
+                        "JP": /^\d{3}-\d{4}$/,            // Japan: 123-4567
+                        "BR": /^\d{5}-\d{3}$/,            // Brazil: 12345-678
+                        "MX": /^\d{5}$/                   // Mexico: 12345
+                    };
+
+                    let isValid = regexPatterns[country] ? regexPatterns[country].test(codePostal) : false;
+
+                    if (isValid) {
+                        $(this).removeClass("is-invalid").addClass("is-valid");
+                    } else {
+                        $(this).removeClass("is-valid").addClass("is-invalid");
+                    }
+                });
+
+
+
+                $("#ville").change(function () {
+                    let ville = $("#ville").val();
+                    if (isNaN(ville)) {
+                        $("#ville").removeClass("is-invalid");
+                        $("#ville").addClass("is-valid");
+                    } else {
+                        $("#ville").removeClass("is-valid");
+                        $("#ville").addClass("is-invalid");
+                    }
+                });
+
+                $("#etatComite").change(function () {
+                    let etatComite = $("#etatComite").val();
+                    if (isNaN(etatComite)) {
+                        $("#etatComite").removeClass("is-invalid");
+                        $("#etatComite").addClass("is-valid");
+                    } else {
+                        $("#etatComite").removeClass("is-valid");
+                        $("#etatComite").addClass("is-invalid");
+                    }
+                });
+                // For banking data Validations
+
+                // Bank
+                $("#bank").change(function () {
+                    let bank = $("#bank").val();
+                    if (bank != null) {
+                        $("#bank").removeClass("is-invalid");
+                        $("#bank").addClass("is-valid");
+                    } else {
+                        $("#bank").removeClass("is-valid");
+                        $("#bank").addClass("is-invalid");
+                    }
+                });
+
+                // Function to validate IBAN using regex pattern
+                function isValidIBAN(iban) {
+                    return /^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(iban);
+                }
+
+                // Function to validate BIC using regex pattern
+                function isValidBIC(bic) {
+                    return /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(bic);
+                }
+
+                $("#iban").on("input", function () {
+                    let iban = $(this).val().toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+                    $(this).val(iban); // Ensure field only contains allowed characters
+
+                    if (iban.length > 4 && isValidIBAN(iban)) {
+                        $(this).removeClass("is-invalid").addClass("is-valid");
+                    } else {
+                        $(this).removeClass("is-valid").addClass("is-invalid");
+                    }
+
+                    // If IBAN is set, ensure BIC is not empty
+                    if (iban.length > 4 && !$("#bic").val()) {
+                        $("#bic").removeClass("is-valid").addClass("is-invalid");
+                    }
+                });
+
+                $("#bic").on("input", function () {
+                    let bic = $(this).val().toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+                    $(this).val(bic); // Ensure field only contains allowed characters
+
+                    if (isValidBIC(bic)) {
+                        $(this).removeClass("is-invalid").addClass("is-valid");
+                    } else {
+                        $(this).removeClass("is-valid").addClass("is-invalid");
+                    }
+                });
+
+                // For US ACCOUNT
+
+                $("#numeroDeCompteUs").keyup(function () {
+
+                    let prenom = $("#numeroDeCompteUs").val();
+                    let iban = prenom.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    let match = iban.match(/^[0-9]{7,14}$/);
+                    console.log(match);
+                    if (match == null) {
+                        $("#numeroDeCompteUs").removeClass("is-valid");
+                        $("#numeroDeCompteUs").addClass("is-invalid");
+                    } else {
+                        $("#numeroDeCompteUs").removeClass("is-invalid");
+                        $("#numeroDeCompteUs").addClass("is-valid");
+                    }
+                });
+
+                $("#abaUs").keyup(function () {
+
+                    let prenom = $("#abaUs").val();
+                    let iban = prenom.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    let match = iban.match(/^([A-Z]{2})(\d{2})(.+)$/);
+                    console.log(match);
+                    if (match == null) {
+                        $("#abaUs").removeClass("is-valid");
+                        $("#abaUs").addClass("is-invalid");
+                    } else {
+                        $("#abaUs").removeClass("is-invalid");
+                        $("#abaUs").addClass("is-valid");
+                    }
+                });
+// END US VALIDATION
+
+// For GB ACCOUNT
+                $("#numeroDeCompte").keyup(function () {
+                    let prenom = $("#numeroDeCompte").val();
+                    let iban = prenom.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    let match = iban.match(/^(\d){8}$/);
+                    console.log(match);
+                    if (match == null) {
+                        $("#numeroDeCompte").removeClass("is-valid");
+                        $("#numeroDeCompte").addClass("is-invalid");
+                    } else {
+                        $("#numeroDeCompte").removeClass("is-invalid");
+                        $("#numeroDeCompte").addClass("is-valid");
+                    }
+                });
+
+                $("#sortCode").keyup(function () {
+
+                    let prenom = $("#sortCode").val();
+                    let iban = prenom;
+                    let match = iban.match(/^(\d){2}-(\d){2}-(\d){2}$/);
+                    console.log(match);
+                    if (match == null) {
+                        $("#sortCode").removeClass("is-valid");
+                        $("#sortCode").addClass("is-invalid");
+                    } else {
+                        $("#sortCode").removeClass("is-invalid");
+                        $("#sortCode").addClass("is-valid");
+                    }
+                });
+// END US VALIDATION
+
+// For CA ACCOUNT
+                $("#numeroDeCompteCa").keyup(function () {
+                    let prenom = $("#numeroDeCompteCa").val();
+                    let iban = prenom.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    let match = iban.match(/^(\d){8}$/);
+                    console.log(match);
+                    if (match == null) {
+                        $("#numeroDeCompteCa").removeClass("is-valid");
+                        $("#numeroDeCompteCa").addClass("is-invalid");
+                    } else {
+                        $("#numeroDeCompteCa").removeClass("is-invalid");
+                        $("#numeroDeCompteCa").addClass("is-valid");
+                    }
+                });
+
+                $("#codeBrancheCa").keyup(function () {
+
+                    let prenom = $("#codeBrancheCa").val();
+                    let iban = prenom;
+                    let match = iban.match(/^(\d){2}-(\d){2}-(\d){2}$/);
+                    console.log(match);
+                    if (match == null) {
+                        $("#codeBrancheCa").removeClass("is-valid");
+                        $("#codeBrancheCa").addClass("is-invalid");
+                    } else {
+                        $("#codeBrancheCa").removeClass("is-invalid");
+                        $("#codeBrancheCa").addClass("is-valid");
+                    }
+                });
+                // END US VALIDATION
+
+                // For OTHER ACCOUNT
+                $("#numeroDeCompteOther").keyup(function () {
+                    let prenom = $("#numeroDeCompteOther").val();
+                    let iban = prenom.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    let match = iban.match(/^([A-Z]{2})(\d{2})(.+)$/);
+                    if (match == null) {
+                        $("#numeroDeCompteOther").removeClass("is-valid");
+                        $("#numeroDeCompteOther").addClass("is-invalid");
+                    } else {
+                        $("#numeroDeCompteOther").removeClass("is-invalid");
+                        $("#numeroDeCompteOther").addClass("is-valid");
+                    }
+                });
+
+                $("#bicOther").keyup(function () {
+                    let prenom = $("#bicOther").val();
+                    let iban = prenom;
+                    let match = iban.match(/([a-zA-Z]{4})([a-zA-Z]{2})(([2-9a-zA-Z]{1})([0-9a-np-zA-NP-Z]{1}))((([0-9a-wy-zA-WY-Z]{1})([0-9a-zA-Z]{2}))|([xX]{3})|)/);
+                    console.log(match);
+                    if (match == null) {
+                        $("#bicOther").removeClass("is-valid");
+                        $("#bicOther").addClass("is-invalid");
+                    } else {
+                        $("#bicOther").removeClass("is-invalid");
+                        $("#bicOther").addClass("is-valid");
+                    }
+                });
+                // END OTHER VALIDATION
+
+                // Last Name
+                $("#accountHolder").change(function () {
+                    let nom = $("#accountHolder").val();
+                    if (isNaN(nom)) {
+                        $("#accountHolder").removeClass("is-invalid");
+                        $("#accountHolder").addClass("is-valid");
+                    } else {
+                        $("#accountHolder").removeClass("is-valid");
+                        $("#accountHolder").addClass("is-invalid");
+                    }
+                });
+
+                $("#addressHolder").change(function () {
+                    let addressHolder = $("#addressHolder").val();
+                    if (isNaN(addressHolder)) {
+                        $("#addressHolder").removeClass("is-invalid");
+                        $("#addressHolder").addClass("is-valid");
+                    } else {
+                        $("#addressHolder").removeClass("is-valid");
+                        $("#addressHolder").addClass("is-invalid");
+                    }
+                });
+
+
+                $("#codePostalHolder").keyup(function () {
+                    let codePostal = $("#codePostalHolder").val();
+                    let resultTest = /^([0-9]{5})$/.test(codePostal);
+                    if (resultTest) {
+                        $("#codePostalHolder").removeClass("is-invalid");
+                        $("#codePostalHolder").addClass("is-valid");
+                        $("#enregProfile").removeAttr("disabled");
+                    } else {
+                        $("#codePostalHolder").removeClass("is-valid");
+                        $("#codePostalHolder").addClass("is-invalid");
+                        $("#enregProfile").prop("disabled", true);
+                    }
+
+                });
+
+                $("#countryHolder").change(function () {
+                    let phone = $("#countryHolder").val();
+                    if (isNaN(phone)) {
+                        $("#countryHolder").removeClass("is-invalid");
+                        $("#countryHolder").addClass("is-valid");
+                    } else {
+                        $("#countryHolder").removeClass("is-valid");
+                        $("#countryHolder").addClass("is-invalid");
+                    }
+
+                });
+
+                $("#cityHolder").change(function () {
+                    let prenom = $("#cityHolder").val();
+                    if (isNaN(prenom)) {
+                        $("#cityHolder").removeClass("is-invalid");
+                        $("#cityHolder").addClass("is-valid");
+                    } else {
+                        $("#cityHolder").removeClass("is-valid");
+                        $("#cityHolder").addClass("is-invalid");
+                    }
+                });
+
+                $("#regionHolder").change(function () {
+                    let regionHolder = $("#regionHolder").val();
+                    if (isNaN(regionHolder)) {
+                        $("#regionHolder").removeClass("is-invalid");
+                        $("#regionHolder").addClass("is-valid");
+                    } else {
+                        $("#regionHolder").removeClass("is-valid");
+                        $("#regionHolder").addClass("is-invalid");
+                    }
+                });
+                // End Bankin Data
+                $("[for=tel]").addClass("active");
+
+                // Preview selected profile photo
+                function readURL(input) {
+                    if (input.files && input.files[0]) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) { // $('#blah').attr('src', e.target.result);
+                            $('#blah').html('<img style="max-height:400px" width="100%" src="' + e.target.result + '" >');
+                        }
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
+
+                $("#imageUpload").change(function () {
+                    readURL(this);
+                });
+                // For banking form
+                function validateFrenchPostalCode($postalCode) {
+                    return preg_match('/^\d{5}$/', $postalCode);
+                }
+                // Modification des données bancaires de l'utilisateur
+                $('#updateBankingProfileData').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                    e.preventDefault();
+
+                    if ($('#accountHolder').val() != '') {
+
+                        $('#enregProfile').addClass('running');
+                        toastr.info('{{ 'systeme.requetes.requete-en-cours'|trans }}');
+
+                        let $form = $(this);
+                        let formdata = (window.FormData) ? new FormData($form[0]) : null;
+                        let data = (formdata !== null) ? formdata : $form.serialize();
+
+                        $.ajax({
+                            url: $form.attr('action'),
+                            type: $form.attr('method'),
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function (response) {
+                                console.log(response);
+                                toastr.clear();
+                                // Handle missing required user data
+                                if (response.result === 11) {
+                                    toastr.warning(response.error || 'Des informations nécessaires sont introuvables, mettez à jour votre profil.');
+                                    //window.location.reload();
+                                }
+                                if (response.card.error) {
+                                    toastr.warning(response.card.error.message || 'Des informations nécessaires sont introuvables, mettez à jour votre profil.');
+                                    //window.location.reload();
+                                }
+                                // Handle errors from Stripe API
+                                else if (response.result === 0) {
+                                    toastr.error(response.error || 'Une erreur est survenue lors de la mise à jour.');
+                                    $('#enregProfile').removeClass('running');
+                                }
+                                // Success
+                                else if (response.result === 1) {
+                                    console.log(response);
+                                    toastr.success(response.message || 'Vos données bancaires ont été mises à jour');
+                                    // Optionally refresh the page or update UI
+                                    //window.location.reload();
+                                }
+                            },
+                            error: function (response) {
+                                $('#enregProfile').removeClass('running');
+                                toastr.clear();
+                                toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+                            }
+                        });
+                    }
+                    return false;
+                });
+
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-center",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "12000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+                // End Banking Form
+                // For Billing Form
+                // Modification des données bancaires de l'utilisateur
+
+                $('#updateBillingProfileData').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                    e.preventDefault();
+                    if ($('#prenom').val() != '') { // remove space in phone
+                        $('#telephone').val($('#telephone').val().replace(/\s/g, ''));
+                        $('#enregProfile2').addClass('running');
+                        toastr.info('{{ 'systeme.requetes.requete-en-cours'|trans }}');
+                        let $form = $(this);
+                        let formdata = (window.FormData) ? new FormData($form[0]) : null;
+                        let data = (formdata !== null) ? formdata : $form.serialize();
+                        $.ajax({
+                            url: $form.attr('action'),
+                            type: $form.attr('method'),
+                            contentType: false,
+                            processData: false,
+                            data: data,
+                            success: function (response) {
+                                console.log(response)
+                                if (response.result == 1) {
+                                    if (response.stripeUserUpdate.error) {
+                                        let errorMsg = response.stripeUserUpdate.error.message;
+                                        toastr.clear();
+                                        toastr.error("Erreur Stripe : " + errorMsg);
+                                    } else {
+                                        toastr.clear();
+                                        toastr.success('{{ 'systeme.requetes.succes'|trans }}');
+                                        window.location = "";
+                                    }
+                                } else if (response.result == 0) {
+                                    $('#enregProfile2').removeClass('running');
+                                    toastr.clear();
+                                    toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+                                }
+                            },
+                            error: function (response) {
+                                $('#enregProfile2').removeClass('running');
+                                toastr.clear();
+                                toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+                            }
+                        });
+                    }
+                    return false;
+                });
+
+                let input = document.querySelector("#telephone");
+                window.intlTelInput(input, {
+                    autoHideDialCode: true,
+                    initialCountry: "fr",
+                    nationalMode: false,
+                    formatOnDisplay: false,
+// separateDialCode: true,
+                    utilsScript: "{{ asset('assets/phone/js/utils.min.js') }}"
+                });
+
+            });
+        </script>
+
+    {% endblock %}

@@ -1,0 +1,254 @@
+{% extends 'profileTemplate.html.twig' %}
+
+  {% block head %}
+  {{parent()}}
+
+ {% endblock %}
+
+{% block title %}Trust &amp; Market | Notifications{% endblock %}{% block style %}
+    {{parent()}}
+
+   <link href="{{ preload(asset('assets/css/style-commentaires.css')) }}" rel="stylesheet">
+   <link href="{{ asset('assets/css/style-moderation.css')}}" rel="stylesheet">
+<link href="{{ asset('assets/css/voir-annonce.css')}}" rel="stylesheet" type="text/css">
+<link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+
+    {% endblock %}
+
+
+    {% block header %}
+
+   {{parent()}}
+    <style>
+     @media only screen and (min-width : 768px) {
+  .dashboard-menu{
+    margin-top: 130px !important;
+  }
+}
+
+ @media only screen and (min-width : 992px) {
+  .dashboard-menu{
+    margin-top: 130px !important;
+  }
+}
+
+
+ </style>
+
+ <style >
+   .image_picker_image{width: 100px;height: 100px}
+   .tox-statusbar__branding{
+   display: none;
+   }
+  .btn-bg-primary {
+    color: #fff;
+    background: #f17b30 !important;
+  }
+  .btn-bg-primary:hover {
+    color: #fff;
+    background: #f4b279 !important;
+  }
+
+    .navbarProfile {
+    background: #f17b30;
+  }
+ </style>
+
+    {% endblock %}
+
+    {% block navigation %}
+
+    {% endblock %}
+
+    {% block body %}
+ <div class="flex-fill container">
+<main class="">
+    <div class="container">
+      {% include 'menuProfile.html.twig' %}
+       <div class="mt-5">
+            <!-- Modif des infos -->
+            <div id="modifInfo">
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                          <a class="nav-link active" id="v-pills-commentaireRecu-tab" data-toggle="pill" href="#v-pills-commentaireRecu" role="tab" aria-controls="v-pills-commentaireRecu" aria-selected="true">{{'profil-utilisateur.commentaire.menu-commentaires-recus'|trans}}</a>
+                          <a class="nav-link" id="v-pills-commentairePoste-tab" data-toggle="pill" href="#v-pills-commentairePoste" role="tab" aria-controls="v-pills-commentairePoste" aria-selected="false">{{'profil-utilisateur.commentaire.menu-commentaires-postes'|trans}}</a>
+                        </div>
+                    </div>
+            <div class="col-md-8 mb-2">
+                      {# Annonces et commentaires recus #}
+                     {#  {{dump(DetailsAnnonceCommentaireRecus)}}  #}
+                      {# Annonces et commentaire postes #}
+                    {#  {{dump(DetailsAnnonceCommentairePostes)}} #}
+                      <div class="tab-content" id="v-pills-tabContent">
+                        <div class="tab-pane fade show active" id="v-pills-commentaireRecu" role="tabpanel" aria-labelledby="v-pills-commentaireRecu-tab">
+                          <h4 class="border-bottom pb-4">{{'profil-utilisateur.commentaire.tableau-titre-commentaires-recus'|trans}}</h4>
+                          {% if DetailsAnnonceCommentaireRecus.annonces|length == 0 %}
+                          <div id="contenaireCommentairesRecu-vide" class="row">
+                            <p class="col-12 custome-text orangee">{{'profil-utilisateur.commentaire.tableau-message-recus-pour-liste-vide'|trans}}</p>
+                          </div>
+                          {% endif %}
+                          {% if DetailsAnnonceCommentaireRecus.annonces|length > 0 %}
+                          <div id="contenaireCommentairesRecu" class="row">
+                            <div class="col-md-12 mb-2">
+                            {% for a in DetailsAnnonceCommentaireRecus.annonces %}
+                            <div class="row mt-3" style="min-height: 200px">
+                              <div class="col-md-4 annonce-img" style="background: url('{{a.gallerie.0.guid}}')"></div>
+                              <div class="col-md-8 py-2 annonce-detail">
+                                <span class="texte-gris text-bold fs-14">Postée le {{a.post_date|date('d-m-Y h:i')}} </span> <br>
+                                <h3>{{a.price}} {{a.devise}}</h3>
+                                <p class="fs-14">{{a.post_title}}</p>
+                                <span class="texte-gris text-bold fs-14"><i class="fas fa-map-marker"></i>{{a.ville}}</span> <br>
+                                <span class="texte-gris text-bold fs-14"><i class="fas fa-calendar"></i> {{a.calendrier|first}} - {{a.calendrier|last}} ({{a.calendrier|length}} dates dispo.)</span>
+                                 <div class="pt-4">
+                                </div>
+                              </div>
+                            </div>
+                            <hr>
+                            <h6>{{a.commentaires|length}} Commentaire(s)</h6>
+                            {% for c in a.commentaires %}
+                            <div class="row xtic-box py-2 rounded mb-2">
+                              <div class="col-md-2 pt-2 text-center">
+                                <img class="img-fluid" width="100% \9" src="{% if c.avatar == "" %}{{asset('assets/img/profile/avatar-profile.png')}}{% else %}{{c.avatar}}{% endif %}" alt="{{c.commentAuthor}}">
+                                <p class="x-info ref-comment fs-14"><strong><a href="#" target="_blank"></a></strong></p>
+                              </div>
+                              <div class="col-md-10">
+                                <p class="x-info ref-comment fs-14">
+                                 {{c.comment_content|raw}}<br>
+                                 {{c.comment_date|date('d-m-Y h:i')}}
+                                </p>
+                              </div>
+                            </div>
+                            {% endfor %}
+                            <hr>
+                          {% endfor %}
+                          </div>
+                          </div>
+                          {% endif %}
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-commentairePoste" role="tabpanel" aria-labelledby="v-pills-commentairePoste-tab">
+                          <h4 class="border-bottom pb-4">{{'profil-utilisateur.commentaire.tableau-titre-commentaires-postes'|trans}}</h4>
+                          {% if DetailsAnnonceCommentairePostes|length == 0 %}
+                          <div class="row contenaireCommentairesPoste-vide">
+                              <p class="col-12 custome-text orangee">{{'profil-utilisateur.commentaire.tableau-message-postes-pour-liste-vide'|trans}}</p>
+                          </div>
+                          {% endif %}
+                          {% if DetailsAnnonceCommentairePostes|length > 0 %}
+                          
+                             <div id="contenaireCommentairesRecu" class="row">
+                            <div class="col-md-12 mb-2">
+                            {% for a in DetailsAnnonceCommentairePostes %}
+                            <div class="row mt-3" style="min-height: 200px">
+                              <div class="col-md-4 annonce-img" style="background: url('{{a.gallerie.0.guid}}')"></div>
+                              <div class="col-md-8 py-2 annonce-detail">
+                                <span class="texte-gris text-bold fs-14">Postée le {{a.post_date|date('d-m-Y h:i')}} </span> <br>
+                                <h3>{{a.price}} {% if a.devise == "" %}€{% else %}{{a.devise}}{% endif %}</h3>
+                                <p class="fs-14">{{a.post_title}}</p>
+                                <span class="texte-gris text-bold fs-14"><i class="fas fa-map-marker"></i>{{a.ville}}</span> <br>
+                                <span class="texte-gris text-bold fs-14"><i class="fas fa-calendar"></i> {{a.calendrier|first}} - {{a.calendrier|last}} ({{a.calendrier|length}} dates dispo.)</span>
+                                 <div class="pt-4">
+                                </div>
+                              </div>
+                            </div>
+                            <hr>
+                            <h6>{{a.commentaires|length}} Commentaire(s)</h6>
+                            {% for c in a.commentaires %}
+                            <div class="row xtic-box py-2 rounded mb-2">
+                              <div class="col-md-2 pt-2 text-center">
+                                <img class="img-fluid" width="100% \9" src="{% if c.avatar == "" %}{{asset('assets/img/profile/avatar-profile.png')}}{% else %}{{c.avatar}}{% endif %}">
+                                <p class="x-info ref-comment fs-14"><strong><a href="#" target="_blank"></a></strong></p>
+                              </div>
+                              <div class="col-md-10">
+                                <p class="x-info ref-comment fs-14">
+                                 {{c.comment_content|raw}}<br>
+                                 {{c.comment_date|date('d-m-Y h:i')}}
+                                </p>
+                              </div>
+                            </div>
+                            {% endfor %}
+                            <hr>
+                          {% endfor %}
+                          </div>
+                          </div>
+
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Fin des modifs -->
+        </div>
+
+    </div>
+     {% include 'assistance.html.twig' %}
+</main>
+ </div>
+    {% endblock %}
+
+
+{% block footer %}
+{{parent()}}
+
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+
+<!-- jQuery plugin for password meter -->
+  <script src="{{ asset('assets/js/password-meter/password-score.js') }}"></script>
+  <script src="{{ asset('assets/js/password-meter/password-score-options.js')}}"></script>
+  <script src="{{ asset('assets/js/password-meter/bootstrap-strength-meter.js')}}"></script>
+
+  <script>
+    $(document).ready(function() {
+      var docWidth = document.documentElement.offsetWidth;
+
+      [].forEach.call(
+        document.querySelectorAll('*'),
+        function(el) {
+          if (el.offsetWidth > docWidth) {
+            console.log(el);
+          }
+        }
+      );
+      //Hambuger menu icon
+      $('.animated-button-icon').on('click', function () {
+        $('.animated-icon2').toggleClass('open');
+      });
+      //first thing turn Hide Menu Search bar
+      $("#searchMenu").hide();
+      //toggle menu search bar on/off
+      $( "#searchMenuShowHide" ).click(function() {
+        $( "#searchMenu" ).toggle( "slide" );
+      });
+
+      //Configure password Meter
+      $('#nouveauPasse').strengthMeter('progressBar', {
+        container: $('#progress-container'),
+        base: 80,
+        hierarchy: {
+          '0': 'progress-bar-striped progress-bar-animated bg-danger',
+          '25': 'progress-bar-striped progress-bar-animated bg-warning',
+          '50': 'progress-bar-striped progress-bar-animated bg-success'
+        },
+        passwordScore: {
+          options: [],
+          append: true
+        }
+      });
+
+      // $('#date').datepicker({
+      //       uiLibrary: 'bootstrap4',
+      //       size: 'large',
+      //       showRightIcon: false,
+      //       iconsLibrary: 'fontawesome'
+      //   });
+
+      //   $("div[role='wrapper']").append("<label for='date'>Date de naissance</label><div class='valid-feedback'>OK!</div><div class='invalid-feedback'>Ce champ contient une erreur!</div>");
+
+    });
+  </script>
+
+{% endblock %}

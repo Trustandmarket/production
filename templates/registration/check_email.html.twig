@@ -1,0 +1,83 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Activer Compte | Trust & Market</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{asset('assets/css/bootstrap.min.css')}}" rel="stylesheet">
+    <!-- Font awesome and date picker -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
+
+    <style>
+      body{ {% if include('Seo/Meta/security_image.html.twig', {code: 'verifier_email_creation_compte_image'}) != "\n" %}
+			background: url({{ include('Seo/Meta/security_image.html.twig', {code: 'verifier_email_creation_compte_image'}) }}) no-repeat center center fixed;
+		{% else %} background: url({{ absolute_url(asset('assets/img/john-raptis.png'))}}) no-repeat center center fixed;
+		{% endif %}
+	        -webkit-background-size: cover;
+	        -moz-background-size: cover;
+	        -o-background-size: cover;
+	        background-size: cover;
+	  }
+      .white-t{
+        color: #fff;
+      }
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      .registration-ok {
+        width: 100%;
+        max-width: 600px;
+        padding: 15px;
+        margin: auto;
+      }
+      .btn-primary {
+        background: #f17c30 !important;
+        border: none
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+      @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        body{
+            background-size: auto;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="{{ asset('assets/css/floating-labels.css')}}" rel="stylesheet">
+  </head>
+  <body>
+    
+    <div class="registration-ok">
+
+      <div class="text-center mb-5">
+        <img class="mb-4" src="{{ asset('assets/img/success-icon.png')}}" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal white-t">{{'verification-email.message-accueil'|trans}}</h1>
+        <p class="white-t">{{'verification-email.conseil'|trans}}</p>
+      </div>
+
+      <div class="text-center">
+          <a class="btn btn-lg btn-primary btn-lg mt-5" href="{{path('home')}}">{{'verification-email.bouton-accueil'|trans}}</a>
+      </div>
+    </div>
+
+<!-- jQuery -->
+<script src="./assets/js/jquery-3.4.1.min.js"></script>
+<!-- Bootstrap Js -->
+<script src="./assets/js/bootstrap.min.js"></script>
+</body>
+</html>

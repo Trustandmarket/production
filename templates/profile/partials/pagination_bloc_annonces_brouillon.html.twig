@@ -1,0 +1,45 @@
+<nav aria-label=" ...">
+		<ul class="pagination">
+			<li class="page-item">
+				<a class="page-link {% if noPage == 1 %}disabled{% endif %}" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage-1,
+				nombreDeLignes: annoncesBrouillonCount, tag: tag})}}" tabindex="-1">{{'filtres.precedent'|trans({}, 'liste_annonces') }}</a>
+			</li>
+			{% if noPage > 1  %}
+				<li class="page-item">
+					<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: 1,
+					nombreDeLignes: annoncesBrouillonCount, tag: tag})}}">1<span class="sr-only"></span>
+					</a>
+				</li>
+			{% endif %}
+			{% if noPage > 2  %}
+				<li class="page-item">
+					<a class="page-link" href="">...<span class="sr-only"></span>
+					</a>
+				</li>
+			{% endif %}
+			<li class="page-item active">
+				<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage,
+				nombreDeLignes: annoncesBrouillonCount, tag: tag})}}">{{noPage}}<span class="sr-only"></span>
+				</a>
+			</li>
+			{% if pages_brouillon is defined and pages_brouillon - noPage > 1  %}
+				<li class="page-item">
+					<a class="page-link" href="">...<span class="sr-only"></span>
+					</a>
+				</li>
+			</li>
+		{% endif %}
+		{% if pages_brouillon is defined and pages_brouillon - noPage > 0  %}
+			<li class="page-item">
+				<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: pages_brouillon,
+				nombreDeLignes: annoncesBrouillonCount, tag: tag})}}">{{pages_brouillon}}<span class="sr-only"></span>
+				</a>
+			</li>
+		{% endif %}
+		<li class="page-item {% if pages_brouillon is defined and noPage == pages_brouillon %}disabled{% endif %}">
+			<a class="page-link" href="{{path('profile_listeAnnoncesPagine', {noPage: noPage+1,
+			nombreDeLignes: annoncesBrouillonCount, tag: tag})}}">{{'filtres.suivant'|trans({}, 'liste_annonces') }}
+			</a>
+		</li>
+	</ul>
+</nav>

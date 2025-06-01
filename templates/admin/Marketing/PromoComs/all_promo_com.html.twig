@@ -1,0 +1,157 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+	Marketing -Promos & Com
+{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	{#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+ 	<link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+	<div class="content">
+
+		<div class="animated fadeIn">
+			<div class="clearfix"></div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header">
+						{% set url_new = ea_url().setController('App\\Controller\\Admin\\Marketing\\PromoComs\\WpPostsCrudController').setAction('new') %}
+							<h4 class="box-title">Marketing - Promos et Com<a class="badge badge-complete right1" href="{{url_new}}" title="Ajouter une promo-com">
+									<i class="fa fa-plus"></i>
+								</a>
+							</h4>
+						</div>
+						<div class="card-body--">
+							<div class="table-stats order-table ov-h">
+								<table class="table ">
+									<thead>
+										<tr>
+											<th>ID</th>
+											<th>Titre</th>
+											<th>Nombre d'articles</th>
+											<th>Categories d'annonces <small><sup>(affichee)</sup></small></th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for m in ops %}
+											<tr style="background-color: #F7F7F7;font-weight: bold;">
+												<td>{{m.id}}</td>
+												<td>{{m.titre}}</td>
+												<td>{{m.articles|length}}</td>
+												<td>{% for item in m.categorie %}
+													{{item.slug|upper}}<br>
+												{% endfor %}</td>
+												<td>
+												{% set url_detail = ea_url().setController('App\\Controller\\Admin\\Marketing\\PromoComs\\WpPostsCrudController').setAction('detail').setEntityId(m.id) %}
+													<a class="badge badge-pending post-details my-1" href="{{url_detail}}" title="Details du post">
+														<i class="fa fa-eye "></i>
+													</a>
+												{% set url_edit = ea_url().setController('App\\Controller\\Admin\\Marketing\\PromoComs\\WpPostsCrudController').setAction('edit').setEntityId(m.id) %}
+													<a class="badge badge-pending update my-1" href="{{url_edit}}" title="Modifier le post">
+														<i class="fa fa-edit "></i>
+													</a>
+													<a class="red delete my-1" href="{{path('post_delete_get', {id : m.id})}}" title="Supprimer l'operation">
+														<i class="fa fa-trash"></i>
+													</a>
+												</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+{% endblock %}
+{% block body_javascript %}
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+{# <script src="{{ asset('admin/assets/js/vendor/jquery-2.1.4.min.js') }}" type="text/javascript"></script> #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+	<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+	<script type="text/javascript">
+
+	
+	$(document).ready(function () {
+		$(document).on('click', '.post-details', function (e) {
+			$('#modal_titre').empty().append($(this).data('title'));
+			$('#modal_guid').empty().append($(this).data('guid'));
+			$('#modal_type').empty().append($(this).data('type'));
+			$('#modal_etat').empty().append($(this).data('etat'));
+			$('#modal_description').empty().append($(this).data('description'));
+		})
+	})
+
+	$(document).on('click', '.delete', function (e) {
+	e.preventDefault();
+	var t = $(this);
+	var urlPath = $(this).attr('href');
+	swal({
+	title: "Suppression de l'opération spéciale",
+	text: "Attention l'opération spéciale et ses articles seront Supprimées et n'apparaitront plus sur votre site",
+	type: "info",
+	showCancelButton: true,
+	confirmButtonClass: "btn-danger",
+	confirmButtonText: "Supprimer",
+	cancelButtonText: "Annuler",
+	closeOnConfirm: false,
+	closeOnCancel: false,
+	showLoaderOnConfirm: true
+	}, function (isConfirm) {
+	if (isConfirm) {
+	$.ajax({
+	url: urlPath,
+	type: 'GET',
+	success: function (reponse) {
+		console.log(reponse);
+	if (reponse == 1) {
+	swal("Suppression terminée", "", "success");
+	t.parents('tr').hide();
+	} else if (reponse == 2) {
+	swal("La catégorie contient des paiements", "", "warning");
+	} else {
+	swal("Erreur de suppression", "", "error");
+	};
+	},
+	error: function (reponse) {
+	swal("Erreur de suppression", "", "error");
+	}
+	});
+	} else {
+	swal.close();
+	}
+	});
+	return false;
+	});
+
+toastr.options = {
+"closeButton": true,
+"debug": false,
+"newestOnTop": false,
+"progressBar": true,
+"positionClass": "toast-top-center",
+"preventDuplicates": false,
+"onclick": null,
+"showDuration": "300",
+"hideDuration": "1000",
+"timeOut": "12000",
+"extendedTimeOut": "1000",
+"showEasing": "swing",
+"hideEasing": "linear",
+"showMethod": "fadeIn",
+"hideMethod": "fadeOut"
+}
+</script>
+
+{% endblock body_javascript %}

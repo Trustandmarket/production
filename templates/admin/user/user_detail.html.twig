@@ -1,0 +1,59 @@
+{% extends '@!EasyAdmin/layout.html.twig' %} {% block page_title %}{{'admin.user.detail'|trans}}{% endblock %} {% block content %}
+<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}" />
+<link rel="stylesheet" href="{{ asset('admin/assets/css/lightslider.css') }}" />
+<link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}" />
+<div class="content">
+    <div class="row mt-5">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>{{'admin.user.detail'|trans}}</h4>
+                </div>
+                <div class="card-body mt-5">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img style="width: 300px; height: auto;" src="{% if avatar %}{{avatar}}{% else %}/assets/img/user.jpg{% endif %}" alt="" class="img" />
+                        </div>
+                        <div class="col-md-8">
+                            <div class="col-md-12">
+                                <p>Noms: {% for p in usermeta %}{% if p.getMetaKey()=='first_name' %}{{p.getMetaValue}}{% endif %} {% endfor %} {% for p in usermeta %}{% if p.getMetaKey()=='last_name' %}{{p.getMetaValue()}}{% endif %} {% endfor %}</p>
+                                <p>{% for p in usermeta %}{% if p.getMetaKey()=='description' %}{{p.getMetaValue()|raw}}{% endif %}{% endfor %}</p>
+                                <p class="left">{{"inscription.date-naissance"|trans}}: {{user.getDateNaissance()}}</p>
+                                <p class="left">{% for p in usermeta %}{% if p.getMetaKey()=='lieu_naissance' %}{{"admin.user.lieu-naissance"|trans}}: {{p.getMetaValue()}}{% endif %}{% endfor %}</p>
+                                <p class="left">{% for p in usermeta %}{% if p.getMetaKey()=='sexe' %}{{"admin.user.sexe"|trans}}: {{p.getMetaValue()}}{% endif %}{% endfor %}</p>
+                                <p class="fa fa-envelope left">{{user.getEmailCanonical()}}</p>
+                                <p class="left">{% for p in usermeta %}{% if p.getMetaKey()=='telephone' %} <i class="fa fa-phone"></i> {{p.getMetaValue()}}{% endif %}{% endfor %}</p>
+                                <p class="left">
+                                    Role:{% for role in user.roles %}
+                                      {{role}}<br>
+                                    {% endfor %} 
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block body_javascript %}
+<script src="{{ asset('admin/assets/js/vendor/jquery-2.1.4.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/js/lightslider.js') }}" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+        $("#image-gallery").lightSlider({
+            gallery: true,
+            item: 1,
+            thumbItem: 6,
+            slideMargin: 0,
+            speed: 500,
+            auto: true,
+            loop: true,
+            onSliderLoad: function () {
+                $("#image-gallery").removeClass("cS-hidden");
+            },
+        });
+    });
+</script>
+{% endblock body_javascript %}
+ 

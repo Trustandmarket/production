@@ -1,0 +1,33 @@
+<style>
+    .playVideoButton {
+        display: block;
+        position: fixed;
+        width: 100px;
+        height: 100px;
+        bottom: 60px;
+        right: 20px;
+        z-index: 9999999999;
+        cursor: pointer;
+        font-size: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #f17c30;
+    }
+
+    .playVideoButton i {
+        font-size: 60px;
+    }
+
+    #topBtn {
+        bottom: 60px;
+    }
+</style>
+<div>
+    {% if youtube_url is defined %}
+        {% if youtube_url.autoload == 'yes' %}
+            <p class="playVideoButton">
+                <i class="fas fa-play"></i>
+            </p>{% endif %}
+    {% endif %}
+</div>

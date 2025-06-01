@@ -1,0 +1,198 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+    Message Nom commercial vide
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link href="{{ asset('assets/css/style-blog.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/dropzone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <style media="screen">
+        .navbar {
+            background: none;
+        }
+
+        header {
+            height: 5%;
+        }
+
+        #main-menu {
+            font-size: 14px;
+        }
+
+        .form-actions {
+            align-content: center;
+        }
+
+        /* The switch - the box around the slider */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        .form-group label {
+            flex: none;
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+    </style>
+
+    <div class="content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        Resultat de recherche sur le nom commercial
+                    </div>
+                    <div class="card-body">
+                        <div class="container row">
+                            <div class="col-md-12 mb-12 clearfix">
+                                <!-- Title -->
+                                <h4 class="card-title">Message</h4>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <form action="{{ path('post_get_empty_request_message') }}" method="post" id="empty_request_message">
+                                            <div class="row mb-2">
+                                                <textarea class="form-control" name="message" id="message">{% if message %}{{ message.postContent }}{% endif %}</textarea>
+                                            </div>
+                                            <input hidden name="post_type" id="post_type" value="empty_nom_commercial"/>
+                                            <div class="form-actions form-group">
+                                                <button type="submit" id="send" class="btn btn-success btn-sm btn-lg ld-over-inverse ">Enregistrer<i class="ld ld-ring ld-spin"></i></button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block body_javascript %}
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+            integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <!-- Tinymce editor -->
+    <script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            tinymce.init({
+                selector: 'textarea#message',
+                height: 350,
+                plugins: [
+                    'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+                ],
+                toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+                browser_spellcheck: true,
+                contextmenu: false,{% if lang=='fr' %}
+                language: 'fr_FR',{% endif %}
+            });
+
+            $('#empty_request_message').on('submit', function (e) {
+                toastr.info('Modification en cours');
+                let form = $(this);
+                let formData = (window.FormData) ? new FormData(form[0]) : null;
+                let data = (formData !== null) ? formData : form.serialize();
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (response) {
+                        if (response != 0) {
+                            toastr.clear();
+                            toastr.success('Modification éffectuée avec succès');
+                            window.location = '';
+                        } else if (response == 0) {
+                            $('#send').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{'admin.annonce.error'|trans}}");
+                        }
+                    },
+                    error: function (response) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'admin.annonce.error'|trans }}");
+                    }
+                });
+            });
+        })
+    </script>
+{% endblock body_javascript %}
+

@@ -1,0 +1,233 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+    Marketing - Actualites
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <div class="content">
+        <style>
+            #main-menu {
+                font-size: 14px;
+            }
+        </style>
+        <div class="animated fadeIn">
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            {% set url_new = ea_url().setController('App\\Controller\\Admin\\Marketing\\Actualites\\WpPostsCrudController').setAction('new') %}
+                            <h4 class="box-title">Marketing - Actualites<a class="badge badge-complete right1"
+                                                                           href="{{ url_new }}"
+                                                                           title="Ajouter une actualite">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </h4>
+                        </div>
+                        <div class="card-body--">
+                            <div class="table-stats order-table ov-h">
+                                <table class="table ">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Titre</th>
+                                        <th>Url</th>
+                                        <th>Etat</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for m in actualites %}
+                                        <tr style="background-color: #F7F7F7;font-weight: bold;">
+                                            <td>{{ m.id }}</td>
+                                            <td>{{ m.postTitle|raw }}</td>
+                                            <td>{{ m.guid }}</td>
+                                            <td>{% if m.postStatus == 'publish' %}
+                                                    <button class="btn btn-round btn-success">Afficher
+                                                    </button>{% else %}
+                                                    <button class="btn btn-round btn-warning">En brouillon</button>
+                                                {% endif %}</td>
+                                            <td>
+                                                <a class="badge badge-pending post-details my-1"
+                                                   data-description="{{ m.postContent }}" data-guid="{{ m.guid }}"
+                                                   data-title="{{ m.postTitle }}"
+                                                   data-type="{{ m.pingStatus|upper }}--{{ m.toPing }}"
+                                                   data-etat="{% if m.postStatus == 1 %}Afficher{% else %}Masquer{% endif %}"
+                                                   data-toggle="modal" data-target="#details-post" href=""
+                                                   title="Details du post">
+                                                    <i class="fa fa-eye "></i>
+                                                </a>
+                                                {% set url = ea_url().setController('App\\Controller\\Admin\\Marketing\\Actualites\\WpPostsCrudController').setAction('edit').setEntityId(m.id) %}
+                                                <a class="badge badge-pending update my-1" href="{{ url }}"
+                                                   title="Modifier le post">
+                                                    <i class="fa fa-edit "></i>
+                                                </a>
+                                                {% if m.postStatus == 'draft' %}
+                                                    <a class="red delete my-1"
+                                                       href="{{ path('post_delete_get', {id : m.id}) }}"
+                                                       title="Supprimer le menu">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade none-border" id="details-post">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">
+                            <strong>Details de l'actualite</strong>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="new_critere_type">
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <div class="col-md-12">Titre</div>
+                                    <div class="col-md-12" id="modal_titre"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <div class="col-md-12">URL</div>
+                                    <div class="col-md-12" id="modal_guid"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <div class="col-md-12">Type</div>
+                                    <div class="col-md-12" id="modal_type"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <div class="col-md-12">Etat</div>
+                                    <div class="col-md-12" id="modal_etat"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <div class="col-md-12">Description</div>
+                                    <div class="col-md-12" id="modal_description"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Fermer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+{% endblock %}
+
+{% block body_javascript %}
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    {# <script src="{{ asset('admin/assets/js/vendor/jquery-2.1.4.min.js') }}" type="text/javascript"></script> #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+            integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+            $(document).on('click', '.post-details', function (e) {
+                $('#modal_titre').empty().append($(this).data('title'));
+                $('#modal_guid').empty().append($(this).data('guid'));
+                $('#modal_type').empty().append($(this).data('type'));
+                $('#modal_etat').empty().append($(this).data('etat'));
+                $('#modal_description').empty().append($(this).data('description'));
+            })
+        })
+
+        $(document).on('click', '.delete', function (e) {
+            e.preventDefault();
+            var t = $(this);
+            var urlPath = $(this).attr('href');
+            swal({
+                title: "Suppression de l'actualite",
+                text: "Attention l'actualite sera Supprimée et n'apparaitra plus sur votre site",
+                type: "info",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Supprimer",
+                cancelButtonText: "Annuler",
+                closeOnConfirm: false,
+                closeOnCancel: false,
+                showLoaderOnConfirm: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: urlPath,
+                        type: 'GET',
+                        success: function (reponse) {
+                            if (reponse == 1) {
+                                swal("Suppression terminée", "", "success");
+                                t.parents('tr').hide();
+                            } else if (reponse == 2) {
+                                swal("La catégorie contient des produits", "", "warning");
+                            } else {
+                                swal("Erreur de suppression", "", "error");
+                            }
+
+                        },
+                        error: function (reponse) {
+                            swal("Erreur de suppression", "", "error");
+                        }
+                    });
+                } else {
+                    swal.close();
+                }
+            });
+            return false;
+        });
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "12000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+
+{% endblock body_javascript %}

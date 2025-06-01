@@ -1,0 +1,475 @@
+{% extends 'generalLayout.html.twig' %}
+{% block head %}
+	{{ parent() }}
+	<meta name="title" content="{{ include('Seo/Meta/title.html.twig', {code: 'blog'}) }}">
+	<meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'blog'}) }}">
+	<link rel="canonical" href="{{ absolute_url(path('blog_index')) }}">
+	<link rel="shortlink" href="{{ absolute_url(path('blog_index')) }}">
+	{# OG Content #}
+	<meta property="og:title" content="blog">
+	<meta property="og:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'blog'}) }}">
+
+	<meta property="og:image" content="{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="{{ absolute_url(path('blog_index')) }}">
+	<meta property="og:locale" content="fr"/>
+	<meta property="og:locale:alternate" content="en"/>
+	{# END OG Content #}
+
+	{# Twitter CARD #}
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:site" content="@trustandmarket">
+	<meta name="twitter:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'blog'}) }}">
+	<meta name="twitter:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'blog'}) }}">
+	<meta name="twitter:image" content="{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}">
+	<meta name="twitter:image:alt" content="{{ include('Seo/Meta/title.html.twig', {code: 'blog'}) }}">
+	{# END Twitter Card #}
+
+	<style>
+		.blog_list .card {
+			min-height: 100%;
+		}
+		.blog_list .card img {
+			height: 200px;
+			width: 100%;
+			object-fit: cover;
+		}
+	</style>
+
+	{# JSON LD #}
+    <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+        {% for article in data %}
+        {
+            "@type": "ListItem",
+            "position":"{{loop.index}}",
+            "item": {
+            "@id": "{{absolute_url(path('blog_details_postBlog', {slug: article.post_name}))}}",
+            "name": "{% if app.request.locale == 'en' and article.title_en != article.post_title and article.title_en != '' %}{{article.title_en}}{% else %}{{ article.post_title|trim }}{% endif %}",
+            "image": "{{ article.imagePost }}"
+            }
+        }
+        {% if loop.last != true %},{% endif %}{% endfor %}
+		]
+		
+	}
+    </script>
+	{# END JSON LD #}
+{% endblock %}
+
+{% block title %}Trust &amp; Market |{{ include('Seo/Meta/title.html.twig', {code: 'blog'}) }}{% endblock %}
+{% block style %}
+	{{ parent() }}
+	<!-- Your custom styles (optional) -->
+	<link rel="stylesheet" href="{{ asset('assets/css/custome.css') }}">
+	<link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+	<link href="{{ asset('assets/css/style-blog.css') }}" rel="stylesheet">
+{% endblock %}
+
+
+{% block header %}
+	{{parent()}}
+{% endblock %}
+{% block navigation %}∑
+	<div id="imageHolder" class="view intro-2">
+		<div class="full-bg-img">
+			<div class="mask rgba-purple-light flex-center">
+				<div class="container text-left align-items-end white-text wow fadeInUp">
+					<h2 class="page-title">{{'blog.titre'|trans}}T&M</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block body %}
+	<!--Main Layout-->
+	<main class="mt-5">
+		<div class="container"><pre>
+		</pre>
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link {% if categorie == null %}active{% endif %}" id="tous-tab" data-toggle="tab" href="#tous" role="tab" aria-controls="tous" aria-selected="{% if categorie is not defined %}true{% else %}false{% endif %}">{{'blog.menu.liste-articles'|trans}}</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link {% if categorie == 'musique' %}active{% endif %}" id="musique-tab" data-toggle="tab" href="#musique" role="tab" aria-controls="musique" aria-selected="{% if categorie == 'musique' %}true{% else %}false{% endif %}">{{'blog.menu.musique'|trans}}</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link {% if categorie == 'photographie' %}active{% endif %}" id="photographie-tab" data-toggle="tab" href="#photographie" role="tab" aria-controls="Photographie" aria-selected="{% if categorie == 'photographie' %}true{% else %}false{% endif %}">{{'blog.menu.photographie'|trans}}</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link {% if categorie == 'video' %}active{% endif %}" id="video-tab" data-toggle="tab" href="#video" role="tab" aria-controls="video" aria-selected="{% if categorie == 'video' %}true{% else %}false{% endif %}">{{'blog.menu.video'|trans}}</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link {% if categorie == 'experiences' %}active{% endif %}" id="experience-tab" data-toggle="tab" href="#experience" role="tab" aria-controls="experience" aria-selected="{% if categorie == 'experiences' %}true{% else %}false{% endif %}">{{'blog.menu.experiences'|trans}}</a>
+				</li>
+			</ul>
+			<div class="tab-content blog_list" id="myTabContent">
+				<div class="tab-pane fade {% if categorie == null %}show active{% endif %} mt-5" id="tous" role="tabpanel" aria-labelledby="tous-tab">
+					<div class="container row">
+						{% for i in data %}
+						{% if app.request.locale == 'en' and i.title_en != i.post_title and i.title_en != '' %}
+							<div class="col-md-4 mb-4 clearfix">
+								<!-- Card -->
+								<div class="card">
+									<!-- Card image -->
+									<div class="view overlay">
+										<img class="card-img-top lazy" width="262.5" height="200" data-src="{{i.imagePost}}" alt="{{i.title}}">
+										<a href="{{path('blog_details_postBlog',{slug:i.post_name})}}">
+											<div class="mask rgba-white-slight"></div>
+										</a>
+									</div>
+									<!-- Card content -->
+									<div class="card-body">
+										<!-- Title -->
+										<h4 class="card-title">{{i.title_en|raw}}</h4>
+										{# <p class="card-text">{{ i.post_content|striptags('<p>')|easyadmin_truncate(200, true)|raw }}</p> #}
+										<!-- Button -->
+										{# <a href="{{path('blog_details_postBlog',{slug:i.post_name})}}" class="btn btn-primary">{{'blog.details-article'|trans}}</a> #}
+									</div>
+								</div>
+								<!-- Card -->
+							</div>
+							{% elseif app.request.locale == 'fr' %}
+							<div class="col-md-4 mb-4 clearfix">
+								<!-- Card -->
+								<div class="card">
+									<!-- Card image -->
+									<div class="view overlay">
+										<img class="card-img-top lazy" width="262.5" height="200" data-src="{{i.imagePost}}" alt="{{i.title}}">
+										<a href="{{path('blog_details_postBlog',{slug:i.post_name})}}">
+											<div class="mask rgba-white-slight"></div>
+										</a>
+									</div>
+									<!-- Card content -->
+									<div class="card-body">
+										<!-- Title -->
+										<h4 class="card-title">{{i.post_title|raw}}</h4>
+										{# <p class="card-text">{{ i.post_content|striptags('<p>')|easyadmin_truncate(200, true)|raw }}</p> #}
+										<!-- Button -->
+										{# <a href="{{path('blog_details_postBlog',{slug:i.post_name})}}" class="btn btn-primary">{{'blog.details-article'|trans}}</a> #}
+									</div>
+								</div>
+								<!-- Card -->
+							</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+				<div class="tab-pane fade mt-5 {% if categorie == 'musique' %}show active{% endif %}" id="musique" role="tabpanel" aria-labelledby="musique-tab">
+					<div class="container row">
+						{% for a in dataMusique %}
+						{% if app.request.locale == 'en' and a.title_en != a.post_title and a.title_en != '' %}
+							<div class="col-md-4 mb-4 clearfix">
+								<!-- Card -->
+								<div class="card">
+									<!-- Card image -->
+									<div class="view overlay">
+										<img class="card-img-top lazy" width="262.5" height="200" data-src="{{a.imagePost}}" alt="{{a.title}}">
+										<a href="{{path('blog_details_postBlog',{slug:a.post_name})}}">
+											<div class="mask rgba-white-slight"></div>
+										</a>
+									</div>
+									<!-- Card content -->
+									<div class="card-body">
+										<!-- Title -->
+										<h4 class="card-title">
+											{{a.title_en|raw}}
+										</h4>
+										<!-- Text -->
+										{# <p class="card-text">{{ a.post_content|striptags('<p>')| easyadmin_truncate(200, true)|raw }}</p> #}
+										<!-- Button -->
+										{# <a href="{{path('blog_details_postBlog',{slug:a.post_name})}}" class="btn btn-primary">{{'blog.details-article'|trans}}</a> #}
+									</div>
+								</div>
+								<!-- Card -->
+							</div>
+							{% elseif app.request.locale == 'fr' %}
+							<div class="col-md-4 mb-4 clearfix">
+								<!-- Card -->
+								<div class="card">
+									<!-- Card image -->
+									<div class="view overlay">
+										<img class="card-img-top lazy" width="262.5" height="200" data-src="{{a.imagePost}}" alt="{{a.title}}">
+										<a href="{{path('blog_details_postBlog',{slug:a.post_name})}}">
+											<div class="mask rgba-white-slight"></div>
+										</a>
+									</div>
+									<!-- Card content -->
+									<div class="card-body">
+										<!-- Title -->
+										<h4 class="card-title">
+											{{a.post_title|raw}}
+										</h4>
+										<!-- Text -->
+										{# <p class="card-text">{{ a.post_content|striptags('<p>')| easyadmin_truncate(200, true)|raw }}</p> #}
+										<!-- Button -->
+										{# <a href="{{path('blog_details_postBlog',{slug:a.post_name})}}" class="btn btn-primary">{{'blog.details-article'|trans}}</a> #}
+									</div>
+								</div>
+								<!-- Card -->
+							</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+				<div class="tab-pane fade mt-5 {% if categorie == 'photographie' %}show active{% endif %}" id="photographie" role="tabpanel" aria-labelledby="photographie-tab">
+					<div class="container row">
+						{% for a in dataPhotographie %}
+							{% if app.request.locale == 'en' and a.title_en != a.post_title and a.title_en != '' %}
+							<div class="col-md-4 mb-4 clearfix">
+								<!-- Card -->
+								<div
+									class="card">
+									<!-- Card image -->
+									<div class="view overlay">
+										<img class="card-img-top lazy" width="262.5" height="200" data-src="{{a.imagePost}}" alt="{{a.title}}">
+										<a href="{{path('blog_details_postBlog',{slug:a.post_name})}}">
+											<div class="mask rgba-white-slight"></div>
+										</a>
+									</div>
+									<!-- Card content -->
+									<div
+										class="card-body">
+										<!-- Title -->
+										<h4 class="card-title">
+											{{a.title_en|raw}}
+										</h4>
+										<!-- Text -->
+										{# <p class="card-text">{{ a.post_content|striptags('<p>')| easyadmin_truncate(200, true)|raw }}</p> #}
+										<!-- Button -->
+										{# <a href="{{path('blog_details_postBlog',{slug:a.post_name})}}" class="btn btn-primary">{{'blog.details-article'|trans}}</a> #}
+									</div>
+								</div>
+								<!-- Card -->
+							</div>
+							{% elseif app.request.locale == 'fr' %}
+							<div
+								class="col-md-4 mb-4 clearfix">
+								<!-- Card -->
+								<div
+									class="card">
+									<!-- Card image -->
+									<div class="view overlay">
+										<img class="card-img-top lazy" width="262.5" height="200" data-src="{{a.imagePost}}" alt="{{a.title}}">
+										<a href="{{path('blog_details_postBlog',{slug:a.post_name})}}">
+											<div class="mask rgba-white-slight"></div>
+										</a>
+									</div>
+									<!-- Card content -->
+									<div
+										class="card-body">
+										<!-- Title -->
+										<h4 class="card-title">
+											{{a.post_title|raw}}
+										</h4>
+										<!-- Text -->
+										{# <p class="card-text">{{ a.post_content|striptags('<p>')| easyadmin_truncate(200, true)|raw }}</p> #}
+										<!-- Button -->
+										{# <a href="{{path('blog_details_postBlog',{slug:a.post_name})}}" class="btn btn-primary">{{'blog.details-article'|trans}}</a> #}
+									</div>
+								</div>
+								<!-- Card -->
+							</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+				<div class="tab-pane fade mt-5 {% if categorie == 'video' %}show active{% endif %}" id="video" role="tabpanel" aria-labelledby="video-tab">
+					<div class="container row">
+						{% for a in dataVideo %}
+							{% if app.request.locale == 'en' and a.title_en != a.post_title and a.title_en != '' %}
+							<div
+								class="col-md-4 mb-4 clearfix">
+								<!-- Card -->
+								<div
+									class="card">
+									<!-- Card image -->
+									<div class="view overlay">
+										<img class="card-img-top lazy" width="262.5" height="200" data-src="{{a.imagePost}}" alt="{{a.title}}">
+										<a href="{{path('blog_details_postBlog',{slug:a.post_name})}}">
+											<div class="mask rgba-white-slight"></div>
+										</a>
+									</div>
+									<!-- Card content -->
+									<div class="card-body">
+										<!-- Title -->
+										<h4 class="card-title">
+											{{a.title_en|raw}}
+										</h4>
+										<!-- Text -->
+										{# <p class="card-text">{{ a.post_content|striptags('<p>')| easyadmin_truncate(200, true)|raw }}</p> #}
+										<!-- Button -->
+										{# <a href="{{path('blog_details_postBlog',{slug:a.post_name})}}" class="btn btn-primary">{{'blog.details-article'|trans}}</a> #}
+									</div>
+								</div>
+								<!-- Card -->
+							</div>
+							{% elseif app.request.locale == 'fr' %}
+							<div class="col-md-4 mb-4 clearfix">
+								<!-- Card -->
+								<div
+									class="card">
+									<!-- Card image -->
+									<div class="view overlay">
+										<img class="card-img-top lazy" width="262.5" height="200" data-src="{{a.imagePost}}" alt="{{a.title}}">
+										<a href="{{path('blog_details_postBlog',{slug:a.post_name})}}">
+											<div class="mask rgba-white-slight"></div>
+										</a>
+									</div>
+									<!-- Card content -->
+									<div class="card-body">
+										<!-- Title -->
+										<h4 class="card-title">
+											{{a.post_title|raw}}
+										</h4>
+										<!-- Text -->
+										{# <p class="card-text">{{ a.post_content|striptags('<p>')| easyadmin_truncate(200, true)|raw }}</p> #}
+										<!-- Button -->
+										{# <a href="{{path('blog_details_postBlog',{slug:a.post_name})}}" class="btn btn-primary">{{'blog.details-article'|trans}}</a> #}
+									</div>
+								</div>
+								<!-- Card -->
+							</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+				<div class="tab-pane fade mt-5 {% if categorie == 'experiences' %}show active{% endif %}" id="experience" role="tabpanel" aria-labelledby="experience-tab">
+					<div class="container row">
+						{% for a in dataExperience %}
+							{% if app.request.locale == 'en' and a.title_en != a.post_title and a.title_en != '' %}
+							<div class="col-md-4 mb-4 clearfix">
+								<!-- Card -->
+								<div class="card">
+									<!-- Card image -->
+									<div class="view overlay">
+										<img class="card-img-top lazy" width="262.5" height="200" data-src="{{a.imagePost}}" alt="{{a.title}}">
+										<a href="{{path('blog_details_postBlog',{slug:a.post_name})}}">
+											<div class="mask rgba-white-slight"></div>
+										</a>
+									</div>
+									<!-- Card content -->
+									<div class="card-body">
+										<!-- Title -->
+										<h4 class="card-title">
+											{{a.title_en|raw}}
+										</h4>
+										<!-- Text -->
+										{# <p class="card-text">{{ a.post_content|striptags('<p>')| easyadmin_truncate(200, true)|raw }}</p> #}
+										<!-- Button -->
+										{# <a href="{{path('blog_details_postBlog',{slug:a.post_name})}}" class="btn btn-primary">{{'blog.details-article'|trans}}</a> #}
+									</div>
+								</div>
+								<!-- Card -->
+							</div>
+							{% elseif app.request.locale == 'fr' %}
+							<div
+								class="col-md-4 mb-4 clearfix">
+								<!-- Card -->
+								<div class="card">
+									<!-- Card image -->
+									<div class="view overlay">
+										<img class="card-img-top lazy" width="262.5" height="200" data-src="{{a.imagePost}}" alt="{{a.title}}">
+										<a href="{{path('blog_details_postBlog',{slug:a.post_name})}}">
+											<div class="mask rgba-white-slight"></div>
+										</a>
+									</div>
+									<!-- Card content -->
+									<div class="card-body">
+										<!-- Title -->
+										<h4 class="card-title">
+											{{a.post_title|raw}}
+										</h4>
+										<!-- Text -->
+										{# <p class="card-text">{{ a.post_content|striptags('<p>')| easyadmin_truncate(200, true)|raw }}</p> #}
+										<!-- Button -->
+										{# <a href="{{path('blog_details_postBlog',{slug:a.post_name})}}" class="btn btn-primary">{{'blog.details-article'|trans}}</a> #}
+									</div>
+								</div>
+								<!-- Card -->
+							</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+	<!--Main Layout-->
+
+	{% include("partials/videoButton.html.twig") %}
+	{% include("partials/otherPagesVideoModal.html.twig") %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<!-- Full background slider jQuery plugin -->
+	<script type="text/javascript" src="{{ asset('assets/js/fullclip.min.js') }}"></script>
+	<!-- Lazy load -->
+	<!-- cdnjs for lazy load -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+
+	<script>
+	$(document).ready(function () { // Lazy Loading initializer
+	$(function () {
+		$('.lazy').lazy();
+	});
+
+		{% include("partials/js/videoButton.js.twig") %}
+	var docWidth = document.documentElement.offsetWidth;
+
+	[].forEach.call(document.querySelectorAll('*'), function (el) {
+	if (el.offsetWidth > docWidth) {
+	console.log(el);
+	}
+	});
+	// Hambuger menu icon
+	$('.animated-button-icon').on('click', function () {
+	$('.animated-icon2').toggleClass('open');
+	});
+
+	// Recherche avancer
+	$("#recherche-avancer").click(function () {
+	$("#sectionAvancer").toggleClass('d-none');
+	});
+
+	// first thing turn Hide Menu Search bar
+	$("#searchMenu").hide();
+	// toggle menu search bar on/off
+	$("#searchMenuShowHide").click(function () {
+	$("#searchMenu").toggle("slide");
+	});
+
+	// Set card title and card-body equal height
+	let maxHeightTitle = 0;
+	let maxHeightbody = 0;
+
+	$(".card-title").each(function () {
+	if ($(this).height() > maxHeightTitle) {
+	maxHeightTitle = $(this).height();
+	}
+	});
+
+	$(".card-title").height(maxHeightTitle);
+	// card body
+	$(".card-body").each(function () {
+	if ($(this).height() > maxHeightbody) {
+	maxHeightbody = $(this).height();
+	}
+	});
+		$(".card-body").height(maxHeightbody);
+	});
+	</script>
+
+{% endblock %}
+
+{% block footer %}
+
+	{{parent()}}
+
+{% endblock %}

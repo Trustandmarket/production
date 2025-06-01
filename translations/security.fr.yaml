@@ -1,0 +1,10 @@
+register:
+  verifier-email: 'Veuillez confirmer votre adresse Email.'
+  verifier-email-succes: 'Votre adresse email a été vérifié.'
+  email-confirmation: 'Veuillez confirmer votre adresse Email'
+changement-compte:
+  message-succes: 'Vous venez de migrer votre compte avec succès. Pour des raisons de sécurité, veuillez vous ré authentifier.'
+changement-mot-de-passe:
+  message-succes: 'Votre mot de passe a été réinitialisé avec succès.'
+desactivation-compte:
+  message-succes: 'Votre compte a été supprimé avec succès.'

@@ -1,0 +1,280 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+    Parcours utilisateur - Expériences
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <style>
+        #main-menu {
+            font-size: 14px;
+        }
+    </style>
+    <div class="content">
+        <div class="animated fadeIn">
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="box-title">Parcours utilisateur - Expériences{# <a class="badge badge-complete right1" href="{{path('marketing_experiences_create_get')}}" title="Ajouter une opération">
+									<i class="fa fa-plus"></i>
+								</a> #}
+                            </h4>
+                        </div>
+                        <div class="card-body--">
+                            <div class="table-stats order-table ov-h">
+                                <table class="table ">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Type</th>
+                                        <th>Ville</th>
+                                        <th>Email</th>
+                                        <th>Statut</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for m in experiences %}
+                                        <tr style="background-color: #F7F7F7;font-weight: bold;">
+                                            <td>{{ m.id }}</td>
+                                            <td>{{ m.exp_type_experience }}</td>
+                                            <td>{% if m.exp_type_experience|lower == 'musique' %}
+                                                    {{ m.exp_ville }}
+                                                {% else %}
+                                                    {{ m.exp_lieu_evt }}
+                                                {% endif %}</td>
+                                            <td>{{ m.user }}</td>
+                                            <td>{% if m.status|lower == 'draft' %}
+                                                    <button class="btn btn-round btn-warning">En Brouillon</button>
+                                                {% else %}
+                                                    <button class="btn btn-round btn-success">Terminée</button>
+                                                {% endif %}</td>
+                                            <td>{{ m.created_at }}</td>
+                                            <td>
+                                                <a class="badge badge-pending post-details my-1 apercuExp"
+                                                   attr-id="{{ m.id }}" href="" title="Details du post">
+                                                    <i class="fa fa-eye "></i>
+                                                </a>
+                                                {% set url = ea_url().setController('App\\Controller\\Admin\\ParcoursUtilisateur\\Experiences\\WpPostsCrudController').setAction('edit').setEntityId(m.id) %}
+                                                <a class="badge badge-pending update my-1" href="{{ url }}"
+                                                   title="Modifier le post">
+                                                    <i class="fa fa-edit "></i>
+                                                </a>
+                                                <a class="red delete my-1"
+                                                   href="{{ path('post_delete_get', {id : m.id}) }}"
+                                                   title="Supprimer l'experience'">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade alert-dismissible in" id="apercuModal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Expérience <span class="apercuTitre"></span></h5>
+                </div>
+                <div class="modal-body">
+                    <div class="recap_choix">
+                        <div class="inline_choix musique_choose">
+                            <h4>Ville:&nbsp;</h4>
+                            <p style="font-weight: 300;" class="villeValue">Paris 15ème</p>
+                        </div>
+                        <div class="inline_choix musique_choose">
+                            <h4>Style musical:&nbsp;</h4>
+                            <p style="font-weight: 300;" class="universValue">Paris 15ème</p>
+                        </div>
+                        <div class="inline_choix divertissement_choose">
+                            <h4>Votre évènement:&nbsp;</h4>
+                            <p style="font-weight: 300;" class="nomEvtValue">Paris 15ème</p>
+                        </div>
+                        <div class="inline_choix divertissement_choose">
+                            <h4>Le lieu:&nbsp;</h4>
+                            <p style="font-weight: 300;" class="lieuValue">Pop / Folk</p>
+                        </div>
+                        <div class="inline_choix divertissement_choose">
+                            <h4>Nombre de participants:&nbsp;</h4>
+                            <p style="font-weight: 300;" class="participantValue">Pop / Folk</p>
+                        </div>
+                        <div style="margin-top: 2rem;">
+                            <h4>Liste de vos besoins:</h4>
+                            <div class="besoinValue" style="margin-top: 1.7rem;">
+                                <p style="font-weight: 300;margin-bottom: 1rem;">Pop / Folk</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 3rem;">
+                            <h4>Les options retenues:</h4>
+                            <div class="optionValue" style="margin-top: 1.7rem;">
+                                <p style="font-weight: 300;margin-bottom: 1rem;">Pop / Folk</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 3rem;">
+                            <h4>Vos précisions pour une offre sur mesure:</h4>
+                            <textarea class="precisionValue field_precisions_2 form-control" name="precisions_2"
+                                      id="precisions_2" class="form-control" cols="30" rows="5"
+                                      placeholder="Donnez-nous des détails pour nous permettre de personnaliser votre offre : nombre de musiciens, la durée de 'enregistrement studio, nombre de titres pour le mixage..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-round btn-secondary close fermerModalApercu p-2"
+                            data-dismiss="modal">Masquer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block body_javascript %}
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+            integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+    <script type="text/javascript">
+
+        $(document).on('click', '.delete', function (e) {
+            e.preventDefault();
+            var t = $(this);
+            var urlPath = $(this).attr('href');
+            swal({
+                title: "Suppression de l'experience",
+                text: "Attention l'expérience sera Supprimée et n'apparaitra plus sur votre site",
+                type: "info",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Supprimer",
+                cancelButtonText: "Annuler",
+                closeOnConfirm: false,
+                closeOnCancel: false,
+                showLoaderOnConfirm: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: urlPath,
+                        type: 'GET',
+                        success: function (reponse) {
+                            //console.log(reponse);
+                            if (reponse == 1) {
+                                swal("Suppression terminée", "", "success");
+                                t.parents('tr').hide();
+                            } else {
+                                swal("Erreur de suppression", "", "error");
+                            }
+
+                        },
+                        error: function (reponse) {
+                            swal("Erreur de suppression", "", "error");
+                        }
+                    });
+                } else {
+                    swal.close();
+                }
+            });
+            return false;
+        });
+
+
+        $('.apercuExp').on('click', function (e) {
+            e.preventDefault();
+            var id = $(this).attr('attr-id');
+            //$(this).append('<span class="spinner-grow"></span>');
+            $.ajax({
+                url: "/{{ app.request.locale }}/admin/parcours_utilisateur/experiences/details/" + id,
+                type: 'GET',
+                success: function (data) {
+                    data = JSON.parse(data)
+                    console.log(data);
+                    $("#apercuModal").fadeTo("slow", 1, function () {
+                        if (data.exp_type_experience == "Musique") {
+                            $('.apercuTitre').text(data.exp_type_experience + " - " + data.exp_ville + " - " + data.exp_univers)
+                            $('.villeValue').text(data.exp_ville)
+                            $('.universValue').text(data.exp_univers)
+                            $('.musique_choose').fadeIn()
+                            $('.divertissement_choose').fadeOut()
+                        } else {
+                            $('.apercuTitre').text(data.exp_type_experience + " - " + data.exp_nom_evt + " - " + data.exp_lieu_evt)
+                            $('.nomEvtValue').text(data.exp_nom_evt)
+                            $('.lieuValue').text(data.exp_lieu_evt)
+                            $('.participantValue').text(+data.exp_participants_evt)
+                            $('.musique_choose').fadeOut()
+                            $('.divertissement_choose').fadeIn()
+                        }
+
+                        $('.besoinValue').empty();
+                        if (data.exp_besoins && data.exp_besoins.length > 0) {
+                            data.exp_besoins.forEach((element) => {
+                                $('.besoinValue').append('<p style="font-weight: 300;margin-bottom: 1rem;">' + element.metaValue + '</p>');
+                            })
+                        }
+
+                        $('.optionValue').empty();
+                        if (data.exp_options && data.exp_options.length > 0) {
+                            data.exp_options.forEach((element) => {
+                                $('.optionValue').append('<p style="font-weight: 300;margin-bottom: 1rem;">' + element.metaValue + '</p>');
+                            })
+                        }
+
+                        $('.precisionValue').val(data.exp_precisions)
+                    });
+                },
+                error: function (error) {
+                    $('.spinner-grow').remove();
+                }
+            });
+        })
+
+        $(".fermerModalApercu").click(function () {
+            $("#apercuModal").fadeTo("slow", 0, function () {
+                $("#apercuModal").css("display", "none");
+                $(".modal-backdrop").css("display", "none");
+            });
+        });
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "12000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+
+{% endblock %}

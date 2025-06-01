@@ -1,0 +1,44 @@
+{% for a in devis %}
+
+	<div class="row mt-3" style="min-height: 200px">
+		<div class="col-md-4 annonce-img" style="background: url('{% if a.gallery.0 %}{{a.gallery.0.guid}}{% else %}{{a.images_secondaires.0.guid}}{% endif %}')"></div>
+		<div class="col-md-8 py-2 annonce-detail">
+			<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+				{{a.titre}}</h4>
+			<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:
+				{{a.dates_devis}}</h4>
+			{# <p class="fs-14">{{a.titre}}</p> #}
+			<div class="col-md-12 row">
+				<div class="col-md-8 pl-0">
+					<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+						{{a.first_name}}
+						{{a.last_name}}</h4>
+				</div>
+				<div class="col-md-4">
+					<span class="texte-gris text-bold fs-14">
+						<i class="fas fa-money-bill"></i>
+						{{a.price}}
+						{{a.devise}}</span>
+				</div>
+			</div>
+			<br>
+			<div class="pt-4">
+				<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+					<div class="btn-group mr-2" role="group" aria-label="First group">
+						<a class="btn btn-bg-primary btn-sm editer" href="{{path('profile_EditDraftAnnounce',{id:a.id, state:'edition'})}}">
+							<i class="fas fa-edit"></i>
+						</a>
+					</div>
+					<div class="btn-group mr-2" role="group" aria-label="Second group">
+						<a href="{{path('profile_deleteDraftAnnounce',{id:a.id})}}" class="btn btn-bg-primary btn-sm editer supprimer">
+							<i class="fas fa-trash-alt"></i>
+						</a>
+					</div>
+
+					<div class="btn-group ml-4 " role="group" aria-label="Thirth group"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endfor %}
+

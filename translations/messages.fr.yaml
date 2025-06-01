@@ -1,0 +1,251 @@
+general:
+    titre: 'Mariage, Evènements privés et corporates'
+    accueil: Accueil
+    email: 'Adresse email'
+    more: Plus
+    projet: 'Votre Projet'
+    create-password: 'Sécurisez votre compte en y associant un mot de passe'
+    envoyer: Envoyer
+    logout: Déconnexion
+    add: Ajouter
+    homme: Homme
+    femme: Femme
+    autre: Autre
+    add-portfolio: 'Charger une image'
+    add-youtube-link: 'Ajouter un lien youtube'
+    supprimer: Supprimer
+    sure: 'Voulez vous effectuer cette action?'
+    voir_annonce: 'Voir l’annonce'
+    nationalite: Nationalite
+    lieu-de-naissance: 'Lieu de naissance'
+    cookie-message: 'Ce site utilise des cookies pour vous optimiser votre expérience utilisateur. En utilisant Trust & Market, vous acceptez notre <a style=''font-color:#ff7e10'' href=''https://www.trustandmarket.com/fr/nos-conditions/politique-de-confidentialite''> Utilisation de cookies</a>'
+    cookie-accepter: Ok
+    error: 'Une erreur est survenue!'
+    rupture: 'En rupture'
+    produit_disponible: 'Rendre disponible'
+    rechercher_produits: 'Rechercher des Produits'
+    rechercher_services: 'Rechercher  des Services'
+    produits_offres: 'PRODUITS ET OFFRES'
+    decouvrez_les_produits: ''
+    decouvrez_les_services: 'Autres services'
+    decouvrez_musique: 'MUSIQUE ET SERVICES'
+    derniers_articles: 'Derniers articles'
+    oui: Oui
+    non: Non
+homme: Homme
+femme: Femme
+autre: Autre
+connexion:
+    titre: Connexion
+    passe: 'Mot de passe'
+    souvenir: 'Se souvenir de moi'
+    passe-oublier: 'Mot de passe oublié?'
+    creer-compte: 'Créer un compte'
+    erreur: Erreur
+inscription:
+    titre: Inscription
+    prenom: Prénom
+    nom: Nom
+    categorie-utilisateur: 'Catégorie d''utilisateur'
+    abonne: Abonné
+    societe: Société
+    auto-entrepreneur: Auto-Entrepreneur
+    code-postal: 'Code postal, ville ou région'
+    passe: 'Mot de passe'
+    confirmation: 'Confirmation du mot de passe'
+    date-naissance: 'Date de naissance'
+    condition-utilisation: 'En envoyant mon inscription,'
+    accepter-condition: 'j''accepte les conditions de service et la politique de confidentialité et sécurité.'
+    newsletter: 'Je souhaite recevoir par email des coupons des promotions.'
+    connecte: 'Se connecter'
+    erreur: { titre: Erreur, email: 'Adresse Email invalide', date: 'Format de la date incorrect', email-utilisee: 'Adresse Email déja utilisée', verification-mot-de-passe: 'Le mot de passe ne correspond pas', erreur: 'Ce champ contient une erreur!', ob: 'Ce champ est obligatoire', ok: OK }
+passe-oublier:
+    titre: 'Mot de passe oublié'
+    description: 'Veuillez renseigner votre adresse e-mail ci-dessous :'
+    valider: Valider
+verification-email:
+    message-accueil: 'Bienvenue, un email vient de vous être envoyé !'
+    conseil: 'Merci de cliquer sur le lien dans l''email pour valider votre inscription.'
+    bouton-accueil: 'Découvrir Trust & Market'
+changer-mot-de-passe:
+    message-accueil: 'Un email vient de vous être envoyé !'
+    conseil: 'Merci de cliquer sur le lien dans l''email pour changer votre mot de passe.'
+    bouton-accueil: 'Découvrir Trust & Market'
+email-confirmation:
+    sujet: 'Activation du compte '
+    titre-email: 'Bienvenue '
+    titre: 'Plus qu''une étape!'
+    descriptif: 'Bienvenue sur Trust & Market. Pour confirmer votre inscription sur notre site ,veuillez clicquer sur le lien et votre compte sera créé.'
+    descriptif-lp: 'Bienvenue sur Trust & Market. Votre compte professionnel a été crée avec succès.'
+    bouton-valider: 'Valider mon compte'
+    saluer: 'Bonjour,'
+    message: 'Merci de votre intéret pour notre market place, vous pourrez vous connecter avec vos identifiants et profiter de l''ensemble de nos services !'
+    remerciements-entete: 'Bien à vous, '
+    remerciements: 'Votre équipe de service client Trust & Market'
+    succes: 'Votre compte a été activé. Vous pouvez vous connecter'
+    connect: 'Connectez vous'
+email-changer-mot-de-passe:
+    sujet: 'Changer mot de passe '
+    titre: 'Changement de mot de passe'
+    titre-email: 'Password change'
+    descriptif: 'Réinitialiser votre mot de passe des a présent par un clic sur le bouton ci-dessous.'
+    bouton-valider: 'Changer votre mot de passe'
+    saluer: 'Bonjour,'
+    message: 'Quelqu''un a demandé le renouvellement de son mot de passe pour le compte suivant'
+    avertissement: 'S''il s''agit d''une erreur, ignorez ce message et la demande ne sera pas prise en compte.'
+    remerciements-entete: 'Bien à vous, '
+    remerciements: 'Votre équipe de service client Trust & Market'
+    email-inexistant: 'Cette adresse email n''est pas enregistrée'
+reinitialiser-mot-de-passe:
+    titre: 'Nouveau mot de passe'
+    description: 'Veuillez saisir votre nouveau mot de passe ci-dessous'
+    texte-mot-de-passe: 'Nouveau mot de passe'
+    texte-repeter-mot-de-passe: 'Confirmer le nouveau mot de passe'
+    valider: 'Réinitialisation du mot de passe'
+    succes: 'Votre mot de passe a été réinitialisé'
+admin:
+    menu: { edit-page: 'Edit a page', create-page: 'Créer une nouvelle page', all-pages: 'Toutes les pages', manage-page: 'Gérer les pages', manage-category: 'Gérer les Categories', gerer-livraisons: 'Gérer les Livraisons', type-prestation: 'Type de prestation', seuil-livraison-gratuite: 'Seuils des frais de livraisons', demande-de-referencement: 'Demandes de referencements', operations-frais-gratuit: 'Opé frais gratuits', gerer-criteres: 'Gerer les criteres', categorie-produit: 'Categorie produit', emailing: Emailing, dashboard: 'Tableau de bord', landing_pages: 'Landings Pages', manage-user: 'Gérer les utilisateurs', all-user: 'Tous les utilisateurs', add-user: 'Ajouter un utilisateur', manage-post: 'Gérer les annonces', all-post: 'Toutes les annonces', all-devis: 'Tout les devis', add-post: 'Ajouter une annonce', all-categories: 'Toutes les catégories', all-activities: 'Liste d''activités', manage-oders: 'Gérer les commandes', all-orders: 'Toutes les commandes', manage-article: 'Gérer les articles', all-article: 'Toutes les articles', writte-article: 'Rediger un article', message: Commentaires, setting: Paramètres, language: Langue, deconnexion: Deconnexion, traduction: 'Fichier de traduction', nouvelle-page: 'Créer une page', modifier-page: 'Modifié la page', pages: 'Toutes les pages', home-page: 'Modifié la page d''accueil', update-category: 'Modifié la categorie', new-category: 'Ajouter une categorie', modifier-menu: ' Menu  et pages', menu-entete: 'Menu d''entete de page', menu-pied: 'Menu du pied de page', libelle: Libellé, sous-menu: 'Voir les sous menu liés', modifier: 'Modifié le menu', menu-page: 'Sous menu associés', modifie-page: 'Modifié la page', add-menu: 'Ajouter un menu', type: 'Type de menu', add-page: 'Ajouter une nouvelle page', configure-email: 'Configuration des emails', add-email: 'Ajouter un email', gerer-marketing: Marketing, actualite: Actualité, frais-livraison: 'Frais de livraison', ops-speciales: 'Opés. spéciales', ops-brouillon: Brouillon, promo-com: 'Promo et com', leads-gen: 'Leads gen', type-de-livraison: 'Types de livraisons', experiences: Experiences, offre: 'Offres pro', abonnement: Abonnements }
+    dashboard: { users: Utilisateurs, annonce: Annonces, orders: Commandes, article: 'Articles rédigés', accueil: 'Retourner à l''accueil', photographes: Photographes, videastes: Vidéastes, studio-audio: 'Studio audio', musiciens: Musiciens, chorales: Chorales, studio-photo: 'Studio de shooting photo', evenementiel: Evenementiels, tournage-video: 'Studio de tournage vidéo', tournage-photo-video: 'Studio de tournage vidéo / Studio Photo' }
+    user: { update-user: 'Modifié l''utilisateur', status: 'Statut du compte', last-login: 'dernière connexion', newsletter: 'Abonné l''utilisateur à la newsletter', creer-compte: 'Créer le compte', admin: Administrateur, detail: 'Détails de l''utilisateur', lieu-naissance: 'Lieu de naissance', sexe: Sexe }
+    article: { titre: 'Libellé de l''article', categorie: 'Catégorie de l''article', cover: 'Imager de couverture de l''article', remove: Supprimer, post: 'Poster l''article' }
+    categorie: { type-prestation: 'Ajouter un Type de prestation', categorie-produit: 'Categorie de produit', add-categorie: 'Ajouter une catégorie', add-critere: 'Ajouter un critere', libelle: 'Nom de la catégorie', categorie-parent: 'Catégorie parente', aucune: Aucune, send: Envoyer, enregistrer: Enregistrer, fermer: Fermer }
+    livraison: { nom-type-livraison: 'Type de prestation', prix: Prix, nom-critere: 'Nom du critere', texte-critere: 'Texte du critere', condition-inferieure: 'Condition inferieure', condition-superieure: 'Condition superieure', valeur-inferieure: 'Valeur inferieure', valeur-superieure: 'Valeur superieure', duree: 'Duree de livraison', choisir-critere: 'Choisir un critere de livraison', aucune: Aucune, send: Envoyer, fermer: Fermer }
+    slider: { titre: 'Gestion de l''accueil' }
+    annonce: { statut: Statut, draft: Brouillon, devis-draft: 'Devis en Brouillon', moderation: Modération, trash: Rejeté, publish: Publié, reserved: Réservé, ended: Fini, drop: Abandonné, cancel: Annulé, pending: 'En attente', success: Réussi, devis-pending: 'Devis En attente', in-progress: 'En cours', supprimer: Supprimer }
+    infos-bulle: { titre: Info-bulle, titre-formulaire: 'Configuration du texte de l''Info Bulle', enregistrer: Enregistrer }
+    page: { title: Pages, key: Clé, titre: Titre, desc: Description, create-button: 'Créer une page', edit-button: 'Editer la page', login_register: 'Connexion / Inscription' }
+home:
+    menu: { lien-des-prestations: 'Nos prestations', lien-des-projets: 'Votre projet', lien-inscription-connexion: Connexion/Inscription, formulaire-texte: 'Recherchez par métier ou type de prestation...', descriptif-recherche: 'Recherche avancée' }
+    pied-de-page: { titre: 'Inscrivez-vous à notre newsletter Trust & Market', blog: Blog, a-propos: 'A propos', aide: Aide, nos-conditions: 'Nos Conditions', retour-experience: 'Retour d''experience', formulaire-champ-prenom: 'Votre prenom', formulaire-champ-email: 'Votre email', formulaire-boutton-valider: ENVOYER, contrat: 'tous droits réservés', subscribe-newsletter: 'Inscription Newsletter' }
+    bouton: { studio-video: 'Studio Vidéo', evenementiel: Evènementiels, realisation-video: 'Réalisation vidéo', studio-photo: 'Studio photo', chorale: Chorale, groupe-de-musique: 'Groupes de musique', production-musicale: 'Production Musicale', musicien: Musicien, photographe: Photographe, studio-enregistrement: 'Studio musique' }
+    liens: { studio-enregistrement: 'Studio musique', mixage: 'Mixage et mastering audio', groupe-de-musique: 'Groupe de musique', chorale: Chorale, sonorisation: Sonorisation, dj: Dj, video-mariage: 'Vidéo mariage', shooting-photo: 'Shooting photo', photographe: photographe, videaste: vidéaste }
+    texte: { slogan: 'Offres de services pour la production musicale.' }
+    formulaire-champs: { titre-formulaire: 'Services, produits et accessoires dédiés à la musique et à l''évènementiel.', type-de-prestation: 'Type de prestation', services-proposes: 'Services proposés', code-postal-ville: 'Code postal et/ou ville', bouton-recherche: RECHERCHER, prestation: Prestations, besoin: Besoins, recherche-sous-categories: 'Recherche des sous catégories...' }
+projet:
+    titre: 'Décrivez-nous votre projet'
+    sous-titre: 'Vous et votre projet (obligatoire)'
+    description: 'Donnez-nous tous les détails de votre projet. Nous vous apporterons la meilleure offre en phase avec vos attentes, et vous accompagnerons avec les professionnels adaptés à votre projet. Quelques soient vos interrogations, vous pouvez également nous joindre au '
+    telephone: '01 85 42 14 91'
+    form: { titre: 'Vous et votre projet (* obligatoire)', nom: nom, prenom: prénom, telephone: téléphone, votre-projet: 'votre projet', calendrier: calendrier, lieu: 'lieu*', nombre-personne: 'nb de personnes', votre-budget: 'votre budget' }
+    titre-formulaire-case-a-cocher: { titre: 'Vos besoins (minimum une sélection)', kit-sonorisation: 'Kit sonorisation', kit-lumiere: 'Kit lumière', prestation-dj: 'Prestation DJ', groupe-de-musique: 'Groupe de musique', studio-enregistrement: 'Studio d''enregistrement', mixage-audio: 'Mixage audio', matering-audio: 'Matering audio', cherche-musicien: 'Cherche musicien', production-audio: 'Production audio', chorale-gospel: 'Chorale gospel', shooting-photo: 'Shooting photo', photo-mariage: 'Photo mariage', shooting-packshoot: 'Shooting packshot', shooting-corporate: 'Shooting corporate', tournage-clip: 'Tournage clip', video-mariage: 'Vidéo mariage', film-corporate: 'Film corporate', tournage-ext-int: 'Tournage Ext/Int', recherche-studio-photo: 'Recherche studio photo', recherche-studio-video: 'Recherche Studio vidéo', autres: Autres..., autres-description: 'autres besoins...' }
+    formulaire-message: { titre: 'Votre message', description: 'Un message et/ou des précisions concernant votre projet', newsletter: 'J''adhère à la newsletter', contrat: 'En envoyant ma demande, j''accepte les ', contrat-lien: 'CGU et la politique de confidentialité et sécurité', bouton-valider: ENVOYER }
+profil-utilisateur:
+    liens: { titre-page: 'Profil Tableau de bord', titre: 'Votre profil', dashboard: Compte, annonces: Annonces, profil: Profil, fournisseur-de-services: 'Fournisseur de service', parametres: Paramètres, commentaires: Commentaires, deconnexion: Déconnexion, mes-commandes: 'Mes Commandes', effacer-compte: 'Voulez-vous vraiment supprimer votre compte ?', effacer-compte-donnees: 'Effacer définitivement mes données.' }
+    formulaire-profil: { nom: Nom, prenom: Prénom, nom_commercial: 'Nom commercial', sexe: Sexe, date-de-naissance: 'Date de naissance', lieu-de-naissance: 'Lieu de naissance', lieu-de-residence: 'Adresse de résidence', lieu-de-livraison: 'Adresse de livraison', adresses: Adresses, adresse-email: 'Adresse email', telephone: Téléphone, raison-sociale: 'Raison sociale', siret: SIRET, tva: TVA, titre: Titre, activite: 'Activité principale', competence: Compétences, description: 'Quelques mots sur vous', region: Région, reference: 'Vos Références', video: Vidéos, voir-profil: 'Voir mon profil', ajouter-photo-profil: 'Sélectionner une image (résolution 400*400)', bouton-modifier: 'MODIFIER MON PROFIL', bouton-supprimer: 'SUPPRIMER MON PROFIL', devenir-auto-entrepreneur: 'Devenir un Auto-entrepreneur', devenir-societe: 'Devenir une Societe', domicile: Domicile, livraison: Livraison, departement: Departement }
+    formulaire-modification-profil: { bouton-modifier: 'Enregistrer les modifications', bouton-annuler: 'Annuler les modifications', portfolio: 'Rajoutez des photos illustrant votre travail, vos compétences', reference: '' }
+    dashboard: { rapport-dernieres-annonces: 'Dernières annonces publiées', rapport-reservations-en-cours: 'Réservations en cours', bouton-profil: 'VOIR MON PROFIL', bouton-annonces: 'MES ANNONCES' }
+    commentaire: { menu-commentaires-recus: 'Commentaires reçus', menu-commentaires-postes: 'Commentaires postés', tableau-titre-commentaires-recus: 'Commentaires reçus', tableau-titre-commentaires-postes: 'Commentaires postés', tableau-message-recus-pour-liste-vide: 'Vous n''avez reçu aucun commentaire', tableau-message-postes-pour-liste-vide: 'Vous n''avez posté aucun commentaire' }
+    parametres: { titre: Paramètres, menu-notifications: Notifications, menu-historique-de-transactions: 'Historique de transactions', menu-mot-de-passe: 'Mot de passe', demande-referencement-produit: 'Demande de référencement produits', formulaire-notifications-titre: Notifications, formulaire-notifications-description: 'Nous souhaitons rester en contact avec vous, de la manière qui vous convient le mieux', formulaire-transactions-versees: 'Transactions versées', formulaire-transactions-recus: 'Transactions reçues', formulaire-revenus-generes: 'Revenus générés', formulaire-messages-revenus-generes: 'A l''heure actuelle, vous avez gagné', formulaire-mot-de-passe-titre: 'Mot de passe', formulaire-referencement-titre: 'Vous souhaitez referencer vos produits sur Trust&Market? C''est simple et pratique. Envoyez-nous votre demande.', formulaire-referencement-attente: 'Votre demande est en cours de traitement par les équipes de Trust&Market.', formulaire-referencement-accepte: 'Votre demande a été accepté,vous pouvez desormais publier vos produits sur Trust&Market', formulaire-referencement-description-rejet: 'Votre demande a ete rejeté, tout vos documents KYC ne sont pas velidés. Veuillez les soumettre puis renouvellez votre demande de référencements produits sur Trust&Market.', formulaire-referencement-referencer-mes-produits: 'Je souhaites référencer mes produits sur Trust&Market', bouton-enregistrer: Enregistrer, formulaire-mot-de-passe-messages-astuce: 'Astuce: le mot de passe devrait contenir au moins 12 caractères.Pour le rendre plus sûr, utilisez des lettres en majuscule et minuscule, des nombres et des symboles tels que ! " ? $ % ^ &. ', email-titre: 'Demande de referencement produit', email-description: 'Votre profil sera etudié afin de vous accorder un accès a la boutique produits sur Trust&Market.', email-bouton-connectez-vous: 'Connectez vous', email-message: 'L''utlisateur %name% a effectué une demande de référencement produit sur Trust&Market', email-demande-accepte-message: '%name%, votre demande de référencement produits sur Trust&Market a été acceptée', email-demande-rejete-message: '%name%, votre demande de référencement produits sur Trust&Market a été rejetée. Veuillez faire valider vos documents par Mangopay puis soumettez de nouveau cette requète.' }
+    calendrier: { titre: Calendrier, conseil: 'Maintenez régulièrement à jour votre calendrier en sélectionnant vos période de disponibilité.' }
+    parametres-notifications: { reservation-de-service-client: 'Réservation de services(s) (Client)', reservation-de-service-annonceur: 'Réservation de service(s) (Fournisseur)', annulation-de-reservation: 'Annulation de réservation', annonce-en-brouillon: 'Annonce en brouillon', annonce-en-moderation: 'Annonce en modération', annonce-rejete: 'Annonce rejeté', annonce-publiee: 'Annonce publiée', newsletter: 'Adhésion à la newsletter' }
+    parametres-mot-de-passe: { mot-de-passe-actuel: 'Tapez votre mot de passe actuel', nouveau-mot-de-passe: 'Tapez votre nouveau mot de passe', confirmer-mot-de-passe-actuel: 'Confirmez votre nouveau mot de passe' }
+    parametres-transaction: { date: Date, type: Type, nom-prestation: 'Nom de la prestation', etat: Etat, montant: Montant, versement: Versement }
+    fournisseurs: { titre: 'Vous êtes fournisseur de service', description: 'Avant de poster une annonce sur Trust & Market, il faut obligatoirement renseigner vos coordonnées de fournisseur. Cela nous permettra de vous verser les sommes correspondantes à vos réservations de service.', formulaire-fournisseurs-titre: Paramètres, formulaire-fournisseurs-informations-bancaires: 'Informations bancaires', formulaire-fournisseurs-nom: 'Nom du détenteur du compte *', formulaire-fournisseurs-adresse: 'Adresse du détenteur du compte *', formulaire-fournisseurs-ville: 'Ville du détenteur du compte *', formulaire-fournisseurs-code-postal: 'Code postal du détenteur du compte *', formulaire-fournisseurs-code-postal2: 'Code postal *', formulaire-fournisseurs-pays: 'Choix de pays...', formulaire-fournisseurs-region: 'Région du détenteur du compte', formulaire-fournisseurs-bouton-enregistrer: Sauvegarder, formulaire-details-facture-titre: 'Détail de votre facture', formulaire-details-facture-prenom: prénom, formulaire-details-facture-nom: nom, formulaire-details-facture-nom-entreprise: 'Nom de l''entreprise', formulaire-details-facture-pays: Pays, formulaire-details-facture-numero-rue: 'Numéro et nom de rue', formulaire-details-facture-code-postal: 'Code postal', formulaire-details-facture-ville: Ville, formulaire-details-facture-etat-comte: 'Etat / Comté', formulaire-details-facture-telephone: Téléphone, formulaire-details-facture-email: 'Adresse de messagerie', formulaire-details-facture-preuve-identite: 'Preuve d''identité', formulaire-details-facture-preuve-adresse: localisation, formulaire-details-facture-preuve-enregistrement: 'Preuve d''enregistrement', formulaire-details-facture-kbis: KBIS, formulaire-details-facture-statut: Statuts, formulaire-details-facture-shareholder: Actionnaire, formulaire-details-facture-preuve-message-envoyé: envoyé, formulaire-details-facture-preuve-message-pas-envoye: 'Pas encore envoyé', formulaire-details-facture-envoyer-document: 'Envoyer un nouveau document', formulaire-details-facture-selectionner-fichiers: 'Envoyer un nouveau document', formulaire-details-facture-bouton-confirmer: Confirmer, bouton-societe: 'DEVENIR UNE SOCIETE', avertissement: 'Vous devez télécharger les documents suivants pour effectuer les vérifications de conformité' }
+    annonces: { reservations-titre: 'Mes réservations', reservations-en-cours: 'Réservations en cours', reservations-terminees: 'Réservations terminées', reservations-annulees: 'Réservations annulées', message-reservations-en-cours: 'Ces Réservations sont actuellement en cours de traitement par nos services.', message-reservations-terminees: 'Ces annonces termines.', message-reservations-annulees: 'Ces annonces sont annulees.', annonces-titre: 'Mes annonces', annonces-en-brouillon: 'Annonces en brouillon', message-brouillon: 'Ces annonces sont actuellement en brouillon.', annonces-en-moderation: 'Annonces en modération', annonces-rejetees: 'Annonces rejetées', annonces-publiees: 'Annonces publiées', message-publies: 'Ces annonces ont été publiées', annonces-reservees: 'Annonces réservées', annonces-terminees: 'Annonces terminées', annonces-annulees: 'Annonces annulées', annonces-publier: 'Publier annonce', message-en-attente: 'Ces annonces sont actuellement en cours de traitement par nos services avant leur publication définitive.', devis-en-attente: 'Devis en Attente', reservation-devis-en-attente: 'Devis reçu en Attente', devis-en-brouillon: 'Devis en Brouillon', devis-message-en-attente: 'Ces devis sont actuellement en attente de validation.', devis-service: SERVICE, devis-date: 'DATES ET HORAIRES', devis-prestataire: PRESTATAIRE, voir-accepter: 'Voir et accepter', annuler: Annuler }
+    annonces-details: { titre: 'Détails de l''Annonce', disponibilites: 'Dates souhaitées', selectionner-dates: 'Sélectionner une ou plusieurs dates parmi celles proposées par le prestataire.', ajouter-panier: 'Ajouter au panier', caracteristiques: Caractéristiques, dates-disponibles: 'dates dispo.', publie-le: 'Postée le', maj-le: 'mise à jour le', commentaires: Commentaires, details-profil: 'Consulter le profil', envoyer-message: 'Envoyer un message', supprimer-annonce: 'Supprimer l''annonce', description-devis: 'Description du Devis', description-prestation: 'Description de la prestation', videos: Vidéos, ajouter-commentaire: 'Ajouter un commentaire', quantite: Quantité, publier: Publier, rupture: 'Produit en rupture' }
+    formulaire-creer-annonce: { type-de-prestations: 'TYPE DE PRESTATIONS', prestation-proposee: 'PRESTATION PROPOSEE', creer-un-devis: 'Créer un devis', champs-trouver-client: 'Trouvez votre client', dates-horaires-prestations: 'Dates et horaires de la prestation', contrainte-de-choix: '1 choix uniquement', presence-reseau-sociaux: 'Your presence on the social network', champs-pays: 'VOTRE ADRESSE', champs-adresse: 'Adresse postale(N°, rue)', champs-localisation: 'Précision (immeuble, étage...)', champs-code-postal: 'Code postal', champs-ville: Ville, equipements: 'Équipements mis à disposition', champs-autres: Autres, case-a-cocher-wi-fi: WI-FI, case-a-cocher-cafe: 'Café, Thé', case-a-cocher-bureau: 'Bureau / Espace de travail', autres: Autres, bouton-suivant: Suivant, bouton-precedent: Précédent, onglet-prestations: PRESTATIONS, onglet-adresse: ADRESSE, onglet-service: SERVICE, onglet-photos-videos: PHOTOS/VIDEOS, onglet-prix: PRIX, onglet-conditions: CONDITIONS, titre-onglet-annonces: 'Mes annonces', titre-onglet-reservations: 'Mes réservations' }
+    formulaire-creer-annonce-3: { entete-nom-service: 'Donnez un nom à votre service', champs-titre-service: 'Titre de service', entete-description-service: 'Description de votre service', champs-description-service: '(Brève description de vos techniques, votre matériel, vos compétences...)' }
+    formulaire-creer-annonce-4: { entete-portfolio: PORTFOLIO, contrainte-ajout-portfolio: '(1 photo obligatoire, taille maximum : L 1000 px H 700 px)', entete-video: VIDEO, contrainte-ajout-video: '(Facultatif, exclusivement des liens YouTube, 3 liens maximum)', telecharger-image: 'Télécharger une image' }
+    formulaire-creer-annonce-5: { entete-prix-prestation: 'PRIX DES PRESTATIONS', description-prix-prestation: 'Votre prix est le tarif fixe forfaitaire ou journalier', entete-prix-ttc: 'Packs-projet-evenementiels - Le prix TTC' }
+    formulaire-creer-annonce-6: { entete-legislation-et-conditions-utilisation: 'Législation et Rappel des conditions d''utilisation de la platforme', texte: 'En finalisant votre annonce, vous confirmez avoir lu, compris et accepté nos conditions générales et notre politique de confidentialité. En acceptant nos conditions générales et en mettant en ligne une annonce, vous vous engagez à respecter vos lois et réglementations locales. Informez-vous sur les lois qui s''appliquent dans votre pays avant de publier votre annonce', bouton-accepter: 'J''accepte' }
+    fournisseurs-abonne: { passez-societe: 'Passez au profil societe', passez-auto-entrepreneur: 'Passez au profil auto-entrepreneur', texte: 'Votre compte n''est pas configuré pour être vendeur. Pour pouvoir publier des annonces sur Trust & Market, il faut obligatoirement devenir fournisseur de services.<br>C''est simple et rapide.<br>Choisissez l''une des options ci-dessous :<br>', auto-entrepreneur: '<strong>Auto-entrepreneur</strong>', ou: ou, societe: '<strong>Société</strong>' }
+    status: { validation_demandee: 'Validation En attente', valide: 'Document validé', validation_refusee: 'Document rejeté' }
+    mon-profil: { region: Région, description: 'Quelques mots sur moi', reference: 'Quelques références projets', portfolio: Portfolio, videos: Vidéos, avis: 'Avis et commentaires', bouton-recommander: 'J''AI RECOMMANDE', bouton-ne-pas-recommander: 'JE NE RECOMMANDES PAS', liste-annonces: 'Les annonces de', bouton-voir-annonce: 'VOIR L''ANNONCE', competences: Compétences, message: 'ENVOYER UN MESSAGE', experience: Expérience, annee: année }
+systeme:
+    requetes: { erreur: 'Erreur lors de la sauvegarde', requete-en-cours: 'Sauvegarde en cours', succes: 'Enregistrement effectué avec succès', alerte_formulaire: 'Les donnees dans le formulaire ne sont pas correctes', taille_fichier: 'La taille maximale des fichiers est 1 Mo', taille_fichier_avatar: 'La photo de profil doit etre < 1 Mo', remplir_annonces: 'Vous devez remplir des annonces.' }
+    email: { erreur: 'Erreur lors de l''envoie', requete-en-cours: 'Envoie du mail en cours', succes: 'Envoie effectué avec succès' }
+    compte: { succes: 'Votre compte a été supprimé avec succès', error: 'Erreur lors de la suppression du compte', en-cours: 'Opération en cours' }
+blog:
+    notre-blog: 'Notre Blog'
+    titre: 'LE BLOG'
+    details-article: 'Lire la suite'
+    menu: { liste-articles: 'Tous les articles', musique: Musique, photographie: Photographie, video: Vidéo, experiences: Expériences }
+footer:
+    ausiteodit: { libelle-lien: 'A propos d''Ausiteodit', titre: 'A PROPOS DE L''AGENCE WEB AUSITEODIT', titre-header-page: 'A PROPOS DE<br>L''AGENCE WEB<br>AUSITEODIT', sous-titre: 'Qui est l''agence Ausiteodit ?', avis-titre: 'Notre avis sur l''agence', avis: 'AUSITEODIT est une agence web et mobile française située à Paris (21 Allée des Dahlias, 92320 Châtillon). Créée en 2017, l''agence est spécialisée dans la conception de site internet, d''applications et l''ingénierie audiovisuel. De nos jours, l’entreprise a diversifié son champ d’action, couvrant ainsi tous les métiers de l’informatique digitale. Dotée d’un savoir-faire avéré dans le domaine du développement (certifications ou prix gagnés), Ausiteodit offre un accompagnement complet à ses clients : de la conception en passant par la gestion des sites web et applications, jusqu’à la promotion des services sur internet.', visiter: 'VISITER LE SITE', valeur-ajoutee-titre: 'Donner de la valeur ajoutée à vos projets web', valeur-ajoutee-description: 'Ausiteodit offre son expertise dans les domaines du développement web (site internet, applications web et hébergement), du développement mobile (Android & iOS) et du digital marketing (référencement, réseaux sociaux, blogging) à des prix confortables. Cette agence web et mobile accompagne ses clients dans la conception projets web, la rédaction de cahiers de charges, la réalisation et la refonte de sites web et applications. Ausiteodit priorise avant tout la satisfaction client. De ce fait, l’entreprise pratique une écoute attentive au besoin profond du client afin de proposer des applications qui leurs ressemblent. <br><br> Nos valeurs : <br> Vision : la différence au service de la créativité sur la transformation digitale <br> Innovation : la soif d’innover et le besoin indéfectible de marquer les esprits <br> Solidarité : le travail en équipe et la cohésion interne <br> Respect : le respect des exigences clients et des délais <br> Engagement : engagement solide dans la satisfaction des clients' }
+error:
+    experiences: 'Expérience Trust & Market'
+    experience: 'L''Expérience'
+    contenu: { text1: 'ne finit jamais, Vous pensiez être au bout du voyage.', text3: 'Non, c''était juste une sortie de piste.', text4: 'Nous vous offrons deux clés mystère pour rejoindre votre parcours', text5: 'C''est maintenant à vous de jouer', text6: 'La quelle choisir?', text7: 'Une erreur inattendue est survenue sur nos infrastructures. Veuillez nous excuser pour la gêne occasionnée. Nous mettons tout en oeuvre pour rétablir le service dans les plus brefs délais.' }
+paiement:
+    explication: 'Afin de finaliser votre commande, veillez remplir les coordonnées liées à votre facture (que vous soyez un particulier ou une entreprise) et sélectionner votre moyen de paiement'
+    titre-page: Facture
+    titre: 'Détail de votre facture'
+    formulaire: { prenom: Prénom, nom: Nom, entreprise: 'Nom de l''entreprise', numero-rue: 'Numéro et nom de rue', code-postal: 'Code postal', ville: Ville, pays: Pays, email: 'Adresse de messagerie', telephone: Téléphone }
+    reservation: { titre: 'Votre réservation', total: Total, sous-total: Sous-total, prix-total: 'Prix total initial', type-de-paiement: 'Paiement en ligne', type-de-carte-de-credit: 'Type de Carte de crédit', conditions-utilisation: 'J''ai lu et accepté les conditions générales d''utilisation du site', commander: Commander, prestations: 'Prestation (détails)', dates: 'date(s) réservée(s)', paiement-attente: 'En attente de paiement', frais-type-de-livraison: 'Frais de livraison de vos produits', seuil-livraison-gratuite: 'Opé frais gratuits' }
+newsletter:
+    titre-page: 'INSCRIPTION NEWSLETTER'
+    titre-page-reponse: 'Merci pour votre Inscription!'
+    succes: 'Inscription a la newsletter réussie'
+    attente: 'Inscription a la newsletter en cours...'
+    robot: 'Vous avez soumis plusieurs requetes, etes vous un humain?'
+    echec: 'Erreur lors de l''adhésion a la newsletter'
+    email_occupe: 'Cette adresse Email est déja utilisée'
+commande:
+    annuler: { confirmer_annulation: 'Etes vous sur de vouloir annuler cette commande?', succes: 'Commande annulée avec succès', erreur: 'Une erreur est survenue lors de l''annulation de la commande' }
+panier:
+    titre: 'Votre panier'
+    message: 'Afin de permettre une bonne gestion des annonces et dans le respect des autres utilisateurs, chaque résevation ajoutée à votre panier est conservée pour une durée de <strong>30 min</strong>.'
+    tableau: { annonces: Annonces, prix/u: Prix/u, quantite: 'Qté - Dates', total: Total, bouton-editer: Modifier, bouton-supprimer: Supprimer, vendu-par: 'Vendu par' }
+    recapitulatif-tableau: { total: Total, montant-initial: 'MT. INITIAL', frais-de-service: 'FRAIS DE SERVICE', message-frais-de-dervice: 'Ces frais financent le fonctionnement de la plateforme et tous ses services. Ils incluent la TVp.', montant-final: 'MT. FINAL', bouton-commande: 'Passer commande', addServ: 'Ajouter des services', ajouter_produits: 'Ajouter des produits' }
+chat:
+    titre-de-page: Messagerie
+    sous-titre-bloc-conversations: Conversations
+    message-accueil: '<h2>Bienvenue dans la messagerie de Trust &amp; Market!</h2>'
+    descriptif: "<p>Cet espace sécurisé vous permet d'échanger des messages et des documents avec vos futurs clients ou prestataires de service.<br>\tCet espace vous permet d'avoir une historique de vos échanges et de contruire une relation durable.</p>"
+    message-avertissement: 'Veuillez choisir un destinataire avant de voir ses annonces'
+    filtre-utilisateurs: { tout: Tout, utilisateurs-connectes: Connectés, utilisateur-deconnectes: 'Non Connectés' }
+    profil-vendeur: { voir-avis: 'Voir les avis' }
+    annonces: Annonces
+    annonces-en-cours: 'Annonces en cours'
+    envoyer-un-devis: 'Envoyer un dévis'
+    messages-erreur: { serveur-ferme: 'Le serveur s''est fermé', erreur: 'Une erreur s''est produite avec le serveur de tchat', non-connecte: 'Vous êtes actuellement en mode hors connexion' }
+    barre-laterale: { statut-interlocuteur: 'Aucun interlocuteur pour le moment' }
+projet-pop-up:
+    titre1: 'Des services diversifiés pour répondre a vos besoins.'
+    sous-titre1: 'Rechercher des services'
+    titre2: 'Créez et personnalisez une expérience unique.'
+    sous-titre2: 'Créer une expérience'
+landing_page:
+    intro: 'Les grandes et belles histoires demandent du temps et de la patience.<br>Trust & Market, une alternative indépendante qui vous permet de rester<span style=''color: #54b4a6;-webkit-text-stroke:0.3px;''> AUTHENTIQUE</span> et<span style=''color: #ed7c3d;-webkit-text-stroke:0.3px;''> LIBRE</span>.'
+    photographes: { bouton-experience: 'Créer votre Expérience', message-paragraphe1: 'Vous êtes<span style=''color: #54b4a6;''> photographe</span>? Alors, vous êtes au bon endroit, au bon moment.', message-paragraphe2: 'Découvrez un écosysteme ou vous êtes <span style=''color: #ed7c3d;''>maître</span> de votre <span style=''color: #ed7c3d;''>histoire</span>.', titre-connaissance: 'Et si on faisait connaissance ?', texte-connaissance: 'Rejoignez notre communauté, développer vos services.', form-prenom: Prénom, form-nom: Nom, form-email: 'Adresse email', form-categorie-user: 'Catégorie d''utilisateur', form-auto-entrepreneur: Auto-Entrepreneur, form-societe: Société, form-naissance: 'Date de naissance', form-pays: Nationalité, form-pays-residence: 'Pays de residence', form-mot-de-passe: 'Mot de passe', form-confirmer-mot-de-passe: 'Confirmer Mot de passe', form-titre-conditions: 'En envoyant mon inscription,', form-conditions: 'j''accepte les conditions de service et la politique de confidentialité et sécurité.', form-precedent: Précédent, form-suivant: Suivant, form-a-propos: 'A propos de Trust & Market', form-en-cours: 'Création du compte en cours...', form-succes: 'Votre compte a été crée avec succes', form-doublon: 'Ce compte existe deja', form-erreur: 'Erreur lors de la creation de votre compte' }
+    chorales: { message-paragraphe1: 'Vous êtes<span style=''color: #54b4a6;''> une chorale ou un choeur gospel</span>? Alors, vous êtes au bon endroit, au bon moment.' }
+    evenementiels: { message-paragraphe1: 'Vous êtes<span style=''color: #54b4a6;''> un professionnel de l''événementiel</span>? Alors, vous êtes au bon endroit, au bon moment.' }
+    studio-audio: { message-paragraphe1: 'Vous êtes<span style=''color: #54b4a6;''> un studio d''enregistrement, de mixage, de mastering</span>? Alors, vous êtes au bon endroit, au bon moment.' }
+    studio-de-tournage: { message-paragraphe1: 'Vous louez<span style=''color: #54b4a6;''> votre studio photo ou de tournage vidéo</span>? Alors, vous êtes au bon endroit, au bon moment.' }
+    musiciens: { message-paragraphe1: 'Vous êtes<span style=''color: #54b4a6;''> un musicien professionnel ou un groupe</span>? Alors, vous êtes au bon endroit, au bon moment.' }
+    videastes: { message-paragraphe1: 'Vous êtes<span style=''color: #54b4a6;''> un vidéaste professionnel</span>? Alors, vous êtes au bon endroit, au bon moment.' }
+newsletter-abonne:
+    notification-texte: 'Merci de vous abonner a notre newsletter. Nous vous tiendrons informes de nos dernieres nouveautes'
+    a-propos-titre: 'A propos'
+    a-propos-message: 'Trust & Market est une plateforme de services dédiée à la productions musicale et à l’événementiel.'
+    adresse-titre: Adresse
+    liens-titre: 'Liens utiles'
+    lien-accueil: Accueil
+    lien-a-propos: 'A propos'
+    lien-annonces: Annonces
+    lien-projet: 'Votre projet'
+nous-contacter:
+    titre: 'Nous contacter'
+    titre-formulaire: 'ENVOYER UNE DEMANDE'
+    nom: Nom
+    email: Email
+    message: Message
+    envoyer: ENVOYER
+feedback:
+    titre-menu: 'Envoyez-nous vos commentaires'
+    titre-bloc: 'Envoyez-nous un commentaire ou un avis, une suggestion ou signalez-nous un bug?'
+    sous-titre-bloc: 'Via ce formulaire ci-dessous, envoyez-nous vos avis ou commentaires, vos suggestions, vos experiences sur la plateforme Trust & Market.'
+    label-menu-deroulant: 'Sur quoi portent vos remarques ?'
+    menu-deroulant: { choisir: 'Merci de choisir', compte: 'Compte utilisateur', reservation: 'Reservation / Paiement', annulation: 'Annulation / Remboursement', versement: Versement, design: 'Design et Ergonomie', technologie: Technologique, experience: 'Experiences utilisateurs', service: 'Services aux utilisateurs', bug: 'Bugs application', divers: Divers, infos: 'L''information à renseigner est obligatoire.' }
+    condition: 'Vous devez être connecté pour utiliser le formulaire.'
+    texte: Descriptif
+    envoyer: Envoyer
+details-annonces:
+    titre-livraison-standard: 'Livraison standard'
+    contenu-livraison-standard: '3 à 6 jours ouvrables'
+    titre-livraison-prioritaire: 'Livraison prioritaire'
+    contenu-livraison-prioritaire: '48 à 72 heures'
+    titre-livraison-express: 'Livraison express'
+    contenu-livraison-express: '24 heures'
+    titre-infos: 'Besoin d''info ?'
+    contenu-infos: 'Tous savoir sur les livraisons'

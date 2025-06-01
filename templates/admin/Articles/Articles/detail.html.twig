@@ -1,0 +1,86 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}{{ annonce.postTitle }}{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/lightslider.css') }}">
+    <style>
+        .img {
+            width: 100%;
+            min-height: 250px;
+        }
+        #main-menu {
+            font-size: 14px;
+        }
+    </style>
+    <div class="content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>{% if app.request.locale == "fr" %}{{ annonce.postTitle }}{% else %}{% for item in contenu_en %}
+                                {% if item.field == "postExcerpt" %}{{ item.content }}{% endif %}
+                            {% endfor %}{% endif %}
+                            <p class="fa fa-calendar right">  {{ annonce.postDate|date("d M Y à H:i ", false) }} </p>
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                {% if img %}
+
+                                    <img src="{{ img.guid }}" alt="" class="img">
+                                {% else %}
+                                    <img src="/assets/img/default.jpg" alt="" class="img">
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                {% if app.request.locale == "fr" %}
+                                    {{ annonce.postContent|raw }}
+                                {% else %}
+                                    {% for item in contenu_en %}
+                                        {% if item.field == "postContentFiltered" %}
+                                            {{ item.content|raw }}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block body_javascript %}
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+            integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('admin/assets/js/lightslider.js') }}" type="text/javascript"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('#image-gallery').lightSlider({
+                gallery: true,
+                item: 1,
+                thumbItem: 6,
+                slideMargin: 0,
+                speed: 500,
+                auto: true,
+                loop: true,
+                onSliderLoad: function () {
+                    $('#image-gallery').removeClass('cS-hidden');
+                }
+            });
+        });
+    </script>
+{% endblock body_javascript %}

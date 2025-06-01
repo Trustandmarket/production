@@ -1,0 +1,660 @@
+{% extends 'generalLayout.html.twig' %}
+
+{% block head %}
+{{ parent() }}
+<meta name="title" content="{{ops.titre}}">
+<meta name="description" content="{{ops.meta_description}}">
+<link rel="canonical" href="{{absolute_url(path('marketing_details_leads_gen', {slug: ops.slug}))}}">
+<link rel="shortlink" href="{{absolute_url(path('marketing_details_leads_gen', {slug: ops.slug}))}}">
+<meta property="og:title" content="{{ops.titre}}">
+<meta property="og:description" content="{{ops.meta_description}}">
+
+<meta property="og:image" content="{{ops.articles.0.guid}}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{absolute_url(path('marketing_details_leads_gen', {slug: ops.slug}))}}">
+<meta property="og:locale" content="fr" />
+<meta property="og:locale:alternate" content="en" />
+
+{# Twitter CARD #}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="Kbr Global">
+<meta name="twitter:site" content="@trustandmarket">
+<meta name="twitter:title" content="{{ops.titre}}">
+<meta name="twitter:description" content="{{ops.meta_description}}">
+<meta name="twitter:image" content="{{ops.articles.0.guid}}">
+<meta name="twitter:image:alt" content="{{ops.articles.0.guid}}">
+{# END Twitter Card #}
+
+<script type="application/ld+json">
+	{   
+		"@context": "https://schema.org", 
+		"@type": "Article",
+		"headline": "{{ops.titre}}",
+		"alternativeHeadline": "Operation speciale Trust&Market",
+		"image": "{{ops.articles.0.guid}}",
+		"author": "Kalide Brassier", 
+		"award": "",
+		"editor": "Kbr Global", 
+		"genre": "Event", 
+		"keywords": "", 
+		"wordcount": "1120",
+		"publisher": {
+			"@type": "Organization",
+			"name": "Google",
+			"logo": {
+			"@type": "ImageObject",
+			"url": "{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+			}
+		},
+		"url": "{{absolute_url(path('marketing_details_leads_gen', {slug: ops.slug}))}}",
+		"mainEntityOfPage": {
+			"@type": "WebPage",
+			"@id": "{{absolute_url(path('marketing_details_leads_gen', {slug: ops.slug}))}}"
+		},
+		"datePublished": "{{ops.post_date|date("d/m/Y")}}",
+		"dateCreated": "{{ops.post_date|date("d/m/Y")}}",
+		"dateModified": "{{ops.post_date|date("d/m/Y")}}",
+		"description": "{{ops.meta_description}}",
+		"sameAs": [
+			"https://www.facebook.com/trustandmarket",
+			"https://twitter.com/trustandmarket",
+			"https://www.instagram.com/trustandmarket/",
+			"https://www.linkedin.com/company/trustandmarket",
+			"https://www.youtube.com/channel/UC-jLvu82KNM6DnFOp2Nvk_A"
+		]
+	}
+</script>
+
+{% endblock %}
+
+{% block title %}Trust &amp; Market | {{'titre-lead-gen'|trans({}, 'marketing') }} | {{ ops.titre }}{% endblock %}
+
+{% block style %}
+{{ parent() }}
+<!-- Gijgo datepicker css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gijgo/1.9.13/combined/css/gijgo.min.css" integrity="sha512-oCuecFHHGu/Y4zKF8IoSoj5hQq1dLNIiUCwN08ChNW1VoMcjIIirAJT2JmKlYde6DeLN6JRSgntz6EDYDdFhCg=="crossorigin="anonymous" />
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<!-- Your custom styles (optional) -->
+<link rel="stylesheet" href="{{ asset('assets/css/custome.css') }}">
+<link href="{{ asset('assets/css/single-post.css') }}" rel="stylesheet">
+
+<link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox.css') }}" />
+<style>
+			.detail_marketing2 {
+				display: flex;
+				text-align: justify;
+				margin-top: 1rem;
+				margin-bottom: 2rem;
+				margin-left: 0rem;
+				margin-right: 0rem;
+				font-family: 'Open Sans', sans-serif;
+			}
+		
+			.div_separated {
+				width: 50%;
+				padding: 15px 60px;
+				flex: 1;
+			}
+
+
+			.div_border_left {
+				border-left: 1.5px solid gray;
+				border-color: #FF7E10;
+			}
+
+			.div_border_right {
+				border-right: 1.5px solid gray;
+				border-color: #FF7E10;
+			}
+
+			.formulaire{
+				padding: 0px 15px;
+			}
+
+			.input_form{
+				margin-top: 1rem;
+				position: relative;
+			}
+
+			.title_form{
+				background: repeating-linear-gradient(to left top, #040a14, #00040a);
+				padding:10px;
+				border-radius: 5px;
+			}
+
+			.title_form h5{
+				text-align: center;
+				color:white;
+			}
+
+			.button_form button{
+				background: repeating-linear-gradient(to left top, #FF7E10, #f07d3aa8);
+				border: 0;
+				padding: 7px;
+				width: 100%;
+				color: white;
+				margin-top:1rem;
+				border-radius: 5px;
+			}
+
+			.input_form :is(input,select,textarea){
+				width: 100%;
+				border-radius: 3px;
+				border: 2px solid #e3e1e1;
+				padding: 10px;
+				color: #797979;
+			}
+			.date_input{
+				padding-right: 50px;
+			}
+			.date_icon{
+				color: #797979;
+				position: absolute;
+				right: 2px;
+				padding: 16px;
+				border-left: 1.5px solid #79797959;
+				cursor:pointer;
+			}
+			#ui-datepicker-div{
+				width: 20% !important;
+			}
+
+	.ml-6 {
+		margin-left: 5rem !important;
+	}
+
+	.timer {
+		font-size: 12px;
+		color: #90949c;
+		font-family: cursive;
+	}
+
+	
+	.list_category_annonce {
+		flex-wrap: wrap;
+		display: flex;
+		justify-content: space-around;
+	}
+
+	.carousel-cards {
+		flex-wrap: wrap;
+		display: flex;
+		justify-content: space-around;
+		position: relative;
+	}
+
+	.carousel-card {
+		width: auto;
+		/* margin-right: 2%; */
+		border-radius: 15px;
+		height: 16rem;
+		background-repeat: no-repeat;
+		background-size: cover;
+		display: flex;
+		justify-content: space-between;
+		align-items: end;
+		margin-bottom: 1rem;
+		cursor: pointer;
+		box-shadow: inset 0 0 0 2000px rgb(6 48 66 / 35%);
+		background-size: cover;
+	}
+
+	.left-align-text {
+		position: relative;
+		left: 15px;
+		bottom: 0px;
+		color: white;
+		text-transform: uppercase;
+	}
+
+	.right-align-text {
+		position: relative;
+		right: 15px;
+		bottom: 0px;
+		color: white;
+		text-transform: uppercase;
+	}
+
+	.detail_marketing {
+		text-align: justify;
+		margin-top: 1rem;
+		margin-bottom: 2rem;
+		font-family: 'Open Sans', sans-serif;
+	}
+	.category_annonce {
+		width: auto;
+		/* margin-left: 1%; */
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border: 2px solid black;
+		border-radius: 10px;
+		padding: 10px;
+		margin-bottom: 1rem;
+		cursor: pointer;
+		color: black;
+		text-transform: uppercase;
+		font-family: 'Open Sans', sans-serif;
+		text-align: center;
+	}
+	.category_annonce_ahref:hover {
+		text-decoration: inherit;
+	}
+	.category_annonce_ahref:hover>div {
+		background: #262626;
+		color: white;
+		text-decoration: inherit;
+	}
+	.lcl_fade_oc.lcl_pre_show #lcl_overlay,
+	.lcl_fade_oc.lcl_pre_show #lcl_window,
+	.lcl_fade_oc.lcl_is_closing #lcl_overlay,
+	.lcl_fade_oc.lcl_is_closing #lcl_window {
+		opacity: 0 !important;
+	}
+	.lcl_fade_oc.lcl_is_closing #lcl_overlay {
+		-webkit-transition-delay: .15s !important;
+		transition-delay: .15s !important;
+	}
+	.active-slide {
+		display: flex !important;
+	}
+	.slide {
+		display: none;
+	}
+	.slider-dots {
+		list-style: none;
+		display: inline-block;
+		padding-left: 0;
+		margin-bottom: 0;
+	}
+	.slider-dots li {
+		color: #bbbcbc;
+		display: inline;
+		font-size: 40px;
+		margin-right: 5px;
+	}
+	.slider-dots li.active-dot {
+		color: #363636;
+	}
+
+
+	@media only screen and (min-width: 768px) {
+		.fixage {
+			position: fixed;
+			right: 0px;
+		}
+		.div_separated.div_right {
+			border-left: 1px solid #FF7E10;
+		}
+	}
+
+	@media only screen and (min-width: 768px) and (max-width: 1199px) {
+		.carteArticle {
+			height: 23rem;
+			overflow-y: auto;
+		}
+	}
+
+	.liArticle {
+		margin: 5px !important;
+		border-radius: 5px;
+	}
+
+	@media only screen and (min-width: 1500px) {
+		.fixage {
+			width: 30%;
+		}
+	}
+
+	.grand-titre {
+		text-align: center;
+	}
+
+	@media only screen and (max-width: 768px) {
+		.list_category_annonce {
+			flex-direction: column;
+			width: 100%;
+			max-width: 100%;
+			box-sizing: content-box;
+		}
+
+		.category_annonce {
+			width: auto;
+			margin-left: 0%;
+		}
+
+		
+		.detail_marketing2 {
+			flex-direction: column;
+			width: 100%;
+		}
+		
+		.div_separated {
+			width: 100%;
+		}
+
+		.div_border_left {
+			border-top: 1.5px solid gray;
+			border-left: none;
+			border-color: #FF7E10;
+		}
+
+		.div_border_right {
+			border: none;
+		}
+
+		#ui-datepicker-div {
+			width: 55% !important;
+		}
+	}
+</style>
+{% endblock %}
+
+{% block header %}
+	{{parent()}}
+{% endblock %}
+
+{% block navigation %}
+<div id="imageHolder" class="view intro-2">
+	<div class="full-bg-img">
+		<div class="mask rgba-purple-light flex-center">
+			<div class="container text-left align-items-end white-text wow fadeInUp">
+				<h2 class="page-title"></h2>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block body %}
+<!--Main layout-->
+<main class="mt-5 pt-5">
+	<div class="container">
+		<h3 hidden class="h3-responsive grand-titre">{{ ops.titre }}</h3>
+		<p class="detail_marketing">
+			{{ops.chapeau|raw}}
+		</p>
+		<section>
+			<div style="width: 100%;display: flex;justify-content: center;">
+				<ul class="slider-dots">
+					{% for item in 1.. page_slide %}
+						<li class="dot {% if loop.index == 1 %}active-dot{% endif %}">•</li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% set x = 0 %}
+			{% for item in ops.articles %}
+				{% set x = x + 1 %}
+				{% if x == 1 %}<div class="row slide {% if loop.index == 1 %}active-slide{% endif %}">{% endif %}
+				<div class="col-md-6">
+					<div class="carousel-card col-md-12"
+						style="background-image: url({{item.guid}});" title="{{item.postTitle}}"
+						attr-src="{{item.guid}}"
+						data-lcl-author="Trust&Market"
+						data-lcl-thumb="{{item.guid}}">
+						<p class="left-align-text">
+							
+						</p>
+						<p class="right-align-text">
+						</p>
+					</div>
+				</div>
+				{% if x == 4 %}
+					</div>
+					{% set x = 0 %} 
+				{% endif %}
+			{% endfor %}
+		</section>
+		<div class="detail_marketing2">
+			<div class="div_separated div_border_right div_left">
+				{{ops.description|raw}}
+			</div>
+			<div class="div_separated div_border_left div_right">
+				<div class="title_form">
+					<h5 class="title_font_form">Envoyez-nous votre besoin</h5>
+				</div>
+				<form action="{{path('marketing_leads_gen_send_email')}}" method="post" id='submitForm'>
+					<div class="formulaire">
+						<div class="form-group input_form">
+							<input hidden value='{{ops.titre}}' name='titre'>
+							<input required type="text" name="prenom" id="" placeholder="Prénom">
+						</div>
+						<div class="form-group input_form">
+							<input required type="text" name="nom" id="" placeholder="Nom">
+						</div>
+						<div class="form-group input_form">
+							<input required type="email" name="email" id="" placeholder="Email">
+						</div>
+						<div class="form-group input_form">
+							<input required type="text" name="code_postal" id="" placeholder="Code postal">
+						</div>
+						<div class="form-group input_form">
+							<input type="tel" name="numero_telephone" id="numero_telephone" placeholder="Téléphone Ex: +33678787878" class="numero_telephone">
+						</div>
+						<div class="form-group input_form">
+							<select required name="type_evenement" id="type_evenement">
+								<option value="">Votre évenement ou besoin</option>
+								<option value="Mariage">Mariage</option>
+								<option value="Concert">Concert</option>
+								<option value="Salon">Salon</option>
+								<option value="Séminaire">Séminaire</option>
+								<option value="Exposition">Exposition</option>
+								<option value="Vernissage">Vernissage</option>
+								<option value="Autres">Autres</option>
+							</select>
+						</div>
+						<div class="form-group input_form">
+							<input required type="text" name="date_evenement" id="date_evenement" placeholder="Date" class="date_input">
+							<i class="date_icon fa fa-calendar" aria-hidden="true"></i>
+						</div>
+						<div class="form-group input_form">
+							<input required type="number" name="nombre_invites" id="nombre_invites" placeholder="Nombre de personnes">
+						</div>
+						<div class="form-group input_form">
+							<textarea required name="message" id="" cols="30" rows="6" placeholder="Demandez une doc, un tarif, une dispo ou un rendez-vous, c'est à vous ..."></textarea>
+						</div>
+					</div>
+				<div class="button_form">
+					<button type="submit">
+						Envoyer
+					</button>
+				</div>
+				</form>
+			</div>
+		</div>
+		<div class="row">
+		{% for item in ops.categorie %}
+			<a target="_blank" href="{{path('annonces_listeAnnonces',{type_prestation:item.slug,services_proposes: '',code_postal_ville: ''})}}" class="col-md-3 category_annonce_ahref">
+				<div class="category_annonce col-md-12">
+					{{item.name}}
+				</div>
+			</a>
+		{% endfor %}
+		</div>
+	</div>
+</main>
+<!--Main layout-->
+{% endblock %}
+
+
+{% block footer %}
+{{parent()}}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<!-- Full background slider jQuery plugin -->
+<script type="text/javascript" src="{{ asset('assets/js/fullclip.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.js"></script>
+<script src="{{ asset('assets/js/lc_lightbox.js') }}" type="text/javascript"></script>
+<!-- SKINS -->
+<link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox_skins_dark.css') }}" />
+<!-- ASSETS -->
+<script	src="{{ asset('assets/js/alloy_finger.min.js') }}" type="text/javascript"></script>
+{# <script type="text/javascript"
+        src="https://raw.githubusercontent.com/jquery/jquery-ui/master/ui/i18n/datepicker-fr.js"> #}
+<script>
+	$(document).ready(function (e) {
+
+		// live handler
+		lc_lightbox('.carousel-card', {
+			wrap_class: 'lcl_fade_oc',
+			gallery: true,
+			thumb_attr: 'data-lcl-thumb',
+			skin: 'dark',
+			radius: 0,
+			padding: 0,
+			border_w: 0,
+			src_attr: 'attr-src',
+			max_width: '93%',
+			max_height: '93%',
+			show_author: false,
+			show_title :true,
+			show_descr :true,
+			thumbs_nav :true,
+			tn_hidden :0,
+			txt_hidden :0,
+		});
+
+		main();
+
+		
+		$('.date_input').datepicker({
+			dateFormat: 'dd-M-yy',
+			minDate: 1,
+			closeText: 'Fermer',
+			prevText: 'Précédent',
+			nextText: 'Suivant',
+			currentText: 'Aujourd\'hui',
+			monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+			monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+			dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+			dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+			dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+			weekHeader: 'Sem.'
+		},);
+		
+		$('.date_icon').on('click', function() {
+			$('.date_input').focus();
+		})
+
+		$("#numero_telephone").keyup(function () {
+			let phone = $("#numero_telephone").val().replace(/\s|[a-zA-Z]/g, "");
+			$("#numero_telephone").val(phone);
+		});
+	});
+	var slideSpeed = 10000;
+
+	var main = function () {
+		//Carousel
+		setInterval(function () { timedDelay() }, slideSpeed);
+		//arrow-next
+		$('.arrow-next').click(function (e) {
+			e.preventDefault();
+
+			var currentSlide = $('.active-slide');
+			var nextSlide = currentSlide.next();
+
+			var currentDot = $('.active-dot');
+			var nextDot = currentDot.next();
+
+			if (nextSlide.length === 0) {
+				nextSlide = $('.slide').first();
+				nextDot = $('.dot').first();
+			}
+
+			currentSlide.fadeOut(600, function () {
+				$(this).removeClass('active-slide');
+				nextSlide.fadeIn(600).addClass('active-slide');
+
+				currentDot.removeClass('active-dot');
+				nextDot.addClass('active-dot');
+			});
+		});
+		//arrow-prev
+		$('.arrow-prev').click(function (e) {
+			e.preventDefault();
+
+			var currentSlide = $('.active-slide');
+			var prevSlide = currentSlide.prev();
+
+			var currentDot = $('.active-dot');
+			var prevDot = currentDot.prev();
+
+			if (prevSlide.length === 0) {
+				prevSlide = $('.slide').last();
+				prevDot = $('.dot').last();
+			}
+
+			currentSlide.fadeOut(600, function () {
+				$(this).removeClass('active-slide');
+				prevSlide.fadeIn(600).addClass('active-slide');
+
+				currentDot.removeClass('active-dot');
+				prevDot.addClass('active-dot');
+			});
+		});
+	};
+
+	//timedDelay function
+	function timedDelay() {
+		var currentSlide = $('.active-slide');
+		var nextTimedSlide = currentSlide.next();
+		var currentDot = $('.active-dot');
+		var nextDot = currentDot.next();
+			if (nextTimedSlide.length === 0) {
+				nextTimedSlide = $('.slide').first();
+				nextDot = $('.dot').first();
+			}
+			currentSlide.fadeOut(600, function () {
+				$(this).removeClass('active-slide');
+				nextTimedSlide.fadeIn(600).addClass('active-slide');
+
+				currentDot.removeClass('active-dot');
+				nextDot.addClass('active-dot');
+			});
+	}
+
+	$('#submitForm').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+		e.preventDefault();
+		if($('.numero_telephone').val().match(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/gmi)){
+		toastr.info('{{ 'systeme.requetes.requete-en-cours'|trans }}');
+		var $form = $(this);
+			var formdata = (window.FormData) ? new FormData($form[0]) : null;
+			var data = (formdata !== null) ? formdata : $form.serialize();
+
+		$.ajax({
+			url: $form.attr('action'),
+			type: $form.attr('method'),
+			contentType: false,
+			processData: false,
+			data: data,
+			success: function (reponse) {
+			window.location = "";
+			if (reponse != 0) {
+				toastr.clear();
+				toastr.success('{{ 'systeme.requetes.succes'|trans }}');
+			} else if (reponse == 0) {
+				toastr.clear();
+				toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+			}
+
+			},
+			error: function (reponse) {
+				toastr.clear();
+				toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+			}
+		});
+		}else{
+			toastr.warning('Entrez un numéro de téléphone valide');
+		}
+		return false;
+	});
+</script>
+
+{% endblock %}

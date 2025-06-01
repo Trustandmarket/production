@@ -1,0 +1,120 @@
+<!-- list des profil -->
+<!-- list des prestations -->
+
+{% if p_empty_search_text %}
+    <div class="filter-text mr-2"
+         style="margin-top: -2rem;margin-bottom: 3rem;">{{ p_empty_search_text.postContent|raw }}</div>
+{% endif %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <!-- First breadcrumb gets <h1> -->
+        <li class="breadcrumb-item">
+            <a href="{{ path('annonces_listeAnnonces', {type_prestation: '',services_proposes: '',code_postal_ville: ''}) }}">
+                <h1 class="breadcrumb-h1">{{ 'filtres.annonce'|trans({}, 'liste_annonces')|raw }}</h1>
+            </a>
+        </li>
+
+        <!-- If type_prestation exists, it gets <h2> -->
+        {% if type_prestation != '' %}
+            <li class="breadcrumb-item" aria-current="page">
+                <a href="{{ path('annonces_listeAnnonces', {type_prestation: type_prestation,services_proposes: '',code_postal_ville: ''}) }}">
+                    {% for prestation in prestations %}
+                        {% if prestation.slug == type_prestation %}
+                            <h2 class="breadcrumb-h2">
+                                {% if app.request.locale == 'en' and prestation.name != '' %}{{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}
+                            </h2>
+                        {% endif %}
+                    {% endfor %}
+                </a>
+            </li>
+        {% endif %}
+
+        <!-- If services_proposes exists, it gets <h3> -->
+        {% if services_proposes != '' %}
+            <li class="breadcrumb-item active" aria-current="page">
+                <a href="#">
+                    {% for prestation in sous_categories %}
+                        {% if prestation.slug == services_proposes %}
+                            <h3 class="breadcrumb-h3">
+                                {% if app.request.locale == 'en' and prestation.name != '' %}{{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}
+                            </h3>
+                        {% endif %}
+                    {% endfor %}
+                </a>
+            </li>
+        {% endif %}
+    </ol>
+
+</nav>
+<div class="row mb-4">
+    {% include "annonces/partialDynamicPagination.html.twig" %}
+    <div class="col-md-8 text-right">
+        <form action="" class="form-inline float-right">
+            <h6 class="filter-text mr-2">{{ 'filtres.titre'|trans({}, 'liste_annonces')|raw }}</h6>
+            <select name="prix" id="triPrix" class="browser-default custom-select mr-2 mb-2">
+                <option value="all">{{ 'filtres.prix'|trans({}, 'liste_annonces')|raw }}</option>
+                <option value="0">{{ 'filtres.croissant'|trans({}, 'liste_annonces')|raw }}</option>
+                <option value="1">{{ 'filtres.decroissant'|trans({}, 'liste_annonces')|raw }}</option>
+            </select>&nbsp;
+            <select name="date-dajout" id="triDate" class="browser-default custom-select mr-2 mb-2">
+                <option value="all">{{ 'filtres.date-ajout'|trans({}, 'liste_annonces')|raw }}</option>
+                <option value="1">{{ 'filtres.recent'|trans({}, 'liste_annonces')|raw }}
+                    &gt; {{ 'filtres.ancien'|trans({}, 'liste_annonces')|raw }}</option>
+                <option value="0">{{ 'filtres.ancien'|trans({}, 'liste_annonces')|raw }}
+                    &lt; {{ 'filtres.recent'|trans({}, 'liste_annonces')|raw }}</option>
+            </select>
+        </form>
+    </div>
+</div>
+<div class="row isotope owl-theme">
+    {% if listeAnnonces is not null %}
+        {% for liste in listeAnnonces %}
+            <div class="col-md-4 mb-5 clearfix isotope-grid">
+                <!-- Card -->
+                <div class="card">
+                    <!-- Card image -->
+                    {% if liste.gallery is not null %}
+                        <div class="view overlay isotope-item" style="height:160px; border-bottom: 4px solid #f17b30">
+                            <img loading="lazy" class="card-img-top" width="100%"
+                                 src="{% if liste.gallery|first %}{{ liste.gallery.0.guid|replace({'www.': ''}) }}{% elseif liste.images_secondaires|first %}{{ liste.images_secondaires.0.guid|replace({'www.': ''}) }}{% else %}https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).jpg{% endif %}"
+                                 alt="Card image cap">
+                            <div class="btnh1-display">
+                                <button class="btn-wish btnh1" data-id="{{ liste.id }}">
+                                    {% if liste.id in text_wishlist %}<i style="color: red;"
+                                                                         class="fas fa-heart"></i> {% else %}
+                                        <i class="far fa-heart"></i> {% endif %}</button>
+                            </div>
+                            <a href="{% if liste.post_name != '' %}{{ path('annonces_detailsAnnonce', { id:liste.post_name }) }}{% endif %}">
+                                <div class="mask rgba-white-slight"></div>
+                            </a>
+                        </div>
+                    {% endif %}
+                    <!-- Card content -->
+                    <div class="card-body">
+                        <!-- Title -->
+                        <h4 class="card-title fs-18">{% if app.request.locale == 'en' and liste.titre_en != '' %}{{ liste.titre_en }}{% else %}{{ liste.titre }}{% endif %}</h4>
+                        <!-- Category -->
+                        <h5 class="card-sub-title fs-15"><a
+                                    href="{% if liste.categorieParent|lower == 'produits' %}{{ path('annonces_listeAnnonces',{type_prestation:'produits',services_proposes: '',code_postal_ville: ''}) }}
+											{% else %}{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: '',code_postal_ville: ''}) }}
+											{% endif %}">{% if app.request.locale == 'en' and liste.categorieParent_en != '' %}{{ liste.categorieParent_en }}{% else %}{{ liste.categorieParent }}{% endif %}</a>
+                        </h5>
+                        <!-- Sub Category -->
+                        <h5 class="card-sub-category fs-18">
+                            <a href="{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: liste.sousCategorieSlug,code_postal_ville: ''}) }}"> {% if app.request.locale == 'en' and liste.sousCategorie_en != '' %}{{ liste.sousCategorie_en }}{% else %}{{ liste.sousCategorie }}{% endif %}</a>
+                        </h5>
+                        <!-- Price -->
+                        <p class="annonce-price fs-24"><span data-stars="{{ liste.price|round(0) }}" class="number">{{ liste.price }}</span> {% if liste.devise != null %}{{ liste.devise }}{% else %}€{% endif %}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a target="_blank" href="{{ path('annonces_listeAnnoncesCommercial', {nom_commercial: liste.nom_commercial, id_commercial: liste.post_author}) }}">{{ liste.nom_commercial }}</a>
+                    </div>
+                </div>
+                <!-- Card -->
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% include "annonces/partialDynamicPagination.html.twig" %}
+<!-- list des prestations -->

@@ -1,0 +1,834 @@
+{% extends 'otherLayout.html.twig' %}
+    {% set page_sub_name = "Annonces" %}
+    {% if nom_commercial is defined and nom_commercial %} {% set page_sub_name =  nom_commercial %}{% else %}
+        {% for prestation in prestations %}
+            {% if prestation.slug == type_prestation %}
+                {% if app.request.locale == 'en' and prestation.name != '' %}
+                    {% set page_sub_name = prestation.content %}
+                {% elseif prestation.name != '' %}{% set page_sub_name = prestation.name %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% block head %}
+    {{ parent() }}
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+          sizes="32x32"/>
+    <link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}"
+          sizes="192x192"/>
+    <link rel="apple-touch-icon-precomposed"
+          href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+    <meta name="msapplication-TileImage"
+          content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="title" content="Trust &amp; Market | {{ page_sub_name }}">
+    <meta name="description"
+          content="{% for prestation in prestations %}{% if prestation.slug == type_prestation %}{% if app.request.locale == 'en' and prestation.name != '' %}{{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}{% endif %}{% endfor %} - {% for prestation in sous_categories %}{% if prestation.slug == services_proposes %}{% if app.request.locale == 'en' and prestation.name != '' %}{{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}{% endif %}{% endfor %}">
+    <link rel="canonical"
+          href="{{ absolute_url(path('annonces_listeAnnonces',{type_prestation:type_prestation,services_proposes: services_proposes, code_postal_ville: code_postal_ville, noPage: noPage})) }}">
+    <link rel="shortlink"
+          href="{{ absolute_url(path('annonces_listeAnnonces',{type_prestation:type_prestation,services_proposes: services_proposes, code_postal_ville: code_postal_ville, noPage: noPage})) }}">
+    {# OG CONTENT #}
+    <meta property="og:title" content="Trust &amp; Market |	{{ page_sub_name }}">
+    <meta property="og:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'toutes-annonces'}) }}">
+    <meta property="og:image" content="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png') }}">
+    <meta propery="og:type" content="website">
+    {# END OG CONTENT #}
+{% endblock %}
+
+{% block title %}Trust &amp; Market | {{ page_sub_name }}{% endblock %}
+{% block style %}
+    {{ parent() }}
+    <!-- Gijgo datepicker css -->
+    <link rel="stylesheet" href=" {{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+    <!-- Custom css for camroll -->
+    <link href="{{ asset('assets/css/camroll/camroll_slider.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/custome.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/mon-profil.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/css/result.css') }}" rel="stylesheet">
+    <!-- owl carousel css -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <style>
+        .pagination .page-item.active .page-link {
+            background-color: #f17b30;
+        }
+
+        .card-footer {
+            text-align: end;
+        }
+
+        @media only screen and (max-width: 500px) {
+            #dialoguons {
+                width: 70%;
+            }
+        }
+
+        @media only screen and (min-width: 501px) {
+            #dialoguons {
+                width: 40%;
+            }
+        }
+
+        @media only screen and (min-width: 769) and (max-width: 1024px) {
+            #dialoguons {
+                width: 30%;
+            }
+        }
+
+        @media only screen and (min-width: 1025px) {
+            #dialoguons {
+                width: 19%;
+            }
+        }
+
+        .p-pop-up1 {
+            margin-bottom: 2rem;
+        }
+
+        .p-pop-titre1,
+        .p-pop-titre2 {
+            font-family: "Palanquin Dark";
+        }
+
+        .p-pop-content1 {
+            background: #53b4a6;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            font-family: "Source Sans Pro";
+        }
+
+        .p-pop-content2 {
+            background: black;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            font-family: "Source Sans Pro";
+        }
+
+        .keyword_search {
+            width: 100%;
+            background-color: #ffffff;
+            position: relative;
+            border-radius: 4rem;
+            padding: 10px;
+            margin-top: 2rem;
+            border: 1px solid #262626;
+        }
+
+        .keyword_search .search__box {
+            width: 85%;
+            background: none;
+            resize: none;
+            color: #000;
+            font-size: 13px;
+            border-radius: 2rem;
+            outline: none;
+            border: none;
+            position: relative;
+            transition: all .75s ease-in;
+            cursor: pointer;
+            margin-top: 0px !important;
+            text-align: left !important;
+            text-align-last: left !important;
+            touch-action: manipulation;
+        }
+
+        .keyword_search .search__icon {
+            cursor: pointer;
+            position: absolute;
+            color: #ff7e10;
+            padding: 0.7rem;
+            border-radius: 50%;
+            background-color: #262626;
+            top: 3px;
+        }
+
+        .keyword_search .show {
+            width: 85%;
+            border: 1px solid #ff7e10;
+        }
+
+
+        .btn-wish {
+            background: transparent;
+            border: none;
+            /* margin: 87px; */
+            /* font-size: 88px; */
+            outline: none;
+            color: grey;
+        }
+
+        .btnh1-display {
+            display: flex;
+            justify-content: end;
+        }
+
+        .btn i:hover {
+            cursor: pointer;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .overlay .btnh1-display {
+            position: absolute;
+            top: 10%;
+            left: 92%;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        @media only screen and (max-width: 768px) {
+            #custom-filter {
+                padding-right: 15px !important;
+                padding-left: 15px !important;
+            }
+
+        }
+
+        .autocompleteResult {
+            background: white;
+            position: absolute;
+            z-index: 1;
+            height: 200px;
+            overflow-y: auto;
+            overflow-x: clip;
+            width: 90%;
+            border: 1px solid gray;
+            border-radius: 8px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .resultIndex a {
+            width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+        .resultIndex {
+            border-bottom: 1px solid gray;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .resultIndex:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .imgSearchResult {
+            height: 2.5rem;
+            width: 2.5rem;
+            border-radius: 50%;
+            margin-right: 1rem;
+            object-fit: cover;
+        }
+        .breadcrumb-h1, .breadcrumb-h2, .breadcrumb-h3 {
+            font-size: inherit;  /* Keeps the font size the same as the surrounding text */
+            margin: 0;  /* Removes any extra margins that come with heading tags */
+            font-weight: inherit;  /* Keeps the font weight the same as the surrounding text */
+            display: inline;  /* Ensures the headings behave like inline text */
+        }
+
+
+    </style>
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navigation %}{% endblock %}
+
+{% block body %}
+    <!--Main Layout-->
+    <main class="">
+        <div class="container">
+            <div class="mt-5">
+                <div class="row">
+                    <div class="col-md-3 py-4 mb-4 custom-filter" id="custom-filter">
+                        <h3>{{ 'form.titre'|trans({}, 'liste_annonces')|raw }}</h3>
+                        <div class="container">
+                            <form action="" id="filtreForm">
+                                <select name="type_prestation" id="type_prestation2"
+                                        class="browser-default custom-select mr-2 mb-2">
+                                    <option value="">{{ 'form.prestation'|trans({}, 'liste_annonces')|raw }}</option>
+                                    {% for prestation in prestations %}
+                                        <option {% if prestation.slug == type_prestation %}selected='selected'{% endif %}
+                                                value="{{ prestation.slug }}">{% if app.request.locale == 'en' and prestation.name != '' %}{{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="services_proposes" id="services_proposes2"
+                                        class="browser-default custom-select mr-2 mb-2">
+                                    <option value="">{{ 'form.service'|trans({}, 'liste_annonces')|raw }}</option>
+                                    {% for prestation in sous_categories %}
+                                        <option {% if prestation.slug == type_prestation %}selected='selected'{% endif %}
+                                                value="{{ prestation.slug }}">{% if app.request.locale == 'en' and prestation.name != '' %}{{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text"
+                                       value="{% if code_postal_ville != '' %}{{ code_postal_ville }}{% endif %}"
+                                       class="form-control" name="code_postal_ville" id="code_postal_ville2"
+                                       placeholder="Code postal et/ou Ville">
+                                <input hidden value="{{ noPage }}" id="noPage" class="noPage" name="noPage"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-lg btn-primary waves-effect waves-light col-md-12 search-normal-btn"
+                                                type="sumbit">{{ 'form.soumettre'|trans({}, 'liste_annonces')|raw }}</button>
+                                        <button class="btn btn-lg btn-primary waves-effect waves-light col-md-12 search-icon-btn"
+                                                type="sumbit">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="autocomplete_keyword_search">
+                            <div class="keyword_search">
+                                <input type="text" id="box" placeholder="Recherche par mots-clés..."
+                                       class="search__box"/>
+                                <i class="fas fa-search search__icon" id="icon" onclick="toggleShow()"></i>
+                            </div>
+                            <div class="autocompleteResult">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9" id="listeAnnonces">
+                        {% if p_empty_search_text is defined and p_empty_search_text %}
+                            {% if nom_commercial is defined and nom_commercial %}
+                                {% set p_empty_search_text = p_empty_search_text.postContent %}
+                                {% set replaced_p_empty_search_text = p_empty_search_text|replace({'nom_commercial': nom_commercial}) %}
+                                <div class="filter-text mr-2"
+                                     style="margin-top: -2rem;margin-bottom: 2rem;">{{ replaced_p_empty_search_text|raw }}</div>
+                            {% else %}
+                                <div class="filter-text mr-2"
+                                     style="margin-top: -2rem;margin-bottom: 2rem;">{{ p_empty_search_text.postContent|raw }}</div>
+                            {% endif %}
+                        {% endif %}
+                        <!-- list des prestations -->
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <!-- First breadcrumb gets <h1> -->
+                                <li class="breadcrumb-item">
+                                    <a href="{{ path('annonces_listeAnnonces', {type_prestation: '',services_proposes: '',code_postal_ville: ''}) }}">
+                                        <h1 class="breadcrumb-h1">{{ 'filtres.annonce'|trans({}, 'liste_annonces')|raw }}</h1>
+                                    </a>
+                                </li>
+
+                                <!-- If type_prestation exists, it gets <h2> -->
+                                {% if type_prestation != '' %}
+                                    <li class="breadcrumb-item {% if services_proposes == '' %}active{{ services_proposes }}{% endif %}" aria-current="page">
+                                        <a href="{{ path('annonces_listeAnnonces', {type_prestation: type_prestation,services_proposes: '',code_postal_ville: ''}) }}">
+                                            {% for prestation in prestations %}
+                                                {% if prestation.slug == type_prestation %}
+                                                    <h2 class="breadcrumb-h2">
+                                                        {% if app.request.locale == 'en' and prestation.name != '' %}{{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}
+                                                    </h2>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </a>
+                                    </li>
+
+                                    <!-- If services_proposes exists, it gets <h3> -->
+                                    {% if services_proposes != '' %}
+                                        <li class="breadcrumb-item active" aria-current="page">
+                                            <a href="#">
+                                                {% for prestation in sous_categories %}
+                                                    {% if prestation.slug == services_proposes %}
+                                                        <h3 class="breadcrumb-h3">
+                                                            {% if app.request.locale == 'en' and prestation.name != '' %}{{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}
+                                                        </h3>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% elseif nom_commercial is defined and nom_commercial %}
+                                    <!-- If no type_prestation, nom_commercial gets <h2> -->
+                                    <li class="breadcrumb-item active" aria-current="page">
+                                        <a href="#"><h2 class="breadcrumb-h2">{{ nom_commercial }}</h2></a>
+                                    </li>
+                                {% endif %}
+                            </ol>
+
+
+                        </nav>
+                        <div class="row mb-12">
+                            {% include "annonces/partialDynamicPagination.html.twig" %}
+                            <div class="col-md-8 text-right">
+                                <form action="" class="form-inline float-right">
+                                    <h6 class="filter-text mr-2">{{ 'filtres.titre'|trans({}, 'liste_annonces')|raw }}</h6>
+                                    <select name="prix" id="triPrix" class="browser-default custom-select mr-2 mb-2">
+                                        <option value="all">{{ 'filtres.prix'|trans({}, 'liste_annonces')|raw }}</option>
+                                        <option value="0">{{ 'filtres.croissant'|trans({}, 'liste_annonces')|raw }}</option>
+                                        <option value="1">{{ 'filtres.decroissant'|trans({}, 'liste_annonces')|raw }}</option>
+                                    </select>&nbsp;
+                                    <select name="date-dajout" id="triDate"
+                                            class="browser-default custom-select mr-2 mb-2">
+                                        <option value="all">{{ 'filtres.date-ajout'|trans({}, 'liste_annonces')|raw }}</option>
+                                        <option value="1">{{ 'filtres.recent'|trans({}, 'liste_annonces')|raw }}
+                                            &gt;
+                                            {{ 'filtres.ancien'|trans({}, 'liste_annonces')|raw }}</option>
+                                        <option value="0">{{ 'filtres.ancien'|trans({}, 'liste_annonces')|raw }}
+                                            &lt;
+                                            {{ 'filtres.recent'|trans({}, 'liste_annonces')|raw }}</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="mt-3 row isotope owl-theme">
+                            {% if listeAnnonces is not null %}
+                                {% for liste in listeAnnonces %}
+                                    <div class="col-lg-4 col-md-6 col-sm-6 mb-5 clearfix isotope-grid">
+                                        <!-- Card -->
+                                        <div class="card">
+                                            <!-- Card image -->
+                                            {% if liste.gallery is not null %}
+                                                <div class="view overlay isotope-item"
+                                                     style="height:160px; border-bottom: 4px solid #f17b30">
+                                                    <img loading="lazy" class="card-img-top lazy" width="100%"
+                                                         src="{% if liste.gallery|first %}{{ liste.gallery.0.guid|replace({'www.': ''}) }}{% elseif liste.images_secondaires|first %}{{ liste.images_secondaires.0.guid|replace({'www.': ''}) }}{% else %}https://mdbootstrap.com/img/Mockups/Lightbox/Thumbnail/img%20(67).jpg{% endif %}"
+                                                         alt="Card image cap">
+                                                    <div class="btnh1-display">
+                                                        <button class="btn-wish btnh1" data-id="{{ liste.id }}">
+                                                            {% if liste.id in text_wishlist %}<i style="color: red;"
+                                                                                                 class="fas fa-heart"></i> {% else %}
+                                                                <i class="far fa-heart"></i> {% endif %}</button>
+                                                    </div>
+                                                    <a href="{% if liste.post_name != '' %}{{ path('annonces_detailsAnnonce', { id:liste.post_name }) }}{% endif %}">
+                                                        <div class="mask rgba-white-slight"></div>
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                            <!-- Card content -->
+                                            <div class="card-body">
+                                                <!-- Title -->
+                                                <h4 class="card-title fs-18">
+                                                    {% if app.request.locale == 'en' and liste.titre_en != '' %}
+                                                        {{ liste.titre_en }}
+                                                    {% else %}
+                                                        {{ liste.titre }}
+                                                    {% endif %}
+                                                </h4>
+                                                <!-- Category -->
+                                                <h5 class="card-sub-title fs-15">
+                                                    <a href="{% if liste.categorieParent|lower == 'produits' %}{{ path('annonces_listeAnnonces',{type_prestation:'produits',services_proposes: '',code_postal_ville: ''}) }} {% else %}{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: '',code_postal_ville: ''}) }} {% endif %}">
+                                                        {% if app.request.locale == 'en' and liste.categorieParent_en != '' %}
+                                                            {{ liste.categorieParent_en }}
+                                                        {% else %}
+                                                            {{ liste.categorieParent }}
+                                                        {% endif %}
+                                                    </a>
+                                                </h5>
+                                                <!-- Sub Category -->
+                                                <h5 class="card-sub-category fs-18">
+                                                    <a href="{{ path('annonces_listeAnnonces', {type_prestation: liste.categorieParentSlug,services_proposes: liste.sousCategorieSlug,code_postal_ville: ''}) }}">
+                                                        {% if app.request.locale == 'en' and liste.sousCategorie_en != '' %}
+                                                            {{ liste.sousCategorie_en }}
+                                                        {% else %}
+                                                            {{ liste.sousCategorie }}
+                                                        {% endif %}
+                                                    </a>
+                                                </h5>
+                                                <!-- Price -->
+                                                <p class="annonce-price fs-24 mb-0">
+                                                    <span data-stars="{{ liste.price|round(0) }}"
+                                                          class="number">{{ liste.price }}</span>
+                                                    {% if liste.devise != null %}
+                                                        {{ liste.devise }}{% else %}€
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                            <div class="card-footer bg-transparent">
+                                                <a target="_blank" href="{{ path('annonces_listeAnnoncesCommercial', {nom_commercial: liste.nom_commercial, id_commercial: liste.post_author}) }}">{{ liste.nom_commercial }}</a>
+                                            </div>
+                                        </div>
+                                        <!-- Card -->
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        {% include "annonces/partialDynamicPagination.html.twig" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!--Main Layout-->
+
+    {% include("partials/project.html.twig") %}
+    {% include("partials/otherPagesVideoModal.html.twig") %}
+{% endblock %}
+
+
+{% block footer %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <!-- jQuery plugin for datepicker -->
+    <script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
+    <!-- jQuery plugin for camroll slider -->
+    <script type="text/javascript" src="{{ asset('assets/js/camroll/camroll_slider.js') }}"></script>
+    <!-- jQuery plugin for date picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+    <!-- cdnjs for lazy load -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+    <!-- owl carousel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <!-- RateIt Js -->
+    <script type="text/javascript" src="{{ asset('assets/js/rateit/jquery.rateit.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function () {
+            var docWidth = document.documentElement.offsetWidth;
+
+            [].forEach.call(document.querySelectorAll('*'), function (el) {
+                if (el.offsetWidth > docWidth) { // console.log(el);
+                }
+            });
+
+            function toggleShow() {
+                var el = document.getElementById("box");
+                el.classList.toggle("show");
+            }
+
+            $(document).click(function (event) {
+                var $target = $(event.target);
+                if (!$target.closest('.autocompleteResult').length && $('.autocompleteResult').is(":visible")) {
+                    {# $('.autocompleteResult').empty(); #}
+                    $('.autocompleteResult').css('display', 'none');
+                }
+            });
+
+            $('.search__box').on('keyup', function (e) {
+                const value = $(this).val();
+                $('.autocompleteResult').empty();
+                $('.autocompleteResult').css('display', 'flex');
+                $('.autocompleteResult').html(`En cours...`);
+                const data = new FormData();
+                data.append("term", value);
+                $.ajax({
+                    url: "{{ path('recherche') }}",
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (data) {
+                        //console.log(data);
+                        $('.autocompleteResult').empty();
+                        $('.autocompleteResult').css('display', 'block');
+                        if (data.length > 0) {
+                            data.forEach(
+                                element => {
+                                    $('.autocompleteResult').append(`
+							<div class="resultIndex">
+								<a href="/fr/annonces/details/${element.slug}"><img src="${element.image}" class="imgSearchResult">${element.name}</a>
+							</div>
+						`)
+                                });
+                        } else {
+                            $('.autocompleteResult').css('display', 'none');
+                        }
+                    },
+                    error: function (error) {
+                        $('.autocompleteResult').empty();
+                        $('.autocompleteResult').css('display', 'none');
+                    }
+                })
+            })
+// Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+// first thing turn Hide Menu Search bar
+            $("#searchMenu").hide();
+// toggle menu search bar on/off
+            $("#searchMenuShowHide").click(function () {
+                $("#searchMenu").toggle("slide");
+            });
+
+
+// Set card title and card-body equal height
+            let maxHeightbody = 0;
+// card body
+            $(".card-body").each(function () {
+                if ($(this).height() > maxHeightbody) {
+                    maxHeightbody = $(this).height();
+                }
+            });
+            $(".card-body").height(maxHeightbody);
+// Modification des données newsletter de l'utilisateur
+            $('#triPrix').on('change', function (e) {
+                if ($('#triPrix').val() == 0) {
+//console.log($('#triPrix').val());
+                    $('.isotope').each(function () {
+                        $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                            let dsa = parseInt($(a).find('.number').eq(0).text()),
+                                dsb = parseInt($(b).find('.number').eq(0).text());
+                            return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                        }));
+                    });
+                } else { // console.log($('#triPrix').val());
+                    $('.isotope').each(function () {
+                        $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                            let dsa = parseInt($(a).find('.number').eq(0).text()),
+                                dsb = parseInt($(b).find('.number').eq(0).text());
+                            return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                        }));
+                    });
+                }
+
+            });
+
+            $('#triDate').on('change', function (e) {
+
+                if ($('#triDate').val() == 0) { // console.log($('#triDate').val());
+                    $('.isotope').each(function () {
+                        $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                            let dsa = parseInt($(a).find('.tri-dates').eq(0).text()),
+                                dsb = parseInt($(b).find('.tri-dates').eq(0).text());
+                            return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                        }));
+                    });
+                } else { // console.log($('#triDate').val());
+                    $('.isotope').each(function () {
+                        $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                            let dsa = parseInt($(a).find('.tri-dates').eq(0).text()),
+                                dsb = parseInt($(b).find('.tri-dates').eq(0).text());
+                            return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                        }));
+                    });
+                }
+            });
+
+// Tri des pro
+            $('#relevance').on('change', function (e) {
+                var relevanceData = $('#relevance').val();
+                switch (relevanceData) {
+                    case '1':
+                        break;
+                    case '2':
+                    case '3':
+                        $('.isotope-pro').each(function () {
+                            $(this).html($(this).find('.isotope-grid-pro').sort(function (a, b) {
+                                let dsa = parseInt($(a).find('.tri-date-pro').eq(0).text()),
+                                    dsb = parseInt($(b).find('.tri-date-pro').eq(0).text());
+                                return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                            }));
+                        });
+                        break;
+                    case '4':
+// console.log($('#relevance').val());
+                        $('.isotope-pro').each(function () {
+                            $(this).html($(this).find('.isotope-grid-pro').sort(function (a, b) {
+                                let dsa = parseInt($(a).find('.prix-indicatif').eq(0).text()),
+                                    dsb = parseInt($(b).find('.prix-indicatif').eq(0).text());
+                                return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                            }));
+                        });
+                        break;
+                    case '5':
+// console.log($('#relevance').val());
+                        $('.isotope-pro').each(function () {
+                            $(this).html($(this).find('.isotope-grid-pro').sort(function (a, b) {
+                                let dsa = parseInt($(a).find('.prix-indicatif').eq(0).text()),
+                                    dsb = parseInt($(b).find('.prix-indicatif').eq(0).text());
+                                return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                            }));
+                        });
+                        break;
+                    default:
+                }
+            });
+
+// Lazy Loading initializer
+            $(function () {
+                $('.lazy').lazy();
+            });
+
+            // like user profile
+            $('.like-btn').on('click', function () {
+                $(this).toggleClass('userhas-like');
+            });
+
+            $('#filtreForm').on('submit', function (e) {
+                e.preventDefault();
+                if ($.trim($('#type_prestation2').val()) == "") {
+                    toastr.error('Le type de prestation est obligatoire');
+                    return;
+                }
+
+                let url = "{{ path('annonces_filtre_recherche_xhr',{ _locale : app.request.get('_locale') }) }}";
+                let type_prestation = $('#type_prestation2').val();
+                let sous_categorie = $('#services_proposes2').val();
+                let code_postal_ville = $('#code_postal_ville2').val();
+                let noPage = $('#noPage').val();
+                let page = "resultat";
+
+                $.ajax({
+                    url: url,
+                    method: "post",
+                    data: {
+                        type_prestation: type_prestation,
+                        services_proposes: sous_categorie,
+                        code_postal_ville: code_postal_ville,
+                        noPage: noPage,
+                        page: page
+                    },
+                    success: function (data) {
+//console.log(data.html);
+                        if (data.html) {
+                            $('#listeAnnonces').html(data.html);
+                        }
+                        let maxHeightTitle = 0;
+                        let maxHeightbody = 0;
+                        $(".card-body").each(function () {
+                            if ($(this).height() > maxHeightbody) {
+                                maxHeightbody = $(this).height();
+                            }
+                        });
+                        $(".card-body").height(maxHeightbody);
+                        $('#triPrix').on('change', function (e) {
+                            if ($('#triPrix').val() == 0) {
+//console.log($('#triPrix').val());
+                                $('.isotope').each(function () {
+                                    $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                                        let dsa = parseInt($(a).find('.number').eq(0).text()),
+                                            dsb = parseInt($(b).find('.number').eq(0).text());
+                                        return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                                    }));
+                                });
+                            } else { // console.log($('#triPrix').val());
+                                $('.isotope').each(function () {
+                                    $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                                        let dsa = parseInt($(a).find('.number').eq(0).text()),
+                                            dsb = parseInt($(b).find('.number').eq(0).text());
+                                        return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                                    }));
+                                });
+                            }
+
+                        });
+
+                        $('#triDate').on('change', function (e) {
+
+                            if ($('#triDate').val() == 0) { // console.log($('#triDate').val());
+                                $('.isotope').each(function () {
+                                    $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                                        let dsa = parseInt($(a).find('.tri-dates').eq(0).text()),
+                                            dsb = parseInt($(b).find('.tri-dates').eq(0).text());
+                                        return (dsa < dsb ? -1 : (dsa > dsb) ? 1 : 0);
+                                    }));
+                                });
+                            } else { // console.log($('#triDate').val());
+                                $('.isotope').each(function () {
+                                    $(this).html($(this).find('.isotope-grid').sort(function (a, b) {
+                                        let dsa = parseInt($(a).find('.tri-dates').eq(0).text()),
+                                            dsb = parseInt($(b).find('.tri-dates').eq(0).text());
+                                        return (dsa > dsb ? -1 : (dsa < dsb) ? 1 : 0);
+                                    }));
+                                });
+                            }
+                        });
+// Tri des pro
+                    },
+                    error: function (xhr) {
+                        console.error(xhr);
+                    }
+                });
+            });
+
+            $('#type_prestation2').on('change', function () {
+                let lang = $('#page_lang').val();
+                let id = $(this).val();
+                let url = "{{ path('annonces_get_sous_categories_xhr',{ _locale : app.request.get('_locale') }) }}";
+
+                $.ajax({
+                    url: url,
+                    method: "get",
+                    data: {
+                        type_prestation: id
+                    },
+                    success: function (data) {
+                        $('#services_proposes2').empty();
+                        $('#services_proposes2').append("<option value='all' disabled='disabled' selected='selected'> {{ 'home.formulaire-champs.services-proposes'|trans }}</option>");
+
+                        if (data.sous_categories) {
+                            data.sous_categories.forEach(function (e) {
+                                if (lang == 'fr') {
+                                    $('#services_proposes2').append("<option value='" + e.slug + "'>" + e.name + "</option>");
+                                } else {
+                                    $('#services_proposes2').append("<option value='" + e.slug + "'>" + e.content + "</option>");
+                                }
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error(xhr);
+                    }
+                });
+            });
+
+            // First Like Button
+            $(document).on('click', '.btnh1', function () {
+                let element = $(this);
+                //Enregistrer dans la wishlist
+                let url = "{{ path('annonces_add_remove_to_user_wishlist',{ _locale : app.request.get('_locale') }) }}";
+                $.ajax({
+                    url: url,
+                    method: "get",
+                    data: {
+                        annonce_id: $(this).attr('data-id')
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        if (response.color == 'red') {
+                            element.children().removeClass("far");
+                            element.children().addClass("fas");
+                            element.children().css('color', 'red');
+                        } else if (response.color == 'black') {
+                            element.children().removeClass("fas");
+                            element.children().addClass("far");
+                            element.children().css('color', 'grey');
+                        } else if (response.status == 401) {
+                            window.location = "{{ path('app_login') }}";
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+            });
+            /*document.addEventListener('gesturestart', function (e) {
+                e.preventDefault();
+            });*/
+        });
+    </script>
+
+
+{% endblock %}

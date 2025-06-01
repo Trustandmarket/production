@@ -1,0 +1,488 @@
+{% extends 'descriptiveContent.html.twig' %}
+
+{% block head %}
+{{ parent() }}
+<meta name="title" content="{{ops.meta_titre}}">
+<meta name="description" content="{{ops.meta_description}}">
+<link rel="canonical" href="{{absolute_url(path('marketing_details_univers_trust', {slug: ops.slug}))}}">
+<link rel="shortlink" href="{{absolute_url(path('marketing_details_univers_trust', {slug: ops.slug}))}}">
+<meta property="og:title" content="{{ops.meta_titre}}">
+<meta property="og:description" content="{{ops.meta_description}}">
+
+<meta property="og:image" content="{{ops.image_couverture}}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{absolute_url(path('marketing_details_univers_trust', {slug: ops.slug}))}}">
+<meta property="og:locale" content="fr" />
+<meta property="og:locale:alternate" content="en" />
+
+{# Twitter CARD #}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="Kbr Global">
+<meta name="twitter:site" content="@trustandmarket">
+<meta name="twitter:title" content="{{ops.meta_titre}}">
+<meta name="twitter:description" content="{{ops.meta_description}}">
+<meta name="twitter:image" content="{{ops.image_couverture}}">
+<meta name="twitter:image:alt" content="{{ops.image_couverture}}">
+{# END Twitter Card #}
+
+<script type="application/ld+json">
+	{   
+		"@context": "https://schema.org", 
+		"@type": "Article",
+		"headline": "{{ops.titre}}",
+		"alternativeHeadline": "Univers Trust&Market",
+		"image": "{{ops.image_couverture}}",
+		"author": "Kalide Brassier", 
+		"award": "",
+		"editor": "Kbr Global", 
+		"genre": "Event", 
+		"keywords": "", 
+		"wordcount": "1120",
+		"publisher": {
+			"@type": "Organization",
+			"name": "Google",
+			"logo": {
+			"@type": "ImageObject",
+			"url": "{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+			}
+		},
+		"url": "{{absolute_url(path('marketing_details_univers_trust', {slug: ops.slug}))}}",
+		"mainEntityOfPage": {
+			"@type": "WebPage",
+			"@id": "{{absolute_url(path('marketing_details_univers_trust', {slug: ops.slug}))}}"
+		},
+		"datePublished": "{{ops.created_at|date("d/m/Y")}}",
+		"dateCreated": "{{ops.created_at|date("d/m/Y")}}",
+		"dateModified": "{{ops.edited_at|date("d/m/Y")}}",
+		"description": "{{ops.meta_description}}",
+		"sameAs": [
+			"https://www.facebook.com/trustandmarket",
+			"https://twitter.com/trustandmarket",
+			"https://www.instagram.com/trustandmarket/",
+			"https://www.linkedin.com/company/trustandmarket",
+			"https://www.youtube.com/channel/UC-jLvu82KNM6DnFOp2Nvk_A"
+		]
+	}
+</script>
+
+{% endblock %}
+
+{% block title %}Trust &amp; Market | {{'titre-univers-trust'|trans({}, 'marketing') }} | {{ ops.titre|lower|capitalize }}{% endblock %}
+
+{% block style %}
+{{ parent() }}
+<!-- Gijgo datepicker css -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gijgo/1.9.13/combined/css/gijgo.min.css"
+	integrity="sha512-oCuecFHHGu/Y4zKF8IoSoj5hQq1dLNIiUCwN08ChNW1VoMcjIIirAJT2JmKlYde6DeLN6JRSgntz6EDYDdFhCg=="
+	crossorigin="anonymous" />
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+	<!-- Your custom styles (optional) -->
+	<link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+	<link href="{{ asset('assets/css/result.css')}}" rel="stylesheet">
+	<link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet">
+
+<link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox.css') }}" />
+<style>
+	.chat-menu a {
+		border-radius: 50%;
+		background-color: transparent;
+		width: 100%;
+	}
+	
+	.breadcrumb {
+		background-color: white;
+	}
+
+	.breadcrumb a {
+		color: #000000;
+	}
+	
+	.breadcrumb a:hover {
+		color: #f17c30;
+	}
+	@media only screen and (min-width: 768px) {
+		.fixage {
+			position: fixed;
+			right: 0px;
+		}
+		.div_separated.div_right {
+			border-left: 1px solid #FF7E10;
+		}
+		#imageHolder .titre_filter>h1 {
+			font-size: 20px;
+			text-align: center;
+			width: auto;
+			text-transform: uppercase;
+			color: white !important;
+			font-size: 1.75rem !important;
+		}
+	}
+
+	@media only screen and (min-width: 768px) and (max-width: 1199px) {
+		.carteArticle {
+			height: 23rem;
+			overflow-y: auto;
+		}
+	}
+
+	.liArticle {
+		margin: 5px !important;
+		border-radius: 5px;
+	}
+
+	@media only screen and (min-width: 1500px) {
+		.fixage {
+			width: 30%;
+		}
+	}
+
+	.grand-titre {
+		text-align: center;
+	}
+
+	@media only screen and (max-width: 768px) {
+		.list_category_annonce {
+			flex-direction: column;
+			width: 100%;
+			max-width: 100%;
+			box-sizing: content-box;
+		}
+
+		#imageHolder .titre_filter>h1 {
+			font-size: 20px;
+			text-align: center;
+			text-transform: uppercase;
+			color: white !important;
+			font-size: 1.25rem !important;
+			display: block;
+		}
+
+		.category_annonce {
+			width: auto;
+			margin-left: 0%;
+		}
+
+		
+		.detail_marketing2 {
+			flex-direction: column;
+			width: 100%;
+		}
+		
+		.div_separated {
+			width: 100%;
+		}
+
+		.div_border_left {
+			border-top: 1.5px solid gray;
+			border-left: none;
+			border-color: #FF7E10;
+		}
+
+		.div_border_right {
+			border: none;
+		}
+
+		#ui-datepicker-div {
+			width: 55% !important;
+		}
+
+		.expertiseRow .breadcrumb{
+			display: none;
+		}
+
+		.expertiseRow{
+			flex-wrap: wrap-reverse;
+		}
+
+		.acces_rapide_bloc{
+			margin-bottom: 5rem;
+		}
+	}
+	.acces_rapide_link{
+		list-style: none;
+		padding: 0;
+	}
+	.acces_rapide_link a{
+		color: #fff !important;
+	}
+	.acces_rapide{
+		background-color: #262626;
+		padding: 10px;
+	}
+	.acces_rapide h4{
+		color: #f07c3a;
+	}
+
+	.dummy_ul {
+		list-style: none;
+		padding-left: 27px;
+	}
+	.dummy_ul li{
+		margin-bottom: 1rem;
+	}
+	.dummy_ul li::before {
+		content: "\2022";
+		color: #f07c3a;
+		font-weight: bold;
+		display: inline-block; 
+		width: 1em;
+		margin-left: -1em;
+	}
+
+	header {
+		height: 100% !important;
+	}
+
+	#holder {
+		min-height: 55% !important;
+    	height: 55%;
+	}
+</style>
+<link href="{{ asset('assets/css/style-aide.css') }} " rel="stylesheet">
+{% endblock %}
+
+{% block header %}
+<header style="height: 55% !important;">
+{% include("header-new-design.html.twig") %}	
+					<div id="imageHolder" class="view intro-2" style="background-image: url('{{ops.image_couverture}}');background-size: cover;background-repeat: no-repeat;">
+						<div>
+							<div style="height: 17rem;" class="mask rgba-purple-light flex-center {# fullBackground #} pt-5 searchFilterDiv">
+								<div class="titre_filter" style="margin-top: 8rem;width:auto; color:white;">
+									<h1>{{ops.titre}}</h1>
+								</div>
+							</div>
+						</div>
+					</div>
+					{# <div id="imageHolder" class="view intro-2">
+						<div class="full-bg-img">
+							<div class="mask rgba-purple-light flex-center">
+								<div class="container text-left align-items-end white-text wow fadeInUp">
+									<h2 class="page-title" style="color: #fff;">
+										{% block pageTitle %}
+											{% if app.request.locale == 'en' and contenu.postExcerpt != '' %}{{ contenu.postExcerpt|upper }}{% else %}{{ contenu.getPostTitle|upper }}{% endif %}
+										{% endblock %}
+									</h2>
+								</div>
+							</div>
+						</div>
+					</div> #}
+</header>
+{% endblock %}
+
+
+{% block body %}
+<!--Main layout-->
+<main class="mt-2 pt-2">
+	<div class="container">
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb pl-0">
+				<li class="breadcrumb-item"><a href="{{path('home')}}">Accueil</a></li>
+				<li class="breadcrumb-item"><a href="/">{{ops.titre|lower|capitalize}}</a></li>
+			</ol>
+		</nav>
+		<div class="row expertiseRow">
+			<div class="col-md-3 acces_rapide_bloc">
+				<div class="acces_rapide">
+					{# <h4>Accès rapides</h4> #}
+					{{ops.lien_acces_rapides|raw}}
+				</div>
+			</div>
+			<div class="col-md-9 text-left">
+				<div>
+					<div>
+						{% if ops.youtube != '' %}
+							<div class="" style="margin-bottom: 2rem;">
+								<iframe class="embed-responsive-item" id="ytplayer" type="text/html" style="width:100%;" height="360" src="https://www.youtube.com/embed/{{ops.youtube}}" frameborder="0" allowfullscreen></iframe>
+							</div>
+						{% endif %}
+						{{ops.contenu|raw}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+<!--Main layout-->
+{% endblock %}
+
+
+{% block footer %}
+{{parent()}}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<!-- Full background slider jQuery plugin -->
+<script type="text/javascript" src="{{ asset('assets/js/fullclip.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.js"></script>
+<script src="{{ asset('assets/js/lc_lightbox.js') }}" type="text/javascript"></script>
+<!-- SKINS -->
+<link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox_skins_dark.css') }}" />
+<!-- ASSETS -->
+<script	src="{{ asset('assets/js/alloy_finger.min.js') }}" type="text/javascript"></script>
+{# <script type="text/javascript"
+        src="https://raw.githubusercontent.com/jquery/jquery-ui/master/ui/i18n/datepicker-fr.js"> #}
+</script>
+<script>
+	$(document).ready(function (e) {
+
+		// live handler
+		lc_lightbox('.carousel-card', {
+			wrap_class: 'lcl_fade_oc',
+			gallery: true,
+			thumb_attr: 'data-lcl-thumb',
+			skin: 'dark',
+			radius: 0,
+			padding: 0,
+			border_w: 0,
+			src_attr: 'attr-src',
+			max_width: '93%',
+			max_height: '93%',
+			show_author: false,
+			show_title :true,
+			show_descr :true,
+			thumbs_nav :true,
+			tn_hidden :0,
+			txt_hidden :0,
+		});
+
+		main();
+
+		
+		$('.date_input').datepicker({
+			dateFormat: 'dd-M-yy',
+			minDate: 1,
+			closeText: 'Fermer',
+			prevText: 'Précédent',
+			nextText: 'Suivant',
+			currentText: 'Aujourd\'hui',
+			monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+			monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+			dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+			dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+			dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+			weekHeader: 'Sem.'
+		},);
+		
+		$('.date_icon').on('click', function() {
+			$('.date_input').focus();
+		})
+
+		$("#numero_telephone").keyup(function () {
+			let phone = $("#numero_telephone").val().replace(/\s|[a-zA-Z]/g, "");
+			$("#numero_telephone").val(phone);
+		});
+	});
+	var slideSpeed = 10000;
+
+	var main = function () {
+		//Carousel
+		setInterval(function () { timedDelay() }, slideSpeed);
+		//arrow-next
+		$('.arrow-next').click(function (e) {
+			e.preventDefault();
+
+			var currentSlide = $('.active-slide');
+			var nextSlide = currentSlide.next();
+
+			var currentDot = $('.active-dot');
+			var nextDot = currentDot.next();
+
+			if (nextSlide.length === 0) {
+				nextSlide = $('.slide').first();
+				nextDot = $('.dot').first();
+			}
+
+			currentSlide.fadeOut(600, function () {
+				$(this).removeClass('active-slide');
+				nextSlide.fadeIn(600).addClass('active-slide');
+
+				currentDot.removeClass('active-dot');
+				nextDot.addClass('active-dot');
+			});
+		});
+		//arrow-prev
+		$('.arrow-prev').click(function (e) {
+			e.preventDefault();
+
+			var currentSlide = $('.active-slide');
+			var prevSlide = currentSlide.prev();
+
+			var currentDot = $('.active-dot');
+			var prevDot = currentDot.prev();
+
+			if (prevSlide.length === 0) {
+				prevSlide = $('.slide').last();
+				prevDot = $('.dot').last();
+			}
+
+			currentSlide.fadeOut(600, function () {
+				$(this).removeClass('active-slide');
+				prevSlide.fadeIn(600).addClass('active-slide');
+
+				currentDot.removeClass('active-dot');
+				prevDot.addClass('active-dot');
+			});
+		});
+	};
+
+	//timedDelay function
+	function timedDelay() {
+		var currentSlide = $('.active-slide');
+		var nextTimedSlide = currentSlide.next();
+		var currentDot = $('.active-dot');
+		var nextDot = currentDot.next();
+			if (nextTimedSlide.length === 0) {
+				nextTimedSlide = $('.slide').first();
+				nextDot = $('.dot').first();
+			}
+			currentSlide.fadeOut(600, function () {
+				$(this).removeClass('active-slide');
+				nextTimedSlide.fadeIn(600).addClass('active-slide');
+
+				currentDot.removeClass('active-dot');
+				nextDot.addClass('active-dot');
+			});
+	}
+
+	$('#submitForm').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+		e.preventDefault();
+		if($('.numero_telephone').val().match(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/gmi)){
+		toastr.info('{{ 'systeme.requetes.requete-en-cours'|trans }}');
+		var $form = $(this);
+			var formdata = (window.FormData) ? new FormData($form[0]) : null;
+			var data = (formdata !== null) ? formdata : $form.serialize();
+
+		$.ajax({
+			url: $form.attr('action'),
+			type: $form.attr('method'),
+			contentType: false,
+			processData: false,
+			data: data,
+			success: function (reponse) {
+			window.location = "";
+			if (reponse != 0) {
+				toastr.clear();
+				toastr.success('{{ 'systeme.requetes.succes'|trans }}');
+			} else if (reponse == 0) {
+				toastr.clear();
+				toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+			}
+
+			},
+			error: function (reponse) {
+				toastr.clear();
+				toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+			}
+		});
+		}else{
+			toastr.warning('Entrez un numéro de téléphone valide');
+		}
+		return false;
+	});
+</script>
+
+{% endblock %}

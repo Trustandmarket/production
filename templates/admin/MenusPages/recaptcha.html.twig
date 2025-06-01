@@ -1,0 +1,126 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+    Recaptcha
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link href="{{ asset('assets/css/style-blog.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/dropzone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <style media="screen">
+        .navbar {
+            background: none;
+        }
+
+        header {
+            height: 5%;
+        }
+
+        #main-menu {
+            font-size: 14px;
+        }
+
+        .form-actions {
+            align-content: center;
+        }
+    </style>
+
+    <div class="content">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        Recaptcha
+                    </div>
+                    <div class="card-body">
+                        <div class="container row">
+                            <div class="col-md-12 mb-12 clearfix">
+                                <!-- Title -->
+                                <h4 class="card-title">Configuration Seuil RECAPTCHA</h4>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <form action="{{ path('post_recaptcha') }}" method="post" id="post_recaptcha" class="">
+                                            <div class="form-group ">
+                                                <input type="number" class="form-control" name="recaptcha" min="0"
+                                                       max="1" step=".01" required
+                                                       value="{% if recaptcha %}{{ recaptcha.optionValue }}{% else %}0.7{% endif %}"/>
+                                            </div>
+                                            <div class="form-actions form-group">
+                                                <button type="submit" id="send"
+                                                        class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                    Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    </div>
+
+{% endblock %}
+{% block body_javascript %}
+	<script src="https://code.jquery.com/jquery-3.6.1.min.js"
+			integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+	<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+			integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+			crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#post_recaptcha').on('submit', function (e) {
+                toastr.info('Modification en cours');
+                let form = $(this);
+                let formData = (window.FormData) ? new FormData(form[0]) : null;
+                let data = (formData !== null) ? formData : form.serialize();
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (response) {
+                        if (response != 0) {
+                            toastr.clear();
+                            toastr.success('Modification éffectuée avec succès');
+                            window.location = '';
+                        } else if (response == 0) {
+                            $('#send').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{'admin.annonce.error'|trans}}");
+                        }
+                    },
+                    error: function (response) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'admin.annonce.error'|trans }}");
+                    }
+                });
+            });
+        })
+    </script>
+{% endblock body_javascript %}
+

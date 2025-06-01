@@ -1,0 +1,521 @@
+{% extends 'generalLayout.html.twig' %}
+
+{% block head %}
+{{ parent() }}
+<meta name="title" content="{{ops.titre}}">
+<meta name="description" content="{{ops.meta_description}}">
+<link rel="canonical" href="{{absolute_url(path('marketing_details_ops_speciales', {slug: ops.slug}))}}">
+<link rel="shortlink" href="{{absolute_url(path('marketing_details_ops_speciales', {slug: ops.slug}))}}">
+<meta property="og:title" content="{{ops.titre}}">
+<meta property="og:description" content="{{ops.meta_description}}">
+
+<meta property="og:image" content="{{ops.articles.0.guid}}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{absolute_url(path('marketing_details_ops_speciales', {slug: ops.slug}))}}">
+<meta property="og:locale" content="fr" />
+<meta property="og:locale:alternate" content="en" />
+
+{# Twitter CARD #}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="Kbr Global">
+<meta name="twitter:site" content="@trustandmarket">
+<meta name="twitter:title" content="{{ops.titre}}">
+<meta name="twitter:description" content="{{ops.meta_description}}">
+<meta name="twitter:image" content="{{ops.articles.0.guid}}">
+<meta name="twitter:image:alt" content="{{ops.articles.0.guid}}">
+{# END Twitter Card #}
+
+<script type="application/ld+json">
+	{   
+		"@context": "https://schema.org", 
+		"@type": "Article",
+		"headline": "{{ops.titre}}",
+		"alternativeHeadline": "Operation speciale Trust&Market",
+		"image": "{{ops.articles.0.guid}}",
+		"author": "Kalide Brassier", 
+		"award": "",
+		"editor": "Kbr Global", 
+		"genre": "Event", 
+		"keywords": "", 
+		"wordcount": "1120",
+		"publisher": {
+			"@type": "Organization",
+			"name": "Google",
+			"logo": {
+			"@type": "ImageObject",
+			"url": "{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+			}
+		},
+		"url": "{{absolute_url(path('marketing_details_ops_speciales', {slug: ops.slug}))}}",
+		"mainEntityOfPage": {
+			"@type": "WebPage",
+			"@id": "{{absolute_url(path('marketing_details_ops_speciales', {slug: ops.slug}))}}"
+		},
+		"datePublished": "{{ops.post_date|date("d/m/Y")}}",
+		"dateCreated": "{{ops.post_date|date("d/m/Y")}}",
+		"dateModified": "{{ops.post_date|date("d/m/Y")}}",
+		"description": "{{ops.meta_description}}",
+		"sameAs": [
+			"https://www.facebook.com/trustandmarket",
+			"https://twitter.com/trustandmarket",
+			"https://www.instagram.com/trustandmarket/",
+			"https://www.linkedin.com/company/trustandmarket",
+			"https://www.youtube.com/channel/UC-jLvu82KNM6DnFOp2Nvk_A"
+		]
+	}
+</script>
+
+{% endblock %}
+
+{% block title %}Trust &amp; Market | {{'titre'|trans({}, 'marketing') }} | {{ ops.titre }}{% endblock %}
+
+{% block style %}
+{{ parent() }}
+<!-- Gijgo datepicker css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gijgo/1.9.13/combined/css/gijgo.min.css"
+	integrity="sha512-oCuecFHHGu/Y4zKF8IoSoj5hQq1dLNIiUCwN08ChNW1VoMcjIIirAJT2JmKlYde6DeLN6JRSgntz6EDYDdFhCg=="
+	crossorigin="anonymous" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" href="{{ asset('admin/date/dist/datepicker.min.css') }}">
+<!-- Your custom styles (optional) -->
+<link rel="stylesheet" href="{{ asset('assets/css/custome.css') }}">
+<link href="{{ asset('assets/css/single-post.css') }}" rel="stylesheet">
+
+<link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox.css') }}" />
+<style>
+	.ml-6 {
+		margin-left: 5rem !important;
+	}
+
+	.timer {
+		font-size: 12px;
+		color: #90949c;
+		font-family: cursive;
+	}
+
+	@media only screen and (min-width: 768px) {
+		.fixage {
+			position: fixed;
+			right: 0px;
+		}
+	}
+
+	@media only screen and (min-width: 768px) and (max-width: 1199px) {
+		.carteArticle {
+			height: 23rem;
+			overflow-y: auto;
+		}
+	}
+
+	.liArticle {
+		margin: 5px !important;
+		border-radius: 5px;
+	}
+
+	@media only screen and (min-width: 1500px) {
+		.fixage {
+			width: 30%;
+		}
+	}
+
+	.grand-titre {
+		text-align: center;
+	}
+
+	@media only screen and (max-width: 768px) {
+		.list_category_annonce {
+			flex-direction: column;
+			width: 100%;
+			max-width: 100%;
+			box-sizing: content-box;
+		}
+
+		.category_annonce {
+			width: auto;
+			margin-left: 0%;
+		}
+	}
+
+	.list_category_annonce {
+		flex-wrap: wrap;
+		display: flex;
+		justify-content: space-around;
+	}
+
+	.carousel-cards {
+		flex-wrap: wrap;
+		display: flex;
+		justify-content: space-around;
+		position: relative;
+	}
+
+	.carousel-card {
+		width: auto;
+		/* margin-right: 2%; */
+		border-radius: 15px;
+		height: 16rem;
+		background-repeat: no-repeat;
+		background-size: cover;
+		display: flex;
+		justify-content: space-between;
+		align-items: end;
+		margin-bottom: 1rem;
+		cursor: pointer;
+		box-shadow: inset 0 0 0 2000px rgb(6 48 66 / 35%);
+		background-size: cover;
+	}
+
+	.left-align-text {
+		position: relative;
+		left: 15px;
+		bottom: 0px;
+		color: white;
+		text-transform: uppercase;
+	}
+
+	.right-align-text {
+		position: relative;
+		right: 15px;
+		bottom: 0px;
+		color: white;
+		text-transform: uppercase;
+	}
+
+	.detail_marketing {
+		text-align: justify;
+		margin-top: 1rem;
+		margin-bottom: 2rem;
+		font-family: 'Open Sans', sans-serif;
+	}
+
+	.category_annonce {
+		width: auto;
+		/* margin-left: 1%; */
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border: 2px solid black;
+		border-radius: 10px;
+		padding: 10px;
+		margin-bottom: 1rem;
+		cursor: pointer;
+		color: black;
+		text-transform: uppercase;
+		font-family: 'Open Sans', sans-serif;
+		text-align: center;
+	}
+
+	.category_annonce_ahref:hover {
+		text-decoration: inherit;
+	}
+
+	.category_annonce_ahref:hover>div {
+		background: #262626;
+		color: white;
+		text-decoration: inherit;
+	}
+
+	.lcl_fade_oc.lcl_pre_show #lcl_overlay,
+	.lcl_fade_oc.lcl_pre_show #lcl_window,
+	.lcl_fade_oc.lcl_is_closing #lcl_overlay,
+	.lcl_fade_oc.lcl_is_closing #lcl_window {
+		opacity: 0 !important;
+	}
+
+	.lcl_fade_oc.lcl_is_closing #lcl_overlay {
+		-webkit-transition-delay: .15s !important;
+		transition-delay: .15s !important;
+	}
+
+	.active-slide {
+		display: flex !important;
+	}
+
+	.slide {
+		display: none;
+	}
+
+	.slider-dots {
+		list-style: none;
+		display: inline-block;
+		padding-left: 0;
+		margin-bottom: 0;
+	}
+
+	.slider-dots li {
+		color: #bbbcbc;
+		display: inline;
+		font-size: 40px;
+		margin-right: 5px;
+	}
+
+	.slider-dots li.active-dot {
+		color: #363636;
+	}
+
+	strong{
+		font-weight: bold;
+	}
+</style>
+{% endblock %}
+
+
+{% block header %}
+{{parent()}}
+
+{% endblock %}
+
+{% block navigation %}
+
+<div id="imageHolder" class="view intro-2">
+	<div class="full-bg-img">
+		<div class="mask rgba-purple-light flex-center">
+			<div class="container text-left align-items-end white-text wow fadeInUp">
+				<h2 class="page-title"></h2>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}
+
+{% block body %}
+
+<!--Main layout-->
+<main class="mt-5 pt-5">
+	<div class="container">
+		<h3 hidden class="h3-responsive grand-titre">{{ ops.titre }}</h3>
+		<p class="detail_marketing">
+			{{ops.chapeau|raw}}
+		</p>
+		<section>
+			<div style="width: 100%;display: flex;justify-content: center;">
+				<ul class="slider-dots">
+					{% for item in 1.. page_slide %}
+						<li class="dot {% if loop.index == 1 %}active-dot{% endif %}">•</li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% set x = 0 %}
+			{% for item in ops.articles %}
+				{% set x = x + 1 %}
+				{% if x == 1 %}<div class="row slide {% if loop.index == 1 %}active-slide{% endif %}">{% endif %}
+				<div class="col-md-6">
+					<div class="carousel-card col-md-12"
+						style="background-image: url({{item.guid}});" title="{{item.postTitle}}"
+						attr-src="{{item.guid}}" 
+						data-lcl-txt="<a class='buy_article'
+						 data-email='serviceclients@kbr-global.com'
+						 data-image='{{item.guid}}'
+						 data-price='{{item.toPing}}'
+						 data-id='{{item.id}}'
+						 data-article-id='{{ops.id}}'
+						 data-author-id='{{ops.post_author}}'
+						 data-livraison='{{item.pinged}}'
+						 data-title='{{item.postTitle}}'
+						 data-ops-title='{{ops.titre}}'
+						 data-slug='{{item.postName}}'
+						 href='#'>Acheter ({{item.toPing}} €)</a>"
+						data-lcl-author="Trust&Market"
+						data-lcl-thumb="{{item.guid}}">
+						<p class="left-align-text">
+							{{item.toPing}} €
+						</p>
+						<p class="right-align-text">
+							Acheter
+						</p>
+					</div>
+				</div>
+				{% if x == 4 %}
+					</div>
+					{% set x = 0 %} 
+				{% endif %}
+			{% endfor %}
+		</section>
+		<p class="detail_marketing">
+			{{ops.description|raw}}
+		</p>
+		<div class="row">
+		{% for item in ops.categorie %}
+			<a target="_blank" href="{{path('annonces_listeAnnonces',{type_prestation:item.slug,services_proposes: '',code_postal_ville: ''})}}" class="col-md-3 category_annonce_ahref">
+				<div class="category_annonce col-md-12">
+					{{item.name}}
+				</div>
+			</a>
+		{% endfor %}
+		</div>
+		</div>
+</main>
+<!--Main layout-->
+{% endblock %}
+
+
+{% block footer %}
+{{parent()}}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+<!-- Full background slider jQuery plugin -->
+<script type="text/javascript" src="{{ asset('assets/js/fullclip.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.js"></script>
+
+<script src="{{ asset('admin/date/dist/datepicker.min.js') }}"></script>
+<script src="{{ asset('assets/js/lc_lightbox.js') }}" type="text/javascript"></script>
+<!-- SKINS -->
+<link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox_skins_dark.css') }}" />
+<!-- ASSETS -->
+<script	src="{{ asset('assets/js/alloy_finger.min.js') }}" type="text/javascript"></script>
+<script>
+	$(document).ready(function (e) {
+
+		// live handler
+		lc_lightbox('.carousel-card', {
+			wrap_class: 'lcl_fade_oc',
+			gallery: true,
+			thumb_attr: 'data-lcl-thumb',
+			skin: 'dark',
+			radius: 0,
+			padding: 0,
+			border_w: 0,
+			src_attr: 'attr-src',
+			max_width: '93%',
+			max_height: '93%',
+			show_author: false,
+			show_title :true,
+			show_descr :true,
+			thumbs_nav :true,
+			tn_hidden :0,
+			txt_hidden :0,
+		});
+
+		main();
+	});
+	var slideSpeed = 10000;
+
+	//Ajouter au panier
+
+	$(document).on('click', '.buy_article', function (e) {// On empeche le navigateur de soumettre le formulaire
+		e.preventDefault();
+		var d = $(".multipleDatePicker").datepicker("getDates");
+		var adresse = "";
+		var image = $(this).attr("data-image");
+		var email = $(this).attr("data-email");
+		var p = $(this).attr("data-price");
+		var categorieParent = "ops_speciale_article";
+		var match = p.match(/[0-9,.]*/);
+		var nombreJour = 1; var amount = 0;
+		if (match !== null) {
+			amount = parseFloat(match[0].replace(/,/g, '')); // replace , thousands separator
+		}
+		var livraison = '';
+		var prixTotal = nombreJour * amount;
+		console.log(image);
+		var url1 = "{{path('annonces_panier')}}" + '?id=' + $(this).attr("data-id") +'&id_article='
+		+ $(this).attr("data-article-id")+ '&prixu=' + amount + '&userId=' +  $(this).attr("data-author-id") +
+		'&qte=' + nombreJour + '&prix=' + prixTotal + '&dates=' + '' + 
+		'&libelle=' + $(this).attr("data-title") + '&image=' + image + '&adresse=' + adresse +
+		'&email=' + email + '&devise=€' + '&name=' + $(this).attr("data-slug") +
+		'&categorie=' + categorieParent +'&sousCategorie=' + $(this).attr("data-ops-title") +
+		'&livraison=' + $(this).attr("data-livraison");
+
+		console.log(url1);
+		if (nombreJour > 0) {
+			toastr.info('Ajout au panier en cours...');
+			$.ajax({
+			url: url1,
+			type: 'get',
+			success: function (reponse) {
+			toastr.clear();
+			toastr.success('Annonce ajoutée au panier!');
+			$('#panier').html(parseInt('{{app.session.get('taille')}}') + 1);
+				lcl_close();
+			},
+			error: function (reponse) {
+				toastr.clear();
+				toastr.error('Erreur lors de l\'ajout');
+			}
+		});
+		} else {
+			toastr.info('Veuillez selectionner une date disponible');
+		}
+	});
+
+	// Fin ajout au panier
+
+	var main = function () {
+		//Carousel
+		setInterval(function () { timedDelay() }, slideSpeed);
+		//arrow-next
+		$('.arrow-next').click(function (e) {
+			e.preventDefault();
+
+			var currentSlide = $('.active-slide');
+			var nextSlide = currentSlide.next();
+
+			var currentDot = $('.active-dot');
+			var nextDot = currentDot.next();
+
+			if (nextSlide.length === 0) {
+				nextSlide = $('.slide').first();
+				nextDot = $('.dot').first();
+			}
+
+			currentSlide.fadeOut(600, function () {
+				$(this).removeClass('active-slide');
+				nextSlide.fadeIn(600).addClass('active-slide');
+
+				currentDot.removeClass('active-dot');
+				nextDot.addClass('active-dot');
+			});
+		});
+		//arrow-prev
+		$('.arrow-prev').click(function (e) {
+			e.preventDefault();
+
+			var currentSlide = $('.active-slide');
+			var prevSlide = currentSlide.prev();
+
+			var currentDot = $('.active-dot');
+			var prevDot = currentDot.prev();
+
+			if (prevSlide.length === 0) {
+				prevSlide = $('.slide').last();
+				prevDot = $('.dot').last();
+			}
+
+			currentSlide.fadeOut(600, function () {
+				$(this).removeClass('active-slide');
+				prevSlide.fadeIn(600).addClass('active-slide');
+
+				currentDot.removeClass('active-dot');
+				prevDot.addClass('active-dot');
+			});
+		});
+	};
+
+	//timedDelay function
+	function timedDelay() {
+		var currentSlide = $('.active-slide');
+		var nextTimedSlide = currentSlide.next();
+		var currentDot = $('.active-dot');
+		var nextDot = currentDot.next();
+			if (nextTimedSlide.length === 0) {
+				nextTimedSlide = $('.slide').first();
+				nextDot = $('.dot').first();
+			}
+			currentSlide.fadeOut(600, function () {
+				$(this).removeClass('active-slide');
+				nextTimedSlide.fadeIn(600).addClass('active-slide');
+
+				currentDot.removeClass('active-dot');
+				nextDot.addClass('active-dot');
+			});
+	}
+</script>
+
+{% endblock %}

@@ -1,0 +1,1265 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}{{ 'admin.slider.titre'|trans }}{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+          integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+    <link href="{{ asset('assets/css/style-blog.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/dropzone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+    <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+    <style media="screen">
+        header {
+            height: 3%;
+        }
+
+        .navbar {
+            background: none;
+        }
+
+        .form-actions {
+            align-content: center;
+        }
+
+        #main-menu {
+            font-size: 14px;
+        }
+    </style>
+
+    <div class="content">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>{{ 'admin.slider.titre'|trans }}
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="col-md-4 mb-4 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc1 %}{{ bloc1.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-photo.jpg') }}{% endif %}"
+                                             alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image 1</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images1">
+                                                    <input hidden name="option_name" value="accueil_bloc_1"/>
+                                                    <div class="form-group">
+                                                        <select name="categories" class="form-control" required>
+                                                            <option value="">Selectionner la categorie a Afficher
+                                                            </option>
+                                                            {% for prestation in categories %}
+                                                                <option {% if bloc1 %}{% if bloc1.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}{% endif %}
+                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
+                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_1"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+
+                            <div class="col-md-4 mb-4 clearfix">
+                                <!-- Card -->
+                                <div
+                                        class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc2 %}{{ bloc2.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-musicien.jpg') }}{% endif %}"
+                                             alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image 2</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images2">
+                                                    <input hidden name="option_name" value="accueil_bloc_2"/>
+                                                    <div class="form-group">
+                                                        <select name="categories" class="form-control" required>
+                                                            <option value="">Selectionner la categorie a Afficher
+                                                            </option>
+                                                            {% for prestation in categories %}
+                                                                <option {% if bloc2 %}{% if bloc2.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}
+                                                                        {% endif %}
+                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
+                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_2"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+
+                            <div
+                                    class="col-md-4 mb-4 clearfix">
+                                <!-- Card -->
+                                <div
+                                        class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc3 %}{{ bloc3.optionValue|split('|||')[1] }}{% else %}
+          {{ asset('assets/img/prestations/home-prestations-production-musicale.jpg') }}{% endif %}" alt=""
+                                             height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image 3</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images3">
+                                                    <input hidden name="option_name" value="accueil_bloc_3"/>
+                                                    <div class="form-group">
+                                                        <select name="categories" class="form-control" required>
+                                                            <option value="">Selectionner la categorie a Afficher
+                                                            </option>
+                                                            {% for prestation in categories %}
+                                                                <option {% if bloc3 %}{% if bloc3.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}
+                                                                        {% endif %}
+                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
+                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_3"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+
+                            <div
+                                    class="col-md-4 mb-4 clearfix">
+                                <!-- Card -->
+                                <div
+                                        class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc4 %}{{ bloc4.optionValue|split('|||')[1] }}{% else %}
+          {{ asset('assets/img/prestations/home-prestations-group-music.jpg') }}{% endif %}" alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image 4</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images4">
+                                                    <input hidden name="option_name" value="accueil_bloc_4"/>
+                                                    <div class="form-group">
+                                                        <select name="categories" class="form-control" required>
+                                                            <option value="">Selectionner la categorie a Afficher
+                                                            </option>
+                                                            {% for prestation in categories %}
+                                                                <option {% if bloc4 %}{% if bloc4.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}
+                                                                        {% endif %}
+                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
+                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_4"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+                            <div class="col-md-4 mb-4 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc5 %}{{ bloc5.optionValue|split('|||')[1] }}{% else %}
+          {{ asset('assets/img/prestations/home-prestations-chorale.jpg') }}{% endif %}" alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image 5</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images5">
+                                                    <input hidden name="option_name" value="accueil_bloc_5"/>
+                                                    <div class="form-group">
+                                                        <select name="categories" class="form-control" required>
+                                                            <option value="">Selectionner la categorie a Afficher
+                                                            </option>
+                                                            {% for prestation in categories %}
+                                                                <option {% if bloc5 %}{% if bloc5.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}
+                                                                        {% endif %}
+                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
+                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_5"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+                            <div class="col-md-4 mb-4 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc6 %}{{ bloc6.optionValue|split('|||')[1] }}{% else %}
+          {{ asset('assets/img/prestations/home-prestations-stud-photo.jpg') }}{% endif %}" alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image 6</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images6">
+                                                    <input hidden name="option_name" value="accueil_bloc_6"/>
+                                                    <div class="form-group">
+                                                        <select name="categories" class="form-control" required>
+                                                            <option value="">Selectionner la categorie a Afficher
+                                                            </option>
+                                                            {% for prestation in categories %}
+                                                                <option {% if bloc6 %}{% if bloc6.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}
+                                                                        {% endif %}
+                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
+                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="dropzone" id="dropzone_element_6"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+                            <div class="col-md-4 mb-4 clearfix">
+                                <!-- Card -->
+                                <div
+                                        class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc7 %}{{ bloc7.optionValue|split('|||')[1] }}{% else %}
+          {{ asset('assets/img/prestations/home-prestations-realisation-vid.jpg') }}{% endif %}" alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image 7</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images7">
+                                                    <input hidden name="option_name" value="accueil_bloc_7"/>
+                                                    <div class="form-group">
+                                                        <select name="categories" class="form-control" required>
+                                                            <option value="">Selectionner la categorie a Afficher
+                                                            </option>
+                                                            {% for prestation in categories %}
+                                                                <option {% if bloc7 %}{% if bloc7.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}
+                                                                        {% endif %}
+                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
+                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_7"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+
+                            <div class="col-md-4 mb-4 clearfix">
+                                <!-- Card -->
+                                <div
+                                        class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc8 %}{{ bloc8.optionValue|split('|||')[1] }}{% else %}
+          {{ asset('assets/img/prestations/home-prestations-evenementiels.jpg') }}{% endif %}" alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image 8</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images8">
+                                                    <input hidden name="option_name" value="accueil_bloc_8"/>
+                                                    <div class="form-group">
+                                                        <select name="categories" class="form-control" required>
+                                                            <option value="">Selectionner la categorie a Afficher
+                                                            </option>
+                                                            {% for prestation in categories %}
+                                                                <option {% if bloc8 %}{% if bloc8.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}
+                                                                        {% endif %}
+                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
+                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_8"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+                            <div class="col-md-4 mb-4 clearfix">
+                                <!-- Card -->
+                                <div
+                                        class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc9 %}{{ bloc9.optionValue|split('|||')[1] }}{% else %}
+          {{ asset('assets/img/prestations/home-prestations-studio-video.jpg') }}{% endif %}" alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div
+                                            class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image 9</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images9">
+                                                    <input hidden name="option_name" value="accueil_bloc_9"/>
+                                                    <div class="form-group">
+                                                        <select name="categories" class="form-control" required>
+                                                            <option value="">Selectionner la categorie a Afficher
+                                                            </option>
+                                                            {% for prestation in categories %}
+                                                                <option {% if bloc9 %}{% if bloc9.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}
+                                                                        {% endif %}
+                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
+                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_9"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+                            <div class="col-md-6 mb-12 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc10 %}{{ bloc10.optionValue }}{% else %}
+          {{ asset('assets/img/prestations/cover.jpg') }}{% endif %}" alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image Accueil</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images10">
+                                                    <input hidden name="option_name" value="accueil_bloc_10"/>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_10"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+
+                            <div class="col-md-6 mb-12 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc11 %}{{ bloc11.optionValue }}{% else %}
+          {{ asset('assets/img/prestations/cover.jpg') }}{% endif %}" alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image Produits et Offres</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images11">
+                                                    <input hidden name="option_name" value="accueil_bloc_11"/>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_11"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+
+                            <div class="col-md-6 mb-12 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card image -->
+                                    <div class="view overlay">
+                                        <img class="card-img-top lazy"
+                                             data-src="{% if bloc12 %}{{ bloc12.optionValue }}{% else %}{{ asset('assets/img/prestations/cover.jpg') }}{% endif %}"
+                                             alt="" height="200">
+                                        <a href="#!">
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Card content -->
+                                    <div class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Image Musique et Services</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('add_image_home') }}" method="post"
+                                                      class="accueil_images" id="accueil_images12">
+                                                    <input hidden name="option_name" value="accueil_bloc_12"/>
+                                                    <div class="form-group">
+                                                        <select name="categories" class="form-control" required>
+                                                            <option value="">Selectionner la categorie a Afficher
+                                                            </option>
+                                                            {% for prestation in categories %}
+                                                                <option {% if bloc12 %}{% if bloc12.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}
+                                                                        {% endif %}
+                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
+                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <div class="dropzone" id="dropzone_element_12"
+                                                             style="width:100%"></div>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+
+                            <div class="col-md-6 mb-12 clearfix">
+                                <!-- Card -->
+                                <div class="card">
+                                    <!-- Card content -->
+                                    <div class="card-body">
+                                        <!-- Title -->
+                                        <h4 class="card-title">Slogan Accueil</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form action="{{ path('slogan_homepage') }}" method="post"
+                                                      class="slogan_homepage" id="slogan_homepage">
+                                                    <div class="form-group">
+                                                        <input class="form-control"
+                                                               value="{% if slogan_homepage %}{{ slogan_homepage.getOptionValue }}{% endif %}"
+                                                               type="text" name="slogan_homepage_text"
+                                                               id="slogan_homepage_text"/>
+                                                    </div>
+                                                    <div class="form-actions form-group">
+                                                        <button type="submit" id="send"
+                                                                class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                            Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card -->
+                            </div>
+                            <div class="row col-md-12">
+                                <div class="col-md-6 mb-12 clearfix">
+                                    <!-- Card -->
+                                    <div class="card">
+                                        <!-- Card content -->
+                                        <div class="card-body">
+                                            <!-- Title -->
+                                            <h4 class="card-title">Encart 1 Accueil</h4>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <form action="{{ path('encart_homepage') }}" method="post"
+                                                          class="encart_homepage_1" id="encart_homepage_1">
+                                                        <input hidden value="encart_homepage_1"
+                                                               name="encart_option_name"/>
+                                                        <div class="form-group">
+                                                            <input class="form-control" required
+                                                                   value="{% if encart_homepage_1 is defined and encart_homepage_1 %}{{ encart_homepage_1.optionValue|split('|||')[0] }}{% else %}DÉCOUVREZ NOTRE UNIVERS{% endif %}"
+                                                                   type="text" name="encart_title"
+                                                                   id="encart_1_title"/>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-control" required
+                                                                   value="{% if encart_homepage_1 is defined and encart_homepage_1 %}{{ encart_homepage_1.optionValue|split('|||')[1] }}{% else %}Notre savoir-faire, nos expertises, nos produits et services.{% endif %}"
+                                                                   type="text" name="encart_description"
+                                                                   id="encart_1_description"/>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-control" required
+                                                                   value="{% if encart_homepage_1 is defined and encart_homepage_1 %}{{ encart_homepage_1.optionValue|split('|||')[2] }}{% else %}{{ url('marketing_details_univers_trust', {slug:'decouvrez-notre-savoir-faire'}) }}{% endif %}"
+                                                                   type="text" name="encart_url"
+                                                                   id="encart_1_url"/>
+                                                        </div>
+                                                        <div class="form-actions form-group">
+                                                            <button type="submit" id="send"
+                                                                    class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                                Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Card -->
+                                </div>
+
+                                <div class="col-md-6 mb-12 clearfix">
+                                    <!-- Card -->
+                                    <div class="card">
+                                        <!-- Card content -->
+                                        <div class="card-body">
+                                            <!-- Title -->
+                                            <h4 class="card-title">Encart 2 Accueil</h4>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <form action="{{ path('encart_homepage') }}" method="post"
+                                                          class="encart_homepage_2" id="encart_homepage_2">
+                                                        <input hidden value="encart_homepage_2"
+                                                               name="encart_option_name"/>
+                                                        <div class="form-group">
+                                                            <input class="form-control" required
+                                                                   value="{% if encart_homepage_2 is defined and encart_homepage_2 %}{{ encart_homepage_2.optionValue|split('|||')[0] }}{% else %}DÉCOUVREZ NOTRE UNIVERS{% endif %}"
+                                                                   type="text" name="encart_title"
+                                                                   id="encart_2_title"/>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-control" required
+                                                                   value="{% if encart_homepage_2 is defined and encart_homepage_2 %}{{ encart_homepage_2.optionValue|split('|||')[1] }}{% else %}Notre savoir-faire, nos expertises, nos produits et services.{% endif %}"
+                                                                   type="text" name="encart_description"
+                                                                   id="encart_2_description"/>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input class="form-control" required
+                                                                   value="{% if encart_homepage_2 is defined and encart_homepage_2 %}{{ encart_homepage_2.optionValue|split('|||')[2] }}{% else %}{{ url('marketing_details_univers_trust', {slug:'decouvrez-notre-savoir-faire'}) }}{% endif %}"
+                                                                   type="text" name="encart_url"
+                                                                   id="encart_2_url"/>
+                                                        </div>
+                                                        <div class="form-actions form-group">
+                                                            <button type="submit" id="send"
+                                                                    class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                                Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Card -->
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+{% block body_javascript %}
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+            integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+            integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('assets/js/lazyload.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('admin/assets/js/dropzone.js') }}"></script>
+    <!-- Tinymce editor -->
+    <script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
+    <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            tinymce.init({
+                selector: 'input#slogan_homepage_text',
+                height: 350,
+                plugins: [
+                    'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+                ],
+                toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+                browser_spellcheck: true,
+                contextmenu: false,{% if lang=='fr' %}
+                language: 'fr_FR',{% endif %}
+            });
+            tinymce.init({
+                selector: 'input#encart_1_description',
+                height: 250,
+                plugins: [
+                    'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+                ],
+                toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+                browser_spellcheck: true,
+                contextmenu: false,{% if lang=='fr' %}
+                language: 'fr_FR',{% endif %}
+            });
+            tinymce.init({
+                selector: 'input#encart_2_description',
+                height: 250,
+                plugins: [
+                    'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker', 'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking', 'save table contextmenu directionality emoticons template paste textcolor'
+                ],
+                toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+                browser_spellcheck: true,
+                contextmenu: false,{% if lang=='fr' %}
+                language: 'fr_FR',{% endif %}
+            });
+
+            let ll = new LazyLoad({
+                elements_selector: ".lazy",
+            });
+        })
+        let myDropzone1 = new Dropzone("#dropzone_element_1",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone2 = new Dropzone("#dropzone_element_2",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone3 = new Dropzone("#dropzone_element_3",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone4 = new Dropzone("#dropzone_element_4",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone5 = new Dropzone("#dropzone_element_5",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone6 = new Dropzone("#dropzone_element_6",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone7 = new Dropzone("#dropzone_element_7",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone8 = new Dropzone("#dropzone_element_8",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone9 = new Dropzone("#dropzone_element_9",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone10 = new Dropzone("#dropzone_element_10",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone11 = new Dropzone("#dropzone_element_11",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+        let myDropzone12 = new Dropzone("#dropzone_element_12",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 1, // MB
+                uploadMultiple: true,
+                parallelUploads: 1, // use it with uploadMultiple
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                success: function (file, response) {
+                    suc = 1;
+                }
+            });
+
+
+        $('.slogan_homepage').on('submit', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            toastr.info('Envoie des données en cours...');
+
+            let temp = tinymce.activeEditor.getContent();
+            $('#slogan_homepage_text').val(temp);
+            let $form = $(this);
+            let formData = (window.FormData) ? new FormData($form[0]) : null;
+            let data = (formData !== null) ? formData : $form.serialize();
+
+            $.ajax({
+                url: $form.attr('action'),
+                type: $form.attr('method'),
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (response) {
+                    if (response != 0) {
+                        toastr.clear();
+                        toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                        window.location = '';
+                    } else if (response == 0) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'erreur'|trans }}");
+                    }
+                },
+                error: function (response) {
+                    $('#send').removeClass('running');
+                    toastr.clear();
+                    toastr.error("{{ 'erreur'|trans }}");
+                }
+            });
+        });
+
+        $('.encart_homepage_1').on('submit', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            toastr.info('Envoie des données en cours...');
+
+            let temp = tinymce.get("encart_1_description").getContent();
+            $('#encart_1_description').val(temp);
+            console.log(temp)
+            let $form = $(this);
+            let formData = (window.FormData) ? new FormData($form[0]) : null;
+            let data = (formData !== null) ? formData : $form.serialize();
+
+            $.ajax({
+                url: $form.attr('action'),
+                type: $form.attr('method'),
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (response) {
+                    if (response != 0) {
+                        toastr.clear();
+                        toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                        window.location = '';
+                    } else if (response == 0) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'erreur'|trans }}");
+                    }
+                },
+                error: function (response) {
+                    $('#send').removeClass('running');
+                    toastr.clear();
+                    toastr.error("{{ 'erreur'|trans }}");
+                }
+            });
+        });
+
+        $('.encart_homepage_2').on('submit', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            toastr.info('Envoie des données en cours...');
+
+            let temp = tinymce.get("encart_2_description").getContent();
+            $('#encart_2_description').val(temp);
+            console.log(temp)
+            let $form = $(this);
+            let formData = (window.FormData) ? new FormData($form[0]) : null;
+            let data = (formData !== null) ? formData : $form.serialize();
+
+            $.ajax({
+                url: $form.attr('action'),
+                type: $form.attr('method'),
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (response) {
+                    if (response != 0) {
+                        toastr.clear();
+                        toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                        window.location = '';
+                    } else if (response == 0) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'erreur'|trans }}");
+                    }
+                },
+                error: function (response) {
+                    $('#send').removeClass('running');
+                    toastr.clear();
+                    toastr.error("{{ 'erreur'|trans }}");
+                }
+            });
+        });
+
+        $('.accueil_images').on('submit', function (e) {
+            // On emp�che le navigateur de soumettre le formulaire
+            e.preventDefault();
+            toastr.info('Envoie des données en cours...');
+
+            let $form = $(this);
+            let formdata = (window.FormData) ? new FormData($form[0]) : null;
+            let data = (formdata !== null) ? formdata : $form.serialize();
+            let myDropzone = '';
+            if ($form.attr('id') === 'accueil_images1') {
+                myDropzone = myDropzone1;
+            } else if ($form.attr('id') === 'accueil_images2') {
+                myDropzone = myDropzone2;
+            } else if ($form.attr('id') === 'accueil_images3') {
+                myDropzone = myDropzone3;
+            } else if ($form.attr('id') === 'accueil_images4') {
+                myDropzone = myDropzone4;
+            } else if ($form.attr('id') === 'accueil_images5') {
+                myDropzone = myDropzone5;
+            } else if ($form.attr('id') === 'accueil_images6') {
+                myDropzone = myDropzone6;
+            } else if ($form.attr('id') === 'accueil_images7') {
+                myDropzone = myDropzone7;
+            } else if ($form.attr('id') === 'accueil_images8') {
+                myDropzone = myDropzone8;
+            } else if ($form.attr('id') === 'accueil_images9') {
+                myDropzone = myDropzone9;
+            } else if ($form.attr('id') === 'accueil_images10') {
+                myDropzone = myDropzone10;
+            } else if ($form.attr('id') === 'accueil_images11') {
+                myDropzone = myDropzone11;
+            } else if ($form.attr('id') === 'accueil_images12') {
+                myDropzone = myDropzone12;
+            }
+
+            if (myDropzone.files != "") {
+                myDropzone.processQueue();
+                myDropzone.on("queuecomplete", function (file, response) {
+                    $.ajax({
+                        url: $form.attr('action'),
+                        type: $form.attr('method'),
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: function (reponse) {
+                            if (reponse != 0) {
+                                toastr.clear();
+                                toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                                window.location = '';
+                            } else if (reponse == 0) {
+                                $('#send').removeClass('running');
+                                toastr.clear();
+                                toastr.error("{{ 'admin.annonce.error'|trans }}");
+                            }
+                        },
+                        error: function (reponse) {
+                            $('#send').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{ 'admin.annonce.error'|trans }}");
+                        }
+                    });
+                });
+            } else {
+                toastr.clear();
+                toastr.info('Choisissez l\'image du bloc 1');
+            }
+            return false;
+        });
+
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "12000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+{% endblock body_javascript %}

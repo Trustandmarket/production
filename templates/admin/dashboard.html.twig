@@ -1,0 +1,212 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block page_title %}
+    {{'admin.menu.dashboard'|trans}}
+{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="{{ asset('admin/assets/css/normalize.css') }}" />
+<link rel="stylesheet" href="{{ asset('admin/assets/css/themify-icons.css') }}" />
+<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}" />
+<link rel="stylesheet" href="{{ asset('admin/assets/css/pe-icon-7-filled.css') }}" />
+<link href="{{ asset('admin/assets/weather/css/weather-icons.css') }}" rel="stylesheet" />
+<link href="{{ asset('admin/assets/calendar/fullcalendar.css') }}" rel="stylesheet" />
+{# <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}" /> #}
+<link href="{{ asset('admin/assets/css/charts/chartist.min.css') }}" rel="stylesheet" />
+<link href="{{ asset('admin/assets/css/lib/vector-map/jqvmap.min.css') }}" rel="stylesheet" />
+<link href="{{ asset('admin/assets/css/more.css') }}" rel="stylesheet" />
+<link href="{{ asset('admin/assets/css/style_admin.css') }}" rel="stylesheet" />
+<style>
+.menu {font-size: 14px;}
+</style>
+<div class="content">
+    <div class="row">
+        <div class="col-lg-3 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="stat-widget-five">
+                        <div class="stat-icon dib flat-color-4">
+                            <i class="pe-7f-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="text-left dib">
+                                <div class="stat-text"><span class="count">{{users}}</span></div>
+                                <div class="stat-heading">{{"admin.dashboard.users"|trans}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="stat-widget-five">
+                        <div class="stat-icon dib flat-color-1">
+                            <i class="pe-7f-speaker"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="text-left dib">
+                                <div class="stat-text"><span class="count">{{post|length}}</span></div>
+                                <div class="stat-heading">{{"admin.dashboard.annonce"|trans}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="stat-widget-five">
+                        <div class="stat-icon dib flat-color-2">
+                            <i class="pe-7f-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="text-left dib">
+                                <div class="stat-text"><span class="count">{{order|length}}</span></div>
+                                <div class="stat-heading">{{"admin.dashboard.orders"|trans}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="stat-widget-five">
+                        <div class="stat-icon dib flat-color-3">
+                            <i class="pe-7f-pen"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="text-left dib">
+                                <div class="stat-text"><span class="count">{{article|length}}</span></div>
+                                <div class="stat-heading">{{"admin.dashboard.article"|trans}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="box-title">Evolution des annonces / commandes au cours de l'année {{'now'|date('Y')}}</h4>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-body">
+                            <div id="traffic-chart" class="traffic-chart"></div>
+                            <b style="color: #f48684;"> Annonces</b> |
+                            <b style="color: #93cf96;">Commandes</b>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block content_footer %}
+    Made with 🤍 by Kbr-Global Tech Team
+{% endblock %}
+
+{% block body_javascript %}
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+{# <script src="{{ asset('admin/assets/js/vendor/jquery-2.1.4.min.js') }}" type="text/javascript"></script> #}
+<script src="{{ asset('admin/assets/js/popper.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/js/plugins.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/js/main.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/js/lib/chart-js/Chart.bundle.js') }}" type="text/javascript"></script>
+
+<script src="{{ asset('admin/assets/js/lib/chartist/chartist.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/js/lib/chartist/chartist-plugin-legend.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/js/lib/flot-chart/jquery.flot.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/js/lib/flot-chart/jquery.flot.pie.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/js/lib/flot-chart/jquery.flot.spline.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/js/lib/moment/moment.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/calendar/fullcalendar.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('admin/assets/calendar/fullcalendar-init.js') }}" type="text/javascript"></script>
+<script type="text/javascript">
+var year={{'now'|date('Y')}};
+
+let traffic = document.getElementById('traffic-chart')
+            // Traffic Chart using chartist
+            console.log(traffic.length)
+              var j=f=m=a=ma=ju=jul=au=sep=oc=no=de=0;
+              var j1=f1=m1=a1=ma1=ju1=jul1=au1=sep1=oc1=no1=de1=0;
+
+              {% for r in order %}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==1) {j+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==2) {f+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==3) {m+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==4) {a+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==5) {ma+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==6) {ju+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==7) {jul+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==8) {au+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==9) {sep+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==10) {oc+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==11) {no+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==12) {de+=1;}
+              {% endfor %}
+
+              {% for r in post %}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==1) {j1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==2) {f1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==3) {m1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==4) {a1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==5) {ma1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==6) {ju1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==7) {jul1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==8) {au1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==9) {sep1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==10) {oc1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==11) {no1+=1;}
+              if ({{r.postDate|date('Y')}}==year && {{r.postDate|date('m')}}==12) {de1+=1;}
+              {% endfor %}
+                var chart = new Chartist.Line('#traffic-chart', {
+                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                  series: [
+                    [j, f, m, a, ma, ju, jul, au, sep, oc, no, de],
+                    [j1, f1, m1, a1, ma1, ju1, jul1, au1, sep1, oc1, no1, de1]
+                  ]
+              }, {
+                  low: 0,
+                  showArea: true,
+                  showLine: false,
+                  showPoint: false,
+                  fullWidth: true,
+                  axisX: {
+                    showGrid: true
+                }
+            });
+
+                chart.on('draw', function(data) {
+                    if(data.type === 'line' || data.type === 'area') {
+                        data.element.animate({
+                            d: {
+                                begin: 2000 * data.index,
+                                dur: 2000,
+                                from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                                to: data.path.clone().stringify(),
+                                easing: Chartist.Svg.Easing.easeOutQuint
+                            }
+                        });
+                    }
+                });
+            // Traffic Chart using chartist End
+
+
+
+
+    </script>
+{% endblock body_javascript %}

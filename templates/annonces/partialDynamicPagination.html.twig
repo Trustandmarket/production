@@ -1,0 +1,94 @@
+                                {% if listeAnnonces|length > 0 %}
+								<div class="col-md-4" id="dynamicPagination>
+									<nav aria-label="...">
+										<ul class="pagination">
+											<li class="page-item">
+												{% if nom_commercial is defined and nom_commercial %}
+													<a class="page-link {% if noPage == 1 %}disabled{% endif %}" href="{{path('annonces_listeAnnoncesCommercial',
+														{nom_commercial: nom_commercial, id_commercial: id_commercial,
+															noPage: noPage-1})}}"
+													   tabindex="-1">{{'filtres.precedent'|trans({}, 'liste_annonces') }}</a>
+												{% else %}
+													<a class="page-link {% if noPage == 1 %}disabled{% endif %}" href="{{path('annonces_listeAnnonces',
+														{type_prestation: type_prestation,
+															services_proposes: services_proposes,
+															code_postal_ville: code_postal_ville,
+															noPage: noPage-1})}}"
+													   tabindex="-1">{{'filtres.precedent'|trans({}, 'liste_annonces') }}</a>
+												{% endif %}
+											</li>
+											{% if noPage > 1  %}
+											<li class="page-item">
+												{% if nom_commercial is defined and nom_commercial %}
+													<a class="page-link" href="{{path('annonces_listeAnnoncesCommercial',
+														{nom_commercial: nom_commercial, id_commercial: id_commercial,
+															noPage: 1})}}">1<span class="sr-only"></span></a>
+												{% else %}
+													<a class="page-link" href="{{path('annonces_listeAnnonces',
+														{type_prestation: type_prestation,
+															services_proposes: services_proposes,
+															code_postal_ville: code_postal_ville,
+															noPage: 1})}}">1<span class="sr-only"></span></a>
+												{% endif %}
+											</li>
+											{% endif %}
+											{% if noPage > 2  %}
+											<li class="page-item">
+												<a class="page-link" href="">...<span class="sr-only"></span></a>
+											</li>
+											{% endif %}
+											<li class="page-item active">
+												{% if nom_commercial is defined and nom_commercial %}
+													<a class="page-link" href="{{path('annonces_listeAnnoncesCommercial',
+														{nom_commercial: nom_commercial, id_commercial: id_commercial,
+															noPage: noPage})}}">{{ noPage }}<span class="sr-only"></span></a>
+												{% else %}
+													<a class="page-link" href="{{path('annonces_listeAnnonces',
+														{type_prestation: type_prestation,
+															services_proposes: services_proposes,
+															code_postal_ville: code_postal_ville,
+															noPage: noPage})}}">{{noPage}}<span class="sr-only"></span>
+													</a>
+												{% endif %}
+											</li>
+											{% if pages - noPage > 1  %}
+											<li class="page-item">
+												<a class="page-link" href="">...<span class="sr-only"></span></a>
+											</li>
+											{% endif %}
+											{% if pages - noPage > 0  %}
+											<li class="page-item">
+												{% if nom_commercial is defined and nom_commercial %}
+													<a class="page-link" href="{{path('annonces_listeAnnoncesCommercial',
+														{nom_commercial: nom_commercial, id_commercial: id_commercial,
+															noPage: pages})}}">{{ pages }}<span class="sr-only"></span></a>
+												{% else %}
+												<a class="page-link" href="{{path('annonces_listeAnnonces',
+													{type_prestation: type_prestation,
+														services_proposes: services_proposes,
+														code_postal_ville: code_postal_ville,
+														noPage: pages})}}">{{pages}}<span class="sr-only"></span>
+												</a>
+												{% endif %}
+												</a>
+											</li>
+											{% endif %}
+											<li class="page-item {% if noPage == pages %}disabled{% endif %}">
+												{% if nom_commercial is defined and nom_commercial %}
+												<a class="page-link" href="{{path('annonces_listeAnnoncesCommercial',
+													{nom_commercial: nom_commercial, id_commercial: id_commercial,
+														noPage: noPage+1})}}">{{'filtres.suivant'|trans({}, 'liste_annonces') }}<span class="sr-only"></span></a>
+												{% else %}
+													<a class="page-link" href="{{path('annonces_listeAnnonces',
+														{type_prestation: type_prestation,
+															services_proposes: services_proposes,
+															code_postal_ville: code_postal_ville,
+															noPage: noPage+1})}}">{{'filtres.suivant'|trans({}, 'liste_annonces') }}
+													</a>
+												{% endif %}
+											</li>
+										</ul>
+									</nav>
+							    </div>
+								{% endif %}
+								

@@ -1,0 +1,143 @@
+{# templates/bundles/layout.html.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  {% include 'tag-google.html.twig' %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    {% block head %}{% endblock %}
+    <link rel="shortcut icon" href="{{ asset('assets/img/favicon.ico') }}">
+    <title>{% block title %} {{'connexion.titre'|trans}} | Trust & Market {% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+ {% block stylesheets %}
+    <!-- Font awesome and date picker -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="{{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
+    <!-- Font awesome and date picker -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{asset('assets/css/gijgo-css/style.css') }}">
+
+        <style>
+      body{
+        background: url({{ absolute_url(asset('assets/img/john-raptis.png'))}}) no-repeat center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+      }
+      .white-t{
+        color: #fff;
+      }
+      .float-r {
+        float: right;
+      }
+      .cgu{
+          color:#ddd;
+          font-size: 12.5px;
+      }
+
+      .special-link{
+        text-decoration: underline;
+        color: #fff;
+      }
+      .special-link:hover{
+        text-decoration: underline;
+        color: #f17c30;
+      }
+
+      .special-below-link{
+        color:#fff;
+      }
+      .special-below-link:hover{
+        text-decoration: none;
+        color:#f17c30;
+      }
+
+      .registration-button{
+        background: #f17c30;
+        border: none;
+        font-size:15px;
+      }
+      .registration-button:hover{
+        color:#f17c30;
+        background: #fff;
+        border: none;
+      }
+
+      .input-custom{
+        background-color: rgba(0, 0, 0, 0.15);
+        color:#ddd;
+      }
+      .input-custom:focus{
+        background-color: rgba(0, 0, 0, 0.15);
+        border-color: #fff;
+        color: #fff;
+      }
+
+      .inputNaissance::placeholder{
+          color: #ddd;
+      }
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+      @media only screen and (max-width: 768px) {
+        /* For mobile phones: */
+        body{
+            background-size: auto;
+        }
+      }
+    </style>
+        <!-- Custom styles for this template -->
+    <link href="{{absolute_url(asset('assets/css/floating-labels.css')) }}" rel="stylesheet">
+
+    {% endblock %}
+	{% include "pixelFacebook.html.twig" %}
+    {% include 'scriptautomatisationBrevo.html.twig' %}
+    {% include 'scriptchatBrevo.html.twig' %}
+</head>
+<body class="">
+    {% block body %}
+    {% endblock %}
+  <!-- jQuery -->
+  <script src="{{ asset('assets/js/jquery-3.4.1.min.js') }}"></script>
+  <!-- jQuery plugin for datepicker -->
+ {#  <script src="https://cdnjs.cloudflare.com/ajax/libs/gijgo/1.9.13/combined/js/gijgo.min.js" integrity="sha512-T62eI76S3z2X8q+QaoTTn7FdKOVGjzKPjKNHw+vdAGQdcDMbxZUAKwRcGCPt0vtSbRuxNWr/BccUKYJo634ygQ==" crossorigin="anonymous"></script> #}
+ <script type="text/javascript" src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}"></script>
+  <!-- Bootstrap Js -->
+  <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+
+  <!-- Datepicker config -->
+  <script>
+      $(document).ready(function(){
+          $('#inputNaissance').datepicker({
+              uiLibrary: 'bootstrap4',
+              size: 'large',
+              showRightIcon: false,
+              iconsLibrary: 'fontawesome'
+          });
+
+          $("div[role='wrapper']").append("<label for='inputNaissance'>Date de naissance</label><div class='valid-feedback'>OK!</div><div class='invalid-feedback'>Ce champ contient une erreur!</div>");
+      });
+  </script>
+  {% block javascripts %}
+  {% endblock %}
+</body>
+</html>

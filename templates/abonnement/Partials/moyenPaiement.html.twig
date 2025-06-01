@@ -1,0 +1,34 @@
+
+<div class="d-flex justify-content-between">
+    <h3>Moyen de paiement</h3>
+    <img src="{{ asset('assets/images/cb_visa_mastercard.png') }}" alt="Payment Method Logo">
+</div>
+    <div class="card-view-bloc row {% if card is null or card.Status != "VALIDATED" %}d-none{% endif %}">
+        {% if card is not null%}
+        {% set allInfos = card.Tag|split('|',2) %}
+        {% set day = allInfos[0][:2] %}
+        {% set month = allInfos[0][2:] %}
+        {% endif %}
+        <p class="font-weight-bold col-md-6 text-left m-auto">
+            <i class="fab {% if card is not null and card.CardType == 'CB_VISA_MASTERCARD' %}fa-cc-visa{% elseif card is not null and card.CardType == 'AMEX' %}fa-cc-amex{% endif %}">
+            </i>**** **** **** {% if card is not null%}{{ allInfos[1] }}{% endif %}
+            <span class="small text-muted">expire le {% if card is not null %}{{ day }}/{{ month }}{% endif %}</span>
+        </p>
+        <div class="col-md-6 text-right">
+            <button type="button" class="btn btn-outline-info btn-sm rounded-pill mise-a-jour">Mettre à jour</button>
+        </div>
+    </div>
+    <form action="" method="post">
+        <div class="d-none card-edit-bloc {% if card and card.Status == "VALIDATED" %}d-none{% endif %}">
+            <div class="card-js" id="my-card" data-capture-name="true" data-icon-colour="#158CBA">
+                <input id="card-number" class="card-number form-control" name="card-number" placeholder="Numero de carte"
+                       autocomplete="off" required>
+                <input class="expiry-month" name="expiry-month" required>
+                <input class="expiry-year" name="expiry-year" required>
+                <input class="cvc" name="cvc" required>
+            </div>
+        </div>
+        <button class="btn btn-abbo btn-sm mt-3 saisir {% if card and card.Status == "VALIDATED" %}d-none{% endif %}">SAISIR</button>
+        <button class="btn btn-abbo btn-sm mt-3 d-none save" type="submit">ENREGISTRER</button>
+    </form>
+</div>

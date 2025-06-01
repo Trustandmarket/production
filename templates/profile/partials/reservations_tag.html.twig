@@ -1,0 +1,66 @@
+{% for a in reservations %}
+	{% if a.pinged == "devis" %}
+		<div class="row mt-3" style="min-height: 200px">
+			<div class="col-md-4 annonce-img" style="background: url('{% if a.affiche %}{{a.affiche}}{% else %}{{ asset('assets/images/empty_devis.jpg') }}{% endif %}')"></div>
+			<div class="col-md-8 py-2 annonce-detail">
+				<h4>{{'profil-utilisateur.annonces.devis-service'|trans}}:
+					{{a.post_title}}</h4>
+				<h4>{{'profil-utilisateur.annonces.devis-date'|trans}}:{{a.date_evenement}}</h4>
+				<h4>{{'profil-utilisateur.annonces.devis-prestataire'|trans}}:
+					{{a.prenom_prestataire}}
+					{{a.nom_prestataire}}</h4>
+				<div class="pt-4">
+					<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+						<div class="btn-group mr-2" role="group" aria-label="First group">
+							<a class="btn btn btn-bg-primary btn-s annulerCommande" href="{{path('profile_cancelledReservationAnnounce',{id:a.id, state:'edition'})}}">
+								{{'profil-utilisateur.annonces.annuler'|trans}}
+							</a>
+						</div>
+						<div class="btn-group ml-4 " role="group" aria-label="Thirth group"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% elseif a.pinged == "product" %}
+		{% for s in a.annonces %}
+			{% if s %}
+				<div class="row mt-3" style="min-height: 200px">
+					<div class="col-md-4 annonce-img" style="background: url('{% if s.gallery.0 %}{{s.gallery.0.guid}}{% else %}{{s.images_secondaires.0.guid}}{% endif %}')"></div>
+					<div class="col-md-8 py-2 annonce-detail">
+						<h3>{{s.first_name}}
+							{{s.last_name}}</h3>
+						<p class="fs-14">{{s.post_title}}</p>
+						<h3>{{ a.post_parent }}
+							{{s.devise.metaValue}}</h3>
+						<span class="texte-gris text-bold fs-14">
+							<i class="fas fa-map-marker"></i>
+							{{s.pays|country_name}},
+							{{s.etat}},
+							{{s.ville}}</span>
+						<br>
+						<span class="texte-gris text-bold fs-14">
+							<i class="fas fa-calendar"></i>
+							{{a.date_evenement}}</span>
+
+						<div class="pt-4">
+							<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+								<div class="btn-group mr-2" role="group" aria-label="First group">
+									<a class="btn btn-bg-primary btn-sm" target="_blank" href="{% if s.slug|length > 8 %}{{path('annonces_detailsAnnonce',{id:s.slug})}}{% endif %}">
+										{{'general.voir_annonce'|trans}}
+									</a>
+								</div>
+								<div class="btn-group mr-2" role="group" aria-label="Second group">
+									<a href="{{path('profile_cancelledReservationAnnounce',{id:a.id})}}" class="btn btn-bg-primary btn-sm editer annulerCommande">
+										{{'profil-utilisateur.annonces.annuler'|trans}}
+									</a>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+{% endfor %}
+

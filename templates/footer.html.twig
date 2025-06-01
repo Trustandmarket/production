@@ -1,0 +1,61 @@
+{% include "partials/top_button.html.twig" %}
+<div>
+	<div class="new-footer">
+		<div class="col-md-12 responsive-footer-links">
+			<p class="footer-links">
+				{% for n in footer%}
+					{% if n.id == 7453 %}
+						<a href="{{path('blog_index')}}">{% if app.request.locale == 'en' and n.postExcerpt != '' %}{{ n.postExcerpt }}{% else %}{{ n.postTitle }}{% endif %}</a>
+					{% elseif n.id == 4683 %}
+						<a href="{{path('experience_envoyez_commentaires')}}">{% if app.request.locale == 'en' and n.postExcerpt != '' %}{{ n.postExcerpt }}{% else %}{{ n.postTitle }}{% endif %}</a>
+					{% else %}
+						<a href="{{path('site_navigation', {navigation: n.postName})}}">{% if app.request.locale == 'en' and n.postExcerpt != '' %}{{ n.postExcerpt }}{% else %}{{ n.postTitle }}{% endif %}</a>
+					{% endif %}
+				{% endfor %}
+				<a href="{{ path('app_newsletter') }}">{{'home.pied-de-page.subscribe-newsletter'|trans}}</a>
+			</p>
+		</div>	
+		<div class="col-md-12 inline-footer">
+			<div class="copyright-links">
+				<p>&copy;&nbsp;Trust &amp; Market {{ "now"|date("Y") }}<span class="comma-to-display">,</span></p>
+				<p class="footer-links footer-links-desktop">
+					{% for n in footer%}
+						{% if n.id == 7453 %}
+							<a href="{{path('blog_index')}}">{% if app.request.locale == 'en' and n.postExcerpt != '' %}{{ n.postExcerpt }}{% else %}{{ n.postTitle }}{% endif %}</a>
+						{% elseif n.id == 4683 %}
+							<a href="{{path('experience_envoyez_commentaires')}}">{% if app.request.locale == 'en' and n.postExcerpt != '' %}{{ n.postExcerpt }}{% else %}{{ n.postTitle }}{% endif %}</a>
+						{% else %}
+							<a href="{{path('site_navigation', {navigation: n.postName})}}">{% if app.request.locale == 'en' and n.postExcerpt != '' %}{{ n.postExcerpt }}{% else %}{{ n.postTitle }}{% endif %}</a>
+						{% endif %}
+					{% endfor %}
+					<a href="{{ path('app_newsletter') }}">{{'home.pied-de-page.subscribe-newsletter'|trans}}</a>
+				</p>
+			</div>
+			<div class="logos-footer">
+				<ul class="footer-ul-social-icons text-right">
+					<li class="mr-4">
+						<a href="https://www.stripe.com" target="_blank">
+							<img src="{{ asset('assets/img/stripe-logo.png') }}" width="50" height="25" alt="stripe-payment-logo" class="stripe-with-powered">
+							</a>
+					</li>
+					<li>
+						<a href="https://www.facebook.com/trustandmarket/">
+							<i class="fab fa-facebook"></i>
+						</a>
+					</li>
+					<li>
+						<a href="https://twitter.com/trustandmarket">
+							<i class="fab fa-twitter"></i>
+						</a>
+					</li>
+					<li>
+						<a href="https://www.instagram.com/trustandmarket/">
+							<i class="fab fa-instagram"></i>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<input value="{{app.request.getLocale()}}" hidden id="page_lang"/>
+</div>

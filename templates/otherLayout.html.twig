@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.getLocale() }}">
+
+<head>
+    {% include 'tag-google.html.twig' %}
+    {% include 'hotjar.html.twig' %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="icon" href="{{ absolute_url(asset('assets/img/logo_new.svg')) }}" sizes="32x32"/>
+    <link rel="apple-touch-icon-precomposed" href="{{ asset('assets/img/logo_tm.svg') }}"/>
+    <meta name="msapplication-TileImage" content="{{ asset('assets/img/logo_tm.svg') }}"/>
+    {% block head %}
+        {% include("Seo/Meta/noindex.html.twig") %}
+    {% endblock %}
+    <title>
+        {% block title %}Trust &amp; Market
+        {% endblock %}
+    </title>
+    {% block style %}
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+        <!-- Bootstrap core CSS -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Material Design Bootstrap -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.8/css/mdb.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/0.8.2/css/flag-icon.min.css" rel="stylesheet">
+        {# <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}"> #}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+              integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+              crossorigin="anonymous"/>
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+        <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
+        <link href="{{ absolute_url(asset('assets/css/footer.css')) }}" rel="stylesheet">
+        {% include 'cssTemplates/chat.css.twig' %}
+        <style>
+            .image-header {
+                width: 35px;
+                height: 35px;
+                object-fit: cover;
+            }
+        </style>
+    {% endblock %}
+    {% include "pixelFacebook.html.twig" %}
+    {% include 'scriptautomatisationBrevo.html.twig' %}
+    {% include 'scriptchatBrevo.html.twig' %}
+</head>
+
+<body style="width: 100%">
+{% include 'facebook-support.html.twig' %}
+{% block header %}
+    <header>
+        {% include("header-new-design.html.twig") %}
+        {% include("partials/otherPagesVideoModal.html.twig") %}
+    </header>
+{% endblock %}
+
+{% block navigation %}{% endblock %}
+
+{% block body %}
+    <a href="{{ path('project_index') }}" target="_blank" id="yourproject-iconed-link">{{ 'general.projet'|trans }}</a>
+{% endblock %}
+{% block footer %}
+    {% include("footer.html.twig") %}
+{% endblock %}
+{% block javascripts %}
+    <!-- JQuery -->
+    {# <script type="text/javascript" src="{{ prerender(asset('assets/js/jquery-3.4.1.min.js')) }}"></script> #}
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- Bootstrap tooltips -->
+    {# <script type="text/javascript" src="{{ asset('assets/js/popper.min.js') }}"></script> #}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    {# <script type="text/javascript" src="{{ asset('assets/js/bootstrap.min.js') }}"></script> #}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    {# <script type="text/javascript" src="{{ asset('assets/js/mdb.min.js') }}"></script> #}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.12.0/js/mdb.min.js"></script>
+    <!-- Lazy load -->
+    <!-- cdnjs for lazy load -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <script src="{{ asset('assets/js/fullclip.min.js') }}"></script>
+    {# <script src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}"></script> #}
+    <script src="{{ asset('assets/js/lazysizes.min.js') }}" async></script>
+    <!-- Images End -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcNudwZAAAAAOo22kCqBlPfeSQHVV05TTIWy2I2"></script>
+    {% include "partials/js/top_button.html.twig" %}
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script> -->
+
+    {% if app.environment == 'prod' %}
+        {% include 'partials/js/cookie.js.twig' %}
+    {% endif %}
+    <script>
+        $(document).on("click", ".linkContent", function (e) {
+            $('.floatingMenu').fadeToggle();
+        })
+
+        {% include("partials/js/videoButton.js.twig") %}
+
+        $(".closeBtnModal").click(function (e) {
+            e.preventDefault();
+            $("#newsletterModal").modal('toggle');
+        });
+
+        $(document).click(function (event) {
+            var target = $(event.target);
+            if (!target.closest('.linkContent').length && $('.linkContent').is(':visible')) {
+                $('.floatingMenu').fadeOut();
+            }
+        });
+        $('.searchSelectPicker').selectpicker();
+
+        $(document).on("click", ".homeFilterFormButton", function (event) {
+            event.preventDefault();
+            var oldTexte = $(this).text()
+            $(this).text("En cours...")
+            var whichForm = $(this).attr('attr-form')
+            var typePrestation = $('.' + whichForm).find('select[name="type_prestation"]').val()
+            console.log(typePrestation);
+            if (typePrestation == "") {
+                $(this).text(oldTexte)
+                toastr.error('Veuillez sélectionner un type de prestation pour lancer la recherche.');
+            } else {
+                $(this).text(oldTexte)
+                $('.' + whichForm).submit();
+            }
+        });
+
+        if ($(window).width() <= 922) {
+            $('.block_conjoint').insertAfter('.search-title-mob')
+            $('.searchDiv').insertAfter('.block_conjoint')
+            $('.link-card-actu').insertAfter('.searchDiv')
+        }
+
+        window.onresize = function () {
+            if (window.innerWidth <= 922) {
+                $('.block_conjoint').insertAfter('.search-title-mob')
+                $('.searchDiv').insertAfter('.block_conjoint')
+                $('.link-card-actu').insertAfter('.searchDiv')
+            } else {
+                $('.block_conjoint').insertAfter('.titreFromTitreFilter')
+                $('.searchDiv').insertAfter('.logoButtonHeader')
+                $('.link-card-actu').insertAfter('.titre_filter')
+            }
+        }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var docWidth = document.documentElement.offsetWidth;
+
+            [].forEach.call(document.querySelectorAll('*'), function (el) {
+                if (el.offsetWidth > docWidth) {
+                    console.log(el);
+                }
+            });
+
+            /**
+             * Manipulate data from data-id and data-name attributes in "Types de prestation"
+             */
+            $('.prestation-i').on('click', function (e) {
+                e.preventDefault();
+                var pres_id = $(this).attr('data-id');
+                var pres_name = $(this).attr('data-name');
+
+                $('.type-pres-span').html(pres_name);
+                $('.input-type-prestation').val(pres_id);
+
+                var url1 = '{{ app.request.get("_locale") }}/home/sous_categorie1?id=' + pres_id;
+                toastr.info("{{ 'home.formulaire-champs.recherche-sous-categories'|trans }}");
+                $.ajax({
+                    url: url1,
+                    type: 'get',
+                    success: function (reponse) {
+                        toastr.clear();
+                        console.log(reponse);
+
+                        $('.besoin-fld-scroll-item').html(reponse);
+                    },
+                    error: function (reponse) {
+                        toastr.clear();
+                    }
+
+                });
+
+            });
+
+            $(document).on('click', '.besoins-i', function () {
+                var pres_id = $(this).attr('data-id');
+                var pres_name = $(this).attr('data-name');
+
+                $('.besoins-span-text').html(pres_name);
+                $('.input-type-besoins').val(pres_id);
+                var b = $('.input-type-besoins').val();
+                console.log(pres_id + " " + pres_name + " " + b);
+            });
+
+
+// Lazy Loading initializer
+            $(function () {
+                $('.lazy').lazy();
+            });
+
+// Hambuger menu icon
+            $('.animated-button-icon').on('click', function () {
+                $('.animated-icon2').toggleClass('open');
+            });
+
+// first thing turn Hide Menu Search bar
+            $("#frLang").hide();
+// toggle language for English
+            $("#enLang").click(function () {
+                $("#dropdownLang").html("<span class='flag-icon flag-icon-us'> </span>  EN");
+                $("#enLang").hide();
+                $("#frLang").toggle("slide");
+            });
+// toggle language for French
+            $("#frLang").click(function () {
+                $("#dropdownLang").html("<span class='flag-icon flag-icon-fr'> </span>  FR");
+                $("#frLang").hide();
+                $("#enLang").toggle("slide");
+            });
+
+            $(document).on('change', '.categorieParent', function (e) {
+
+                e.preventDefault();
+                var url1 = '{{ app.request.get("_locale") }}/home/sous_categorie?id=' + $(this).val();
+                toastr.info("{{ 'home.formulaire-champs.recherche-sous-categories'|trans }}");
+
+                $.ajax({
+                    url: url1,
+                    type: 'get',
+                    success: function (reponse) {
+                        toastr.clear();
+                        console.log(reponse);
+                        $('.sous_category').removeAttr('disabled');
+
+                        $('.sous_category').html(reponse);
+                    },
+                    error: function (reponse) {
+                        toastr.clear();
+                    }
+
+                });
+
+            });
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "30000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+
+        });
+    </script>
+
+
+    {% include "partials/js/searchForm.html.twig" %}
+    {% include 'ws/script.html.twig' %}
+{% endblock %}
+</body>
+</html>

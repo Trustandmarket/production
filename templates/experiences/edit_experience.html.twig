@@ -1,0 +1,867 @@
+{% extends 'generalLayout.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+    <meta name="title" content="">
+    <meta name="description" content="">
+    <link rel="canonical" href="{{ absolute_url(path('experiences_index')) }}">
+    <link rel="shortlink" href="{{ absolute_url(path('experiences_index')) }}">
+    <meta property="og:title" content="">
+    <meta property="og:description" content="">
+
+    <meta property="og:image"
+          content="{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ absolute_url(path('experiences_index')) }}">
+    <meta property="og:locale" content="fr"/>
+    <meta property="og:locale:alternate" content="en"/>
+
+    {# Twitter CARD #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="Kbr Global">
+    <meta name="twitter:site" content="@trustandmarket">
+    <meta name="twitter:title" content="">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="">
+    <meta name="twitter:image:alt" content="">
+    {# END Twitter Card #}
+
+    <script type="application/ld+json">
+	{   
+		"@context": "https://schema.org", 
+		"@type": "Article",
+		"headline": "",
+		"alternativeHeadline": "Univers Trust&Market",
+		"image": "",
+		"author": "Kalide Brassier", 
+		"award": "",
+		"editor": "Kbr Global", 
+		"genre": "Event", 
+		"keywords": "", 
+		"wordcount": "1120",
+		"publisher": {
+			"@type": "Organization",
+			"name": "Google",
+			"logo": {
+			"@type": "ImageObject",
+			"url": "{{ absolute_url(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}"
+			}
+		},
+		"url": "{{ absolute_url(path('experiences_index')) }}",
+		"mainEntityOfPage": {
+			"@type": "WebPage",
+			"@id": "{{ absolute_url(path('experiences_index')) }}"
+		},
+		"datePublished": "",
+		"dateCreated": "",
+		"dateModified": "",
+		"description": "",
+		"sameAs": [
+			"https://www.facebook.com/trustandmarket",
+			"https://twitter.com/trustandmarket",
+			"https://www.instagram.com/trustandmarket/",
+			"https://www.linkedin.com/company/trustandmarket",
+			"https://www.youtube.com/channel/UC-jLvu82KNM6DnFOp2Nvk_A"
+		]
+	}
+
+    </script>
+
+{% endblock %}
+
+{% block title %}Trust &amp; Market | Expériences | Créer une expérience{% endblock %}
+
+{% block style %}
+    {{ parent() }}
+    <!-- Gijgo datepicker css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gijgo/1.9.13/combined/css/gijgo.min.css"
+          integrity="sha512-oCuecFHHGu/Y4zKF8IoSoj5hQq1dLNIiUCwN08ChNW1VoMcjIIirAJT2JmKlYde6DeLN6JRSgntz6EDYDdFhCg=="
+          crossorigin="anonymous"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <!-- Your custom styles (optional) -->
+    <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet"/>
+    <link href="{{ asset('assets/css/result.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('assets/css/custome.css') }} " rel="stylesheet"/>
+
+    <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox.css') }}"/>
+    <link href="{{ asset('assets/css/experiences/edit_exp.css') }} " rel="stylesheet"/>
+    <link href="{{ asset('assets/css/style-aide.css') }} " rel="stylesheet"/>
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navigation %}
+{% endblock %}
+
+{% block body %}
+    <p class="saveAndClose">Enregistrer et quitter</p>
+    <div id="trustBody" style="min-height: 67vh; margin-top: 54.4766px;" class="container">
+        <!--Main layout-->
+        <main class="mt-2 pt-2">
+            <div class="container experience_create_content">
+                <h1>Créez votre expérience unique avec Trust & Market</h1>
+                <div class="options">
+                    <div class="step1 steps" attr-step="1"
+                         attr-title="Créez votre expérience unique avec Trust & Market">
+                        <div class="list_option">
+                            <h2>Lancez - vous !</h2>
+                            <p>Personnalisez votre expérience et faites-vous accompagner quelque soit votre besoin.</p>
+                        </div>
+                    </div>
+                    <div class="step2 steps" style="display: none;" attr-step="2"
+                         attr-title="Quel type d'expérience voulez-vous créer ?">
+                        <div class="list_option {{ experience.exp_type_experience == 'Musique' ? 'active' : '' }}">
+                            <h2>Musique</h2>
+                            <p>Production musicale, cours d'instruments de musique, coaching, instruments de
+                                musique...</p>
+                        </div>
+                        <div class="list_option {{ experience.exp_type_experience == 'Divertissement et événementiels' ? 'active' : '' }}">
+                            <h2>Divertissement et événementiels</h2>
+                            <p>Des services à personnaliser pour faire de vos évènements des moments uniques.</p>
+                        </div>
+                    </div>
+                    <div class="step3 steps" style="display: none;" attr-step="3" attr-title="Expérience: Musique">
+                        <div class="form-group list_field musique_choose">
+                            <label for=""><h2>Dans quelle ville souhaitez-vous créer l'expérience* ?</h2></label>
+                            <input type="text" class="form-control input_rounded field_ville" name="ville"
+                                   value="{{ experience.exp_ville }}">
+                        </div>
+                        <div class="form-group list_field musique_choose">
+                            <label for=""><h2>Quel est votre univers musical* ?</h2></label>
+                            <input type="text" class="form-control input_rounded field_univers" name="univers"
+                                   value="{{ experience.exp_univers }}">
+                        </div>
+                        <div class="form-group list_field divertissement_choose">
+                            <label for=""><h2>Votre évènement*</h2></label>
+                            <input type="text" class="form-control input_rounded field_nom_evt" name="nom_evt"
+                                   placeholder="Mariage, salon, séminaires, anniversaires, fête familiale, Bar-Mtzvah, baptême..."
+                                   value="{{ experience.exp_nom_evt }}">
+                        </div>
+                        <div class="form-group list_field divertissement_choose">
+                            <label for=""><h2>Lieu de votre évènement* ?</h2></label>
+                            <input type="text" class="form-control input_rounded field_lieu" name="lieu"
+                                   placeholder="Où ?" value="{{ experience.exp_lieu_evt }}">
+                        </div>
+                        <div class="form-group list_field divertissement_choose">
+                            <label for=""><h2>Nombre de participants à votre évènement* ?</h2></label>
+                            <input type="number" class="form-control input_rounded field_participants"
+                                   name="participants" value="{{ experience.exp_participants_evt }}">
+                        </div>
+                        <div class="form-group list_field" style="margin-top: 2rem;">
+                            <label for=""><h2>Choisissez vos besoins</h2></label>
+                            <div class="radios besoins">
+                                <table>
+                                    <tbody>
+                                    <tr class="musique_choose">
+                                        <td><p>Enregistrement studio</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Enregistrement studio' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Enregistrement studio"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Mixage audio</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Mixage audio' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Mixage audio"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Mastering audio</p></td>
+                                        <td style="width: 1%;white-space: nowrap;"><input type="checkbox"
+                                                                                          {% for item in experience.exp_besoins %}{% if item.metaValue == 'Mastering audio' %}checked{% endif %}{% endfor %}
+                                                                                          name="besoins[]"
+                                                                                          value="Mastering audio"
+                                                                                          class="form-control radio_custom field_besoins"/>
+                                        </td>
+                                    </tr>
+                                    <tr class="musique_choose">
+                                        <td><p>Percussionniste</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Percussionniste' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Percussionniste"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Batteur</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Batteur' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Batteur"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Bassiste</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Bassiste' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Bassiste"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                    </tr>
+                                    <tr class="musique_choose">
+                                        <td><p>Guitariste</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Guitariste' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Guitariste"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Pianiste</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Pianiste' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Pianiste"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Cuivres</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Cuivres' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Cuivres"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                    </tr>
+                                    <tr class="musique_choose">
+                                        <td><p>Chœurs gospel</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Chœurs gospel' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Chœurs gospel"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Choristes</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Choristes' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Choristes"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Cours de guitare</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == '>Cours de guitare' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Cours de guitare"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                    </tr>
+                                    <tr class="musique_choose">
+                                        <td><p>Guitare</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Guitare' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Guitare"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Micros</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Micros' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Micros"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Amplis</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Amplis' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Amplis"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                    </tr>
+                                    <tr class="musique_choose">
+                                        <td style="padding-bottom: 2rem;"><p>Accessoires guitare</p></td>
+                                        <td style="padding-bottom: 2rem;"><input type="checkbox"
+                                                                                 {% for item in experience.exp_besoins %}{% if item.metaValue == 'Accessoires guitare' %}checked{% endif %}{% endfor %}
+                                                                                 value="Accessoires guitare"
+                                                                                 name="besoins[]"
+                                                                                 class="form-control radio_custom field_besoins"/>
+                                        </td>
+                                    </tr>
+                                    <!-- DIVERTISSEMENT BESOINS -->
+                                    <tr class="divertissement_choose">
+                                        <td><p>Photo mariage</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Photo mariage' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Photo mariage"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Vidéo mariage</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Vidéo mariage' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Vidéo mariage"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Orchestre</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Orchestre' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Orchestre"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                    </tr>
+                                    <tr class="divertissement_choose">
+                                        <td><p>Chorale gospel</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Chorale gospel' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Chorale gospel"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Sonorisation</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Sonorisation' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Sonorisation"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>DJ</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'DJ' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="DJ"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                    </tr>
+                                    <tr class="divertissement_choose">
+                                        <td><p>Kits lumière</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Kits lumière' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Kits lumière"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Reportage photo</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Reportage photo' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Reportage photo"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Reportage vidéo</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Reportage vidéo' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Reportage vidéo"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                    </tr>
+                                    <tr class="divertissement_choose">
+                                        <td><p>Traiteurs</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Traiteurs' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Traiteurs"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Salles</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Salles' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Salles"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                        <td><p>Voiture</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Voiture' %}checked{% endif %}{% endfor %}
+                                                   name="besoins[]" value="Voiture"
+                                                   class="form-control radio_custom field_besoins"/></td>
+                                    </tr>
+
+                                    <tr class="musique_choose">
+                                        <td colspan="6"><h2>Ajoutez vos options</h2></td>
+                                    </tr>
+                                    <tr class="musique_choose">
+                                        <td><p>Captation vidéo</p</td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_options %}{% if item.metaValue == 'Captation vidéo' %}checked{% endif %}{% endfor %}
+                                                   name="options[]" value="Captation vidéo"
+                                                   class="form-control radio_custom field_options"/></td>
+                                        <td><p>Photographie</p></td>
+                                        <td>
+                                            <input type="checkbox" {% for item in experience.exp_options %}{% if item.metaValue == 'Photographie' %} checked{% endif %}{% endfor %}
+                                                   name="options[]" value="Photographie"
+                                                   class="form-control radio_custom field_options"/></td>
+                                        <td><p>Clip vidéo</p></td>
+                                        <td><input type="checkbox"
+                                                   {% for item in experience.exp_options %}{% if item.metaValue == 'Clip vidéo' %}checked{% endif %}{% endfor %}
+                                                   name="options[]" value="Clip vidéo"
+                                                   class="form-control radio_custom field_options"/></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group list_field">
+                            <label for=""><h2>Des précisions pour personnaliser l’expérience</h2></label>
+                            <textarea name="precisions" id="precisions" class="field_precisions form-control" cols="30"
+                                      rows="5"
+                                      placeholder="Donnez-nous des détails pour nous permettre de personnaliser votre offre.">{{ experience.exp_precisions }}</textarea>
+                        </div>
+                    </div>
+                    <div class="step4 steps" style="display: none;" attr-step="4" attr-title="Expérience: Musique">
+                        <div class="recap_choix">
+                            <div class="inline_choix musique_choose">
+                                <h2>Ville:</h2>
+                                <p style="font-weight: 300;" class="villeValue">Paris 15ème</p>
+                            </div>
+                            <div class="inline_choix musique_choose">
+                                <h2>Style musical:</h2>
+                                <p style="font-weight: 300;" class="universValue">Paris 15ème</p>
+                            </div>
+                            <div class="inline_choix divertissement_choose">
+                                <h2>Votre évènement:</h2>
+                                <p style="font-weight: 300;" class="nomEvtValue">Paris 15ème</p>
+                            </div>
+                            <div class="inline_choix divertissement_choose">
+                                <h2>Le lieu:</h2>
+                                <p style="font-weight: 300;" class="lieuValue">Pop / Folk</p>
+                            </div>
+                            <div class="inline_choix divertissement_choose">
+                                <h2>Nombre de participants:</h2>
+                                <p style="font-weight: 300;" class="participantValue">Pop / Folk</p>
+                            </div>
+                            <div style="margin-top: 3rem;">
+                                <h2>Liste de vos besoins:</h2>
+                                <div class="besoinValue" style="margin-top: 1.7rem;">
+                                    <p style="font-weight: 300;margin-bottom: 1rem;">Pop / Folk</p>
+                                </div>
+                            </div>
+                            <div style="margin-top: 3rem;" class="musique_choose">
+                                <h2>Les options retenues:</h2>
+                                <div class="optionValue" style="margin-top: 1.7rem;">
+                                    <p style="font-weight: 300;margin-bottom: 1rem;">Pop / Folk</p>
+                                </div>
+                            </div>
+                            <div style="margin-top: 3rem;">
+                                <h2>Vos précisions pour une offre sur mesure:</h2>
+                                <textarea class="precisionValue field_precisions_2 form-control" name="precisions_2"
+                                          id="precisions_2" class="form-control" cols="30" rows="5"
+                                          placeholder="Donnez-nous des détails pour nous permettre de personnaliser votre offre.">{{ experience.exp_precisions }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container experience_success_content" style="display: none;">
+                <div class="success_icon">
+                    <span class="fa fa-check"></span>
+                </div>
+                <p>
+                    Votre demande d'expérience a été créée et validée. Nos équipes prennent le relais et reviennent vers
+                    vous dans les plus brefs délais avec une offre adaptée. Dès que notre proposition est disponible,
+                    vous recevrez une notification et elle sera consultable depuis votre compte utilisateur.
+                </p>
+                <p>
+                    Merci d'avoir choisi <strong style="font-family: 'Palanquin Dark', sans-serif;color: black;">TRUST &
+                        MARKET</strong>.
+                </p>
+                <div class="experience_success_content_links">
+                    <a href="{{ path('experiences_liste_experience') }}" class="dark_link">MON TABLEAU DE BORD</a>
+                    <a href="{{ path('experiences_index') }}" class="orange_link">UNIVERS TRUST</a>
+                </div>
+            </div>
+        </main>
+        <!--Main layout-->
+    </div>
+{% endblock %}
+
+
+{% block footer %}
+    <div class="prefooter_action">
+        <a href="#" class="action_prev hidden">Précédent</a>
+        <a href="#" class="action_next disabled">Suivant</a>
+    </div>
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('toastr/toastr.min.js') }}"></script>
+    <!-- Full background slider jQuery plugin -->
+    <script type="text/javascript" src="{{ asset('assets/js/fullclip.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.7/jquery.timeago.js"></script>
+    <script src="{{ asset('assets/js/lc_lightbox.js') }}" type="text/javascript"></script>
+    <!-- SKINS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox_skins_dark.css') }}"/>
+    <!-- ASSETS -->
+    <script src="{{ asset('assets/js/alloy_finger.min.js') }}" type="text/javascript"></script>
+    {# <script type="text/javascript"
+            src="https://raw.githubusercontent.com/jquery/jquery-ui/master/ui/i18n/datepicker-fr.js">
+    </script>#}
+    <script src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js" ></script>
+    <script>
+        var actualStep = 1;
+        var checkedCheck = 0;
+        var typeExperience = "{{ experience.exp_type_experience }}";
+        var checkboxValues = [];
+        var optionsValues = [];
+
+        function removeDuplicates(array) {
+            return array.filter((a, b) => array.indexOf(a) === b)
+        }
+
+        $('.step1 .list_option').addClass('active')
+        $('.action_next').addClass('active');
+        $('.action_next').removeClass('disabled');
+        // actualStep = 2;
+
+        $(document).on('click', '.list_option', function () {
+            $(this).parent().find('.list_option').removeClass('active');
+            $(this).addClass('active');
+            $('.action_next').addClass('active');
+            $('.action_next').removeClass('disabled');
+            actualStep = $(this).parent().attr('attr-step');
+            if (actualStep == 2) {
+                var choixTitle = $(this).find('h2').text();
+                typeExperience = choixTitle;
+                $('.step3').attr("attr-title", "Expérience: " + choixTitle)
+                if (typeExperience == "Musique") {
+                    $('.musique_choose').fadeIn()
+                    $('.divertissement_choose').fadeOut()
+                } else {
+                    $('.musique_choose').fadeOut()
+                    $('.divertissement_choose').fadeIn()
+                }
+            }
+        })
+        $(document).on('change', '.besoins .radio_custom', function () {
+            let that = $(this);
+            checkedCheck = 0;
+            $('.besoins .radio_custom').each(function () {
+                if ($(this).is(":checked")) {
+                    checkedCheck++
+                    if (typeExperience == "Musique") {
+                        if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "") {
+                            $('.action_next').addClass('active');
+                            $('.action_next').removeClass('disabled');
+                            actualStep = $(this).parent().parent().parent().parent().parent().parent().parent().attr('attr-step');
+                        }
+                    } else {
+                        if ($("input[name='nom_evt']").val() != "" && $("input[name='lieu']").val() != "" && $("input[name='participants']").val() != "") {
+                            $('.action_next').addClass('active');
+                            $('.action_next').removeClass('disabled');
+                            actualStep = $(this).parent().parent().parent().parent().parent().parent().parent().attr('attr-step');
+                        }
+                    }
+                }
+            });
+            console.log("checkedCheck value::: ", checkedCheck);
+            if (checkedCheck == 0) {
+                $('.action_next').removeClass('active');
+                $('.action_next').addClass('disabled');
+            }
+        })
+        $(document).on('keyup', '.input_rounded', function () {
+            if (typeExperience == "Musique") {
+                if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
+                    $('.action_next').addClass('active');
+                    $('.action_next').removeClass('disabled');
+                    actualStep = $(this).parent().parent().attr('attr-step');
+                } else {
+                    $('.action_next').removeClass('active');
+                    $('.action_next').addClass('disabled');
+                }
+            } else {
+                if ($("input[name='nom_evt']").val() != "" && $("input[name='lieu']").val() != "" && $("input[name='participants']").val() != "" && checkedCheck > 0) {
+                    $('.action_next').addClass('active');
+                    $('.action_next').removeClass('disabled');
+                    actualStep = $(this).parent().parent().attr('attr-step');
+                } else {
+                    $('.action_next').removeClass('active');
+                    $('.action_next').addClass('disabled');
+                }
+            }
+        })
+        $(document).on('click', '.action_next', function (e) {
+            e.preventDefault();
+            actualStep = parseInt(actualStep) + 1;
+            if (actualStep < 5) {
+                $('.steps').css('display', 'none')
+                $('.step' + actualStep).css('display', '')
+                var titreExp = $('.step' + actualStep).attr('attr-title');
+                $('.experience_create_content h1').text(titreExp == undefined ? "{{ experience.exp_type_experience }}" : titreExp)
+                $('.action_prev').removeClass('hidden');
+                if (actualStep > 2) {
+                    $('.saveAndClose').fadeIn();
+                } else {
+                    $('.saveAndClose').fadeOut(300);
+                }
+                if ($('.step' + actualStep).find('.list_option.active').length == 0 && actualStep != 4) {
+                    $(this).removeClass('active');
+                    $(this).addClass('disabled');
+                }
+                // alert($('.step'+actualStep).find('.list_option.active').length);
+                if (actualStep == 2) {
+                    $(this).addClass('active');
+                    $(this).removeClass('disabled');
+                    if (typeExperience == "Musique") {
+                        $('.musique_choose').fadeIn()
+                        $('.divertissement_choose').fadeOut()
+                    } else {
+                        $('.musique_choose').fadeOut()
+                        $('.divertissement_choose').fadeIn()
+                    }
+                }
+
+                if (actualStep == 4) {
+                    $(this).text('Valider')
+                    $('.action_next').addClass('active');
+                    $('.action_next').removeClass('disabled');
+                    $('.experience_create_content h1').text(typeExperience == undefined ? "Expérience: {{ experience.exp_type_experience }}" : "Expérience: " + typeExperience)
+                    $('.villeValue').text($(".field_ville").val());
+                    $('.universValue').text($(".field_univers").val());
+                    $('.nomEvtValue').text($(".field_nom_evt").val());
+                    $('.lieuValue').text($(".field_lieu").val());
+                    $('.participantValue').text($(".field_participants").val());
+                    $('.precisionValue').val($(".field_precisions").val());
+                    checkboxValues = [];
+                    optionsValues = [];
+                    $('input[name="besoins[]"]:checked').each(function () {
+                        checkboxValues[checkboxValues.length] = (this.checked ? $(this).val() : "");
+                    });
+                    $('input[name="options[]"]:checked').each(function () {
+                        optionsValues[optionsValues.length] = (this.checked ? $(this).val() : "");
+                    });
+                    $('.besoinValue').empty();
+                    removeDuplicates(checkboxValues).forEach((element) => {
+                        $('.besoinValue').append('<p style="font-weight: 300;margin-bottom: 1rem;">' + element + '</p>');
+                    })
+                    $('.optionValue').empty();
+                    removeDuplicates(optionsValues).forEach((element) => {
+                        $('.optionValue').append('<p style="font-weight: 300;margin-bottom: 1rem;">' + element + '</p>');
+                    })
+                } else {
+                    $(this).text('Suivant')
+                }
+                if (actualStep > 3) {
+                    $("html, body").animate({scrollTop: 0}, "slow");
+                } else if (actualStep == 3) {
+                    $('.experience_create_content h1').text(typeExperience == undefined ? "Expérience: {{ experience.exp_type_experience }}" : "Expérience: " + typeExperience)
+                    checkedCheck = 0;
+                    $('.besoins .radio_custom').each(function () {
+                        if ($(this).is(":checked")) {
+                            checkedCheck++
+                        }
+                    });
+                    if (typeExperience == "Musique") {
+                        if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
+                            $(this).addClass('active');
+                            $(this).removeClass('disabled');
+                        }
+                    } else {
+                        if ($("input[name='nom_evt']").val() != "" && $("input[name='lieu']").val() != "" && $("input[name='participants']").val() != "" && checkedCheck > 0) {
+                            $(this).addClass('active');
+                            $(this).removeClass('disabled');
+                        }
+                    }
+                }
+            } else {
+                $(this).append('<span class="spinner-grow"></span>');
+                submitData('publish');
+            }
+        })
+        $(document).on('click', '.action_prev', function () {
+            actualStep = parseInt(actualStep) - 1;
+            if (actualStep == 1) {
+                $(this).addClass('hidden');
+            }
+            if (actualStep > 2) {
+                $('.saveAndClose').fadeIn();
+            } else {
+                $('.saveAndClose').fadeOut(300);
+            }
+            $('.steps').css('display', 'none')
+            if (actualStep > 3) {
+                $("html, body").animate({scrollTop: 0}, "slow");
+            }
+            $('.step' + actualStep).css('display', '')
+            $('.experience_create_content h1').text($('.step' + actualStep).attr('attr-title'))
+            $('.action_next').addClass('active');
+            $('.action_next').removeClass('disabled');
+            if (actualStep == 4) {
+                // $(this).text('Valider')
+                $('.action_next').addClass('active');
+                $('.action_next').removeClass('disabled');
+            } else {
+                $(this).text('Précédent')
+                $('.action_next').text('Suivant')
+            }
+        })
+
+        $(document).on('click', '.saveAndClose', function (e) {
+            e.preventDefault();
+            $(this).append('<span class="spinner-grow" style="position: relative;top:-4.5px;"></span>');
+            submitData('draft');
+        })
+
+        function submitData(status) {
+            var data = new FormData();
+            data.append('ville', $(".field_ville").val());
+            data.append('univers', $(".field_univers").val());
+            data.append('nom_evt', $(".field_nom_evt").val());
+            data.append('lieu_evt', $(".field_lieu").val());
+            data.append('participants_evt', $(".field_participants").val());
+            $('input[name="besoins[]"]:checked').each(function () {
+                data.append('besoins[]', this.checked ? $(this).val() : "");
+            });
+            $('input[name="options[]"]:checked').each(function () {
+                data.append('options[]', this.checked ? $(this).val() : "");
+            });
+            data.append('precisions', $(".field_precisions_2").val());
+            data.append('type_experience', typeExperience);
+            data.append('status', status);
+            data.append('postId', "{{ experience.id }}");
+
+            console.log(data);
+            $.ajax({
+                url: "{{ path('experiences_update_experience') }}",
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: data,
+                success: function (data) {
+                    if (data.response == "error") {
+                        $('.spinner-grow').remove();
+                        swal("Oups!", data.message, "error");
+                    } else if (data.response == "success") {
+                        $('.spinner-grow').remove();
+                        /* $('.prefooter_action').remove()
+                        $('.experience_create_content').remove()
+                        $('.saveAndClose').remove()
+                        $('.experience_success_content').fadeIn(500) */
+                        window.location = "{{ path('experiences_liste_experience') }}";
+                    } else {
+                        $('.spinner-grow').remove();
+                        /* $('.prefooter_action').remove()
+                        $('.experience_create_content').remove()
+                        $('.saveAndClose').remove()
+                        $('.experience_success_content').fadeIn(500) */
+                        window.location = "{{ path('experiences_liste_experience') }}";
+                        // $('.spinner-grow').remove();
+                        // swal("Oups!", "Une erreur est survenue. Veuillez reesayer plutard.", "error");
+                    }
+                },
+                error: function (error) {
+                    $('.spinner-grow').remove();
+                    swal("Oups!", "Une erreur est survenue. Veuillez reesayer plutard.", "error");
+                }
+            });
+        }
+
+        $(document).ready(function (e) {
+
+            // live handler
+            lc_lightbox('.carousel-card', {
+                wrap_class: 'lcl_fade_oc',
+                gallery: true,
+                thumb_attr: 'data-lcl-thumb',
+                skin: 'dark',
+                radius: 0,
+                padding: 0,
+                border_w: 0,
+                src_attr: 'attr-src',
+                max_width: '93%',
+                max_height: '93%',
+                show_author: false,
+                show_title: true,
+                show_descr: true,
+                thumbs_nav: true,
+                tn_hidden: 0,
+                txt_hidden: 0,
+            });
+
+            main();
+
+
+            $('.date_input').datepicker({
+                dateFormat: 'dd-M-yy',
+                minDate: 1,
+                closeText: 'Fermer',
+                prevText: 'Précédent',
+                nextText: 'Suivant',
+                currentText: 'Aujourd\'hui',
+                monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+                dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+                dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+                dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                weekHeader: 'Sem.'
+            },);
+
+            $('.date_icon').on('click', function () {
+                $('.date_input').focus();
+            })
+
+            $("#numero_telephone").keyup(function () {
+                let phone = $("#numero_telephone").val().replace(/\s|[a-zA-Z]/g, "");
+                $("#numero_telephone").val(phone);
+            });
+        });
+        var slideSpeed = 10000;
+
+        var main = function () {
+            //Carousel
+            setInterval(function () {
+                timedDelay()
+            }, slideSpeed);
+            //arrow-next
+            $('.arrow-next').click(function (e) {
+                e.preventDefault();
+
+                var currentSlide = $('.active-slide');
+                var nextSlide = currentSlide.next();
+
+                var currentDot = $('.active-dot');
+                var nextDot = currentDot.next();
+
+                if (nextSlide.length === 0) {
+                    nextSlide = $('.slide').first();
+                    nextDot = $('.dot').first();
+                }
+
+                currentSlide.fadeOut(600, function () {
+                    $(this).removeClass('active-slide');
+                    nextSlide.fadeIn(600).addClass('active-slide');
+
+                    currentDot.removeClass('active-dot');
+                    nextDot.addClass('active-dot');
+                });
+            });
+            //arrow-prev
+            $('.arrow-prev').click(function (e) {
+                e.preventDefault();
+
+                var currentSlide = $('.active-slide');
+                var prevSlide = currentSlide.prev();
+
+                var currentDot = $('.active-dot');
+                var prevDot = currentDot.prev();
+
+                if (prevSlide.length === 0) {
+                    prevSlide = $('.slide').last();
+                    prevDot = $('.dot').last();
+                }
+
+                currentSlide.fadeOut(600, function () {
+                    $(this).removeClass('active-slide');
+                    prevSlide.fadeIn(600).addClass('active-slide');
+
+                    currentDot.removeClass('active-dot');
+                    prevDot.addClass('active-dot');
+                });
+            });
+        };
+
+        //timedDelay function
+        function timedDelay() {
+            var currentSlide = $('.active-slide');
+            var nextTimedSlide = currentSlide.next();
+            var currentDot = $('.active-dot');
+            var nextDot = currentDot.next();
+            if (nextTimedSlide.length === 0) {
+                nextTimedSlide = $('.slide').first();
+                nextDot = $('.dot').first();
+            }
+            currentSlide.fadeOut(600, function () {
+                $(this).removeClass('active-slide');
+                nextTimedSlide.fadeIn(600).addClass('active-slide');
+
+                currentDot.removeClass('active-dot');
+                nextDot.addClass('active-dot');
+            });
+        }
+
+        $('#submitForm').on('submit', function (e) {
+            e.preventDefault();
+            if ($('.numero_telephone').val().match(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/gmi)) {
+                toastr.info('{{ 'systeme.requetes.requete-en-cours'|trans }}');
+                var $form = $(this);
+                var formdata = (window.FormData) ? new FormData($form[0]) : null;
+                formdata.append('status', 'publish');
+                var data = (formdata !== null) ? formdata : $form.serialize();
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (reponse) {
+                        window.location = "";
+                        if (reponse != 0) {
+                            toastr.clear();
+                            toastr.success('{{ 'systeme.requetes.succes'|trans }}');
+                        } else if (reponse == 0) {
+                            toastr.clear();
+                            toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+                        }
+
+                    },
+                    error: function (reponse) {
+                        toastr.clear();
+                        toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
+                    }
+                });
+            } else {
+                toastr.warning('Entrez un numéro de téléphone valide');
+            }
+            return false;
+        });
+    </script>
+
+{% endblock %}

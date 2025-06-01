@@ -1,0 +1,73 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block page_title %}
+    Ajouter Stripe ID
+{% endblock %}
+
+{% block main %}
+    <div class="content">
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-lg-6 mx-auto">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="box-title">Supprimer Compte Stripe</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form id="stripe-form">
+                                <div class="form-group">
+                                    <label for="stripe_id">Stripe ID</label>
+                                    <input class="form-control" type="text" name="stripe_id" id="stripe_id" required/>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" id="submit-btn" class="btn btn-danger">
+                                        Supprimer
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="success-message" class="alert alert-success mt-3" style="display: none;">
+                            Stripe ID supprime avec succès !
+                        </div>
+                        <div id="error-message" class="alert alert-danger mt-3" style="display: none;">
+                            Une erreur s'est produite.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body_javascript %}
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#stripe-form").submit(function (e) {
+                e.preventDefault();
+
+                let stripeId = $("#stripe_id").val();
+                if (!stripeId) {
+                    alert("Veuillez entrer un Stripe ID.");
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ path('admin_user_delete_stripe_id') }}", // Route in Symfony
+                    type: "POST",
+                    data: { stripe_id: stripeId },
+                    success: function (response) {
+                        console.log(response);
+                        $("#success-message").show();
+                        $("#error-message").hide();
+                        $("#stripe_id").val('');
+                    },
+                    error: function (response) {
+                        $("#error-message").show();
+                        $("#success-message").hide();
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,350 @@
+{% extends 'generalLayout.html.twig' %}
+
+{% block head %}
+	{{ parent() }}
+	<link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-32x32.png')) }}" sizes="32x32"/>
+	<link rel="icon" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-192x192.png')) }}" sizes="192x192"/>
+	<link rel="apple-touch-icon-precomposed" href="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-180x180.png')) }}"/>
+	<meta name="msapplication-TileImage" content="{{ preload(asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png')) }}"/>
+{% endblock %}
+
+{% block title %}
+	Paiement | Trust &amp; Market{% endblock %}
+{% block style %}
+
+{{ parent() }}
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+	<!-- Bootstrap core CSS -->
+	<link href="{{asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
+	<!-- Material Design Bootstrap -->
+	<link href="{{prerender(asset('assets/css/mdb.min.css'))}}" rel="stylesheet">
+	<!-- Your custom styles (optional) -->
+	<link href="{{asset('assets/css/custome.css')}}" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/0.8.2/css/flag-icon.min.css" rel="stylesheet">
+	<link href="{{asset('assets/css/checkout.css')}}" rel="stylesheet" type="text/css">
+	<link href="{{asset('assets/css/topBtn.css')}}" rel="stylesheet">
+	<script src="{{asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+	<link rel="stylesheet" href="{{ asset('assets/phone/css/intlTelInput.css') }}">
+	<style>
+		#topBtn {
+			position: fixed;
+			bottom: 60px;
+		}
+	</style>
+{% endblock %}
+
+{% block header %}
+	{{parent()}}
+{% endblock %}
+
+{% block navigation %}
+	{{parent()}}
+	{% block pageTitle %}
+		{{'paiement.titre-page'|trans}}
+	{% endblock %}
+{% endblock %}
+
+{% block body %}
+	<div id="trustBody" style="min-height: 67vh; margin-top: 54.4766px;" class="container"> 
+			<main class="py-5">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-4">
+						<h2 class="font-weight-bold">{{'paiement.titre-page'|trans}}</h2>
+						<p class="x-info">{{'paiement.explication'|trans}}</p>
+					</div>
+					<div class="col-md-8">
+						<div class="row">
+							<div class="col-md-12">
+								<h2 class="font-weight-bold">{{'paiement.titre'|trans}}</h2>
+							</div>
+						</div>
+						{% for message in app.flashes('noticeErrorDate') %}
+							<div class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
+								<strong>{{message}}</strong>
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+						{% endfor %}
+						<form class="checkout-form" action="{{path('payment_pre_command')}}" method="POST">
+							<div class="row pt-3">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="prenom">{{'paiement.formulaire.prenom'|trans}}*</label>
+										<input type="text" name="prenom" required="required" value="{% if prenom_livraison != '' %}{{prenom_livraison}}{% elseif prenom_domicile != '' %}{{prenom_domicile}}{% else %}{{userData.first_name}}{% endif %}" class="form-control" id="prenom">
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="nom">{{'paiement.formulaire.nom'|trans}}
+											*</label>
+										<input type="text" class="form-control" name="nom" required="required" value="{% if nom_livraison != '' %}{{nom_livraison}}{% elseif nom_domicile != '' %}{{nom_domicile}}{% else %}{{userData.last_name}}{% endif %}" id="nom">
+									</div>
+								</div>
+							</div>
+							<div class="row pt-3">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="entreprise">{{'paiement.formulaire.entreprise'|trans}}
+										</label>
+										<input type="text" name="entreprise" class="form-control" id="entreprise" value="{% if nomEntreprise_livraison != '' %}{{nomEntreprise_livraison}}{% else %}{{nomEntreprise_domicile}}{% endif %}">
+									</div>
+								</div>
+							</div>
+							<div class="row pt-3">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="rue">{{'paiement.formulaire.numero-rue'|trans}}*</label>
+										<input type="text" name="rue" required="required"  value="{% if numeroNomRue_livraison != '' %}{{numeroNomRue_livraison}}{% elseif numeroNomRue_domicile != '' %}{{numeroNomRue_domicile}}{% else %}{{userData.rue}}{% endif %}" class="form-control" id="rue">
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="codePostal">{{'paiement.formulaire.code-postal'|trans}}*</label>
+										<input type="text" name="codePostal" required="required" value="{% if codePostal_livraison != '' %}{{codePostal_livraison}}{% else %}{{codePostal_domicile}}{% endif %}" class="form-control" id="codePostal">
+									</div>
+								</div>
+							</div>
+							<div class="row pt-3">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="ville">{{'paiement.formulaire.ville'|trans}}*</label>
+										<input type="text" name="ville" required="required" value="{% if ville_livraison != '' %}{{ville_livraison}}{% else %}{{ville_domicile}}{% endif %}" class="form-control" id="ville">
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="pays">{{'paiement.formulaire.pays'|trans}}*</label>
+										<select name="pays" required="required" class="form-control" id="pays">
+											<option value="{% if pays_livraison != '' %}{{pays_livraison}}{% else %}{{pays_domicile}}{% endif %}">{% if pays_livraison != '' %}{{pays_livraison|country_name}}{% else %}{{pays_domicile|country_name}}{% endif %}</option>
+											{% include('partials/country_list.html.twig') %}
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row pt-3">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="email">{{'paiement.formulaire.email'|trans}}*</label>
+										<input type="text" name="email" required="required" value="{{userData.email}}" class="form-control" id="email">
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="telephone">{{'paiement.formulaire.telephone'|trans}}*</label>
+										<input type="text" name="telephone" required="required" value="{{userData.telephone}}" class="form-control" id="telephone">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<h2 class="font-weight-bold">{{'paiement.reservation.titre'|trans}}</h2>
+								</div>
+								<div class="border p-3" style="width: 100%">
+									<table class="table">
+										<thead class="grey white-text">
+											<tr>
+												<th scope="col">{{'paiement.reservation.prestations'|trans}}</th>
+												<th scope="col">{{'paiement.reservation.total'|trans}}</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% set livraisonGratuite = false %}
+											{% set critere = false %}
+												{% for a in panierData %}
+													<tr class="prestation-detail">
+														<td>
+															<div class="titre-de-prest">
+																<h6>{{a.libelle}}</h6>
+															</div>
+															<div>
+																<h6>x{{a.qte}}</h6>
+															</div>
+															<div>
+																<small>{{'paiement.reservation.dates'|trans}}:
+																	{{a.dates}}</small>
+															</div>
+														</td>
+														<td class="font-weight-bold">{{a.prixu}} {% if a.devise == "" %}&euro;
+															{% else %}
+																{{a.devise}}
+															{% endif %}
+														</td>
+													</tr>
+													<tr>
+														<td>{{'paiement.reservation.sous-total'|trans}}</td>
+														<td class="font-weight-bold">{{a.prix}} {% if a.devise == "" %}&euro;
+															{% else %}
+																{{a.devise}}
+															{% endif %}
+														</td>
+													</tr>
+													
+														{% for criteresFreeOp in criteresFreeOps %}
+															{% if a.categorie == criteresFreeOp.cat and prixTotalProduits > criteresFreeOp.prix %}
+																{% set livraisonGratuite = true %}
+																{% set critere = criteresFreeOp.id %}
+															{% endif %}
+													{% endfor %}
+												{% endfor %}
+											{% if prixTotalProduits > 0 %}
+												{% if livraisonGratuite == true %}
+													<tr class="prestation-detail">
+														<td class="font-weight-bold">
+															<div><h6>{{'paiement.reservation.frais-type-de-livraison'|trans}}</h6></div>
+																<div class="form-check">
+																	<input class="crit-check-input" type="radio" data-price="0" value="{% if critere %}{{critere}}{% else %}Pas de livraison{% endif %}" name="crit-check-input" checked>
+																		<label class="form-check-label" for="flexCheckChecked">
+																			Livraison gratuite
+																		</label>
+																</div>
+														</td>
+													</tr>
+												{% else %}
+													<tr class="prestation-detail">
+														<td class="font-weight-bold">
+															<div><h6>{{'paiement.reservation.frais-type-de-livraison'|trans}}</h6></div>
+															{% for crit in criteresLivraisons %}
+																<div class="form-check">
+																	<input class="crit-check-input" type="radio" data-price="{{crit.prix}}" value="{{crit.id}}" name="crit-check-input" {% if loop.first %}checked{% endif %}>
+																	<label class="form-check-label" for="flexCheckChecked">
+																		{% if app.request.locale == 'fr'%}{{crit.fr_text}}{% else %}{{crit.en_text}}{% endif %} {{crit.delai}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{crit.prix}}&nbsp;{% if panierData|first.devise == "" %}&euro;{% else %}{{panierData|first.devise}}{% endif %}
+																	</label>
+																</div>
+															{% endfor %}
+														</td>
+													</tr>
+												{% endif %}
+											{% else %}
+												<input hidden id="crit-check-input" type="radio" data-price="0" value="0" name="crit-check-input" checked>
+											{% endif %}
+											<input value="0" name="frais_livraison" id="frais_livraison" hidden/>
+											<tr class="total-footer">
+												<td class="font-weight-bold">{{'paiement.reservation.total'|trans}}</td>
+												<td class="font-weight-bold">
+													<span id="prixTotalFacture">{{ prixTotal }}</span>
+												{% if panierData|first.devise == "" %}&euro;{% else %}{{panierData|first.devise}}{% endif %}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="p-3 xtic-box mt-4 pb-4" style="width: 100%">
+									<div>
+										<h6 class="paiement-en-ligne">{{'paiement.reservation.type-de-paiement'|trans}}</h6>
+									</div>
+									<div class="select-option-div mt-4 px-2 py-3">
+										<div class="triangle"></div>
+										<div class="col-md-6">
+											<label for="cardOption" class="font-weight-bold" style="color: #4a4a4a">{{'paiement.reservation.type-de-carte-de-credit'|trans}}
+												:</label>
+											<select class="browser-default custom-select" name="cardOption" id="cardOption">
+												<option value="CB_VISA_MASTERCARD">CB/VISA/MASTERCARD</option>
+												<option value="MAESTRO">Maestro</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<input hidden="" type="text" name="idUser" id="idUser" value="{{idUser}}">
+								<div class="col-md-12 take-agreement mt-4">
+									<div class="customCheckbox mr-2">
+										<input type="checkbox" value="1" id="customCheckboxInput" name="" required/>
+										<label for="customCheckboxInput"></label>
+									</div>
+									<div class="checkbox-text-div">
+										{{'paiement.reservation.conditions-utilisation'|trans}}<span class="font-weight-bold">*</span>
+									</div>
+								</div>
+							</div>
+							<input value="{{ prixTotal }}" name="total-price" id="total-price" hidden/>
+							<input value="{{ prixTotal }}" name="total-price-no-delivery" id="total-price-no-delivery" hidden/>
+							<div class="row">
+								<div class="col-md-6"></div>
+								<div class="col-md-6 mt-4">
+									<button type="submit" id="submitForm" class="btn btn-block font-weight-bold checkout-btn">{{'paiement.reservation.commander'|trans}}</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			{% include 'assistance.html.twig' %}
+		</main>
+	</div>
+	<!--Main Layout-->
+{% endblock %}
+
+{% block footer %}
+	{{parent()}}
+{% endblock %}
+
+{% block javascripts %}
+	{{parent()}}
+	<!-- jQuery plugin for date picker -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+	<!-- cdnjs for lazy load -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
+	<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+	<script src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}"></script>
+	<script src="{{ asset('assets/phone/js/intlTelInput.min.js') }}"></script>
+	<script>
+	$(document).ready(function () {
+	var input = document.querySelector("#telephone");
+	window.intlTelInput(input, {
+		autoHideDialCode: true,
+		initialCountry: "fr",
+		nationalMode: false,
+		formatOnDisplay: false,
+		// separateDialCode: true,
+		utilsScript: "/assets/phone/js/utils.js"
+	});
+		$("#telephone").keyup(function () {
+			var phone = $("#telephone").val().replace(/\s|[a-zA-Z]/g, "");
+		$("#telephone").val(phone);
+			if (validatePhoneNumber(phone)) {
+				$("#telephone").removeClass("is-invalid");
+				$("#telephone").addClass("is-valid");
+				$("#submitForm").prop('disabled', false);
+			} else {
+				$("#telephone").removeClass("is-valid");
+				$("#telephone").addClass("is-invalid");
+				$("#submitForm").prop('disabled', true);
+			}
+		});
+		$("#codePostal").keyup(function () {
+		var codePostal = $("#codePostal").val().replace(/\s/g, "");
+		$("#codePostal").val(codePostal);
+		if (codePostal != '') {
+			$("#submitForm").prop('disabled', false);
+		} else {
+			$("#codePostal").removeClass("is-valid");
+			$("#codePostal").addClass("is-invalid");
+			$("#submitForm").prop('disabled', true);
+		}
+		});
+		//Update price
+		//let prixTotalLivraison = $('input[name="crit-check-input"]:checked').attr("data-price");
+		let prixTotalLivraison = parseFloat($('input[name="crit-check-input"]:checked').attr("data-price")) || 0;
+		console.log(prixTotalLivraison);
+		$("#frais_livraison").val(prixTotalLivraison);
+		let prixTotalAchat = (Number(prixTotalLivraison) + Number({{ prixTotal }})).toFixed(2);
+		$('#total-price').val(prixTotalAchat);
+		$('#prixTotalFacture').text(prixTotalAchat);
+
+		jQuery("input:radio[name=crit-check-input]").on("change", function() {
+		if (jQuery(this).is(":checked")) {	
+			let prixTotalLivraison = jQuery(this).attr("data-price");
+			$("#frais_livraison").val(prixTotalLivraison);
+			let prixTotalAchat = (Number(prixTotalLivraison) + Number({{ prixTotal }})).toFixed(2);
+			$('#total-price').val(prixTotalAchat);
+			$('#prixTotalFacture').text(prixTotalAchat);
+		}
+		});
+	})
+</script>
+
+
+
+{% endblock %}

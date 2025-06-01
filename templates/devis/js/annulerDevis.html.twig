@@ -1,0 +1,43 @@
+<script>
+    $(document).on('click', '.annuler-devis', function (e) {
+        // On emp�che le navigateur de soumettre le formulaire
+        e.preventDefault();
+        let t = $(this);
+        let urlPath = $(this).attr('href');
+        swal({
+                title: t.text(),
+                text: "{{ 'commande.annuler.confirmer_annulation'|trans }}",
+                type: "info",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Oui",
+                cancelButtonText: "Annuler",
+                closeOnConfirm: false,
+                closeOnCancel: false,
+                showLoaderOnConfirm: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: urlPath,
+                        type: 'GET',
+                        success: function (response) {
+                            if (response.result > 0) {
+                                swal("{{ 'commande.annuler.succes'|trans }}", "", "success");
+                                console.log(response);
+                                window.location = '';
+                            } else {
+                                swal("{{ 'commande.annuler.erreur'|trans }}", "", "error");
+                            }
+                        },
+                        error: function (response) {
+                            swal("{{ 'commande.annuler.erreur'|trans }}", "", "error");
+                        }
+                    });
+                } else {
+                    swal.close();
+                }
+            });
+        return false;
+    });
+</script>

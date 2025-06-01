@@ -1,0 +1,241 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block page_title %}
+	{{'admin.menu.seuil-livraison-gratuite'|trans}}
+{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	{# <link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
+	<link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
+	<link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
+	<div class="content">
+
+		<div class="animated fadeIn">
+			<div class="clearfix"></div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header">
+							<h4 class="box-title">Gerer les Montants seuil
+								<sup>(Frais de livraisons gratuits)</sup>
+								<a class="badge badge-complete right1 " data-toggle="modal" data-target="#add-category" href="" title="{{'admin.categorie.add-categorie'|trans}}">
+									<i class="fa fa-plus"></i>
+								</a>
+							</h4>
+						</div>
+						<div class="card-body--">
+							<div class="table-stats order-table ov-h">
+								<table class="table ">
+									<thead>
+										<tr>
+											<th>ID</th>
+											<th>Type de prestation</th>
+											<th>Montant</th>
+											<th>Statut</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for m in criteres %}
+											<tr style="background-color: #F7F7F7;font-weight: bold;">
+												<td>{{m.id}}</td>
+												<td>{{m.cat.slug|upper }}</td>
+												<td>{{m.guid}} €</td>
+												<td>{% if m.post_status == '1' %}
+													<span class='btn btn-success btn-round'>Actif</span>{% else %}
+													<span class='btn btn-success btn-warning'>Inactif</span> {% endif %}</td>
+												<td>
+												{% set url = ea_url().setController('App\\Controller\\Admin\\Livraisons\\OpeFraisGratuits\\WpPostsCrudController').setAction('edit').setEntityId(m.id) %}
+													<a class="badge badge-pending update" href="{{url}}" title="Modifier le post">
+														<i class="fa fa-edit "></i>
+													</a>
+													<a class=" red delete" href="{{path('post_delete_get', {'id':m.id})}}" title="Supprimer le menu">
+														<i class="fa fa-trash"></i>
+													</a>
+												</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade none-border" id="add-category">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">
+							<strong>Ajouter un seuil</strong>
+						</h4>
+					</div>
+					<div class="modal-body">
+						<form action="{{path('admin_livraison_new_critere_free_op')}}" method="post" id="register">
+							<input hidden name="state" id="state" value="{{state}}"/>
+							<div class="row">
+								<div class="col-md-12 form-group">
+									<select name="categorie" id="categorie" required class="form-control">
+										<option value="">Toutes les categories</option>
+										{% for categorie in categories %}
+											<option value="{{categorie.termTaxonomyId}}">{{categorie.name}}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 form-group">
+									<input class="form-control" placeholder="Montant" type="text" name="montant" id="montant" required/>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 form-group">
+									<select name="statut" id="statut" required class="form-control">
+										<option value="">Statut</option>
+										<option value="1">Actif</option>
+										<option value="0">Inactif</option>
+									</select>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Fermer</button>
+								<button type="submit" id="send" class="btn btn-success waves-effect waves-light ld-over-inverse ">{{'admin.categorie.send'|trans}}<i class="ld ld-ring ld-spin"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+{% endblock %}
+{% block body_javascript %}
+	<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+	{# <script src="{{ asset('admin/assets/js/vendor/jquery-2.1.4.min.js') }}" type="text/javascript"></script> #}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha512-Cy3gSrKCS8aJ7AIaammc0wLXyKRmTa8ntgHvU01Tuz4EdsqVgk/lKzFm/b/8RxOWBaoHI2uGLLU6rXMbqKcGHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="{{ asset('toastr/toastr.min.js') }}"></script>
+	<script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
+	<script src="{{ asset('assets/js/tools.js') }}"></script>
+	<script type="text/javascript">
+
+		$("#montant").on({
+			keyup: function () {
+			var myFloat = $("#montant").val().replace(/[^0-9\.{1,2}]+/g, "");
+			console.log(myFloat);
+			$("#montant").val(myFloat);
+			},
+			blur: function () {
+			if ($(this).val() == '') {
+				$(this).val(0);
+			}
+			},
+			focus: function () {
+			let s = $(this).val();
+			while (s.charAt(0) === '0') {
+				s = s.substr(1);
+				$(this).val(s);
+			}
+			}
+		});
+
+		$('#register').on('submit', function (e) {
+			e.preventDefault();
+			if ($('#cat_name').val() != '') {
+			$('#send').addClass('running');
+			var $form = $(this);
+			$.ajax({
+			url: $form.attr('action'),
+			type: $form.attr('method'),
+			data: $form.serialize(),
+			success: function (reponse) {
+			if (reponse > 0) {
+			toastr.clear();
+			$('#send').removeClass('running');
+			toastr.success('Ajout Terminé');
+			window.location = '';
+			} else if (reponse == 0) {
+			toastr.clear();
+			$('#send').removeClass('running');
+			toastr.error('Erreur d\'ajout');
+			}
+			},
+			error: function (reponse) {
+			toastr.clear();
+			$('#send').removeClass('running');
+			toastr.error('Erreur d\'ajout');
+			}
+			});
+			}
+			return false;
+			});
+
+			$(document).on('click', '.delete', function (e) {
+			e.preventDefault();
+			var t = $(this);
+			var urlPath = $(this).attr('href');
+			swal({
+			title: "Suppression du critere",
+			text: "Attention le critere sera Supprimée et n'apparaitra plus sur votre site",
+			type: "info",
+			showCancelButton: true,
+			confirmButtonClass: "btn-danger",
+			confirmButtonText: "Supprimer",
+			cancelButtonText: "Annuler",
+			closeOnConfirm: false,
+			closeOnCancel: false,
+			showLoaderOnConfirm: true
+			}, function (isConfirm) {
+			if (isConfirm) {
+			$.ajax({
+			url: urlPath,
+			type: 'GET',
+			success: function (reponse) {
+			if (reponse == 1) {
+			swal("Suppression terminée", "", "success");
+			t.parents('tr').hide();
+			} else if (reponse == 2) {
+			swal("La catégorie contient des produits", "", "warning");
+			} else {
+			swal("Erreur de suppression", "", "error");
+			};
+			},
+			error: function (reponse) {
+			swal("Erreur de suppression", "", "error");
+			}
+			});
+			} else {
+			swal.close();
+			}
+			});
+			return false;
+			});
+
+			toastr.options = {
+			"closeButton": true,
+			"debug": false,
+			"newestOnTop": false,
+			"progressBar": true,
+			"positionClass": "toast-top-center",
+			"preventDuplicates": false,
+			"onclick": null,
+			"showDuration": "300",
+			"hideDuration": "1000",
+			"timeOut": "12000",
+			"extendedTimeOut": "1000",
+			"showEasing": "swing",
+			"hideEasing": "linear",
+			"showMethod": "fadeIn",
+			"hideMethod": "fadeOut"
+		}
+	</script>
+
+{% endblock body_javascript %}

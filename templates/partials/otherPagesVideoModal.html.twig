@@ -1,0 +1,18 @@
+<!-- Modal -->
+{% if youtube_url is defined %}
+    {% if youtube_url.autoload == 'yes' %}
+        <div class="modal fade" id="youtubeVideoModal" tabindex="-1" role="dialog" aria-labelledby="youtubeVideoModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content" style="background-color: transparent;box-shadow: none;">
+                    <div class="modal-body">
+                        <span aria-hidden="true" class="closeVideoBtnModal">&times;</span>
+                        <div class="hs-responsive-embed-youtube">
+                            <iframe class="rounded" src="" frameborder="0" allowfullscreen=""></iframe>
+                        </div>
+                        <input hidden value="{% if youtube_url %}{% if youtube_url.autoload == 'yes' %}{{youtube_url.optionValue}}{% endif %}{% endif %}" id="youtube_url"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
