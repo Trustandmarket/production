@@ -153,7 +153,7 @@ class ExperiencesController extends AbstractController
             ],
             'bcc' => [
                 [
-                    'email' => 'serviceclients@kbr-global.com',
+                    'email' => 'commerce@trustandmarket.com',
                     'name' => "Trust & Market"
                 ]
             ],
