@@ -192,7 +192,7 @@ class RegistrationController extends AbstractController
                 $data = [
                     'to' => [
                         [
-                            'Email' => "serviceclients@kbr-global.com",
+                            'Email' => "commerce@trustandmarket.com",
                             'Name' => "Admin"
                         ]
                     ],
