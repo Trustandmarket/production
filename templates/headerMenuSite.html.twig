@@ -74,8 +74,8 @@
 	</style>
 	<ul class="nav navbar-nav nav-flex-icons ml-auto mx-2 minify-menu">
 		<li class="nav-item"><a class="nav-link" href="{{ path('annonces_listeAnnonces', {'type_prestation': 'studio-musique', 'code_postal_ville': '', 'noPage': 1}) }}" aria-haspopup="true">Trouver des prestataires</a>
-		<li class="nav-item"><a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Professionnels</a>
-			<ul class="dropdown-menu">
+		<li class="nav-item"><a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true">Professionnels</a>
+			<ul class="dropdown-menu" style="display: block;">
 				<li><a class="dropdown-item" href="{{ path('marketing_details_univers_trust', {slug:'la-solution-trust-market'}) }}">Notre solution</a></li>
 				<li><a class="dropdown-item" href="{{path('app_souscription')}}">Prix</a></li>
 				<li><a class="dropdown-item" href="{{ path('app_register') }}">Créer un compte</a></li>
