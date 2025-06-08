@@ -72,10 +72,37 @@
 			right: 7px;
 		}
 	</style>
+
+	<style>
+		.MenuDeroulant{
+			position: absolute;
+			background: white;
+			border: 1px solid orange;
+			border-radius: 10px;
+			padding-block: 10px;
+			top: 70px;
+			width: 180px;
+			right: 100px;
+			display: none;
+		}
+		.MenuDeroulant li{
+			padding-inline: 10px;
+		}
+		.MenuDeroulant a{
+			font-family: 'Palanquin',sans-serif;
+			color: black;
+		}
+		.MenuDeroulant a:hover{
+			color: #f17c30;
+			text-decoration: none;
+		}
+
+	</style>
+
 	<ul class="nav navbar-nav nav-flex-icons ml-auto mx-2 minify-menu">
 		<li class="nav-item"><a class="nav-link" href="{{ path('annonces_listeAnnonces', {'type_prestation': 'studio-musique', 'code_postal_ville': '', 'noPage': 1}) }}" aria-haspopup="true">Trouver des prestataires</a>
 		<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Professionnels</a>
-			<ul class="dropdown-menu">
+			<ul class="dropdown-menu MenuDeroulant">
 				<li><a href="{{ path('marketing_details_univers_trust', {slug:'la-solution-trust-market'}) }}">Notre solution</a></li>
 				<li><a href="{{path('app_souscription')}}">Prix</a></li>
 				<li><a href="{{ path('app_register') }}">S'inscrire comme prestataire</a></li>
