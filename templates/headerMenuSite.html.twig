@@ -74,34 +74,37 @@
 	</style>
 
 	<style>
-		.MenuDeroulant{
-			position: relative;
+		.MenuDeroulant {
+			position: absolute;
 			background: white;
 			border: 1px solid orange;
 			border-radius: 10px;
-			padding-block: 10px;
 			top: 70px;
+			right: 12px;
 			width: 180px;
-			right: 100px;
+			padding: 0; /* plus de padding vertical */
 			display: none;
+			z-index: 1000;
 		}
-		.MenuDeroulant.dropdown-item{
-			padding: 0;
-		}
-		.MenuDeroulant a{
-			font-family: 'Palanquin',sans-serif;
+
+		/* Espacement supprimé entre les éléments */
+		.MenuDeroulant .dropdown-item {
+			padding: 6px 10px;
+			margin: 0;
+			font-family: 'Palanquin', sans-serif;
 			color: black;
-			padding: 0;
+			border-bottom: 1px solid #f0f0f0;
 		}
-		.MenuDeroulant a:hover{
+
+		.MenuDeroulant .dropdown-item:last-child {
+			border-bottom: none;
+		}
+
+		.MenuDeroulant .dropdown-item:hover {
 			color: #f17c30;
+			background-color: transparent;
 			text-decoration: none;
 		}
-		.MenuDeroulant{
-				z-index: 1;
-				right: 12px;
-    			top: 70px;
-			}
 		
 	</style>
 
