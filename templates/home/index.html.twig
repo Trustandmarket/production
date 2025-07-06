@@ -11,7 +11,7 @@
 	<link rel="canonical" href="https://www.trustandmarket.com/{{app.request.getLocale()}}">
 	{# OG CONTENT #}
 	<meta property="og:site_name" content="Trust&Market">
-	/*<meta property="og:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'home'}) }}">*/
+	<meta property="og:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'home'}) }}">
 	<meta property="og:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'home'}) }}">
 	<meta property="og:image" content="{% if bloc10 %}{{bloc10.optionValue}}{% else %}{{absolute_url(asset('assets/img/prestations/cover.jpg'))}}{% endif %}">
 	<meta property="og:type" content="website">
