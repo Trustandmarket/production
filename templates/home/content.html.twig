@@ -36,7 +36,7 @@
 	</script>
 	{# END JSON LD #}
 {% endblock %}
-/*{% block title %}{{ parent() }} | {% if app.request.locale == 'en' and contenu.postExcerpt != '' %}{{ contenu.postExcerpt }}{% else %}{{ contenu.getPostTitle }}{% endif %}{% endblock %}*/
+{% block title %}{{ parent() }} | {% if app.request.locale == 'en' and contenu.postExcerpt != '' %}{{ contenu.postExcerpt }}{% else %}{{ contenu.getPostTitle }}{% endif %}{% endblock %}
 {% block style %}
 	{{ parent() }}
 	<!-- Your custom styles (optional) -->
