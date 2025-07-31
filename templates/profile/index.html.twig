@@ -479,7 +479,7 @@
                                             class="browser-default custom-select">
                                         <option value="{{ birth_place }}">{% if birth_place != '' %}{{ birth_place|country_name }}{% else %}{{ 'general.lieu-de-naissance'|trans }} *{% endif %}
                                         </option>
-                                        {% include("countryRegister.html.twig") %}
+                                        {% include 'Tools/CountryNat.html.twig' %}
                                     </select>
                                 </div>
                             </div>
