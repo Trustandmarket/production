@@ -545,46 +545,7 @@
                                     </div>
                                 </div>
                                 <!-- Videos -->
-                                {% if detailsAnnonce.livraison == 'oui' and detailsAnnonce.categorieParentSlug == 'produits' %}
-                                    <div id="mesVideos" class="col-md-12 mt-4">
-                                        <h2 class="py-4 mb-4 border-bottom" style="font-size: 1.5rem">Modes de livraison</h2>
-                                        <div class="row modes">
-                                            <div class="col-md-6 mode mode1" style="display: flex;margin-bottom: 3rem;">
-                                                <img src="{{ asset('assets/img/livraison-standard.svg') }}" alt=""
-                                                     style="width: 100px;height: 60px;">
-                                                <div class="description_mode" style="margin-left: 1rem;">
-                                                    <h5>{{ 'details-annonces.titre-livraison-standard'|trans }}</h5>
-                                                    <p>{{ 'details-annonces.contenu-livraison-standard'|trans }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mode mode2" style="display: flex;margin-bottom: 3rem;">
-                                                <img src="{{ asset('assets/img/livraison-prioritaire.svg') }}" alt=""
-                                                     style="width: 100px;height: 60px;">
-                                                <div class="description_mode" style="margin-left: 1rem;">
-                                                    <h5>{{ 'details-annonces.titre-livraison-prioritaire'|trans }}</h5>
-                                                    <p>{{ 'details-annonces.contenu-livraison-prioritaire'|trans }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mode mode3" style="display: flex;">
-                                                <img src="{{ asset('assets/img/livraison-express.svg') }}" alt=""
-                                                     style="width: 100px;height: 60px;">
-                                                <div class="description_mode" style="margin-left: 1rem;">
-                                                    <h5>{{ 'details-annonces.titre-livraison-express'|trans }}</h5>
-                                                    <p>{{ 'details-annonces.contenu-livraison-express'|trans }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mode mode4">
-                                                <p style="margin-bottom: 0.5rem;"><span
-                                                            style="font-weight: bold;font-size: 0.8rem;">{{ 'details-annonces.titre-infos'|trans }}</span>
-                                                    <span>01 85 42 14 91</span></p>
-                                                <a target="_blank"
-                                                   href="{{ path('page_navigation', { idPage: 'aide' ,id: 'modes-de-livraison' }) }}"
-                                                   style="color: black;text-decoration: underline;">{{ 'details-annonces.contenu-infos'|trans }}</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endif %}
-
+                                
                                 <!-- Videos -->
                                 <!-- Videos -->
                                 <div id="mesVideos" class="col-md-12 mt-4">
