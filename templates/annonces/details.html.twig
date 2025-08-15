@@ -381,11 +381,11 @@
                                         {% endif %}
                                     </p>
 
-                                    <a target="_blank"
+                                    <button target="_blank"
                                         href="{{ path('chat_chat', {'destinataire': detailsAnnonce.post_author }) }}"
                                         class="btn btn-sm btn-primary">
                                         {{ 'CONTACTER'}}
-                                    </a>
+                                    </button>
 
                                     {% if rupture == 0 and detailsAnnonce.categorieParentType != 'product_cat' %}
                                         <span id="rupture" class="btn btn-md btn-warning text-center">
