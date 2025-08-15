@@ -360,11 +360,9 @@
                                     {{ detailsAnnonce.devise.metaValue }}{% else %}€
                                 {% endif %}
                             </h5>
-                            <h6 class="mt-4 mb-2" {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
-                                
-                            </h6>
+                            
                             <p class="fs-14" {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
-                                Sélectionner les dates de prestations souhaitées pour finaliser votre reservation.
+                                Rentrer directement en contact avec ce professionnel si cette offre correspond à vos besoins. 
                             </p>
                             <form action="">
                                 <div class="multipleDatePicker md-form" {% if detailsAnnonce.categorieParentType
