@@ -364,13 +364,8 @@
                                 <i class="fas fa-calendar"></i>
                                 {{ 'profil-utilisateur.annonces-details.disponibilites'|trans }}
                             </h6>
-                            <p /*class="fs-14"*/ {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
+                            <p class="fs-14" {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
                                 Sélectionner les dates de prestations souhaitées pour finaliser votre reservation.
-                                /*<span class="calendar_infos" data-html="true" data-container="body"
-                                      data-toggle="popover2" data-placement="top" data-content="">
-												<i style="color:rgb(0, 82, 204);"
-                                                   class="fas fa-question-circle fa-lg"></i>
-											</span>*/
                             </p>
                             <form action="">
                                 <div class="multipleDatePicker md-form" {% if detailsAnnonce.categorieParentType
