@@ -360,10 +360,7 @@
                                     {{ detailsAnnonce.devise.metaValue }}{% else %}€
                                 {% endif %}
                             </h5>
-                            <h6 class="mt-4 mb-2" {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
-                                <i class="fas fa-calendar"></i>
-                                {{ 'profil-utilisateur.annonces-details.disponibilites'|trans }}
-                            </h6>
+                           
                             <p class="fs-14" {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
                                 Sélectionner les dates de prestations souhaitées pour finaliser votre reservation.
                             </p>
