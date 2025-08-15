@@ -367,11 +367,9 @@
                             <form action="">
                                 <div class="multipleDatePicker md-form" {% if detailsAnnonce.categorieParentType
                                     !='product_cat' %}hidden{% endif %} value='' type='text'>
-                                    <input type='hidden' class='DateField' value=''>
-                                </div>
-                                {% if detailsAnnonce.categorieParentType != 'product_cat' %}
                                     
-                                {% endif %}
+                                </div>
+                                
                                 <div class="col-md-12 md-form">
                                     <p id="price" {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
                                         {% if datep|length >0 %}
