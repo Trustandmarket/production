@@ -370,23 +370,7 @@
                                     <input type='hidden' class='DateField' value=''>
                                 </div>
                                 {% if detailsAnnonce.categorieParentType != 'product_cat' %}
-                                    <div class="form-group">
-                                        <div class="form-group">
-                                            <label for="product_quantity">{{ 'profil-utilisateur.annonces-details.quantite'|trans }}</label>
-                                            <select class="form-control" id="product_quantity" name="product_quantity">
-                                                <option selected>1</option>
-                                                <option>2</option>
-                                                <option>3</option>
-                                                <option>4</option>
-                                                <option>5</option>
-                                                <option>6</option>
-                                                <option>7</option>
-                                                <option>8</option>
-                                                <option>9</option>
-                                                <option>10</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    
                                 {% endif %}
                                 <div class="col-md-12 md-form">
                                     <p id="price" {% if detailsAnnonce.categorieParentType !='product_cat' %} hidden {% endif %}>
