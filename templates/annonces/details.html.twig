@@ -381,11 +381,11 @@
                                         {% endif %}
                                     </p>
 
-                                    <button target="_blank"
+                                    <a target="_blank"
                                         href="{{ path('chat_chat', {'destinataire': detailsAnnonce.post_author }) }}"
                                         class="btn btn-sm btn-primary">
                                         {{ 'CONTACTER LE PROFESSIONNEL'}}
-                                    </button>
+                                    </a>
 
                                     {% if rupture == 0 and detailsAnnonce.categorieParentType != 'product_cat' %}
                                         <span id="rupture" class="btn btn-md btn-warning text-center">
@@ -520,10 +520,7 @@
                                                    href="{{ path('profile_detailsProfessionnel',{'id': 'infos-profil-' ~ detailsAnnonce.post_author }) }}"
                                                    class="btn btn-sm btn-primary">
                                                     {{ 'profil-utilisateur.annonces-details.details-profil'|trans }}</a>
-                                                <a target="_blank"
-                                                   href="{{ path('chat_chat', {'destinataire': detailsAnnonce.post_author }) }}"
-                                                   class="btn btn-sm btn-primary">
-                                                    {{ 'profil-utilisateur.annonces-details.envoyer-message'|trans }}</a>
+                                                
                                                 {% if app.user %}
                                                     {% if app.user.id == detailsAnnonce.post_author %}
                                                         <a href="{{ path('annonces_deleteAnnounce', { id: detailsAnnonce.id }) }}"
