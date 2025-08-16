@@ -172,9 +172,9 @@
 					<a href="{{ path('profile_profile' )}}">{{'profil-utilisateur.liens.profil'|trans}}</a>
 				</li>
 				{% if 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles or 'ROLE_CONTRIBUTEUR' in app.user.roles or 'ROLE_COMMERCE' in app.user.roles or 'ROLE_SOCIETE' in app.user.roles %}
-				<li class="mt-2">
+				<!-- <li class="mt-2">
 					<a href="{{ path('app_abonnement') }}">Abonnements</a>
-				</li>
+				</li> -->
 				{% endif %}
 				
 				<li class="mt-2">
@@ -183,9 +183,9 @@
 				<li class="mt-2 toHideOnDesktop">
 					<a href="{{ path('marketing_details_univers_trust', {slug:'la-solution-trust-market'}) }}">Solution pros</a>
 				</li>
-				<li class="mt-2 toHideOnDesktop">
+				<!-- <li class="mt-2 toHideOnDesktop">
 					<a href="{{path('app_souscription')}}">Tarifs pros</a>
-			
+				</li> -->
 				<li class="mt-2">
 					<a href="{{ path('annonces_favoris' )}}">Favoris</a>
 				</li>
