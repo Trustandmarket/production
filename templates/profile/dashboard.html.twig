@@ -228,7 +228,7 @@
                     </div>
                     <div class="col-12 col-md-4 col-sm-6 col-lg-4">
                         <div class="card px-2 py-4">
-                            <a style="pointer-events: none; cursor: default;" 
+                            <a{% if 'ROLE_SOCIETE' in app.user.roles or 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles %}style="pointer-events: none; cursor: default;"{% endif %}
                                class="card-block stretched-link text-decoration-none" href="{{ path('app_abonnement') }}">
                                 <h4 class="card-title">Mes abonnements</h4>
                                 <p class="card-text mt-2">Retrouvez ici vos abonnements et vos informations de
