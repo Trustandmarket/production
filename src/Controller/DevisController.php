@@ -687,7 +687,7 @@ class DevisController extends AbstractController
                 ],
                 'bcc' => [
                     [
-                        'email' => 'serviceclients@kbr-global.com',
+                        'email' => 'commerce@trustandmarket.com',
                         'name' => 'Trust & Market',
                     ]
                 ],
@@ -726,7 +726,7 @@ class DevisController extends AbstractController
                 ],
                 'bcc' => [
                     [
-                        'email' => 'serviceclients@kbr-global.com',
+                        'email' => 'commerce@trustandmarket.com',
                         'name' => 'Trust & Market',
                     ]
                 ],
@@ -762,7 +762,7 @@ class DevisController extends AbstractController
                 ],
                 'bcc' => [
                     [
-                        'email' => 'serviceclients@kbr-global.com',
+                        'email' => 'commerce@trustandmarket.com',
                         'name' => 'Trust & Market',
                     ]
                 ],
@@ -1096,7 +1096,7 @@ class DevisController extends AbstractController
             ],
             'bcc' => [
                 [
-                    'email' => 'serviceclients@kbr-global.com',
+                    'email' => 'commerce@trustandmarket.com',
                     'name' => "Trust & Market"
                     ]
                 ],

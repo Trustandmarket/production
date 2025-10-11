@@ -53,7 +53,7 @@ class AbonnementController extends AbstractController
                     $data = [
                         'to' => [
                             [
-                                'email' => 'serviceclients@kbr-global.com',
+                                'email' => 'commerce@trustandmarket.com',
                                 'name' => 'Service Client'
                             ]
                         ],
@@ -196,7 +196,7 @@ class AbonnementController extends AbstractController
                 $data = [
                     'to' => [
                         [
-                            'email' => 'serviceclients@kbr-global.com',
+                            'email' => 'commerce@trustandmarket.com',
                             'name' => "Trust & Market",
                         ]
                     ],
@@ -618,7 +618,7 @@ class AbonnementController extends AbstractController
                     $data = [
                         'to' => [
                             [
-                                'email' => 'serviceclients@kbr-global.com',
+                                'email' => 'commerce@trustandmarket.com',
                                 'name' => "Trust & Market",
                             ]
                         ],
@@ -666,7 +666,7 @@ class AbonnementController extends AbstractController
                     ],
                     'bcc' => [
                         [
-                            'email' => 'serviceclients@kbr-global.com',
+                            'email' => 'commerce@trustandmarket.com',
                             'name' => "Trust & Market"
                         ]
                     ],
