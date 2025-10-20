@@ -1421,7 +1421,7 @@ class ProfileController extends AbstractController
                         'to' => array_unique($emailsVendeurs, SORT_REGULAR),
                         'bcc' => [
                             [
-                                'email' => 'serviceclients@kbr-global.com',
+                                'email' => 'commerce@trustandmarket.com',
                                 'name' => 'Trust & Market',
                             ]
                         ],
@@ -1458,7 +1458,7 @@ class ProfileController extends AbstractController
                         ],
                         'bcc' => [
                             [
-                                'email' => 'serviceclients@kbr-global.com',
+                                'email' => 'commerce@trustandmarket.com',
                                 'name' => 'Trust & Market',
                             ]
                         ],
@@ -1516,7 +1516,7 @@ class ProfileController extends AbstractController
                         ],
                         'bcc' => [
                             [
-                                'email' => 'serviceclients@kbr-global.com',
+                                'email' => 'commerce@trustandmarket.com',
                                 'name' => 'Trust & Market',
                             ]
                         ],
@@ -1563,7 +1563,7 @@ class ProfileController extends AbstractController
                         ],
                         'bcc' => [
                             [
-                                'email' => 'serviceclients@kbr-global.com',
+                                'email' => 'commerce@trustandmarket.com',
                                 'name' => 'Trust & Market',
                             ]
                         ],
@@ -1615,7 +1615,7 @@ class ProfileController extends AbstractController
                         'to' => array_unique($emailsVendeurs, SORT_REGULAR),
                         'bcc' => [
                             [
-                                'email' => 'serviceclients@kbr-global.com',
+                                'email' => 'commerce@trustandmarket.com',
                                 'name' => "Trust & Market"
                             ]
                         ],
@@ -1653,7 +1653,7 @@ class ProfileController extends AbstractController
                         ],
                         'bcc' => [
                             [
-                                'email' => 'serviceclients@kbr-global.com',
+                                'email' => 'commerce@trustandmarket.com',
                                 'name' => "Trust & Market"
                             ]
                         ],
@@ -3604,7 +3604,7 @@ class ProfileController extends AbstractController
                 ],
                 'bcc' => [
                     [
-                        'email' => 'serviceclients@kbr-global.com',
+                        'email' => 'commerce@trustandmarket.com',
                         'name' => "Trust & Market"
                     ]
                 ],
@@ -3888,7 +3888,7 @@ class ProfileController extends AbstractController
             ],
             'bcc' => [
                 [
-                    'email' => 'serviceclients@kbr-global.com',
+                    'email' => 'commerce@trustandmarket.com',
                     'name' => "Trust & Market"
                 ]
             ],
@@ -3991,7 +3991,7 @@ class ProfileController extends AbstractController
             $data = [
                 'to' => [
                     [
-                        'email' => "serviceclients@kbr-global.com",
+                        'email' => "commerce@trustandmarket.com",
                         'name' => "Trust & Market"
                     ]
                 ],
@@ -4097,7 +4097,7 @@ class ProfileController extends AbstractController
             $data = [
                 'to' => [
                     [
-                        'email' => "serviceclients@kbr-global.com",
+                        'email' => "commerce@trustandmarket.com",
                         'name' => "Trust & Market"
                     ]
                 ],
