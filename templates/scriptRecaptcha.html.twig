@@ -1,0 +1,10 @@
+<!-- recaptcha Conversations {literal} -->
+<script>
+  function onClick(e) {
+    e.preventDefault();
+    grecaptcha.enterprise.ready(async () => {
+      const token = await grecaptcha.enterprise.execute(GOOGLE_RECAPTCHA_SITE_KEY, {action: 'LOGIN'});
+    });
+  }
+</script>
+<!-- /recaptcha Conversations {/literal} -->
