@@ -93,7 +93,7 @@ class ExperienceController extends AbstractController
                         $data = [
                             'to' => [
                                 [
-                                    'email' => 'contact@kbr-global.com',
+                                    'email' => 'commerce@trustandmarket.com',
                                     'name' => "Trust & Market"
                                 ]
                             ],
@@ -186,7 +186,7 @@ class ExperienceController extends AbstractController
             $data = [
                 'to' => [
                     [
-                        'email' => 'contact@kbr-global.com',
+                        'email' => 'commerce@trustandmarket.com',
                         'name' => "Trust & Market"
                     ]
                 ],
