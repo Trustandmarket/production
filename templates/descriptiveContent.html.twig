@@ -199,7 +199,7 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="{{ asset('toastr/toastr.min.js') }}" async></script>
     <script src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}" async></script>
-    <script src="https://www.google.com/recaptcha/api.js?render=6LcNudwZAAAAAOo22kCqBlPfeSQHVV05TTIWy2I2"></script>
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfNfgksAAAAALEy05yLNaEbDYPSNKATSmD-pHtP"></script>
     {% include "partials/js/top_button.html.twig" %}
 
     <!-- Latest compiled and minified JavaScript -->
@@ -246,7 +246,7 @@
         });
 
         grecaptcha.ready(function () {
-            grecaptcha.execute('6LcNudwZAAAAAOo22kCqBlPfeSQHVV05TTIWy2I2', {action: 'homepage'}).then(function (token) {
+            grecaptcha.execute('6LfNfgksAAAAALEy05yLNaEbDYPSNKATSmD-pHtP', {action: 'homepage'}).then(function (token) {
                 document.getElementById("recaptchaResponse").value = token;
             });
         });
