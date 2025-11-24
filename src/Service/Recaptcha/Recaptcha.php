@@ -43,7 +43,7 @@ class Recaptcha
     ) : void {
         // Créez le client reCAPTCHA.
         // À FAIRE : mettre en cache le code de génération du client (recommandé) ou appeler client.close() avant de quitter la méthode.
-        //putenv("GOOGLE_APPLICATION_CREDENTIALS=" . __DIR__ . '/../../../trust-market/security_form.json');
+        putenv("GOOGLE_APPLICATION_CREDENTIALS=" . __DIR__ . '/../../../trust-market/security_form.json');
         $client = new RecaptchaEnterpriseServiceClient();
         $projectName = $client->projectName($project);
         //$result = ['response' => true, 'message' => '', 'code' => 200];
