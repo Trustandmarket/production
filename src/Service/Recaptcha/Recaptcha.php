@@ -17,16 +17,8 @@ use Google\Cloud\RecaptchaEnterprise\V1\TokenProperties\InvalidReason;
 use Symfony\Component\HttpFoundation\Response;
 use Google\Cloud\RecaptchaEnterprise\V1\CreateAssessmentRequest;
 
-/**
- * Class ServiceManager
- * @package App\Service
- */
 class Recaptcha
 {
-    public function __construct(
-    ) {
-    }
-
     /**
      * Créez une évaluation pour analyser le risque d'une action dans l'interface utilisateur.
      * @param string $recaptchaKey La clé reCAPTCHA associée au site ou à l'application
@@ -78,8 +70,10 @@ class Recaptcha
             // https://cloud.google.com/recaptcha-enterprise/docs/interpret-assessment
             printf('The score for the protection action is:');
             printf($response->getRiskAnalysis()->getScore());
-            } else {
-            printf('The action attribute in your reCAPTCHA tag does not match the action you are expecting to score');
+            } 
+            else 
+            {
+                printf('The action attribute in your reCAPTCHA tag does not match the action you are expecting to score');
             }
         } catch (exception $e) {
             printf('CreateAssessment() call failed with the following error: ');
@@ -88,3 +82,4 @@ class Recaptcha
     }
 
 }
+?>
