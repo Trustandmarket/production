@@ -1,85 +1,76 @@
 <?php
+require 'vendor/autoload.php';
 
-// src/Services/ServiceManager.php
-
-//Couche d'acces au données
-
-namespace App\Service\Recaptcha;
+// Inclure les dépendances Google Cloud à l'aide de Composer
+//namespace App\Service\Recaptcha;
 
 use App\Entity\Translation\WpPostsTranslation;
 use App\Entity\Translation\WpPostmetaTranslation;
 use App\Entity\Translation\WpTermsTranslation;
 use Exception;
-use Google\Cloud\RecaptchaEnterprise\V1\Assessment;
-use Google\Cloud\RecaptchaEnterprise\V1\Event;
-use Google\Cloud\RecaptchaEnterprise\V1\RecaptchaEnterpriseServiceClient;
 use Google\Cloud\RecaptchaEnterprise\V1\TokenProperties\InvalidReason;
 use Symfony\Component\HttpFoundation\Response;
+use Google\Cloud\RecaptchaEnterprise\V1\Client\RecaptchaEnterpriseServiceClient;
+use Google\Cloud\RecaptchaEnterprise\V1\Event;
+use Google\Cloud\RecaptchaEnterprise\V1\Assessment;
 use Google\Cloud\RecaptchaEnterprise\V1\CreateAssessmentRequest;
+use Google\Cloud\RecaptchaEnterprise\V1\TokenProperties\InvalidReason;
 
-class Recaptcha
-{
-    /**
-     * Créez une évaluation pour analyser le risque d'une action dans l'interface utilisateur.
-     * @param string $recaptchaKey La clé reCAPTCHA associée au site ou à l'application
-     * @param string $token Jeton généré auprès du client.
-     * @param string $project L'ID de votre projet Google Cloud.
-     * @param string $action Nom d'action correspondant au jeton.
-     * @throws Exception
-     */
-    function create_assessment(
-        string $recaptchaKey,
-        string $token,
-        string $project,
-        string $action
-    ) : void {
-        // Créez le client reCAPTCHA.
-        // À FAIRE : mettre en cache le code de génération du client (recommandé) ou appeler client.close() avant de quitter la méthode.
-        putenv("GOOGLE_APPLICATION_CREDENTIALS=" . __DIR__ . '/../../../trust-market/security_form.json');
-        $client = new RecaptchaEnterpriseServiceClient();
-        $projectName = $client->projectName($project);
-        //$result = ['response' => true, 'message' => '', 'code' => 200];
-        
-        // Définissez les propriétés de l'événement à suivre.
-        $event = (new Event())
-            ->setSiteKey($recaptchaKey)
-            ->setToken($token);
+/**
+  * Créez une évaluation pour analyser le risque d'une action dans l'interface utilisateur.
+  * @param string $recaptchaKey La clé reCAPTCHA associée au site ou à l'application
+  * @param string $token Jeton généré auprès du client.
+  * @param string $project L'ID de votre projet Google Cloud.
+  * @param string $action Nom d'action correspondant au jeton.
+  */
+function create_assessment(
+  string $recaptchaKey,
+  string $token,
+  string $project,
+  string $action
+): void {
+  // Créez le client reCAPTCHA.
+  // À FAIRE : mettre en cache le code de génération du client (recommandé) ou appeler client.close() avant de quitter la méthode.
+  $client = new RecaptchaEnterpriseServiceClient();
+  $projectName = $client->projectName($project);
 
-        // Créez la demande d'évaluation.
-        $assessment = (new Assessment())
-            ->setEvent($event);
+  // Définissez les propriétés de l'événement à suivre.
+  $event = (new Event())
+    ->setSiteKey($recaptchaKey)
+    ->setToken($token);
 
-         $request = (new CreateAssessmentRequest())
-            ->setParent($projectName)
-            ->setAssessment($assessment);
+  // Créez la demande d'évaluation.
+  $assessment = (new Assessment())
+    ->setEvent($event);
 
-        try {
-            $response = $client->createAssessment($request);
+  $request = (new CreateAssessmentRequest())
+  ->setParent($projectName)
+  ->setAssessment($assessment);
 
-            // Vérifiez si le jeton est valide.
-            if ($response->getTokenProperties()->getValid() == false) {
-            printf('The CreateAssessment() call failed because the token was invalid for the following reason: ');
-            printf(InvalidReason::name($response->getTokenProperties()->getInvalidReason()));
-            return;
-            }
+  try {
+    $response = $client->createAssessment($request);
 
-            // Vérifiez si l'action attendue a été exécutée.
-            if ($response->getTokenProperties()->getAction() == $action) {
-            // Obtenez le score de risques et le ou les motifs.
-            // Pour savoir comment interpréter l'évaluation, consultez les pages suivantes :
-            // https://cloud.google.com/recaptcha-enterprise/docs/interpret-assessment
-            printf('The score for the protection action is:');
-            printf($response->getRiskAnalysis()->getScore());
-            } 
-            else 
-            {
-                printf('The action attribute in your reCAPTCHA tag does not match the action you are expecting to score');
-            }
-        } catch (exception $e) {
-            printf('CreateAssessment() call failed with the following error: ');
-            printf($e);
-        }
+    // Vérifiez si le jeton est valide.
+    if ($response->getTokenProperties()->getValid() == false) {
+      printf('The CreateAssessment() call failed because the token was invalid for the following reason: ');
+      printf(InvalidReason::name($response->getTokenProperties()->getInvalidReason()));
+      return;
     }
 
+    // Vérifiez si l'action attendue a été exécutée.
+    if ($response->getTokenProperties()->getAction() == $action) {
+      // Obtenez le score de risques et le ou les motifs.
+      // Pour savoir comment interpréter l'évaluation, consultez les pages suivantes :
+      // https://cloud.google.com/recaptcha-enterprise/docs/interpret-assessment
+      printf('The score for the protection action is:');
+      printf($response->getRiskAnalysis()->getScore());
+    } else {
+      printf('The action attribute in your reCAPTCHA tag does not match the action you are expecting to score');
+    }
+  } catch (exception $e) {
+    printf('CreateAssessment() call failed with the following error: ');
+    printf($e);
+  }
 }
+
 ?>
