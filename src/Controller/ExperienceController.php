@@ -84,7 +84,7 @@ class ExperienceController extends AbstractController
      */
     public function sendCommentsEmails(Request $request, Recaptcha $recaptcha)
     {
-        $recaptcha = $recaptcha->create_assessment('6Ld5EEUpAAAAAOcwEkhPcx1fjKi0BUggL3jqUpPJ',$request->get('g-recaptcha-response'),'sym-trust-adresse','TRUST_CONTACT_US');
+        $recaptcha = $recaptcha->create_assessment('6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO',$request->get('g-recaptcha-response'),'sym-trust-adresse','TRUST_CONTACT_US');
         if($recaptcha['response']){
             $date = new DateTime();
             $response = "";
@@ -180,7 +180,7 @@ class ExperienceController extends AbstractController
      */
     public function feedbacks(Request $request, Recaptcha $recaptcha)
     {
-        $recaptcha = $recaptcha->create_assessment('6Ld5EEUpAAAAAOcwEkhPcx1fjKi0BUggL3jqUpPJ',$request->get('g-recaptcha-response'),'sym-trust-adresse','TRUST_FEEDBACKS');
+        $recaptcha = $recaptcha->create_assessment('6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO',$request->get('g-recaptcha-response'),'sym-trust-adresse','TRUST_FEEDBACKS');
         if($recaptcha['response']){
             // Prepare the data
             $data = [

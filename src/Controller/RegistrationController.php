@@ -53,7 +53,7 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $recaptcha = $recaptcha->create_assessment('6Ld5EEUpAAAAAOcwEkhPcx1fjKi0BUggL3jqUpPJ', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_REGISTER');
+            $recaptcha = $recaptcha->create_assessment('6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_REGISTER');
             if ($recaptcha['response']) {
                 $user->setPassword(
                     $userPasswordHasher->hashPassword(

@@ -71,7 +71,7 @@ class NewsletterController extends AbstractController
     #[Route('/{_locale}/newsletter/ajouter',name: 'newsletterUser', requirements: ['_locale' => 'fr'])]
     public function newsletterUser(Request $request, Recaptcha $recaptcha)
     {
-        $recaptcha = $recaptcha->create_assessment('6Ld5EEUpAAAAAOcwEkhPcx1fjKi0BUggL3jqUpPJ', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_NEWSLETTER');
+        $recaptcha = $recaptcha->create_assessment('6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_NEWSLETTER');
         if ($recaptcha['response']) {
 
             $email_exist = $this->entityManager->getRepository(Newsletter::class)->findOneBy(['email' => $request->get('email')]);
