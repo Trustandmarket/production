@@ -46,7 +46,7 @@ class Recaptcha
         putenv("GOOGLE_APPLICATION_CREDENTIALS=" . __DIR__ . '/../../../trust-market/security_form.json');
         $client = new RecaptchaEnterpriseServiceClient();
         $projectName = $client->projectName($project);
-        $result = ['response' => true, 'message' => '', 'code' => 200];
+        //$result = ['response' => true, 'message' => '', 'code' => 200];
         // Définissez les propriétés de l'événement à suivre.
         $event = (new Event())
             ->setSiteKey($recaptchaKey)
