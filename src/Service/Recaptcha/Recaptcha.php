@@ -39,7 +39,8 @@ class Recaptcha
         string $token,
         string $project,
         string $action
-    ) {
+    ) 
+    {
         // Créez le client reCAPTCHA.
         // À FAIRE : mettre en cache le code de génération du client (recommandé) ou appeler client.close() avant de quitter la méthode.
         putenv("GOOGLE_APPLICATION_CREDENTIALS=" . __DIR__ . '/../../../trust-market/security_form.json');
@@ -55,32 +56,33 @@ class Recaptcha
         $assessment = (new Assessment())
             ->setEvent($event);
 
+        $request = (new CreateAssessmentRequest())
+        ->setParent($projectName)
+        ->setAssessment($assessment);
+
         try {
-            $response = $client->createAssessment($projectName, $assessment);
+            $response = $client->createAssessment($request);
+
             // Vérifiez si le jeton est valide.
             if ($response->getTokenProperties()->getValid() == false) {
-/*                throw new \Exception('Un probleme est survenu: ' .
-                    InvalidReason::name($response->getTokenProperties()->getInvalidReason()), 400);*/
-                $result = ['response' => false, 'message' => 'Un probleme est survenu: Etes vous un humain?'
-                    /*InvalidReason::name($response->getTokenProperties()->getInvalidReason())*/, 'code' => 400];
-                return $result;
+            printf('The CreateAssessment() call failed because the token was invalid for the following reason: ');
+            printf(InvalidReason::name($response->getTokenProperties()->getInvalidReason()));
+            return;
             }
 
             // Vérifiez si l'action attendue a été exécutée.
             if ($response->getTokenProperties()->getAction() == $action) {
-                // Obtenez le score de risques et le ou les motifs.
-                // Pour savoir comment interpréter l'évaluation, consultez les pages suivantes :
-                // https://cloud.google.com/recaptcha-enterprise/docs/interpret-assessment
-                /*printf('The score for the protection action is:');
-                printf($response->getRiskAnalysis()->getScore());*/
+            // Obtenez le score de risques et le ou les motifs.
+            // Pour savoir comment interpréter l'évaluation, consultez les pages suivantes :
+            // https://cloud.google.com/recaptcha-enterprise/docs/interpret-assessment
+            printf('The score for the protection action is:');
+            printf($response->getRiskAnalysis()->getScore());
             } else {
-                //throw new \Exception('Le format de cette requette est invalide', 400);
-                $result = ['response' => false, 'message' => 'Le format de cette requette est invalide', 'code' => 400];
-                return $result;
+            printf('The action attribute in your reCAPTCHA tag does not match the action you are expecting to score');
             }
-            return $result;
         } catch (exception $e) {
-            return $result;
+            printf('CreateAssessment() call failed with the following error: ');
+            printf($e);
         }
     }
 
