@@ -40,7 +40,7 @@ class NewsletterController extends AbstractController
     }
 
     //#[Route('/{_locale}/newsletter', name: 'app_newsletter')]
-     return $this->redirectToRoute('home');
+     //return $this->redirectToRoute('home');
     public function index(): Response
     {
         return $this->render('newsletter/subscribe.html.twig', [
