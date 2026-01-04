@@ -62,7 +62,7 @@ class Recaptcha
                 /*throw new \Exception('Un probleme est survenu: ' .
                     InvalidReason::name($response->getTokenProperties()->getInvalidReason()), 400);*/
                 $result = ['response' => false, 'message' => 'Un probleme est survenu: Etes vous un humain?'
-                    InvalidReason::name($response->getTokenProperties()->getInvalidReason()), 'code' => 400];
+                    /*InvalidReason::name($response->getTokenProperties()->getInvalidReason())*/, 'code' => 400];
                 return $result;
             }
 
