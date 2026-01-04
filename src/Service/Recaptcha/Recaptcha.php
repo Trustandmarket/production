@@ -63,7 +63,7 @@ class Recaptcha
                 
                 printf('The CreateAssessment() call failed because the token was invalid for the following reason: ');
                 printf(InvalidReason::name($response->getTokenProperties()->getInvalidReason()));
-                return;
+                return $result;
             }
 
             // Vérifiez si l'action attendue a été exécutée.
@@ -73,6 +73,7 @@ class Recaptcha
                 // https://cloud.google.com/recaptcha-enterprise/docs/interpret-assessment
                 printf('The score for the protection action is:');
                 printf($response->getRiskAnalysis()->getScore());
+                return $result;
             } 
             else 
             {
@@ -83,7 +84,7 @@ class Recaptcha
         {
             printf('CreateAssessment() call failed with the following error: ');
             printf($e);
-            //return $result;
+            return $result;
         }
     }
 
