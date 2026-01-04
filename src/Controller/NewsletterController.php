@@ -53,7 +53,7 @@ class NewsletterController extends AbstractController
         ]);*/
     }
 
-    //#[Route('/{_locale}/newsletter/inscription-reussie', name: 'app_newsletter_success')]
+    #[Route('/{_locale}/newsletter/inscription-reussie', name: 'app_newsletter_success')]
     public function app_newsletter_success(): Response
     {
         return $this->render('newsletter/result.html.twig', [
@@ -70,7 +70,7 @@ class NewsletterController extends AbstractController
      * @param Recaptcha $recaptcha
      * @return Response
      */
-    //#[Route('/{_locale}/newsletter/ajouter',name: 'newsletterUser', requirements: ['_locale' => 'fr'])]
+    #[Route('/{_locale}/newsletter/ajouter',name: 'newsletterUser', requirements: ['_locale' => 'fr'])]
     public function newsletterUser(Request $request, Recaptcha $recaptcha)
     {
         $recaptcha = $recaptcha->create_assessment('6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_NEWSLETTER');
