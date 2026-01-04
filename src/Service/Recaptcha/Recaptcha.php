@@ -56,15 +56,15 @@ class Recaptcha
             ->setEvent($event);
 
         try {
-            $response = $client->createAssessment($projectName, $assessment);
+           // $response = $client->createAssessment($projectName, $assessment);
             // Vérifiez si le jeton est valide.
-            if ($response->getTokenProperties()->getValid() == false) {
+           // if ($response->getTokenProperties()->getValid() == false) {
                 /*throw new \Exception('Un probleme est survenu: ' .
                     InvalidReason::name($response->getTokenProperties()->getInvalidReason()), 400);*/
                // $result = ['response' => false, 'message' => 'Un probleme est survenu: Etes vous un humain?'
                     /*InvalidReason::name($response->getTokenProperties()->getInvalidReason()), 'code' => 400];*/
                // return $result;
-            }
+           // }
 
             // Vérifiez si l'action attendue a été exécutée.
             if ($response->getTokenProperties()->getAction() == $action) {
