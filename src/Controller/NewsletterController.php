@@ -40,7 +40,8 @@ class NewsletterController extends AbstractController
     }
 
     //#[Route('/{_locale}/newsletter', name: 'app_newsletter')]
-    @Route("/{_locale}", name="index", requirements={"_locale": "fr"})
+    #[Route('/{_locale}/index', name: '/fr')]
+    #Route["/{_locale}", name="index", requirements={"_locale": "fr"}]
      //return $this->redirectToRoute('home');
     public function index(): Response
     {
