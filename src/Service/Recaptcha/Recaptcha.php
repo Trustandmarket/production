@@ -59,7 +59,7 @@ class Recaptcha
             $response = $client->createAssessment($projectName, $assessment);
             // Vérifiez si le jeton est valide.
             if ($response->getTokenProperties()->getValid() == false) {
-/*                throw new \Exception('Un probleme est survenu: ' .
+                /*throw new \Exception('Un probleme est survenu: ' .
                     InvalidReason::name($response->getTokenProperties()->getInvalidReason()), 400);*/
                // $result = ['response' => false, 'message' => 'Un probleme est survenu: Etes vous un humain?'
                     /*InvalidReason::name($response->getTokenProperties()->getInvalidReason())*/, 'code' => 400];
