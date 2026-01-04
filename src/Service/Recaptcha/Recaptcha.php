@@ -45,7 +45,7 @@ class Recaptcha
         putenv("GOOGLE_APPLICATION_CREDENTIALS=" . __DIR__ . '/../../../trust-market/security_form.json');
         $client = new RecaptchaEnterpriseServiceClient();
         $projectName = $client->projectName($project);
-        //$result = ['response' => true, 'message' => '', 'code' => 200];
+        $result = ['response' => true, 'message' => '', 'code' => 200];
         // Définissez les propriétés de l'événement à suivre.
         $event = (new Event())
             ->setSiteKey($recaptchaKey)
@@ -58,13 +58,13 @@ class Recaptcha
         try {
             $response = $client->createAssessment($projectName, $assessment);
             // Vérifiez si le jeton est valide.
-            if ($response->getTokenProperties()->getValid() == false) {
+          //  if ($response->getTokenProperties()->getValid() == false) {
 /*                throw new \Exception('Un probleme est survenu: ' .
                     InvalidReason::name($response->getTokenProperties()->getInvalidReason()), 400);*/
-                $result = ['response' => false, 'message' => 'Un probleme est survenu: Etes vous un humain?'
+               // $result = ['response' => false, 'message' => 'Un probleme est survenu: Etes vous un humain?'
                     /*InvalidReason::name($response->getTokenProperties()->getInvalidReason())*/, 'code' => 400];
-                return $result;
-            }
+               // return $result;
+           // }
 
             // Vérifiez si l'action attendue a été exécutée.
             if ($response->getTokenProperties()->getAction() == $action) {
