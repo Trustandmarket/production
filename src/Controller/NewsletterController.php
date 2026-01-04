@@ -42,25 +42,27 @@ class NewsletterController extends AbstractController
     #[Route('/{_locale}/newsletter', name: 'app_newsletter')]
     public function index(): Response
     {
-        return $this->render('newsletter/subscribe.html.twig', [
+        /*return $this->render('newsletter/subscribe.html.twig', [
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'pageName' => 'Newsletter',
-        ]);
+        ]);*/
+        return $this->redirect('/fr', 301);
     }
 
     #[Route('/{_locale}/newsletter/inscription-reussie', name: 'app_newsletter_success')]
     public function app_newsletter_success(): Response
     {
-        return $this->render('newsletter/result.html.twig', [
+        /*return $this->render('newsletter/result.html.twig', [
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'pageName' => 'Newsletter',
-        ]);
+        ]);*/
+        return $this->redirect('/fr', 301);
     }
 
     /**
