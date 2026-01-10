@@ -37,6 +37,8 @@ class SouscriptionController extends AbstractController
     #[Route('/{_locale}/souscription', name: 'app_souscription')]
     public function index(): Response
     {
+        return $this->redirect('/fr', 301);
+        
         $abonnement = $this->entityManager->getRepository(Abonnement::class)
             ->findAbonnementByUser($this->getUser());
         $offres = $this->entityManager->getRepository(OffreInterne::class)->findBy(array(), array('tarif' => 'ASC'));
