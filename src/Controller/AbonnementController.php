@@ -42,6 +42,8 @@ class AbonnementController extends AbstractController
     #[Route('/{_locale}/abonnement/{page<\d+>}', name: 'app_abonnement')]
     public function index(Request $request, int $page = 1): Response
     {
+        return $this->redirect('/fr', 301);
+        
         if (in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles()) || in_array('ROLE_SOCIETE', $this->getUser()->getRoles())) {
             if ($request->get("transactionId")) {
                 $abonnement = $this->entityManager->getRepository(Abonnement::class)->find($request->get("abonnement_id"));
