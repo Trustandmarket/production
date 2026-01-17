@@ -46,7 +46,7 @@
 
     </script>
     {# END JSON LD #}
-    <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+      <script src=URL_GOOGLE_API></script>
 {% endblock %}
 	{% block title %}Trust &amp; Market |{{ include('Seo/Meta/title.html.twig', {code: 'nous-contacter'}) }}{% endblock %}
 {% block style %}
@@ -149,9 +149,16 @@
                                               required></textarea>
                                 </div>
                             </div>
-                            <div class="g-recaptcha" margin="0 auto"
-                                 data-sitekey="6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO"
-                                 data-action="TRUST_CONTACT_US"></div>
+                            
+                            <script>
+                            function onClick(e) {
+                                e.preventDefault();
+                                grecaptcha.enterprise.ready(async () => {
+                                const token = await grecaptcha.enterprise.execute(GOOGLE_RECAPTCHA_SITE_KEY, {action: 'TRUST_CONTACT_US'});
+                                });
+                            }
+                            </script>
+
                             <br/>
                             <div class="form-group">
                                 <div class="col-sm-10">
