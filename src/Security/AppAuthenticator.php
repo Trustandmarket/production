@@ -52,7 +52,7 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
     {
         $emailCanonical = $request->request->get('email_canonical', '');
         if($this->params->get('environnement') == 'rec' || $this->params->get('environnement') == 'prod'){
-            $recaptcha = $this->recaptcha->create_assessment('6LfD3E0sAAAAAJo0gI977pMBGmkirM5KwaOnSA7u', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_LOGIN');
+            $recaptcha = $this->recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_LOGIN');
             $this->requestStack->getSession()->set(Security::LAST_USERNAME, $emailCanonical);
             if($recaptcha['response']){
                 return new Passport(
