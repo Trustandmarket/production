@@ -84,7 +84,8 @@ class ExperienceController extends AbstractController
      */
     public function sendCommentsEmails(Request $request, Recaptcha $recaptcha)
     {
-        $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O',$request->get('g-recaptcha-response'),'sym-trust-adresse','TRUST_CONTACT_US');
+        //$recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O',$request->get('g-recaptcha-response'),'sym-trust-adresse','TRUST_CONTACT_US');
+        $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O',$request->grecaptcha.enterprise.execute(),'sym-trust-adresse','TRUST_CONTACT_US');
         if($recaptcha['response']){
             $date = new DateTime();
             $response = "";
