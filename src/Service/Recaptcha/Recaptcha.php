@@ -58,6 +58,12 @@ class Recaptcha
         try 
         {
             $response = $client->createAssessment($projectName, $assessment);
+
+            //Vérifier si le Captcha a été utilisé ou pas (éliminer les bots) 
+            if(empty($response['g-recaptcha-response'])){
+                die("Captcha manquant");
+            }
+
             // Vérifiez si le jeton est valide.
             if ($response->getTokenProperties()->getValid() == false) {
                 
