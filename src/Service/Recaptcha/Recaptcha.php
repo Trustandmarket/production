@@ -83,7 +83,7 @@ class Recaptcha
                 return $result;
             } 
             // On vérifie le hostname
-            $allowedHosts = ['trustandmarket.com','www.trustandmarket.com'];
+            $allowedHosts = ['trustandmarket.com','www.trustandmarket.com','rec.trustandmarket.com'];
             if (!in_array($tokenProps->getHostname(), $allowedHosts)) {
                 return $result;
             }
