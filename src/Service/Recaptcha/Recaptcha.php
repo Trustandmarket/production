@@ -13,8 +13,6 @@ use Exception;
 use Google\Cloud\RecaptchaEnterprise\V1\Assessment;
 use Google\Cloud\RecaptchaEnterprise\V1\Event;
 use Google\Cloud\RecaptchaEnterprise\V1\RecaptchaEnterpriseServiceClient;
-use Google\Cloud\RecaptchaEnterprise\V1\CreateAssessmentRequest;
-use Google\Cloud\RecaptchaEnterprise\V1\createAssessment;
 use Google\Cloud\RecaptchaEnterprise\V1\TokenProperties\InvalidReason;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,13 +55,9 @@ class Recaptcha
         $assessment = (new Assessment())
             ->setEvent($event);
 
-        $request = (new CreateAssessmentRequest())
-         ->setParent($projectName)
-         ->setAssessment($assessment);
-
         try 
         {
-            $response = $client->createAssessment($request);
+            $response = $client->createAssessment($projectName,$assessment);
             
             //Vérifier si le Captcha a été utilisé ou pas (éliminer les bots) 
             if(empty($token['g-recaptcha-response'])){
