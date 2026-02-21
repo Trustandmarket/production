@@ -61,7 +61,7 @@ class Recaptcha
 
         try 
         {
-            $response = $client->createAssessment($request);
+            $response = $client->CreateAssessment($request);
             
             //Vérifier si le Captcha a été utilisé ou pas (éliminer les bots) 
             if(empty($token['g-recaptcha-response'])){
