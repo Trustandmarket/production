@@ -59,13 +59,6 @@ class Recaptcha
         {
             $response = $client->createAssessment($projectName,$assessment);
             
-            //On vérifie le host pour éliminer les bots 
-            $host = $_SERVER['HTTP_HOST'];
-            $allowed = ['trustandmarket.com', 'www.trustandmarket.com'];
-            if (!in_array($host, $allowed)) {
-                die('Host serveur invalide');
-            }
-
             // Vérifiez si le jeton est valide.
             if ($response->getTokenProperties()->getValid() == false) {
                 
