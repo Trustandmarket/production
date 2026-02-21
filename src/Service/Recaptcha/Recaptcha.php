@@ -88,11 +88,8 @@ class Recaptcha
                 return $result;
             }
             // Anti replay (token < 2 min)
-            $createTime = $tokenProps->getCreateTime();
-            $timestamp = is_object($createTime)
-                         ? $createTime->getTimestamp()
-                         : strtotime($createTime);
-            if (time() - $timestamp > 120) {
+            $createTime = strtotime($tokenProps->getCreateTime());
+            if (time() - $createTime > 120) {
                return $result;
             }
             //Contrôle du score 
