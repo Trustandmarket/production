@@ -60,7 +60,7 @@ class Recaptcha
             $response = $client->createAssessment($projectName,$assessment);
             //Contrôle du score 
             $score = $response->getRiskAnalysis()->getScore();
-            if ($score === false || $score < 0.7) {
+            if ($score === false || $score < 0.5) {
                 die('Bot détecté (score faible)');
             }
             //On vérifie le host pour renforcer l'élimination des bots
