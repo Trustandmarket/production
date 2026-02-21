@@ -45,7 +45,7 @@ class Recaptcha
         putenv("GOOGLE_APPLICATION_CREDENTIALS=" . __DIR__ . '/../../../trust-market/security_form.json');
         $client = new RecaptchaEnterpriseServiceClient();
         $projectName = $client->projectName($project);
-        $result = ['response' => true, 'message' => '', 'code' => 200];
+        $result = ['response' => false, 'message' => 'Captcha invalide', 'code' => 403];
         // Définissez les propriétés de l'événement à suivre.
         $event = (new Event())
             ->setSiteKey($recaptchaKey)
@@ -60,14 +60,12 @@ class Recaptcha
             $response = $client->createAssessment($projectName,$assessment);
             //Contrôle du score 
             $score = $response->getRiskAnalysis()->getScore();
-            if ($score === false || $score < 0.5) {
-                die('Bot détecté (score faible)');
+            if ($score < 0.7) {
+                return $result;
             }
             //On vérifie le host pour renforcer l'élimination des bots
-            $host = $_SERVER['HTTP_HOST'];
-            $allowed = ['trustandmarket.com', 'www.trustandmarket.com'];
-            if (!in_array($host, $allowed)) {
-                die('Host serveur invalide');
+            if ($response->getTokenProperties()->getHostname() !== 'trustandmarket.com') {
+                return $result;
             }
             // Vérifiez si le jeton est valide.
             if ($response->getTokenProperties()->getValid() == false) {
@@ -84,7 +82,7 @@ class Recaptcha
                 // https://cloud.google.com/recaptcha-enterprise/docs/interpret-assessment
                 printf('The score for the protection action is:');
                 printf($response->getRiskAnalysis()->getScore());
-                return $result;
+                 return ['response' => true, 'message' => 'OK', 'code' => 200];
             } 
             else 
             {
