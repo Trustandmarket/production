@@ -79,7 +79,7 @@ class Recaptcha
                 return $result;
             }
             // Vérifiez si l'action attendue a été exécutée.
-            if ($response->getTokenProperties()->getAction() != $action) {
+            if ($response->getTokenProperties()->getAction() !== $action) {
                 return $result;
             } 
             // On vérifie le hostname
