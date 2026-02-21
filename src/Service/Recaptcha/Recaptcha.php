@@ -88,10 +88,10 @@ class Recaptcha
                 return $result;
             }
             // Anti replay (token < 2 min)
-            $createTime = strtotime($tokenProps->getCreateTime());
-            if (time() - $createTime > 120) {
-                return $result;
-            }
+           // $createTime = strtotime($tokenProps->getCreateTime());
+            //if (time() - $createTime > 120) {
+             //   return $result;
+            //}
             //Contrôle du score 
             $score = $response->getRiskAnalysis()->getScore();
             if ($score < 0.7) {
