@@ -61,8 +61,8 @@ class Recaptcha
         // Définissez les propriétés de l'événement à suivre.
         $event = (new Event())
             ->setSiteKey($recaptchaKey)
-            ->setToken($token);
-            //->setUserIpAddress(getRealIP()); // LIAISON IP
+            ->setToken($token)
+            ->setUserIpAddress(getRealIP()); // LIAISON IP
         
         // Créez la demande d'évaluation.
         $assessment = (new Assessment())
