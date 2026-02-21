@@ -59,9 +59,11 @@ class Recaptcha
         {
             $response = $client->createAssessment($projectName,$assessment);
             
-            //Vérifier si le Captcha a été utilisé ou pas (éliminer les bots) 
-            if(empty($token['g-recaptcha-response'])){
-                die("Captcha manquant");
+            //On vérifie le host pour éliminer les bots 
+            $host = $_SERVER['HTTP_HOST'];
+            $allowed = ['trustandmarket.com', 'www.trustandmarket.com'];
+            if (!in_array($host, $allowed)) {
+                die('Host serveur invalide');
             }
 
             // Vérifiez si le jeton est valide.
@@ -69,7 +71,7 @@ class Recaptcha
                 
                 printf('The CreateAssessment() call failed because the token was invalid for the following reason: ');
                 printf(InvalidReason::name($response->getTokenProperties()->getInvalidReason()));
-                return $result;
+                return false;
             }
 
             // Vérifiez si l'action attendue a été exécutée.
@@ -84,13 +86,14 @@ class Recaptcha
             else 
             {
                 printf('The action attribute in your reCAPTCHA tag does not match the action you are expecting to score');
+                return false;
             }
 
         } catch (exception $e) 
         {
             printf('CreateAssessment() call failed with the following error: ');
             printf($e);
-            return $result;
+            return false;
         }
     }
 
