@@ -46,12 +46,8 @@ class Recaptcha
         return $_SERVER['REMOTE_ADDR'];
     }
     // Fonction pour l'évaluation
-    function create_assessment(
-        string $recaptchaKey,
-        string $token,
-        string $project,
-        string $action
-    ) {
+    function create_assessment(string $recaptchaKey,string $token,string $project,string $action) 
+    {
         // Créez le client reCAPTCHA.
         // À FAIRE : mettre en cache le code de génération du client (recommandé) ou appeler client.close() avant de quitter la méthode.
         putenv("GOOGLE_APPLICATION_CREDENTIALS=" . __DIR__ . '/../../../trust-market/security_form.json');
