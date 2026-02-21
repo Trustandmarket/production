@@ -83,10 +83,10 @@ class Recaptcha
                 return $result;
             } 
             // On vérifie le hostname
-            //$allowedHosts = ['trustandmarket.com','www.trustandmarket.com','rec.trustandmarket.com'];
-            //if (!in_array($tokenProps->getHostname(), $allowedHosts)) {
-              //  return $result;
-            //}
+            $allowedHosts = ['trustandmarket.com','www.trustandmarket.com','rec.trustandmarket.com'];
+            if (!in_array($tokenProps->getHostname(), $allowedHosts)) {
+                return $result;
+            }
             // Anti replay (token < 2 min)
             $createTime = strtotime($tokenProps->getCreateTime());
             if (time() - $createTime > 120) {
