@@ -58,7 +58,17 @@ class Recaptcha
         try 
         {
             $response = $client->createAssessment($projectName,$assessment);
-            
+            //Contrôle du score 
+            $score = $response->getRiskAnalysis()->getScore();
+            if ($score === false || $score < 0.7) {
+                die('Bot détecté (score faible)');
+            }
+            //On vérifie le host pour renforcer l'élimination des bots
+            $host = $_SERVER['HTTP_HOST'];
+            $allowed = ['trustandmarket.com', 'www.trustandmarket.com'];
+            if (!in_array($host, $allowed)) {
+                die('Host serveur invalide');
+            }
             // Vérifiez si le jeton est valide.
             if ($response->getTokenProperties()->getValid() == false) {
                 
