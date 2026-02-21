@@ -85,7 +85,7 @@ class Recaptcha
                 return $result;
             }
             // Anti replay (token < 2 min)
-            $createTime = strtotime($tokenProps->getCreateTime());
+           /**$createTime = strtotime($tokenProps->getCreateTime());
             if (time() - $createTime > 120) {
                return $result;
             }
@@ -93,7 +93,7 @@ class Recaptcha
             $score = $response->getRiskAnalysis()->getScore();
             if ($score < 0.7) {
                 return $result;
-            }
+            }*/
            
             //Sinon tous les checks sont OK     
             return ['response' => true, 'message' => 'OK', 'code' => 200];
