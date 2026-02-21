@@ -61,8 +61,8 @@ class Recaptcha
         // Définissez les propriétés de l'événement à suivre.
         $event = (new Event())
             ->setSiteKey($recaptchaKey)
-            ->setToken($token);
-            //->setUserIpAddress(getRealIP()); // LIAISON IP
+            ->setToken($token)
+            ->setUserIpAddress(getRealIP()); // LIAISON IP
         
         // Créez la demande d'évaluation.
         $assessment = (new Assessment())
@@ -75,11 +75,11 @@ class Recaptcha
             $tokenProps = $response->getTokenProperties();
                              
             // Vérifier la validité du token
-            if ($response->getTokenProperties()->getValid() == false) {
+            if (!$tokenProps->getValid()) {
                 return $result;
             }
             // Vérifiez si l'action attendue a été exécutée.
-            if ($response->getTokenProperties()->getAction() !== $action) {
+            if ($tokenProps->getAction() !== $action) {
                 return $result;
             } 
             // On vérifie le hostname
