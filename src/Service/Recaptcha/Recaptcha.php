@@ -54,42 +54,37 @@ class Recaptcha
         // Créez la demande d'évaluation.
         $assessment = (new Assessment())
             ->setEvent($event);
-
+        
         try 
         {
             $response = $client->createAssessment($projectName,$assessment);
+            //Recupération des propriétés du token
+            $tokenProps = $response->getTokenProperties();
+                             
+            // Vérifier la validité du token
+            if ($response->getTokenProperties()->getValid() == false) {
+                printf('The CreateAssessment() call failed because the token was invalid for the following reason: ');
+                printf(InvalidReason::name($response->getTokenProperties()->getInvalidReason()));
+                return $result;
+            }
+            // Vérifiez si l'action attendue a été exécutée.
+            if ($response->getTokenProperties()->getAction() != $action) {
+                printf('The action attribute in your reCAPTCHA tag does not match the action you are expecting to score');
+                return $result;
+            } 
+            // On vérifie le hostname
+            $allowedHosts = ['trustandmarket.com','www.trustandmarket.com'];
+            if (!in_array($tokenProps->getHostname(), $allowedHosts)) {
+                return $result;
+            }
             //Contrôle du score 
             $score = $response->getRiskAnalysis()->getScore();
             if ($score < 0.7) {
                 return $result;
             }
-            //On vérifie le host pour renforcer l'élimination des bots
-            if ($response->getTokenProperties()->getHostname() !== 'trustandmarket.com') {
-                return $result;
-            }
-            // Vérifiez si le jeton est valide.
-            if ($response->getTokenProperties()->getValid() == false) {
-                
-                printf('The CreateAssessment() call failed because the token was invalid for the following reason: ');
-                printf(InvalidReason::name($response->getTokenProperties()->getInvalidReason()));
-                return $result;
-            }
-
-            // Vérifiez si l'action attendue a été exécutée.
-            if ($response->getTokenProperties()->getAction() == $action) {
-                // Obtenez le score de risques et le ou les motifs.
-                // Pour savoir comment interpréter l'évaluation, consultez les pages suivantes :
-                // https://cloud.google.com/recaptcha-enterprise/docs/interpret-assessment
-                printf('The score for the protection action is:');
-                printf($response->getRiskAnalysis()->getScore());
-                 return ['response' => true, 'message' => 'OK', 'code' => 200];
-            } 
-            else 
-            {
-                printf('The action attribute in your reCAPTCHA tag does not match the action you are expecting to score');
-                return $result;
-            }
-
+            //Sinon tous les checks sont OK     
+            return ['response' => true, 'message' => 'OK', 'code' => 200];
+          
         } catch (exception $e) 
         {
             printf('CreateAssessment() call failed with the following error: ');
