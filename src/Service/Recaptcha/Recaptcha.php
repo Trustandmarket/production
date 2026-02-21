@@ -35,7 +35,7 @@ class Recaptcha
      * @throws Exception
      */
     // Fonction pour récupérer l'IP de provenance
-    /**function getRealIP() 
+    function getRealIP() 
     {
         if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
             return $_SERVER['HTTP_CF_CONNECTING_IP'];
@@ -44,7 +44,7 @@ class Recaptcha
             return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
         }
         return $_SERVER['REMOTE_ADDR'];
-    }*/
+    }
     // Fonction pour l'évaluation
     function create_assessment(
         string $recaptchaKey,
@@ -75,7 +75,7 @@ class Recaptcha
             $tokenProps = $response->getTokenProperties();
                              
             // Vérifier la validité du token
-            if ($response->getTokenProperties()->getValid() == false) {
+            if (!$tokenProps->getValid()) {
                 return $result;
             }
            
