@@ -76,7 +76,7 @@ class Recaptcha
             }
 
             // Vérifiez si l'action attendue a été exécutée.
-            /**if ($tokenProps->getAction() !== $action) {
+            if ($tokenProps->getAction() !== $action) {
                 return $result;
             } 
             // On vérifie le hostname
@@ -93,7 +93,7 @@ class Recaptcha
             $score = $response->getRiskAnalysis()->getScore();
             if ($score < 0.7) {
                 return $result;
-            }*/
+            }
            
             //Sinon tous les checks sont OK     
             return ['response' => true, 'message' => 'OK', 'code' => 200];
