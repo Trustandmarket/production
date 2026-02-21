@@ -55,9 +55,13 @@ class Recaptcha
         $assessment = (new Assessment())
             ->setEvent($event);
 
+        $request = (new CreateAssessmentRequest())
+         ->setParent($projectName)
+         ->setAssessment($assessment);
+
         try 
         {
-            $response = $client->createAssessment($projectName, $assessment);
+            $response = $client->createAssessment($request);
 
             //Vérifier si le Captcha a été utilisé ou pas (éliminer les bots) 
             if(empty($token['g-recaptcha-response'])){
