@@ -34,6 +34,18 @@ class Recaptcha
      * @param string $action Nom d'action correspondant au jeton.
      * @throws Exception
      */
+    // Fonction pour récupérer l'IP de provenance
+    function getRealIP() 
+    {
+        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            return $_SERVER['HTTP_CF_CONNECTING_IP'];
+        }
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+        }
+        return $_SERVER['REMOTE_ADDR'];
+    }
+    // Fonction pour l'évaluation
     function create_assessment(
         string $recaptchaKey,
         string $token,
@@ -49,8 +61,9 @@ class Recaptcha
         // Définissez les propriétés de l'événement à suivre.
         $event = (new Event())
             ->setSiteKey($recaptchaKey)
-            ->setToken($token);
-
+            ->setToken($token)
+            ->setUserIpAddress(getRealIP()); // LIAISON IP
+        
         // Créez la demande d'évaluation.
         $assessment = (new Assessment())
             ->setEvent($event);
@@ -63,18 +76,20 @@ class Recaptcha
                              
             // Vérifier la validité du token
             if ($response->getTokenProperties()->getValid() == false) {
-                printf('The CreateAssessment() call failed because the token was invalid for the following reason: ');
-                printf(InvalidReason::name($response->getTokenProperties()->getInvalidReason()));
                 return $result;
             }
             // Vérifiez si l'action attendue a été exécutée.
             if ($response->getTokenProperties()->getAction() != $action) {
-                printf('The action attribute in your reCAPTCHA tag does not match the action you are expecting to score');
                 return $result;
             } 
             // On vérifie le hostname
             $allowedHosts = ['trustandmarket.com','www.trustandmarket.com'];
             if (!in_array($tokenProps->getHostname(), $allowedHosts)) {
+                return $result;
+            }
+            // Anti replay (token < 2 min)
+            $createTime = strtotime($tokenProps->getCreateTime());
+            if (time() - $createTime > 120) {
                 return $result;
             }
             //Contrôle du score 
@@ -87,8 +102,6 @@ class Recaptcha
           
         } catch (exception $e) 
         {
-            printf('CreateAssessment() call failed with the following error: ');
-            printf($e);
             return $result;
         }
     }
