@@ -85,24 +85,14 @@ class Recaptcha
                 return $result;
             }
             // Anti replay (token < 2 min)
-            $createTime = $tokenProps->getCreateTime()->getSeconds();
-            $score = $response->getRiskAnalysis()->getScore();
-            echo "<pre>";
-            echo "VALID: " . ($tokenProps->getValid() ? 'OK' : 'NO') . "\n";
-            echo "ACTION: " . $tokenProps->getAction() . "\n";
-            echo "HOSTNAME: " . $tokenProps->getHostname() . "\n";
-            echo "SCORE: " . $score . "\n";
-            echo "TIME DIFF: " . (time() - $createTime) . "\n";
-            echo "</pre>";
-            die();
-            
+            $createTime = $tokenProps->getCreateTime()->getSeconds();            
             if (time() - $createTime > 120) {
                return $result;
             }
 
-            //Contrôle du score 
+            //Contrôle du score : il faudra adapter le seuil par action
            $score = $response->getRiskAnalysis()->getScore();
-            if ($score < 0.7) {
+            if ($score < 0.5) {
                 return $result;
             }
            
