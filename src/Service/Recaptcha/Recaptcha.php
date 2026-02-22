@@ -66,10 +66,13 @@ class Recaptcha
             ->setSiteKey($recaptchaKey)
             ->setToken($token);
         $ip = getRealIP();
-        if ($ip && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) 
-        {
-            $event->setUserIpAddress($ip);
-        }
+        echo "<pre>";
+        echo "IP envoyée : " . $ip . "\n";
+        echo "REMOTE_ADDR : " . ($_SERVER['REMOTE_ADDR'] ?? 'none') . "\n";
+        echo "CF_CONNECTING_IP : " . ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? 'none') . "\n";
+        echo "X_FORWARDED_FOR : " . ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? 'none') . "\n";
+        echo "</pre>";
+        die();
                 
         // Créez la demande d'évaluation.
         $assessment = (new Assessment())
