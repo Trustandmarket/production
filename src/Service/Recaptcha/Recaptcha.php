@@ -86,6 +86,18 @@ class Recaptcha
             }
             // Anti replay (token < 2 min)
             $createTime = $tokenProps->getCreateTime()->getSeconds();
+            $now = time();
+            $diff = $now - $createTime;
+
+            echo "<pre>";
+            echo "now(time())      = $now\n";
+            echo "createTime(sec)  = $createTime\n";
+            echo "diff(seconds)    = $diff\n";
+            echo "UTC now          = " . gmdate('c', $now) . "\n";
+            echo "UTC createTime   = " . gmdate('c', $createTime) . "\n";
+            echo "</pre>";
+            die();
+            
             if (time() - $createTime > 120) {
                return $result;
             }
