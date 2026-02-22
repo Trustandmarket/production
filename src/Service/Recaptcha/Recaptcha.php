@@ -69,11 +69,7 @@ class Recaptcha
             $response = $client->createAssessment($projectName,$assessment);
             //Recupération des propriétés du token
             $tokenProps = $response->getTokenProperties();
-            echo '<pre>';
-            var_dump($tokenProps->getCreateTime());
-            echo '</pre>';
-            die();
-                             
+                                         
             // Vérifier la validité du token
             if (!$tokenProps->getValid()) {
                 return $result;
@@ -89,7 +85,7 @@ class Recaptcha
                 return $result;
             }
             // Anti replay (token < 2 min)
-            $createTime = strtotime($tokenProps->getCreateTime());
+            $createTime = $tokenProps->getCreateTime()->getSeconds();
             if (time() - $createTime > 120) {
                return $result;
             }
