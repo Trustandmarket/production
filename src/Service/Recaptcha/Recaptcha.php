@@ -40,7 +40,7 @@ class Recaptcha
          if (!empty($_SERVER['HTTP_CF_CONNECTING_IP']) &&
         filter_var($_SERVER['HTTP_CF_CONNECTING_IP'], FILTER_VALIDATE_IP)) 
         {
-        return $_SERVER['HTTP_CF_CONNECTING_IP'];
+            return $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
 
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) 
@@ -56,7 +56,11 @@ class Recaptcha
                 }
             }
         }
-        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (!empty($_SERVER['REMOTE_ADDR'])) 
+        {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+        return '0.0.0.0';
     }
     // Fonction pour l'évaluation
     function create_assessment(string $recaptchaKey,string $token,string $project,string $action) 
