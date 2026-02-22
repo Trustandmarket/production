@@ -64,8 +64,8 @@ class Recaptcha
         // Définissez les propriétés de l'événement à suivre.
         $event = (new Event())
             ->setSiteKey($recaptchaKey)
-            ->setToken($token)
-            ->setUserIpAddress(getRealIP());
+            ->setToken($token);
+            //->setUserIpAddress(getRealIP());
         
         // Créez la demande d'évaluation.
         $assessment = (new Assessment())
@@ -73,15 +73,6 @@ class Recaptcha
         
         try 
         {
-            $ip = getRealIP();
-            echo "<pre>";
-            echo "getRealIP() = " . $ip . "\n";
-            echo "REMOTE_ADDR = " . ($_SERVER['REMOTE_ADDR'] ?? '') . "\n";
-            echo "CF_CONNECTING_IP = " . ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? '') . "\n";
-            echo "X_FORWARDED_FOR = " . ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '') . "\n";
-            echo "is_valid_ip = " . (filter_var($ip, FILTER_VALIDATE_IP) ? 'YES' : 'NO') . "\n";
-            echo "</pre>";
-            die();
             $response = $client->createAssessment($projectName,$assessment);
             //Recupération des propriétés du token
             $tokenProps = $response->getTokenProperties();
