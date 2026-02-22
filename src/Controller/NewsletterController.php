@@ -49,7 +49,7 @@ class NewsletterController extends AbstractController
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'pageName' => 'Newsletter',
         ]);
-        //return $this->redirect('/fr', 301);
+        /*return $this->redirect('/fr', 301);*/
     }
 
     #[Route('/{_locale}/newsletter/inscription-reussie', name: 'app_newsletter_success')]
@@ -62,7 +62,7 @@ class NewsletterController extends AbstractController
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'pageName' => 'Newsletter',
         ]);
-        //return $this->redirect('/fr', 301);
+        /*return $this->redirect('/fr', 301);*/
     }
 
     /**
