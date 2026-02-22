@@ -95,7 +95,7 @@ class Recaptcha
             }
             // Anti replay (token < 2 min)
             $createTime = $tokenProps->getCreateTime()->getSeconds();            
-            if (time() - $createTime > 120) {
+            if (time() - $createTime > 300) {
                return $result;
             }
 
