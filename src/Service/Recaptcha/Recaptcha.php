@@ -65,15 +65,8 @@ class Recaptcha
         $event = (new Event())
             ->setSiteKey($recaptchaKey)
             ->setToken($token);
-        $ip = getRealIP();
-        echo "<pre>";
-        echo "IP envoyée : " . $ip . "\n";
-        echo "REMOTE_ADDR : " . ($_SERVER['REMOTE_ADDR'] ?? 'none') . "\n";
-        echo "CF_CONNECTING_IP : " . ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? 'none') . "\n";
-        echo "X_FORWARDED_FOR : " . ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? 'none') . "\n";
-        echo "</pre>";
-        die();
-                
+            ->setUserIpAddress(this->getRealIP());
+        
         // Créez la demande d'évaluation.
         $assessment = (new Assessment())
             ->setEvent($event);
