@@ -37,13 +37,28 @@ class Recaptcha
     // Fonction pour récupérer l'IP de provenance
     function getRealIP() 
     {
-        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-            return $_SERVER['HTTP_CF_CONNECTING_IP'];
+         if (!empty($_SERVER['HTTP_CF_CONNECTING_IP']) &&
+        filter_var($_SERVER['HTTP_CF_CONNECTING_IP'], FILTER_VALIDATE_IP)) 
+        {
+        return $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) 
+        {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            foreach ($ips as $ip) 
+            {
+                $ip = trim($ip);
+                if (filter_var($ip, FILTER_VALIDATE_IP,
+                    FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) 
+                {
+                    return $ip;
+                }
+            }
         }
-        return $_SERVER['REMOTE_ADDR'];
+    }
+
+    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
     // Fonction pour l'évaluation
     function create_assessment(string $recaptchaKey,string $token,string $project,string $action) 
@@ -57,8 +72,8 @@ class Recaptcha
         // Définissez les propriétés de l'événement à suivre.
         $event = (new Event())
             ->setSiteKey($recaptchaKey)
-            ->setToken($token);
-            //->setUserIpAddress(getRealIP());
+            ->setToken($token)
+            ->setUserIpAddress(getRealIP());
         
         // Créez la demande d'évaluation.
         $assessment = (new Assessment())
