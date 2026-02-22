@@ -35,31 +35,21 @@ class Recaptcha
      * @throws Exception
      */
     // Fonction pour récupérer l'IP de provenance
-    function getRealIP() 
+    function getRealIP()
     {
-         if (!empty($_SERVER['HTTP_CF_CONNECTING_IP']) &&
-        filter_var($_SERVER['HTTP_CF_CONNECTING_IP'], FILTER_VALIDATE_IP)) 
-        {
+        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
             return $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
 
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) 
-        {
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            foreach ($ips as $ip) 
-            {
-                $ip = trim($ip);
-                if (filter_var($ip, FILTER_VALIDATE_IP,
-                    FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) 
-                {
-                    return $ip;
-                }
-            }
+            return trim($ips[0]);
         }
-        if (!empty($_SERVER['REMOTE_ADDR'])) 
-        {
+
+        if (!empty($_SERVER['REMOTE_ADDR'])) {
             return $_SERVER['REMOTE_ADDR'];
         }
+
         return '0.0.0.0';
     }
     // Fonction pour l'évaluation
