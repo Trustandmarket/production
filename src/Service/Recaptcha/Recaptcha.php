@@ -109,8 +109,8 @@ class Recaptcha
             {
                 foreach ($reasons as $reason) 
                 {
-                    if ($reason === ClassificationReason::AUTOMATION || 
-                        $reason === ClassificationReason::UNEXPECTED_ENVIRONMENT) 
+                    if ($reason == ClassificationReason::AUTOMATION || 
+                        $reason == ClassificationReason::UNEXPECTED_ENVIRONMENT) 
                     {
                         return $result;
                     }
