@@ -103,12 +103,18 @@ class Recaptcha
 
             //Récupération de la raison pour éliminer les headless / puppeteer
             $risk = $response->getRiskAnalysis();
-            $reasons = $risk->getReasons(); 
+            $reasons = $risk ? $risk->getReasons() : [];
             if (!empty($reasons)) 
             {
-                if (in_array('AUTOMATION', $reasons) || in_array('UNEXPECTED_ENVIRONMENT', $reasons)) 
+                foreach ($reasons as $reason) 
                 {
-                    return $result;
+                    $reasonName = \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::name($reason);
+
+                    if ($reasonName === 'AUTOMATION' || $reasonName === 'UNEXPECTED_ENVIRONMENT'
+                    ) 
+                    {
+                        return $result;
+                    }
                 }
             }
             else
