@@ -103,7 +103,7 @@ class Recaptcha
 
             //Récupération de la raison pour éliminer les headless / puppeteer
             $risk = $response->getRiskAnalysis();
-            $reasons = $risk ? $risk->getReasons() : [];
+            $reasons = $risk->getReasons(); 
             if (!empty($reasons)) 
             {
                 if (in_array('AUTOMATION', $reasons) || in_array('UNEXPECTED_ENVIRONMENT', $reasons)) 
