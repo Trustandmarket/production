@@ -81,9 +81,6 @@ class Recaptcha
         if (filter_var($ip, FILTER_VALIDATE_IP)) 
         {
             $event->setUserIpAddress($ip); 
-        }else
-        {
-            return $result;
         }
         // Créez la demande d'évaluation.
         $assessment = (new Assessment())
