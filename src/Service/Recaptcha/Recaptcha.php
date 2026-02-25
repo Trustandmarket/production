@@ -37,20 +37,14 @@ class Recaptcha
     // Fonction pour récupérer l'IP de provenance
     function getRealIP()
     {
-        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+        // IP Cloudflare valide ?
+        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) 
+        {
             return $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
-
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            return trim($ips[0]);
-        }
-
-        if (!empty($_SERVER['REMOTE_ADDR'])) {
-            return $_SERVER['REMOTE_ADDR'];
-        }
-
-        return '0.0.0.0';
+        
+        // fallback
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
     // Fonction pour l'évaluation
     function create_assessment(string $recaptchaKey,string $token,string $project,string $action) 
@@ -66,8 +60,24 @@ class Recaptcha
             ->setSiteKey($recaptchaKey)
             ->setToken($token);
         $ip = $this->getRealIP();
+
+        // User-Agent obligatoire
+        if (empty($_SERVER['HTTP_USER_AGENT'])) {
+            return $result;
+        }
+        // Bloque les environnements headless connus
+        $ua = $_SERVER['HTTP_USER_AGENT'];
+        if (
+            stripos($ua, 'Headless') !== false ||
+            stripos($ua, 'PhantomJS') !== false ||
+            stripos($ua, 'Puppeteer') !== false
+        ) 
+        {
+            return $result;
+        }
+        // on ajoute l'ip ici si valide
         if (filter_var($ip, FILTER_VALIDATE_IP)) {
-            $event->setUserIpAddress($ip); // on l'ajoute si valide
+            $event->setUserIpAddress($ip); 
         }
         // Créez la demande d'évaluation.
         $assessment = (new Assessment())
@@ -76,12 +86,25 @@ class Recaptcha
         try 
         {
             $response = $client->createAssessment($projectName,$assessment);
+
+            //validité du token 
             //Recupération des propriétés du token
-            $tokenProps = $response->getTokenProperties();
-                                         
+            $tokenProps = $response->getTokenProperties();                          
             // Vérifier la validité du token
-            if (!$tokenProps->getValid()) {
+            if (!$tokenProps->getValid()) 
+            {
                 return $result;
+            }
+
+            //Récupération de la raison pour éliminer les headless / puppeteer
+            $risk = $response->getRiskAnalysis();
+            $reasons = $risk ? $risk->getReasons() : [];
+            if (!empty($reasons)) 
+            {
+                if (in_array('AUTOMATION', $reasons) || in_array('UNEXPECTED_ENVIRONMENT', $reasons)) 
+                {
+                    return $result;
+                }
             }
 
             // Vérifiez si l'action attendue a été exécutée.
@@ -95,13 +118,15 @@ class Recaptcha
             }
             // Anti replay (token < 2 min)
             $createTime = $tokenProps->getCreateTime()->getSeconds();            
-            if (time() - $createTime > 300) {
+            if (time() - $createTime > 120) 
+            {
                return $result;
             }
 
             //Contrôle du score : il faudra adapter le seuil par action
-           $score = $response->getRiskAnalysis()->getScore();
-            if ($score < 0.5) {
+           $score = $risk ? $risk->getScore() : 0;
+            if ($score < 0.5) 
+            {
                 return $result;
             }
            
