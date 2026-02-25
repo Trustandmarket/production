@@ -135,7 +135,7 @@ class Recaptcha
           
         } catch (exception $e) */
         {
-            return return ['response' => true, 'message' => 'OK', 'code' => 200]; //$result;
+            return ['response' => true, 'message' => 'OK', 'code' => 200]; //$result;
         }
     }
 
