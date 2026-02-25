@@ -62,7 +62,7 @@ class Recaptcha
         $ip = $this->getRealIP();
 
         // User-Agent obligatoire
-       /* if (empty($_SERVER['HTTP_USER_AGENT'])) {
+        if (empty($_SERVER['HTTP_USER_AGENT'])) {
             return $result;
         }
         // Bloque les environnements headless connus
@@ -76,7 +76,7 @@ class Recaptcha
             return $result;
         }
         // on ajoute l'ip ici si valide
-        if (filter_var($ip, FILTER_VALIDATE_IP)) {
+        /*if (filter_var($ip, FILTER_VALIDATE_IP)) {
             $event->setUserIpAddress($ip); 
         }
         // Créez la demande d'évaluation.
