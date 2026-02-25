@@ -145,8 +145,9 @@ class Recaptcha
             //Sinon tous les checks sont OK     
             return ['response' => true, 'message' => 'OK', 'code' => 200];
           
-        } catch (\Exception $e) 
-        {
+        } catch (\Throwable $e) 
+        {  
+            error_log('reCAPTCHA error: '.$e->getMessage());
             return $result;
         }
     }
