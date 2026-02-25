@@ -62,7 +62,7 @@ class Recaptcha
         $ip = $this->getRealIP();
 
         // User-Agent obligatoire
-        if (empty($_SERVER['HTTP_USER_AGENT'])) {
+       /* if (empty($_SERVER['HTTP_USER_AGENT'])) {
             return $result;
         }
         // Bloque les environnements headless connus
@@ -136,7 +136,7 @@ class Recaptcha
         } catch (exception $e) 
         {
             return $result;
-        }
+        }*/
     }
 
 }
