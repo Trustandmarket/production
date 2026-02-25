@@ -84,7 +84,7 @@ class Recaptcha
             return $result;
         }
         // Créez la demande d'évaluation.
-        /*$assessment = (new Assessment())
+        $assessment = (new Assessment())
             ->setEvent($event);
         
         try 
@@ -101,7 +101,7 @@ class Recaptcha
             }
 
             //Récupération de la raison pour éliminer les headless / puppeteer
-            $risk = $response->getRiskAnalysis();
+           /* $risk = $response->getRiskAnalysis();
             $reasons = $risk ? $risk->getReasons() : [];
             if (!empty($reasons)) 
             {
@@ -135,9 +135,9 @@ class Recaptcha
             }
            
             //Sinon tous les checks sont OK     
-            return ['response' => true, 'message' => 'OK', 'code' => 200];
+            return ['response' => true, 'message' => 'OK', 'code' => 200];*/
           
-        } catch (exception $e) */
+        } catch (exception $e) 
         {
             return ['response' => true, 'message' => 'OK', 'code' => 200]; //$result;
         }
