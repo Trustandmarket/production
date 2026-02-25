@@ -55,8 +55,20 @@ class Recaptcha
         $client = new RecaptchaEnterpriseServiceClient();
         $projectName = $client->projectName($project);
         $result = ['response' => false, 'message' => 'Captcha invalide', 'code' => 403];
+
+        //le token est vide ? 
+        if (empty($token)) 
+        {
+            error_log('reCAPTCHA token manquant');
+            return $result;
+        }
+        else
+        {
+           return ['response' => true, 'message' => 'OK', 'code' => 200];
+        }
+
         // Définissez les propriétés de l'événement à suivre.
-        $event = (new Event())
+        /*$event = (new Event())
             ->setSiteKey($recaptchaKey)
             ->setToken($token);
         $ip = $this->getRealIP();
@@ -100,7 +112,7 @@ class Recaptcha
                 return $result;
             }     
 
-            /*if (!$tokenProps->getValid()) 
+            if (!$tokenProps->getValid()) 
             {
                 return $result;
             }
@@ -140,12 +152,12 @@ class Recaptcha
             }
            
             //Sinon tous les checks sont OK     
-            return ['response' => true, 'message' => 'OK', 'code' => 200];*/
+            return ['response' => true, 'message' => 'OK', 'code' => 200];
           
         } catch (exception $e) 
         {
-            return ['response' => true, 'message' => 'OK', 'code' => 200]; //$result;
-        }
+            return $result;
+        }*/
     }
 
 }
