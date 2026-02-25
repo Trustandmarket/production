@@ -56,19 +56,8 @@ class Recaptcha
         $projectName = $client->projectName($project);
         $result = ['response' => false, 'message' => 'Captcha invalide', 'code' => 403];
 
-        //le token est vide ? 
-        if (empty($token)) 
-        {
-            error_log('reCAPTCHA token manquant');
-            return $result;
-        }
-        else
-        {
-           return ['response' => true, 'message' => 'OK', 'code' => 200];
-        }
-
         // Définissez les propriétés de l'événement à suivre.
-        /*$event = (new Event())
+        $event = (new Event())
             ->setSiteKey($recaptchaKey)
             ->setToken($token);
         $ip = $this->getRealIP();
@@ -91,12 +80,13 @@ class Recaptcha
         if (filter_var($ip, FILTER_VALIDATE_IP)) 
         {
             $event->setUserIpAddress($ip); 
+            return ['response' => true, 'message' => 'OK', 'code' => 200];
         }else
         {
             return $result;
         }
         // Créez la demande d'évaluation.
-        $assessment = (new Assessment())
+       /* $assessment = (new Assessment())
             ->setEvent($event);
         
         try 
