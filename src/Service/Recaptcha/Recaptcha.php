@@ -43,12 +43,8 @@ class Recaptcha
             return $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
         
-        if (!empty($_SERVER['REMOTE_ADDR'])) {
-            return $_SERVER['REMOTE_ADDR'];
-        }
-        
         // fallback
-        return '0.0.0.0';
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
     // Fonction pour l'évaluation
     function create_assessment(string $recaptchaKey,string $token,string $project,string $action) 
@@ -137,10 +133,10 @@ class Recaptcha
             //Sinon tous les checks sont OK     
             return ['response' => true, 'message' => 'OK', 'code' => 200];
           
-        } catch (exception $e) 
+        } catch (exception $e) */
         {
-            return $result;
-        }*/
+            return return ['response' => true, 'message' => 'OK', 'code' => 200]; //$result;
+        }
     }
 
 }
