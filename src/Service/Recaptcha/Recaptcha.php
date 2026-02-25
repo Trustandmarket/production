@@ -95,13 +95,18 @@ class Recaptcha
             //Recupération des propriétés du token
             $tokenProps = $response->getTokenProperties();                          
             // Vérifier la validité du token
-            if (!$tokenProps->getValid()) 
+            if ($tokenProps === null) 
+            {
+                return $result;
+            }     
+
+            /*if (!$tokenProps->getValid()) 
             {
                 return $result;
             }
 
             //Récupération de la raison pour éliminer les headless / puppeteer
-           /* $risk = $response->getRiskAnalysis();
+            $risk = $response->getRiskAnalysis();
             $reasons = $risk ? $risk->getReasons() : [];
             if (!empty($reasons)) 
             {
