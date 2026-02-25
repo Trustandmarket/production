@@ -43,8 +43,12 @@ class Recaptcha
             return $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
         
+        if (!empty($_SERVER['REMOTE_ADDR'])) {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+        
         // fallback
-        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        return '0.0.0.0';
     }
     // Fonction pour l'évaluation
     function create_assessment(string $recaptchaKey,string $token,string $project,string $action) 
