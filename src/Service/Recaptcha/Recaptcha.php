@@ -15,6 +15,7 @@ use Google\Cloud\RecaptchaEnterprise\V1\Event;
 use Google\Cloud\RecaptchaEnterprise\V1\RecaptchaEnterpriseServiceClient;
 use Google\Cloud\RecaptchaEnterprise\V1\TokenProperties\InvalidReason;
 use Symfony\Component\HttpFoundation\Response;
+use Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason;
 
 /**
  * Class ServiceManager
@@ -108,10 +109,8 @@ class Recaptcha
             {
                 foreach ($reasons as $reason) 
                 {
-                    $reasonName = \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::name($reason);
-
-                    if ($reasonName === 'AUTOMATION' || $reasonName === 'UNEXPECTED_ENVIRONMENT'
-                    ) 
+                    if ($reason === ClassificationReason::AUTOMATION || 
+                        $reason === ClassificationReason::UNEXPECTED_ENVIRONMENT) 
                     {
                         return $result;
                     }
