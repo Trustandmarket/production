@@ -100,13 +100,9 @@ class Recaptcha
             {
                 return $result;
             }
-            else
-            {
-                return ['response' => true, 'message' => 'OK', 'code' => 200];
-            }
 
             //Récupération de la raison pour éliminer les headless / puppeteer
-            /*$risk = $response->getRiskAnalysis();
+            $risk = $response->getRiskAnalysis();
             $reasons = $risk ? $risk->getReasons() : [];
             if (!empty($reasons)) 
             {
@@ -115,9 +111,13 @@ class Recaptcha
                     return $result;
                 }
             }
+            else
+            {
+                return ['response' => true, 'message' => 'OK', 'code' => 200];
+            }
 
             // Vérifiez si l'action attendue a été exécutée.
-            if ($tokenProps->getAction() !== $action) {
+           /* if ($tokenProps->getAction() !== $action) {
                 return $result;
             } 
             // On vérifie le hostname
