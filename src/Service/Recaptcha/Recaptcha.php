@@ -101,7 +101,7 @@ class Recaptcha
 
             //Récupération de la raison pour éliminer les headless / puppeteer
             $risk = $response->getRiskAnalysis();
-            /*$reasons = $risk ? $risk->getReasons() : [];
+            $reasons = $risk ? $risk->getReasons() : [];
             if (!empty($reasons)) 
             {
                 foreach ($reasons as $reason) 
@@ -112,7 +112,7 @@ class Recaptcha
                         return $result;
                     }
                 }
-            }*/
+            }
          
             // Vérifiez si l'action attendue a été exécutée.
             if ($tokenProps->getAction() !== $action) {
@@ -124,7 +124,12 @@ class Recaptcha
                 return $result;
             }
             // Anti replay (token < 2 min)
-            $createTime = $tokenProps->getCreateTime()->getSeconds();            
+            $createTimeObj = $tokenProps->getCreateTime();
+            if (!$createTimeObj) 
+            {
+                return $result;
+            }
+            $createTime = $createTimeObj->getSeconds();            
             if (time() - $createTime > 120) 
             {
                return $result;
@@ -140,7 +145,7 @@ class Recaptcha
             //Sinon tous les checks sont OK     
             return ['response' => true, 'message' => 'OK', 'code' => 200];
           
-        } catch (exception $e) 
+        } catch (\exception $e) 
         {
             return $result;
         }
