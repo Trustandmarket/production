@@ -80,13 +80,12 @@ class Recaptcha
         if (filter_var($ip, FILTER_VALIDATE_IP)) 
         {
             $event->setUserIpAddress($ip); 
-            return ['response' => true, 'message' => 'OK', 'code' => 200];
         }else
         {
             return $result;
         }
         // Créez la demande d'évaluation.
-       /* $assessment = (new Assessment())
+        $assessment = (new Assessment())
             ->setEvent($event);
         
         try 
@@ -97,18 +96,17 @@ class Recaptcha
             //Recupération des propriétés du token
             $tokenProps = $response->getTokenProperties();                          
             // Vérifier la validité du token
-            if ($tokenProps === null) 
-            {
-                return $result;
-            }     
-
-            if (!$tokenProps->getValid()) 
+            if ($tokenProps == null || !$tokenProps->getValid()) 
             {
                 return $result;
             }
+            else
+            {
+                return ['response' => true, 'message' => 'OK', 'code' => 200];
+            }
 
             //Récupération de la raison pour éliminer les headless / puppeteer
-            $risk = $response->getRiskAnalysis();
+            /*$risk = $response->getRiskAnalysis();
             $reasons = $risk ? $risk->getReasons() : [];
             if (!empty($reasons)) 
             {
@@ -142,12 +140,12 @@ class Recaptcha
             }
            
             //Sinon tous les checks sont OK     
-            return ['response' => true, 'message' => 'OK', 'code' => 200];
+            return ['response' => true, 'message' => 'OK', 'code' => 200];*/
           
         } catch (exception $e) 
         {
             return $result;
-        }*/
+        }
     }
 
 }
