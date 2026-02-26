@@ -94,7 +94,7 @@ class Recaptcha
             //Recupération des propriétés du token
             $tokenProps = $response->getTokenProperties();                          
             // Vérifier la validité du token
-            if ($tokenProps == null || !$tokenProps->getValid()) 
+            if ($tokenProps === null || !$tokenProps->getValid()) 
             {
                 return $result;
             }
