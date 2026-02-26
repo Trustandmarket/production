@@ -106,8 +106,8 @@ class Recaptcha
             {
                 foreach ($reasons as $reason) 
                 {
-                    if ($reason === \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::AUTOMATION ||
-                        $reason === \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::UNEXPECTED_ENVIRONMENT) 
+                    if ($reason === \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::UNEXPECTED_ENVIRONMENT ||
+                        $reason === \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::TOO_MUCH_TRAFFIC) 
                     {
                         return $result;
                     }
