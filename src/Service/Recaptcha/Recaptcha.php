@@ -110,8 +110,14 @@ class Recaptcha
             {
                 foreach ($reasons as $reason) 
                 {
-                    if ($reason == \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::UNEXPECTED_ENVIRONMENT ||
-                        $reason == \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::TOO_MUCH_TRAFFIC) 
+                    // Blocage direct (signal bot très fort)
+                    if ($reason == \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::UNEXPECTED_ENVIRONMENT) 
+                    {
+                        return $result;
+                    }
+                    // Blocage conditionnel (évite les faux positifs en cas de pic de trafic)
+                    if ($reason == \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::TOO_MUCH_TRAFFIC
+                        && $risk->getScore() < 0.4) 
                     {
                         return $result;
                     }
