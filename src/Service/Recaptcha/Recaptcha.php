@@ -101,13 +101,17 @@ class Recaptcha
 
             //Récupération de la raison pour éliminer les headless / puppeteer
             $risk = $response->getRiskAnalysis();
+            if (!$risk) 
+            {
+                return $result;
+            }
             $reasons = $risk ? $risk->getReasons() : [];
             if (!empty($reasons)) 
             {
                 foreach ($reasons as $reason) 
                 {
-                    if ($reason === \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::UNEXPECTED_ENVIRONMENT ||
-                        $reason === \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::TOO_MUCH_TRAFFIC) 
+                    if ($reason == \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::UNEXPECTED_ENVIRONMENT ||
+                        $reason == \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::TOO_MUCH_TRAFFIC) 
                     {
                         return $result;
                     }
