@@ -111,12 +111,12 @@ class Recaptcha
                 foreach ($reasons as $reason) 
                 {
                     // Blocage direct (signal bot très fort)
-                    if ($reason == \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::UNEXPECTED_ENVIRONMENT) 
+                    if ($reason === ClassificationReason::UNEXPECTED_ENVIRONMENT) 
                     {
                         return $result;
                     }
                     // Blocage conditionnel (évite les faux positifs en cas de pic de trafic)
-                    if ($reason == \Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason::TOO_MUCH_TRAFFIC
+                    if ($reason === ClassificationReason::TOO_MUCH_TRAFFIC 
                         && $risk->getScore() < 0.4) 
                     {
                         return $result;
@@ -130,7 +130,7 @@ class Recaptcha
             } 
             // On vérifie le hostname
             $allowedHosts = ['trustandmarket.com','rec.trustandmarket.com'];
-            if (!in_array($tokenProps->getHostname(), $allowedHosts)) {
+            if (!in_array($tokenProps->getHostname(), $allowedHosts,true)) {
                 return $result;
             }
             // Anti replay (token < 2 min)
