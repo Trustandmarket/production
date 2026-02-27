@@ -106,6 +106,7 @@ class Recaptcha
                 return $result;
             }
             $reasons = $risk ? $risk->getReasons() : [];
+            $score = $risk ? $risk->getScore() : 0;
             if (!empty($reasons)) 
             {
                 foreach ($reasons as $reason) 
@@ -117,7 +118,7 @@ class Recaptcha
                     }
                     // Blocage conditionnel (évite les faux positifs en cas de pic de trafic)
                     if ($reason === ClassificationReason::TOO_MUCH_TRAFFIC 
-                        && $risk->getScore() < 0.4) 
+                        & $score < 0.4) 
                     {
                         return $result;
                     }
@@ -146,7 +147,6 @@ class Recaptcha
             }
 
             //Contrôle du score : il faudra adapter le seuil par action
-           $score = $risk ? $risk->getScore() : 0;
             if ($score < 0.5) 
             {
                 return $result;
