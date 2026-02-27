@@ -118,7 +118,7 @@ class Recaptcha
                     }
                     // Blocage conditionnel (évite les faux positifs en cas de pic de trafic)
                     if ($reason === ClassificationReason::TOO_MUCH_TRAFFIC 
-                        & $score < 0.4) 
+                        && $score < 0.4) 
                     {
                         return $result;
                     }
