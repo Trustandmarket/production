@@ -39,7 +39,7 @@ class Recaptcha
     function getRealIP()
     {
         // IP Cloudflare valide ?
-        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) 
+        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP']) && !empty($_SERVER['REMOTE_ADDR'])) 
         {
             return $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
@@ -53,15 +53,7 @@ class Recaptcha
         // Créez le client reCAPTCHA.
         // À FAIRE : mettre en cache le code de génération du client (recommandé) ou appeler client.close() avant de quitter la méthode.
         putenv("GOOGLE_APPLICATION_CREDENTIALS=" . __DIR__ . '/../../../trust-market/security_form.json');
-        $client = new RecaptchaEnterpriseServiceClient();
-        $projectName = $client->projectName($project);
         $result = ['response' => false, 'message' => 'Captcha invalide', 'code' => 403];
-
-        // Définissez les propriétés de l'événement à suivre.
-        $event = (new Event())
-            ->setSiteKey($recaptchaKey)
-            ->setToken($token);
-        $ip = $this->getRealIP();
 
         // User-Agent obligatoire
         if (empty($_SERVER['HTTP_USER_AGENT'])) {
@@ -77,6 +69,16 @@ class Recaptcha
         {
             return $result;
         }
+
+        $ip = getRealIP();
+        $client = new RecaptchaEnterpriseServiceClient();
+        $projectName = $client->projectName($project);
+        // Définissez les propriétés de l'événement à suivre.
+        $event = (new Event())
+            ->setSiteKey($recaptchaKey)
+            ->setToken($token)
+            ->setUserAgent($ua);
+        
         // on ajoute l'ip ici si valide
         if (filter_var($ip, FILTER_VALIDATE_IP)) 
         {
@@ -130,7 +132,7 @@ class Recaptcha
                 return $result;
             } 
             // On vérifie le hostname
-            $allowedHosts = ['trustandmarket.com','rec.trustandmarket.com'];
+            $allowedHosts = ['trustandmarket.com','rec.trustandmarket.com','*.trustandmarket.com'];
             if (!in_array($tokenProps->getHostname(), $allowedHosts,true)) {
                 return $result;
             }
