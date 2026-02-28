@@ -70,7 +70,7 @@ class Recaptcha
             return $result;
         }
 
-        $ip = getRealIP();
+        $ip = $this->getRealIP();
         $client = new RecaptchaEnterpriseServiceClient();
         $projectName = $client->projectName($project);
         // Définissez les propriétés de l'événement à suivre.
