@@ -36,7 +36,7 @@ class Recaptcha
      * @throws Exception
      */
     // Fonction pour récupérer l'IP de provenance
-    function getRealIP()
+    function getRealIP() : string 
     {
         // IP Cloudflare valide ?
         if (!empty($_SERVER['HTTP_CF_CONNECTING_IP']) && !empty($_SERVER['REMOTE_ADDR'])) 
@@ -148,8 +148,15 @@ class Recaptcha
                return $result;
             }
 
-            //Contrôle du score : il faudra adapter le seuil par action
-            if ($score < 0.5) 
+            //Contrôle du score : seuil par action
+            $Actiontrust = [
+                'TRUST_LOGIN' => 0.7,
+                'TRUST_RESETPASSWORD' => 0.8,
+                'TRUST_CONTACT_US' => 0.6,
+                'TRUST_FEEDBACKS' => 0.6,
+                'TRUST_NEWSLETTER'=> 0.5,];
+            $minScore = $thresholds[$action] ?? 0.5
+            if ($score < $minScore) 
             {
                 return $result;
             }
