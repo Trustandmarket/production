@@ -154,7 +154,7 @@ class Recaptcha
                 'TRUST_RESETPASSWORD' => 0.8,
                 'TRUST_CONTACT_US' => 0.6,
                 'TRUST_FEEDBACKS' => 0.6,
-                'TRUST_NEWSLETTER'=> 0.5,];
+                'TRUST_NEWSLETTER'=> 0.6,];
             $minScore = $thresholds[$action] ?? 0.5
             if ($score < $minScore) 
             {
