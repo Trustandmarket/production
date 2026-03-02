@@ -151,6 +151,7 @@ class Recaptcha
             //Contrôle du score : seuil par action
             $Actiontrust = [
                 'TRUST_LOGIN' => 0.7,
+                'TRUST_REGISTER' => 0.75,
                 'TRUST_RESETPASSWORD' => 0.8,
                 'TRUST_CONTACT_US' => 0.6,
                 'TRUST_FEEDBACKS' => 0.6,
