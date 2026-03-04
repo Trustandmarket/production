@@ -77,12 +77,17 @@ class Recaptcha
     public function getRealIP() : string 
     {
         // IP Cloudflare valide ?
-        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP']) && !empty($_SERVER['REMOTE_ADDR'])) 
+        $cloudflareIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? null;
+        if (is_string($cloudflareIp) && filter_var($cloudflareIp, FILTER_VALIDATE_IP))
         {
-            return $_SERVER['HTTP_CF_CONNECTING_IP'];
+            return $cloudflareIp;
         }
         // fallback
-        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? null;
+        if (is_string($remoteAddr) && filter_var($remoteAddr, FILTER_VALIDATE_IP)) {
+            return $remoteAddr;
+        }
+        return '0.0.0.0';
     }
 
     // Fonction pour l'évaluation
