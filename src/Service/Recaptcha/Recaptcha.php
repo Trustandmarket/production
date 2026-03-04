@@ -29,7 +29,7 @@ class Recaptcha
         'trustandmarket.com',
         'rec.trustandmarket.com'
         ];
-    $Actiontrust = [
+    private const Actiontrust = [
                 'TRUST_LOGIN' => 0.7,
                 'TRUST_REGISTER' => 0.75,
                 'TRUST_RESETPASSWORD' => 0.8,
