@@ -263,9 +263,11 @@ class UserCrudController extends AbstractCrudController
         $user = $context->getEntity()->getInstance();
         if (!$user) 
         {
-           
+           $this->addFlash('danger', "User not found.");
+           return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
         }
-
+        
+        $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user);
     }
 
     public function new(AdminContext $context)
