@@ -19,10 +19,10 @@ class Recaptcha
 {
     //Variables globales quel que soit l'appel 
     private const DEFAULT_RESULT = ['response' => false, 'message' => 'Captcha invalide', 'code' => 403];
-    private const  ALLOWEDHOSTS = [
+    private const ALLOWEDHOSTS = [
         'trustandmarket.com',
         'rec.trustandmarket.com'
-        ];
+    ];
     private const ACTION_SCORE_MIN = [
                 'TRUST_LOGIN' => 0.7,
                 'TRUST_REGISTER' => 0.75,
@@ -30,7 +30,7 @@ class Recaptcha
                 'TRUST_CONTACT_US' => 0.6,
                 'TRUST_FEEDBACKS' => 0.6,
                 'TRUST_NEWSLETTER'=> 0.6,
-                ];
+    ];
     // filtrage par raisons de l'action pour éliminer les headless / puppeteer
     private function mustBlockByRiskReason(iterable $reasons, float $score): bool
     {
@@ -68,7 +68,7 @@ class Recaptcha
         }
     }
     // Fonction pour récupérer l'IP de provenance
-    public function getRealIP() : string 
+    public function getRealIP(): string 
     {
         // IP Cloudflare valide ?
         $cloudflareIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? null;
@@ -152,7 +152,7 @@ class Recaptcha
                 return self::DEFAULT_RESULT;
             }
             //Contrôle du score : seuil par action
-            $minScore = self::ACTION_SCORE_MIN[$action] ?? 0.5;
+            $minScore = self::ACTION_SCORE_MIN[$action];
             if ($score < $minScore) 
             {
                 return self::DEFAULT_RESULT;
