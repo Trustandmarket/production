@@ -261,13 +261,14 @@ class UserCrudController extends AbstractCrudController
     public function ActivercompteAction(AdminContext $context)
     {
         $user = $context->getEntity()->getInstance();
-        if (!$user) 
-        {
+        if (!$user) {
            $this->addFlash('danger', "User not found.");
            return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
         }
         
         $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user);
+        $this->addFlash('success', "Activation email sent successfully.");
+        return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
     }
 
     public function new(AdminContext $context)
