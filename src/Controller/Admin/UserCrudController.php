@@ -159,7 +159,7 @@ class UserCrudController extends AbstractCrudController
             ->setCssClass('btn btn-warning text-red') // Yellow to differentiate from Delete
             ->displayAsLink();*/
 
-        $Activeruser = Action::new('Activeruser', 'Activercompte')
+        $Activeruser = Action::new('Activeruser', 'Mail activation')
             ->linkToCrudAction('ActivercompteAction')
             ->setIcon('fas fa-unlink') // More relevant icon
             ->setCssClass('btn btn-warning text-red') // Yellow to differentiate from Delete
