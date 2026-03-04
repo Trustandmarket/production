@@ -153,19 +153,24 @@ class UserCrudController extends AbstractCrudController
             ->setCssClass('btn btn-danger')
             ->createAsGlobalAction();
 
-        $deleteStripe = Action::new('deleteStripe', 'Supprimer Stripe')
+        /*$deleteStripe = Action::new('deleteStripe', 'Supprimer Stripe')
             ->linkToCrudAction('deleteStripeAction')
             ->setIcon('fas fa-unlink') // More relevant icon
             ->setCssClass('btn btn-warning text-red') // Yellow to differentiate from Delete
+            ->displayAsLink();*/
+
+        $deleteStripe = Action::new('Activeruser', 'Activercompte')
+            ->linkToCrudAction('ActivercompteAction')
+            ->setIcon('fas fa-unlink') // More relevant icon
+            ->setCssClass('btn btn-warning text-red') // Yellow to differentiate from Delete
             ->displayAsLink();
-
-
 
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $export)
             ->add(Crud::PAGE_INDEX, $openStripeForm)
-            ->add(Crud::PAGE_INDEX, $deleteStripe);
+            ->add(Crud::PAGE_INDEX, $Activeruser);
+            //->add(Crud::PAGE_INDEX, $deleteStripe);
     }
 
 
@@ -252,7 +257,16 @@ class UserCrudController extends AbstractCrudController
         return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
     }
 
+    //Renvoi email d'activation de compte 
+    public function ActivercompteAction(AdminContext $context)
+    {
+        $user = $context->getEntity()->getInstance();
+        if (!$user) 
+        {
+           
+        }
 
+    }
 
     public function new(AdminContext $context)
     {
