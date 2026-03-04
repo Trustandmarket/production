@@ -6,15 +6,9 @@
 
 namespace App\Service\Recaptcha;
 
-use App\Entity\Translation\WpPostsTranslation;
-use App\Entity\Translation\WpPostmetaTranslation;
-use App\Entity\Translation\WpTermsTranslation;
-use Exception;
 use Google\Cloud\RecaptchaEnterprise\V1\Assessment;
 use Google\Cloud\RecaptchaEnterprise\V1\Event;
 use Google\Cloud\RecaptchaEnterprise\V1\RecaptchaEnterpriseServiceClient;
-use Google\Cloud\RecaptchaEnterprise\V1\TokenProperties\InvalidReason;
-use Symfony\Component\HttpFoundation\Response;
 use Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason;
 
 /**
