@@ -23,73 +23,100 @@ use Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason;
  */
 class Recaptcha
 {
-    public function __construct(
-    ) {
+    //Variables globales quel que soit l'appel 
+    private const result = ['response' => false, 'message' => 'Captcha invalide', 'code' => 403];
+    private const  allowedHosts = [
+        'trustandmarket.com',
+        'rec.trustandmarket.com'
+        ];
+    $Actiontrust = [
+                'TRUST_LOGIN' => 0.7,
+                'TRUST_REGISTER' => 0.75,
+                'TRUST_RESETPASSWORD' => 0.8,
+                'TRUST_CONTACT_US' => 0.6,
+                'TRUST_FEEDBACKS' => 0.6,
+                'TRUST_NEWSLETTER'=> 0.6,
+                ];
+    // filtrage par raisons de l'action pour éliminer les headless / puppeteer
+    private function mustBlockByRiskReason(iterable $reasons, float $score): bool
+    {
+        foreach ($reasons as $reason) 
+        {
+            // Blocage direct (signal bot très fort)
+            if ($reason === ClassificationReason::UNEXPECTED_ENVIRONMENT) {
+                return true;
+            }
+            // Blocage conditionnel (évite les faux positifs en cas de pic de trafic)
+            if ($reason === ClassificationReason::TOO_MUCH_TRAFFIC && $score < 0.4) {
+                return true;
+            }
+        }
+        return false;
     }
+    // Bloque les environnements headless connus 
+    private function isKnownHeadlessUserAgent(string $userAgent): bool
+    {
+        return stripos($userAgent, 'Headless') !== false
+            || stripos($userAgent, 'PhantomJS') !== false
+            || stripos($userAgent, 'Puppeteer') !== false;
+    }
+    // À FAIRE : mettre en cache le code de génération du client (recommandé)
+    // ou appeler client.close() avant de quitter la méthode.
+    private function configureGoogleCredentials(): void
+    {
+        if (getenv('GOOGLE_APPLICATION_CREDENTIALS')) {
+            return;
+        }
 
-    /**
-     * Créez une évaluation pour analyser le risque d'une action dans l'interface utilisateur.
-     * @param string $recaptchaKey La clé reCAPTCHA associée au site ou à l'application
-     * @param string $token Jeton généré auprès du client.
-     * @param string $project L'ID de votre projet Google Cloud.
-     * @param string $action Nom d'action correspondant au jeton.
-     * @throws Exception
-     */
+        $defaultCredentialsPath = __DIR__ . '/../../../trust-market/security_form.json';
+        if (is_file($defaultCredentialsPath)) {
+            putenv('GOOGLE_APPLICATION_CREDENTIALS=' . $defaultCredentialsPath);
+        }
+    }
     // Fonction pour récupérer l'IP de provenance
-    function getRealIP() : string 
+    public function getRealIP() : string 
     {
         // IP Cloudflare valide ?
         if (!empty($_SERVER['HTTP_CF_CONNECTING_IP']) && !empty($_SERVER['REMOTE_ADDR'])) 
         {
             return $_SERVER['HTTP_CF_CONNECTING_IP'];
         }
-        
         // fallback
         return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
+
     // Fonction pour l'évaluation
     function create_assessment(string $recaptchaKey,string $token,string $project,string $action) 
     {
-        // Créez le client reCAPTCHA.
-        // À FAIRE : mettre en cache le code de génération du client (recommandé) ou appeler client.close() avant de quitter la méthode.
-        putenv("GOOGLE_APPLICATION_CREDENTIALS=" . __DIR__ . '/../../../trust-market/security_form.json');
-        $result = ['response' => false, 'message' => 'Captcha invalide', 'code' => 403];
-
+        $this->configureGoogleCredentials();
         // User-Agent obligatoire
         if (empty($_SERVER['HTTP_USER_AGENT'])) {
-            return $result;
+            return self::result;
         }
         // Bloque les environnements headless connus
-        $ua = $_SERVER['HTTP_USER_AGENT'];
-        if (
-            stripos($ua, 'Headless') !== false ||
-            stripos($ua, 'PhantomJS') !== false ||
-            stripos($ua, 'Puppeteer') !== false
-        ) 
+        $ua = (string) $_SERVER['HTTP_USER_AGENT'];
+        if ($this->isKnownHeadlessUserAgent($ua)) 
         {
-            return $result;
+            return self::result;
         }
 
         $ip = $this->getRealIP();
         $client = new RecaptchaEnterpriseServiceClient();
-        $projectName = $client->projectName($project);
-        // Définissez les propriétés de l'événement à suivre.
-        $event = (new Event())
-            ->setSiteKey($recaptchaKey)
-            ->setToken($token)
-            ->setUserAgent($ua);
-        
-        // on ajoute l'ip ici si valide
-        if (filter_var($ip, FILTER_VALIDATE_IP)) 
-        {
-            $event->setUserIpAddress($ip); 
-        }
-        // Créez la demande d'évaluation.
-        $assessment = (new Assessment())
-            ->setEvent($event);
-        
         try 
         {
+            $projectName = $client->projectName($project);
+            // Définissez les propriétés de l'événement à suivre.
+            $event = (new Event())
+                ->setSiteKey($recaptchaKey)
+                ->setToken($token)
+                ->setUserAgent($ua);
+
+            // on ajoute l'ip ici si valide
+            if (filter_var($ip, FILTER_VALIDATE_IP)) 
+            {
+                $event->setUserIpAddress($ip); 
+            }
+            $assessment = (new Assessment())->setEvent($event);
             $response = $client->createAssessment($projectName,$assessment);
 
             //validité du token 
@@ -98,68 +125,37 @@ class Recaptcha
             // Vérifier la validité du token
             if ($tokenProps === null || !$tokenProps->getValid()) 
             {
-                return $result;
+                return self::result;
             }
 
-            //Récupération de la raison pour éliminer les headless / puppeteer
+            //Risk analysis
             $risk = $response->getRiskAnalysis();
-            if (!$risk) 
+            if ($risk === null) 
             {
-                return $result;
+                return self::result;
             }
-            $reasons = $risk ? $risk->getReasons() : [];
-            $score = $risk ? $risk->getScore() : 0;
-            if (!empty($reasons)) 
-            {
-                foreach ($reasons as $reason) 
-                {
-                    // Blocage direct (signal bot très fort)
-                    if ($reason === ClassificationReason::UNEXPECTED_ENVIRONMENT) 
-                    {
-                        return $result;
-                    }
-                    // Blocage conditionnel (évite les faux positifs en cas de pic de trafic)
-                    if ($reason === ClassificationReason::TOO_MUCH_TRAFFIC 
-                        && $score < 0.4) 
-                    {
-                        return $result;
-                    }
-                }
+            $score = $risk->getScore();
+            if ($this->mustBlockByRiskReason($risk->getReasons(), $score)) {
+                return self::result;
             }
-         
             // Vérifiez si l'action attendue a été exécutée.
             if ($tokenProps->getAction() !== $action) {
-                return $result;
+                return self::result;
             } 
             // On vérifie le hostname
-            $allowedHosts = ['trustandmarket.com','rec.trustandmarket.com'];
-            if (!in_array($tokenProps->getHostname(), $allowedHosts,true)) {
-                return $result;
+            if (!in_array($tokenProps->getHostname(), sel::allowedHosts,true)) {
+                return self::result;
             }
             // Anti replay (token < 2 min)
             $createTimeObj = $tokenProps->getCreateTime();
-            if (!$createTimeObj) 
-            {
-                return $result;
+            if ($createTime === null || (time() - $createTimeObj->getSeconds()) > 120) {
+                return self::result;
             }
-            $createTime = $createTimeObj->getSeconds();            
-            if (time() - $createTime > 120) 
-            {
-               return $result;
-            }
-
             //Contrôle du score : seuil par action
-            $Actiontrust = [
-                'TRUST_LOGIN' => 0.7,
-                'TRUST_REGISTER' => 0.75,
-                'TRUST_RESETPASSWORD' => 0.8,
-                'TRUST_CONTACT_US' => 0.6,
-                'TRUST_FEEDBACKS' => 0.6,
-                'TRUST_NEWSLETTER'=> 0.6,];
-            $minScore = $Actiontrust[$action] ?? 0.5;
+            $minScore = self::Actiontrust[$action] ?? 0.5;
             if ($score < $minScore) 
             {
-                return $result;
+                return self::result;
             }
            
             //Sinon tous les checks sont OK     
@@ -168,8 +164,8 @@ class Recaptcha
         } catch (\Throwable $e) 
         {  
             error_log('reCAPTCHA error: '.$e->getMessage());
-            return $result;
-        }
+            return self::result;
+        }finally { $client->close();}
     }
-
+    
 }
