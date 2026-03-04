@@ -18,12 +18,12 @@ use Google\Cloud\RecaptchaEnterprise\V1\RiskAnalysis\ClassificationReason;
 class Recaptcha
 {
     //Variables globales quel que soit l'appel 
-    private const result = ['response' => false, 'message' => 'Captcha invalide', 'code' => 403];
-    private const  allowedHosts = [
+    private const DEFAULT_RESULT = ['response' => false, 'message' => 'Captcha invalide', 'code' => 403];
+    private const  ALLOWEDHOSTS = [
         'trustandmarket.com',
         'rec.trustandmarket.com'
         ];
-    private const Actiontrust = [
+    private const ACTION_SCORE_MIN = [
                 'TRUST_LOGIN' => 0.7,
                 'TRUST_REGISTER' => 0.75,
                 'TRUST_RESETPASSWORD' => 0.8,
@@ -90,13 +90,13 @@ class Recaptcha
         $this->configureGoogleCredentials();
         // User-Agent obligatoire
         if (empty($_SERVER['HTTP_USER_AGENT'])) {
-            return self::result;
+            return self::DEFAULT_RESULT;
         }
         // Bloque les environnements headless connus
         $ua = (string) $_SERVER['HTTP_USER_AGENT'];
         if ($this->isKnownHeadlessUserAgent($ua)) 
         {
-            return self::result;
+            return self::DEFAULT_RESULT;
         }
 
         $ip = $this->getRealIP();
@@ -124,37 +124,37 @@ class Recaptcha
             // Vérifier la validité du token
             if ($tokenProps === null || !$tokenProps->getValid()) 
             {
-                return self::result;
+                return self::DEFAULT_RESULT;
             }
 
             //Risk analysis
             $risk = $response->getRiskAnalysis();
             if ($risk === null) 
             {
-                return self::result;
+                return self::DEFAULT_RESULT;
             }
             $score = $risk->getScore();
             if ($this->mustBlockByRiskReason($risk->getReasons(), $score)) {
-                return self::result;
+                return self::DEFAULT_RESULT;
             }
             // Vérifiez si l'action attendue a été exécutée.
             if ($tokenProps->getAction() !== $action) {
-                return self::result;
+                return self::DEFAULT_RESULT;
             } 
             // On vérifie le hostname
-            if (!in_array($tokenProps->getHostname(), self::allowedHosts,true)) {
-                return self::result;
+            if (!in_array($tokenProps->getHostname(), self::ALLOWEDHOSTS,true)) {
+                return self::DEFAULT_RESULT;
             }
             // Anti replay (token < 2 min)
             $createTimeObj = $tokenProps->getCreateTime();
             if ($createTimeObj === null || (time() - $createTimeObj->getSeconds()) > 120) {
-                return self::result;
+                return self::DEFAULT_RESULT;
             }
             //Contrôle du score : seuil par action
-            $minScore = self::Actiontrust[$action] ?? 0.5;
+            $minScore = self::ACTION_SCORE_MIN[$action] ?? 0.5;
             if ($score < $minScore) 
             {
-                return self::result;
+                return self::DEFAULT_RESULT;
             }
            
             //Sinon tous les checks sont OK     
@@ -163,7 +163,7 @@ class Recaptcha
         } catch (\Throwable $e) 
         {  
             error_log('reCAPTCHA error: '.$e->getMessage());
-            return self::result;
+            return self::DEFAULT_RESULT;
         }finally { $client->close();}
     }
     
