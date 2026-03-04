@@ -100,9 +100,10 @@ class Recaptcha
         }
 
         $ip = $this->getRealIP();
-        $client = new RecaptchaEnterpriseServiceClient();
+        $client = null;
         try 
         {
+            $client = new RecaptchaEnterpriseServiceClient();
             $projectName = $client->projectName($project);
             // Définissez les propriétés de l'événement à suivre.
             $event = (new Event())
@@ -164,7 +165,13 @@ class Recaptcha
         {  
             error_log('reCAPTCHA error: '.$e->getMessage());
             return self::DEFAULT_RESULT;
-        }finally { $client->close();}
+        }finally 
+        { 
+            if ($client !== null) 
+            {
+                $client->close();
+            }
+        }
     }
     
 }
