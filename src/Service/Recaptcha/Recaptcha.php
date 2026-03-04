@@ -91,7 +91,7 @@ class Recaptcha
     }
 
     // Fonction pour l'évaluation
-    function create_assessment(string $recaptchaKey,string $token,string $project,string $action) 
+    public function create_assessment(string $recaptchaKey,string $token,string $project,string $action): array
     {
         $this->configureGoogleCredentials();
         // User-Agent obligatoire
@@ -148,12 +148,12 @@ class Recaptcha
                 return self::result;
             } 
             // On vérifie le hostname
-            if (!in_array($tokenProps->getHostname(), sel::allowedHosts,true)) {
+            if (!in_array($tokenProps->getHostname(), self::allowedHosts,true)) {
                 return self::result;
             }
             // Anti replay (token < 2 min)
             $createTimeObj = $tokenProps->getCreateTime();
-            if ($createTime === null || (time() - $createTimeObj->getSeconds()) > 120) {
+            if ($createTimeObj === null || (time() - $createTimeObj->getSeconds()) > 120) {
                 return self::result;
             }
             //Contrôle du score : seuil par action
