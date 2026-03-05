@@ -248,6 +248,26 @@
         {% set profileCompletionScore = profileCompletionScore + 4 %}
     {% endif %}
 
+    {# Contact et activite (20) #}
+    {% if app.user and app.user.getEmailCanonical %}
+        {% set profileCompletionScore = profileCompletionScore + 6 %}
+    {% endif %}
+    {% if telephone is defined and telephone|trim != '' %}
+        {% set profileCompletionScore = profileCompletionScore + 4 %}
+    {% endif %}
+    {% if principal_activity is defined and principal_activity %}
+        {% set profileCompletionScore = profileCompletionScore + 3 %}
+    {% endif %}
+    {% if competence is defined and competence|length > 0 %}
+        {% set profileCompletionScore = profileCompletionScore + 10 %}
+    {% endif %}
+    {% if nom_commercial is defined and nom_commercial|trim != '' %}
+        {% set profileCompletionScore = profileCompletionScore + 1 %}
+    {% endif %}
+    {% if user.getUserUniqueData and user.getUserUniqueData.getDepartement %}
+        {% set profileCompletionScore = profileCompletionScore + 1 %}
+    {% endif %}
+
     <div class="flex-fill container">
         <main class="">
             <div class="container mt-2 pt-4">
