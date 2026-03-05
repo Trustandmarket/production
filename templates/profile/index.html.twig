@@ -54,6 +54,20 @@
             font-weight: 300;
             color: #757575;
         }
+        .profile-completion-wrapper {
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 12px 16px;
+            background: #fff;
+        }
+
+        .profile-completion-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #262626;
+        }
+
         .image_area {
             position: relative;
         }
@@ -211,6 +225,14 @@
 {% endblock %}
 {% block navigation %}{% endblock %}
 {% block body %}
+    {% set profileCompletionTotalWeight = 100 %}
+    {% set profileCompletionScore = 0 %}
+
+    {# Identite (25) #}
+    {% if avatar is defined and avatar %}
+        {% set profileCompletionScore = profileCompletionScore + 5 %}
+    {% endif %}
+
     <div class="flex-fill container">
         <main class="">
             <div class="container mt-2 pt-4">
