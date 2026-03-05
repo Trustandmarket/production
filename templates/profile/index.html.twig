@@ -298,6 +298,9 @@
         {% set profileCompletionScore = profileCompletionScore + 15 %}
     {% endif %}
 
+    {% set profileCompletionRate = [0, profileCompletionRate]|max %}
+    {% set profileCompletionRate = [100, profileCompletionRate]|min %}
+
     <div class="flex-fill container">
         <main class="">
             <div class="container mt-2 pt-4">
