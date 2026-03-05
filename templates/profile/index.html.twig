@@ -298,10 +298,6 @@
         {% set profileCompletionScore = profileCompletionScore + 15 %}
     {% endif %}
 
-    {% set profileCompletionRate = ((profileCompletionScore / profileCompletionTotalWeight) * 100)|round(0, 'floor') %}
-    {% set profileCompletionRate = [0, profileCompletionRate]|max %}
-    {% set profileCompletionRate = [100, profileCompletionRate]|min %}
-
     <div class="flex-fill container">
         <main class="">
             <div class="container mt-2 pt-4">
