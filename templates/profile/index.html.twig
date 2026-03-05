@@ -268,6 +268,23 @@
         {% set profileCompletionScore = profileCompletionScore + 1 %}
     {% endif %}
 
+    {# Adresse domicile (15) #}
+    {% if numeroNomRue_domicile is defined and numeroNomRue_domicile|trim != '' %}
+        {% set profileCompletionScore = profileCompletionScore + 5 %}
+    {% endif %}
+    {% if codePostal_domicile is defined and codePostal_domicile|trim != '' %}
+        {% set profileCompletionScore = profileCompletionScore + 3 %}
+    {% endif %}
+    {% if ville_domicile is defined and ville_domicile|trim != '' %}
+        {% set profileCompletionScore = profileCompletionScore + 3 %}
+    {% endif %}
+    {% if region_domicile is defined and region_domicile|trim != '' %}
+        {% set profileCompletionScore = profileCompletionScore + 2 %}
+    {% endif %}
+    {% if pays_domicile is defined and pays_domicile|trim != '' %}
+        {% set profileCompletionScore = profileCompletionScore + 2 %}
+    {% endif %}
+
     <div class="flex-fill container">
         <main class="">
             <div class="container mt-2 pt-4">
