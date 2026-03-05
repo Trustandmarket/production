@@ -309,6 +309,20 @@
         <main class="">
             <div class="container mt-2 pt-4">
                 {% include 'menuProfile.html.twig' %}
+                <div class="profile-completion-wrapper mb-3">
+                    <div class="profile-completion-label">
+                        Taux de remplissage du profil: {{ profileCompletionRate }}%
+                    </div>
+                    <div class="progress" style="height: 16px;">
+                        <div class="progress-bar bg-success" role="progressbar"
+                             style="width: {{ profileCompletionRate }}%;"
+                             aria-valuenow="{{ profileCompletionRate }}"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                            {{ profileCompletionRate }}%
+                        </div>
+                    </div>
+                </div>
                 <div class="mb-3">
                     {% for message in app.flashes('noticeErrorDate') %}
                         <div class="col-md-12 alert alert-warning alert-dismissible fade show" role="alert">
