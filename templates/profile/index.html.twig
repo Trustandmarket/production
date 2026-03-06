@@ -306,6 +306,9 @@
     {% endif %}
 
     {% set profileCompletionRate = profileCompletionScore %}
+    {% if profile_completion_rate is defined and profile_completion_rate is not null %}
+        {% set profileCompletionRate = profile_completion_rate %}
+    {% endif %}
     {% if profileCompletionRate < 0 %}
         {% set profileCompletionRate = 0 %}
     {% elseif profileCompletionRate > 100 %}

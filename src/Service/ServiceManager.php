@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 
 // src/Services/ServiceManager.php
 
-//Couche d'acces au données
+//Couche d'acces au donnÃ©es
 
 namespace App\Service;
 
@@ -229,7 +229,7 @@ class ServiceManager
         }
     }
 
-    // Les Sous Catégories
+    // Les Sous CatÃ©gories
 
     /**
      * @param $taxonomy
@@ -404,7 +404,7 @@ class ServiceManager
         return $categories;
     }
 
-    // récuperation de la sous categorie
+    // rÃ©cuperation de la sous categorie
     /**
      * @param $key
      * @param $parent
@@ -855,7 +855,7 @@ class ServiceManager
     }
 
     /**
-     * Nombre de commentaires postés par un utilisateur
+     * Nombre de commentaires postÃ©s par un utilisateur
      * @param $userId
      * @return null|array
      */
@@ -893,7 +893,7 @@ class ServiceManager
     }
 
     /**
-     * Réponse a un commentaire
+     * RÃ©ponse a un commentaire
      * @param $postId
      * @return null|array
      */
@@ -926,7 +926,7 @@ class ServiceManager
 
     //END SHOW COMMENTS DATA
 
-    //CRUD Commentmeta ou données supplémentaires
+    //CRUD Commentmeta ou donnÃ©es supplÃ©mentaires
 
     /**
      * @param $comment
@@ -1015,8 +1015,8 @@ class ServiceManager
         return new Response('OK');
     }
 
-    // CRUD Post ou ensemble des données générales envoyés sur la BD
-    //Cette partie sera gérée avec de maniere non conventionnelle car la relation est ManyToMany et la table de liaison existe deja.
+    // CRUD Post ou ensemble des donnÃ©es gÃ©nÃ©rales envoyÃ©s sur la BD
+    //Cette partie sera gÃ©rÃ©e avec de maniere non conventionnelle car la relation est ManyToMany et la table de liaison existe deja.
 
     //CRUD Post
 
@@ -1126,7 +1126,7 @@ class ServiceManager
     }
 
     /**
-     * Permet de créer une nouvelle page statique avec les informations comme le titre et la description de la page
+     * Permet de crÃ©er une nouvelle page statique avec les informations comme le titre et la description de la page
      * @param array $data
      * @return array
      */
@@ -1158,7 +1158,7 @@ class ServiceManager
     }
 
     /**
-     * Permet de créer une nouvelle page statique avec les informations comme le titre et la description de la page
+     * Permet de crÃ©er une nouvelle page statique avec les informations comme le titre et la description de la page
      * @param array $data
      * @return array
      */
@@ -1199,8 +1199,8 @@ class ServiceManager
         ]);
     }
 
-    // CRUD Post ou ensemble des données générales envoyés sur la BD
-    //Cette partie sera gérée avec de maniere non conventionnelle car la relation est ManyToMany et la table de liaison existe deja.
+    // CRUD Post ou ensemble des donnÃ©es gÃ©nÃ©rales envoyÃ©s sur la BD
+    //Cette partie sera gÃ©rÃ©e avec de maniere non conventionnelle car la relation est ManyToMany et la table de liaison existe deja.
 
     //CRUD Post
 
@@ -1663,7 +1663,7 @@ class ServiceManager
         return true;
     }
 
-    // Récupérer les annonces:
+    // RÃ©cupÃ©rer les annonces:
 
     /**
      * @param $id
@@ -1719,7 +1719,7 @@ class ServiceManager
                 if ($devise) {
                     $listeAnnonces[$i]['devise'] = $devise->getMetaValue();
                 } else {
-                    $listeAnnonces[$i]['devise'] = '€';
+                    $listeAnnonces[$i]['devise'] = 'â‚¬';
                 }
 
                 //Adresse
@@ -1740,7 +1740,7 @@ class ServiceManager
                     $listeAnnonces[$i]['id']
                 );
 
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->entityManager
                     ->getRepository(WpUsermeta::class)
                     ->findOneBy([
@@ -1801,7 +1801,7 @@ class ServiceManager
                 if ($devise) {
                     $listeAnnonces[$i]['devise'] = $devise->getMetaValue();
                 } else {
-                    $listeAnnonces[$i]['devise'] = '€';
+                    $listeAnnonces[$i]['devise'] = 'â‚¬';
                 }
 
                 //Adresse
@@ -1821,7 +1821,7 @@ class ServiceManager
                 $listeAnnonces[$i]['gallerie'] = $this->getAllImageForAnnouces(
                     $listeAnnonces[$i]['id']
                 );
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->entityManager
                     ->getRepository(WpUsermeta::class)
                     ->findOneBy([
@@ -1842,7 +1842,7 @@ class ServiceManager
         return $listeAnnonces;
     }
 
-    // Récupérer les annonces:
+    // RÃ©cupÃ©rer les annonces:
 
     /**
      * @param $id
@@ -1900,7 +1900,7 @@ class ServiceManager
                 if ($devise) {
                     $listeAnnonces[$i]['devise'] = $devise->getMetaValue();
                 } else {
-                    $listeAnnonces[$i]['devise'] = '€';
+                    $listeAnnonces[$i]['devise'] = 'â‚¬';
                 }
 
                 //Adresse
@@ -1926,7 +1926,7 @@ class ServiceManager
                     'images_annonces'
                 );
 
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->getUserStringDataValue(
                     $listeAnnonces[$i]['idUser'],
                     'disponibilite'
@@ -2029,7 +2029,7 @@ class ServiceManager
                 if ($devise) {
                     $listeAnnonces[$i]['devise'] = $devise->getMetaValue();
                 } else {
-                    $listeAnnonces[$i]['devise'] = '€';
+                    $listeAnnonces[$i]['devise'] = 'â‚¬';
                 }
                 //Adresse
                 $listeAnnonces[$i]['pays'] = $this->getPostStringDataValue(
@@ -2053,7 +2053,7 @@ class ServiceManager
                     $listeAnnonces[$i]["id"],
                     'images_annonces'
                 );
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->getUserStringDataValue(
                     $listeAnnonces[$i]['idUser'],
                     'disponibilite'
@@ -2167,7 +2167,7 @@ class ServiceManager
                 if ($devise) {
                     $listeAnnonces[$i]['devise'] = $devise->getMetaValue();
                 } else {
-                    $listeAnnonces[$i]['devise'] = '€';
+                    $listeAnnonces[$i]['devise'] = 'â‚¬';
                 }
 
                 //Adresse
@@ -2192,7 +2192,7 @@ class ServiceManager
                     $listeAnnonces[$i]["id"],
                     'images_annonces'
                 );
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->getUserStringDataValue(
                     $listeAnnonces[$i]['post_author'],
                     'disponibilite'
@@ -2293,7 +2293,7 @@ class ServiceManager
                 if ($devise) {
                     $listeAnnonces[$i]['devise'] = $devise->getMetaValue();
                 } else {
-                    $listeAnnonces[$i]['devise'] = '€';
+                    $listeAnnonces[$i]['devise'] = 'â‚¬';
                 }
 
                 //Adresse
@@ -2318,7 +2318,7 @@ class ServiceManager
                     $listeAnnonces[$i]["id"],
                     'images_annonces'
                 );
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->getUserStringDataValue(
                     $listeAnnonces[$i]['post_author'],
                     'disponibilite'
@@ -2372,7 +2372,7 @@ class ServiceManager
         return $listeAnnonces;
     }
 
-    // Récupérer les Professionnels:
+    // RÃ©cupÃ©rer les Professionnels:
     /**
      * @param $id
      * @param $ville
@@ -2498,7 +2498,7 @@ class ServiceManager
                 /* var_dump($sommeTotale);*/
                 $sommeMoyenne = $sommeTotale / sizeof($data);
                 $listeAnnonces[$i]['sommeMoyenne'] = $sommeMoyenne;
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->entityManager
                     ->getRepository(WpUsermeta::class)
                     ->findOneBy([
@@ -2614,7 +2614,7 @@ class ServiceManager
                     $sommeMoyenne = $sommeTotale / sizeof($data);
                 }
                 $listeAnnonces[$i]['sommeMoyenne'] = $sommeMoyenne;
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->entityManager
                     ->getRepository(WpUsermeta::class)
                     ->findOneBy([
@@ -2759,7 +2759,7 @@ class ServiceManager
                     $sommeMoyenne = $sommeTotale / sizeof($data);
                 }
                 $listeAnnonces[$i]['sommeMoyenne'] = $sommeMoyenne;
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->entityManager
                     ->getRepository(WpUsermeta::class)
                     ->findOneBy([
@@ -2878,7 +2878,7 @@ class ServiceManager
                     $sommeMoyenne = $sommeTotale / sizeof($data);
                 }
                 $listeAnnonces[$i]['sommeMoyenne'] = $sommeMoyenne;
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->entityManager
                     ->getRepository(WpUsermeta::class)
                     ->findOneBy([
@@ -3029,7 +3029,7 @@ class ServiceManager
                     $sommeMoyenne = $sommeTotale / sizeof($data);
                 }
                 $listeAnnonces[$i]['sommeMoyenne'] = $sommeMoyenne;
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->entityManager
                     ->getRepository(WpUsermeta::class)
                     ->findOneBy([
@@ -3172,7 +3172,7 @@ class ServiceManager
                     $sommeMoyenne = $sommeTotale / sizeof($data);
                 }
                 $listeAnnonces[$i]['sommeMoyenne'] = $sommeMoyenne;
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->entityManager
                     ->getRepository(WpUsermeta::class)
                     ->findOneBy([
@@ -3319,7 +3319,7 @@ class ServiceManager
                     $sommeMoyenne = $sommeTotale / sizeof($data);
                 }
                 $listeAnnonces[$i]['sommeMoyenne'] = $sommeMoyenne;
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->entityManager
                     ->getRepository(WpUsermeta::class)
                     ->findOneBy([
@@ -3443,7 +3443,7 @@ class ServiceManager
                 }
                 $listeAnnonces[$i]['sommeMoyenne'] = $sommeMoyenne;
 
-                //Pour la disponibilité
+                //Pour la disponibilitÃ©
                 $calendrier = $this->entityManager
                     ->getRepository(WpUsermeta::class)
                     ->findOneBy([
@@ -3472,7 +3472,7 @@ class ServiceManager
         return $listeAnnonces;
     }
 
-    // Récupérer les annonces:
+    // RÃ©cupÃ©rer les annonces:
 
     /**
      * @param $tag
@@ -3506,7 +3506,7 @@ class ServiceManager
 
     // End posts
 
-    // CRUD PostMeta ou ensemble des données supplémentaires liées aux Posts
+    // CRUD PostMeta ou ensemble des donnÃ©es supplÃ©mentaires liÃ©es aux Posts
 
     /**
      * @param $postId
@@ -3673,7 +3673,7 @@ class ServiceManager
         $r = $query->getResult();
         if ($r == 0) {
             $u = $this->readUserMeta($id, $metaKey);
-            if (!$u && $metaValue) {
+            if (!$u && $metaValue !== null && $metaValue !== "") {
                 $this->createUserMeta1($id, $metaKey, $metaValue);
             }
         }
@@ -4636,7 +4636,7 @@ class ServiceManager
         // FIN RECUPERATION
     }
 
-    //Toutes les réservations d'un utilisateur
+    //Toutes les rÃ©servations d'un utilisateur
 
     // RECUPERATION DE TOUTES LES ANNONCES D'Un USER
     /**
@@ -4693,7 +4693,7 @@ class ServiceManager
         return $data;
     }
 
-    //Toutes les réservations Devis d'un utilisateur
+    //Toutes les rÃ©servations Devis d'un utilisateur
     // RECUPERATION DE TOUT LES Devis D'Un USER
     /**
      */
@@ -5580,7 +5580,7 @@ class ServiceManager
                 'commentPostId' => $data['id'],
             ]);
         // var_dump($data["commentaires"]);
-        //Compétence
+        //CompÃ©tence
         $competence = $this->getUserStringDataValue($userId, 'competence');
         if ($competence) {
             $data['competence'] = explode(',', $competence);
@@ -5605,7 +5605,7 @@ class ServiceManager
         } else {
             $data['portfolio'] = '';
         }
-        //Référence Utilisateur
+        //RÃ©fÃ©rence Utilisateur
         $data['reference'] = $this->getUserStringDataValue(
             $userId,
             'reference'
@@ -5699,7 +5699,7 @@ class ServiceManager
                 'commentPostId' => $data['id'],
             ]);
         // var_dump($data["commentaires"]);
-        //Compétence
+        //CompÃ©tence
         $competence = $this->getUserStringDataValue($userId, 'competence');
         if ($competence) {
             $data['competence'] = explode(',', $competence);
@@ -5724,7 +5724,7 @@ class ServiceManager
         } else {
             $data['portfolio'] = '';
         }
-        //Référence Utilisateur
+        //RÃ©fÃ©rence Utilisateur
         $data['reference'] = $this->getUserStringDataValue(
             $userId,
             'reference'
@@ -5755,7 +5755,7 @@ class ServiceManager
      * @param $userId
      * @return array()
      */
-    //Données annonces publiés du pro + Annonces
+    //DonnÃ©es annonces publiÃ©s du pro + Annonces
     /**
      * @param $userId
      * @return mixed[]
@@ -5882,7 +5882,7 @@ class ServiceManager
         }
         return $data;
     }
-    //Données commentaires recus du pro
+    //DonnÃ©es commentaires recus du pro
 
     /**
      * @param $userId
@@ -6966,7 +6966,7 @@ class ServiceManager
         return $ids;
     }
 
-    // Fontion qui permet d'uploder les fichiers de preuve d'identité
+    // Fontion qui permet d'uploder les fichiers de preuve d'identitÃ©
     /**
      * @param $file
      * @param $userId
@@ -6985,7 +6985,7 @@ class ServiceManager
             $type = 'IDENTITY_PROOF';
             $metakey = 'kyc_document_' . $creation_date;
             $url = $this->local . '/identite/' . $document_name;
-            //Vérifier qu'il existe des documents et récuperer le plus récent;
+            //VÃ©rifier qu'il existe des documents et rÃ©cuperer le plus rÃ©cent;
 
             //CREATE TABLE AND SERIALIZE
             $data = @serialize([
@@ -7021,7 +7021,7 @@ class ServiceManager
             $type = 'REGISTRATION_PROOF';
             $metakey = 'kyc_document_' . $creation_date;
             $url = $this->local . '/enregistrement/' . $document_name;
-            //Vérifier qu'il existe des documents et récuperer le plus récent;
+            //VÃ©rifier qu'il existe des documents et rÃ©cuperer le plus rÃ©cent;
 
             //CREATE TABLE AND SERIALIZE
             $data = @serialize([
@@ -10031,7 +10031,7 @@ class ServiceManager
     }
 
     function verifierDate($date) {
-        // Vérifie si la date est au format MM/DD/YYYY
+        // VÃ©rifie si la date est au format MM/DD/YYYY
         if (!preg_match("/^(0[1-9]|1[0-2])\/([0[1-9]|1[0-2]|2[0-9]|3[01])\/([0-9]{4})$/", $date)) {
             // La date n'est pas valide ou est au format DD/MM/YYYY
             // Convertit la date au format MM/DD/YYYY
@@ -10044,3 +10044,4 @@ class ServiceManager
     }
 
 }
+

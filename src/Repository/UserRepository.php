@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Repository;
 
@@ -166,4 +166,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         return $this->loadUserByIdentifier($usernameOrEmail);
     }
+    /**
+     * @return User[]
+     */
+    public function findUsersForProfileCompletionRecompute(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.roles LIKE :role_societe OR u.roles LIKE :role_auto_entrepreneur')
+            ->setParameter('role_societe', '%ROLE_SOCIETE%')
+            ->setParameter('role_auto_entrepreneur', '%ROLE_AUTO_ENTREPRENEUR%')
+            ->getQuery()
+            ->getResult();
+    }
 }
+

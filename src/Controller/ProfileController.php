@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Controller;
 
@@ -14,7 +14,7 @@ use App\Entity\{Abonnement,
     WpUsermeta,
     WpTermRelationships
 };
-use App\Service\{Payment, Panier, ServiceManager, ToolsMeta};
+use App\Service\{Payment, Panier, ProfileCompletionCalculator, ServiceManager, ToolsMeta};
 use App\Service\DataAccessLayer\Annonces;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,6 +42,7 @@ class ProfileController extends AbstractController
     private $payment;
     private $requestStack;
     private $em;
+    private $profileCompletionCalculator;
 
     public function __construct(
         ServiceManager $service_manager,
@@ -50,6 +51,7 @@ class ProfileController extends AbstractController
         RequestStack $requestStack,
         Payment $payment,
         Panier $panier,
+        ProfileCompletionCalculator $profileCompletionCalculator,
         EntityManagerInterface $em
     )
     {
@@ -59,6 +61,7 @@ class ProfileController extends AbstractController
         $this->requestStack = $requestStack;
         $this->payment = $payment;
         $this->panier = $panier;
+        $this->profileCompletionCalculator = $profileCompletionCalculator;
         $this->em = $em;
         $this->local = $_SERVER['APP_FILES_LOCAL_URL'];
     }
@@ -79,7 +82,7 @@ class ProfileController extends AbstractController
             $noPage = $request->get('noPage');
         }
         $detailsPro = $this->annonces_access_layer->readAllProData($user_id, $noPage);
-        //Commentaires récents
+        //Commentaires rÃ©cents
         $lastComment = '';
         $idDernierPost = $this->em->getRepository(wpPosts::class)->findBy(['postAuthor' => $user_id], ['id' => 'DESC']);
         if ($idDernierPost != null) {
@@ -217,13 +220,13 @@ class ProfileController extends AbstractController
         $numeroNomRue_livraison = $this->service_manager->readUserMeta($userId, 'numeroNomRue_livraison');
         $codePostal_livraison = $this->service_manager->readUserMeta($userId, 'codePostal_livraison');
         $ville_livraison = $this->service_manager->readUserMeta($userId, 'ville_livraison');
-        //Compétences
+        //CompÃ©tences
         $cmp = $this->service_manager->readUserMeta($userId, 'competence');
         $competence = array();
         if ($cmp) {
             $competence = explode(',', $cmp->getMetaValue());
         }
-        //Région
+        //RÃ©gion
         $region = $this->service_manager->getUserStringDataValue($userId, 'region');
         $region_livraison = $this->service_manager->getUserStringDataValue($userId, 'region_livraison');
         $region_domicile = $this->service_manager->getUserStringDataValue($userId, 'region_domicile');
@@ -332,6 +335,7 @@ class ProfileController extends AbstractController
         //Departement
         $departement = $this->service_manager->getUserStringDataValue($userId, 'departement');
         $departements = $this->em->getRepository(Departement::class)->findAll();
+        $profileCompletionRate = $this->recomputeAndPersistProfileCompletion($this->getUser());
 
         return $this->render('profile/index.html.twig', [
             'header' => $this->service_manager->naveMenuItem(10),
@@ -353,6 +357,7 @@ class ProfileController extends AbstractController
             'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'activities' => $this->service_manager->postCategorie1('product_activity'), 'principal_activity' => $principal_activity,
             'departements' => $departements, 'user_departement' => $departement,
+            'profile_completion_rate' => $profileCompletionRate,
             'page_name' => 'Profil et informations personnelles'
         ]);
         // code...
@@ -637,6 +642,8 @@ class ProfileController extends AbstractController
             }
         }
 
+        $this->recomputeAndPersistProfileCompletion($user);
+
         return $this->json([
             'result' => true,
             'data' => $stripeData,
@@ -812,9 +819,9 @@ class ProfileController extends AbstractController
         $codePostaleCompte = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'vendor_account_postcode');
         //Information bancaire: Pays
         $paysCompte = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'vendor_account_country');
-        //Information bancaire: Région
+        //Information bancaire: RÃ©gion
         $regionCompte = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'vendor_account_region');
-        //Données De la facture:
+        //DonnÃ©es De la facture:
         $nomEntreprise = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_company');
         $pays = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_country');
         $numeroNomRue = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_address_1');
@@ -837,7 +844,7 @@ class ProfileController extends AbstractController
         return $this->render('profile/fournisseurs.html.twig', [
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
-            //Données Compte
+            //DonnÃ©es Compte
             'typeCompte' => $typeCompte,
             'nomCompte' => $nomCompte,
             'adresseDetenteur' => $adresseDetenteur,
@@ -845,7 +852,7 @@ class ProfileController extends AbstractController
             'codePostaleCompte' => $codePostaleCompte,
             'paysCompte' => $paysCompte,
             'regionCompte' => $regionCompte,
-            //Données Facture
+            //DonnÃ©es Facture
 
             'siret' => $siret,
             'tva' => $tva,
@@ -1112,7 +1119,7 @@ class ProfileController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $userId = $this->getUser()->getId();
         $description = null;
-        //Données nécessaires aux traitements
+        //DonnÃ©es nÃ©cessaires aux traitements
         $mpAccount = $this->service_manager->getUserStringDataValue($userId, 'mp_user_id_sandbox');
         $stripePersonAccount = $this->service_manager->getUserStringDataValue($userId, 'stripe_person_user');
 
@@ -1137,7 +1144,7 @@ class ProfileController extends AbstractController
         if (empty($nom) || empty($prenom) || empty($pays) || empty($user_nationality)) {
             return new JsonResponse([
                 'result' => 11, // Error: Missing necessary information
-                'error' => 'Des informations nécessaires sont introuvables, mettez à jour votre profil.'
+                'error' => 'Des informations nÃ©cessaires sont introuvables, mettez Ã  jour votre profil.'
             ]);
         }
 
@@ -1374,7 +1381,7 @@ class ProfileController extends AbstractController
             if ($allData->getPinged() == "devis") {
                 $prixTotal = $panierData["prix_devis"];
                 //$devisePrixTotal = $panierData["devise"];
-                $devisePrixTotal = '€';
+                $devisePrixTotal = 'â‚¬';
                 $panierData['email'] = $this->em->getRepository(User::class)->find($panierData['post_author']);
                 if ($panierData['email']) {
                     $panierData['email'] = $panierData['email']->getEmailCanonical();
@@ -1387,11 +1394,11 @@ class ProfileController extends AbstractController
                     $prixTotal += $panierData[$i]["prix"];
                 }
                 //$devisePrixTotal = $panierData["0"]["devise"];
-                $devisePrixTotal = '€';
+                $devisePrixTotal = 'â‚¬';
             }
 
             if ($transaction->Status == "SUCCEEDED" && $this->requestStack->getSession()->get('PayInCardWebId') == $transaction->Id) {
-                $responseMessage = 'Paiement crée';
+                $responseMessage = 'Paiement crÃ©e';
                 $this->addFlash('notice', $responseMessage);
                 //Update Command status
                 $this->em->flush();
@@ -1734,7 +1741,7 @@ class ProfileController extends AbstractController
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'userAvailabilityDates' => array_values(array_reverse($userAvailabilityDates)),
-            'page_name' => 'Paramètres'
+            'page_name' => 'ParamÃ¨tres'
         ]);
     }
 
@@ -1794,7 +1801,7 @@ class ProfileController extends AbstractController
             ),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
-            'page_name' => 'Paramètres'
+            'page_name' => 'ParamÃ¨tres'
         ]);
     }
 
@@ -1807,7 +1814,7 @@ class ProfileController extends AbstractController
     {
         $userId = $this->getUser()->getId();
 
-        //Réservation de services(s) (Client)
+        //RÃ©servation de services(s) (Client)
         if ($request->get('reservationServiceClient') == 'on') {
             $this->service_manager->updateUserMeta(
                 $userId,
@@ -1821,7 +1828,7 @@ class ProfileController extends AbstractController
                 0
             );
         }
-        //Réservation de service(s) (Fournisseur)
+        //RÃ©servation de service(s) (Fournisseur)
         if ($request->get('reservationServiceAnnonceur') == 'on') {
             $this->service_manager->updateUserMeta(
                 $userId,
@@ -1835,7 +1842,7 @@ class ProfileController extends AbstractController
                 0
             );
         }
-        //Annulation de réservation
+        //Annulation de rÃ©servation
         if ($request->get('annulationReservation') == 'on') {
             $this->service_manager->updateUserMeta(
                 $userId,
@@ -1863,7 +1870,7 @@ class ProfileController extends AbstractController
                 0
             );
         }
-        //Annonce en modération
+        //Annonce en modÃ©ration
         if ($request->get('annonceModeration') == 'on') {
             $this->service_manager->updateUserMeta(
                 $userId,
@@ -1877,7 +1884,7 @@ class ProfileController extends AbstractController
                 0
             );
         }
-        //Annonce rejeté
+        //Annonce rejetÃ©
         if ($request->get('annonceRejete') == 'on') {
             $this->service_manager->updateUserMeta(
                 $userId,
@@ -1891,7 +1898,7 @@ class ProfileController extends AbstractController
                 0
             );
         }
-        //Annonce publiée
+        //Annonce publiÃ©e
         if ($request->get('annoncePublie') == 'on') {
             $this->service_manager->updateUserMeta(
                 $userId,
@@ -1905,7 +1912,7 @@ class ProfileController extends AbstractController
                 0
             );
         }
-        //Adhésion à la newsletter
+        //AdhÃ©sion Ã  la newsletter
         if ($request->get('adhesionNewsletter') == 'on') {
             $this->service_manager->updateUserMeta(
                 $userId,
@@ -3578,20 +3585,20 @@ class ProfileController extends AbstractController
             $statut_annonce = '';
             $email_code = '';
             if ($detailsAnnonce->getPostStatus() == 'moderation') {
-                $statut_annonce = 'Modération';
-                $setEmailSubject = 'Création d\'annonce sur Trust & Market';
+                $statut_annonce = 'ModÃ©ration';
+                $setEmailSubject = 'CrÃ©ation d\'annonce sur Trust & Market';
                 $email_code = 27;
             } elseif ($detailsAnnonce->getPostStatus() == 'publish') {
-                $statut_annonce = 'Publiée';
-                $setEmailSubject = 'Nouvelle annonce publiée sur Trust & Market';
+                $statut_annonce = 'PubliÃ©e';
+                $setEmailSubject = 'Nouvelle annonce publiÃ©e sur Trust & Market';
                 $email_code = 28;
             } elseif ($detailsAnnonce->getPostStatus() == 'draft') {
                 $statut_annonce = 'En brouillon';
-                $setEmailSubject = 'Création d\'annonce sur Trust & Market';
+                $setEmailSubject = 'CrÃ©ation d\'annonce sur Trust & Market';
                 $email_code = 27;
             } elseif ($detailsAnnonce->getPostStatus() == 'trash') {
-                $statut_annonce = 'Rejetée';
-                $setEmailSubject = 'Annonce rejetée sur Trust & Market';
+                $statut_annonce = 'RejetÃ©e';
+                $setEmailSubject = 'Annonce rejetÃ©e sur Trust & Market';
                 $email_code = 29;
             }
 
@@ -3869,10 +3876,10 @@ class ProfileController extends AbstractController
         $statut_annonce = '';
         $email_code = '';
         if ($annonce->getPostStatus() == 'moderation') {
-            $statut_annonce = 'Modération';
+            $statut_annonce = 'ModÃ©ration';
             $email_code = 27;
         } elseif ($annonce->getPostStatus() == 'publish') {
-            $statut_annonce = 'Publiée';
+            $statut_annonce = 'PubliÃ©e';
             $email_code = 28;
         } elseif ($annonce->getPostStatus() == 'draft') {
             $statut_annonce = 'En brouillon';
@@ -4131,4 +4138,24 @@ class ProfileController extends AbstractController
             'result' => $r,
         ]);
     }
+    private function supportsProfileCompletion(User $user): bool
+    {
+        return in_array('ROLE_AUTO_ENTREPRENEUR', $user->getRoles(), true)
+            || in_array('ROLE_SOCIETE', $user->getRoles(), true);
+    }
+
+    private function recomputeAndPersistProfileCompletion(User $user): ?int
+    {
+        if (!$this->supportsProfileCompletion($user)) {
+            return null;
+        }
+
+        $rate = $this->profileCompletionCalculator->calculateForUser($user);
+        $this->service_manager->updateUserMeta((int) $user->getId(), 'profile_completion_rate', (string) $rate);
+
+        return $rate;
+    }
 }
+
+
+
