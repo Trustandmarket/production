@@ -15,7 +15,7 @@ class ProfileCompletionCalculator
         $userId = (int) $user->getId();
         $score = 0;
 
-        // Identite (25)
+        // Identite (15)
         $avatarMeta = $this->serviceManager->readUserMeta($userId, 'basic_user_avatar');
         if ($avatarMeta && $avatarMeta->getMetaValue()) {
             $img = @unserialize($avatarMeta->getMetaValue());
@@ -24,27 +24,27 @@ class ProfileCompletionCalculator
             }
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'last_name'))) {
-            $score += 4;
-        }
-        if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'first_name'))) {
-            $score += 4;
-        }
-        if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'sexe'))) {
             $score += 3;
         }
+        if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'first_name'))) {
+            $score += 3;
+        }
+        if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'sexe'))) {
+            $score += 2;
+        }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'bdaytime'))) {
-            $score += 5;
+            $score += 4;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'nationalityCountry'))) {
-            $score += 4;
+            $score += 3;
         }
 
-        // Contact et activite (20)
+        // Contact et activite (15)
         if ($this->hasValue($user->getEmailCanonical())) {
-            $score += 6;
+            $score += 4;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'telephone'))) {
-            $score += 4;
+            $score += 1;
         }
 
         $principalActivity = $this->serviceManager->readUserMeta($userId, 'activite_principale');
@@ -54,7 +54,7 @@ class ProfileCompletionCalculator
 
         $competence = $this->serviceManager->getUserStringDataValue($userId, 'competence');
         if ($this->hasValue($competence)) {
-            $score += 10;
+            $score += 5;
         }
 
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'nom_commercial'))) {
@@ -82,12 +82,12 @@ class ProfileCompletionCalculator
             $score += 2;
         }
 
-        // Contenu de profil (25)
+        // Contenu de profil (40)
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'description'))) {
-            $score += 20;
+            $score += 30;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'reference'))) {
-            $score += 5;
+            $score += 10;
         }
 
         // Portfolio (15)
