@@ -519,7 +519,7 @@
                                                        class="btn btn-sm btn-primary">
                                                         {{ 'profil-utilisateur.annonces-details.details-profil'|trans }}</a>
                                                 {% else %}
-                                                    <span class="d-inline-block" title="Le profil n'est pas consultable pour le moment.">
+                                                    <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-trigger="hover focus click" data-placement="top" title="Le profil n'est pas consultable pour le moment.">
                                                         <a href="javascript:void(0);" aria-disabled="true" tabindex="-1"
                                                            class="btn btn-sm btn-primary disabled" style="pointer-events: none;">
                                                             {{ 'profil-utilisateur.annonces-details.details-profil'|trans }}</a>
@@ -743,7 +743,7 @@
 
     <script>
         $(document).ready(function () {
-
+            $('[data-toggle="tooltip"]').tooltip();
             if ($(window).width() < 768) {
                 $('.desktop-form div').appendTo('.mobile-form');
             }
