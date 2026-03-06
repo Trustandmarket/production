@@ -77,6 +77,12 @@ class ProfileController extends AbstractController
         $arr = explode('-', $request->get('id'));
         $user_id = $arr[array_key_last($arr)];
         $user = $this->em->getRepository(User::class)->find($user_id);
+        $profileCompletionRate = (int) $this->service_manager->getUserStringDataValue((int) $user_id, 'profile_completion_rate');
+        $isOwner = (int) $this->getUser()->getId() === (int) $user_id;
+
+        if ($profileCompletionRate < 80 && !$isOwner) {
+            return $this->redirectToRoute('index', ['_locale' => $request->getLocale()]);
+        }
         $noPage = 1;
         if ($request->get('noPage')) {
             $noPage = $request->get('noPage');
