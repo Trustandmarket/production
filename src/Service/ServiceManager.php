@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 // src/Services/ServiceManager.php
 
