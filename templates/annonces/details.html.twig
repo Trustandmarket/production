@@ -381,11 +381,21 @@
                                         {% endif %}
                                     </p>
 
-                                    <a target="_blank"
-                                        href="{{ path('chat_chat', {'destinataire': detailsAnnonce.post_author }) }}"
-                                        class="btn btn-sm btn-primary">
-                                        {{ 'profil-utilisateur.annonces-details.envoyer-message'|trans }}
-                                    </a>
+                                    {% set canSendMessage = seller_profile_completion_rate is defined and seller_profile_completion_rate >= 80 %}
+                                    {% if canSendMessage %}
+                                        <a target="_blank"
+                                            href="{{ path('chat_chat', {'destinataire': detailsAnnonce.post_author }) }}"
+                                            class="btn btn-sm btn-primary">
+                                            {{ 'profil-utilisateur.annonces-details.envoyer-message'|trans }}
+                                        </a>
+                                    {% else %}
+                                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-trigger="hover focus click" data-placement="top" title="Vous ne pouvez pas contact ce professionnel pour le moment.">
+                                            <a href="javascript:void(0);" aria-disabled="true" tabindex="-1"
+                                               class="btn btn-sm btn-primary disabled" style="pointer-events: none;">
+                                                {{ 'profil-utilisateur.annonces-details.envoyer-message'|trans }}
+                                            </a>
+                                        </span>
+                                    {% endif %}
 
                                     {% if rupture == 0 and detailsAnnonce.categorieParentType != 'product_cat' %}
                                         <span id="rupture" class="btn btn-md btn-warning text-center">
