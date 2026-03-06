@@ -512,9 +512,9 @@
                                         <div class="row" style="width: 100%;">
                                             <div class="col-md-12 my-1 pull-right button_profil_sendmsg">
 											
-                                                <a target="_blank"
-                                                   href="{{ path('profile_detailsProfessionnel',{'id': 'infos-profil-' ~ detailsAnnonce.post_author }) }}"
-                                                   class="btn btn-sm btn-primary">
+                                                {% set canOpenProfile = seller_profile_completion_rate is defined and seller_profile_completion_rate >= 80 %}
+                                                <a {% if canOpenProfile %}target="_blank" href="{{ path('profile_detailsProfessionnel',{'id': 'infos-profil-' ~ detailsAnnonce.post_author }) }}"{% else %}href="javascript:void(0);" aria-disabled="true" tabindex="-1" data-toggle="tooltip" data-placement="top" title="Le profil n'est pas consultable pour le moment."{% endif %}
+                                                   class="btn btn-sm btn-primary{% if not canOpenProfile %} disabled{% endif %}">
                                                     {{ 'profil-utilisateur.annonces-details.details-profil'|trans }}</a>
                                                 
                                                 {% if app.user %}

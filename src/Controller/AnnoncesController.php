@@ -376,6 +376,7 @@ class AnnoncesController extends AbstractController
             $date = explode(',', $d1->getMetaValue());
         }
         $professional = $this->entityManager->getRepository(User::class)->find($detailsAnnonce['post_author']);
+        $profileCompletionRate = (int) $this->service_manager->getUserStringDataValue($detailsAnnonce['post_author'], 'profile_completion_rate');
         $lateDate = date('d-m-Y', strtotime($dateCommande->format('d-m-Y'). ' + 1 years'));
         $availabilityRangeDates = $this->tools->getBetweenDates($dateCommande->format('d-m-Y'), $lateDate);
         $userAvailabilityDates = array_diff($availabilityRangeDates, $date);
@@ -414,6 +415,7 @@ class AnnoncesController extends AbstractController
             'bloc8' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('accueil_bloc_8'),
             'bloc9' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('accueil_bloc_9'),
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
+            'seller_profile_completion_rate' => $profileCompletionRate,
         ]);
     }
 
