@@ -82,18 +82,18 @@ class ProfileCompletionCalculator
             $score += 2;
         }
 
-        // Contenu de profil (40)
+        // Contenu de profil (50)
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'description'))) {
-            $score += 30;
+            $score += 35;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'reference'))) {
-            $score += 10;
+            $score += 15;
         }
 
-        // Portfolio (15)
+        // Portfolio (5)
         $portfolio = $this->serviceManager->getUserStringDataValue($userId, 'portfolio');
         if ($this->hasValue($portfolio)) {
-            $score += 15;
+            $score += 5;
         }
 
         if ($score < 0) {
