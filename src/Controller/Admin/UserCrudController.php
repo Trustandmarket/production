@@ -183,7 +183,7 @@ class UserCrudController extends AbstractCrudController
         $Activeruser = Action::new('Activeruser', 'Mail activation')
             ->linkToCrudAction('ActivercompteAction');
 
-        $completionLt80 = Action::new('completionLt80', 'Completion < 80%')
+       /* $completionLt80 = Action::new('completionLt80', 'Completion < 80%')
             ->linkToUrl($this->buildCompletionUrl('lt80', null))
             ->createAsGlobalAction();
 
@@ -201,7 +201,7 @@ class UserCrudController extends AbstractCrudController
 
         $completionReset = Action::new('completionReset', 'Reset completion')
             ->linkToUrl($this->buildCompletionUrl('all', 'none'))
-            ->createAsGlobalAction();
+            ->createAsGlobalAction();*/
 
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
