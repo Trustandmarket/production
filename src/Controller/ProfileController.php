@@ -1747,7 +1747,7 @@ class ProfileController extends AbstractController
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'userAvailabilityDates' => array_values(array_reverse($userAvailabilityDates)),
-            'page_name' => 'ParamÃ¨tres'
+            'page_name' => 'Paramètres'
         ]);
     }
 
@@ -1807,7 +1807,7 @@ class ProfileController extends AbstractController
             ),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
-            'page_name' => 'ParamÃ¨tres'
+            'page_name' => 'Paramètres'
         ]);
     }
 
