@@ -70,7 +70,7 @@ class UserCrudController extends AbstractCrudController
     {
         return $crud
             ->setPageTitle('index', 'Liste des utilisateurs')
-            ->setPageTitle('detail', 'DÃ©tails Utilisateur')
+            ->setPageTitle('detail', 'DÃƒÂ©tails Utilisateur')
             ->setPageTitle('edit', 'Modifier Utilisateur')
             ->setEntityLabelInSingular('Utilisateur')
             ->setEntityLabelInPlural('Utilisateurs')
@@ -88,23 +88,17 @@ class UserCrudController extends AbstractCrudController
             TextField::new('display_name', 'Noms'),
             TextField::new('email_canonical', 'Email'),
             ArrayField::new('roles', 'Roles'),
-            //TextField::new('last_activity_at', 'DerniÃ¨re Connexion'),
+            //TextField::new('last_activity_at', 'DerniÃƒÂ¨re Connexion'),
             BooleanField::new('enabled', 'Compte Actif?'),
             //AssociationField::new('abonnements', 'Abonnements')->hideOnForm(),
-            BooleanField::new('is_verified', 'Email vÃ©rifiÃ©?'),
+            BooleanField::new('is_verified', 'Email vÃƒÂ©rifiÃƒÂ©?'),
             TextField::new('id', 'Completion Rate')
-                ->formatValue(function ($value, $entity) {
-                    if (!$entity instanceof User) {
-                        return '';
-                    }
-
-                    return $this->renderCompletionRateBadge($entity);
-                })
+                ->formatValue([$this, 'formatCompletionRate'])
                 ->renderAsHtml()
                 ->onlyOnIndex(),
             TextField::new('date_naissance', 'Date de naissance')->onlyOnDetail(),
             DateTimeField::new('userRegistered', 'Date de creation')->onlyOnIndex(),
-            //DateTimeField::new('last_activity_at', 'DerniÃ¨re Connexion'),
+            //DateTimeField::new('last_activity_at', 'DerniÃƒÂ¨re Connexion'),
             DateTimeField::new('updatedAt', 'Date de MAJ')->onlyOnIndex(),
 
             FormField::addTab('Donnees uniques utilisateur')->onlyOnDetail(),
@@ -346,6 +340,15 @@ class UserCrudController extends AbstractCrudController
         return sprintf('<span class="%s">%d%%</span>', $class, $rate);
     }
 
+    public function formatCompletionRate($value, $entity): string
+    {
+        if (!$entity instanceof User) {
+            return '';
+        }
+
+        return $this->renderCompletionRateBadge($entity);
+    }
+
     public function stripeForm(AdminContext $context)
     {
         return $this->render('admin/user/stripe_form.html.twig', []);
@@ -378,11 +381,11 @@ class UserCrudController extends AbstractCrudController
                 $this->em->flush();
             }
 
-            return new JsonResponse(['message' => 'Compte Stripe supprimÃ© avec succÃ¨s', 'delete' => $deletedItem], 200);
+            return new JsonResponse(['message' => 'Compte Stripe supprimÃƒÂ© avec succÃƒÂ¨s', 'delete' => $deletedItem], 200);
         }
 
         // If the account was not deleted, return an error message
-        return new JsonResponse(['error' => 'Ã‰chec de la suppression du compte Stripe', 'delete' => $deletedItem], 400);
+        return new JsonResponse(['error' => 'Ãƒâ€°chec de la suppression du compte Stripe', 'delete' => $deletedItem], 400);
     }
 
 
@@ -563,7 +566,7 @@ class UserCrudController extends AbstractCrudController
             $userId,
             'vendor_account_country'
         );
-        //Information bancaire: RÃ©gion
+        //Information bancaire: RÃƒÂ©gion
         $regionCompte = $this->service_manager->readUserMeta(
             $userId,
             'vendor_account_region'
@@ -675,7 +678,7 @@ class UserCrudController extends AbstractCrudController
             'regionCompte' => $regionCompte,
             'activities' => $this->service_manager->postCategorie1('product_activity'),
             'principal_activity' => $principal_activity,
-            //DonnÃ©es Facture
+            //DonnÃƒÂ©es Facture
             'user' => $this->service_manager->userById($userId),
             'prenom' => $prenom,
             'nom' => $nom,
@@ -783,14 +786,14 @@ class UserCrudController extends AbstractCrudController
         $accountToken = $this->payment->createStripeAccountToken($userType, $data);
         if (empty($accountToken['id'])) return ['token' => $accountToken, 'data' => $data];
 
-        // ðŸ”¹ Create Stripe Account from Token
+        // Ã°Å¸â€Â¹ Create Stripe Account from Token
         $stripeAccount = $this->payment->createStripeUserFromToken($accountToken['id']);
         if (empty($stripeAccount['id'])) return ['token' => $accountToken, 'data' => $data];
 
         $this->service_manager->updateUserMeta($userId, 'mp_user_id_sandbox', $stripeAccount['id']);
         $this->payment->updateStripeUser($stripeAccount['id'], $userType, $data);
 
-        // ðŸ”¹ Create Stripe Person if required
+        // Ã°Å¸â€Â¹ Create Stripe Person if required
         if($userType != 'ROLE_ABONNE'){
             $stripePersonToken = $this->payment->createStripePersonToken($data);
             if (!empty($stripePersonToken['id'])) {
