@@ -175,7 +175,7 @@ class UserCrudController extends AbstractCrudController
         $Activeruser = Action::new('Activeruser', 'Mail activation')
             ->linkToCrudAction('ActivercompteAction');
 
-        $completionLt80 = Action::new('completionLt80', 'Completion < 80%')
+       /* $completionLt80 = Action::new('completionLt80', 'Completion < 80%')
             ->linkToUrl($this->buildCompletionUrl('lt80', null))
             ->createAsGlobalAction();
 
@@ -193,18 +193,18 @@ class UserCrudController extends AbstractCrudController
 
         $completionReset = Action::new('completionReset', 'Reset completion')
             ->linkToUrl($this->buildCompletionUrl('all', 'none'))
-            ->createAsGlobalAction();
+            ->createAsGlobalAction();*/
 
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $export)
             ->add(Crud::PAGE_INDEX, $openStripeForm)
             ->add(Crud::PAGE_INDEX, $Activeruser)
-            ->add(Crud::PAGE_INDEX, $completionLt80)
-            ->add(Crud::PAGE_INDEX, $completionGte80)
-            ->add(Crud::PAGE_INDEX, $completionSortAsc)
-            ->add(Crud::PAGE_INDEX, $completionSortDesc)
-            ->add(Crud::PAGE_INDEX, $completionReset);
+           // ->add(Crud::PAGE_INDEX, $completionLt80)
+           // ->add(Crud::PAGE_INDEX, $completionGte80)
+           // ->add(Crud::PAGE_INDEX, $completionSortAsc)
+           // ->add(Crud::PAGE_INDEX, $completionSortDesc)
+           // ->add(Crud::PAGE_INDEX, $completionReset);
             //->add(Crud::PAGE_INDEX, $deleteStripe);
     }
 
@@ -241,7 +241,7 @@ class UserCrudController extends AbstractCrudController
             ->generateUrl();
     }
 
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    /*public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
@@ -271,7 +271,7 @@ class UserCrudController extends AbstractCrudController
         }
 
         return $qb;
-    }
+    }*/
 
     private function getProfileCompletionRate(User $user): int
     {
