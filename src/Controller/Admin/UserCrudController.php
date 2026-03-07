@@ -7,9 +7,13 @@ use App\Security\EmailVerifier;
 use App\Service\Export\CsvExporter;
 use App\Service\{Payment, ServiceManager};
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud};
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField,
@@ -25,6 +29,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField,
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -81,8 +86,16 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('enabled', 'Compte Actif?'),
             //AssociationField::new('abonnements', 'Abonnements')->hideOnForm(),
             BooleanField::new('is_verified', 'Email vérifié?'),
-            IdField::new('id', 'Portefeuille?')->setTemplatePath('admin/user/Fields/mangopay.html.twig'),
-            IdField::new('id', 'KYC')->setTemplatePath('admin/user/Fields/kyc.html.twig'),
+            TextField::new('id', 'Completion Rate')
+                ->formatValue(function ($value, $entity) {
+                    if (!$entity instanceof User) {
+                        return '';
+                    }
+
+                    return $this->renderCompletionRateBadge($entity);
+                })
+                ->renderAsHtml()
+                ->onlyOnIndex(),
             TextField::new('date_naissance', 'Date de naissance')->onlyOnDetail(),
             DateTimeField::new('userRegistered', 'Date de creation')->onlyOnIndex(),
             //DateTimeField::new('last_activity_at', 'Dernière Connexion'),
@@ -161,15 +174,37 @@ class UserCrudController extends AbstractCrudController
 
         $Activeruser = Action::new('Activeruser', 'Mail activation')
             ->linkToCrudAction('ActivercompteAction');
-           // ->setIcon('fas fa-unlink') // More relevant icon
-            //->setCssClass('btn btn-warning text-red') // Yellow to differentiate from Delete
-            //->displayAsLink();
+
+        $completionLt80 = Action::new('completionLt80', 'Completion < 80%')
+            ->linkToUrl($this->buildCompletionUrl('lt80', null))
+            ->createAsGlobalAction();
+
+        $completionGte80 = Action::new('completionGte80', 'Completion >= 80%')
+            ->linkToUrl($this->buildCompletionUrl('gte80', null))
+            ->createAsGlobalAction();
+
+        $completionSortAsc = Action::new('completionSortAsc', 'Completion asc')
+            ->linkToUrl($this->buildCompletionUrl(null, 'asc'))
+            ->createAsGlobalAction();
+
+        $completionSortDesc = Action::new('completionSortDesc', 'Completion desc')
+            ->linkToUrl($this->buildCompletionUrl(null, 'desc'))
+            ->createAsGlobalAction();
+
+        $completionReset = Action::new('completionReset', 'Reset completion')
+            ->linkToUrl($this->buildCompletionUrl('all', 'none'))
+            ->createAsGlobalAction();
 
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $export)
             ->add(Crud::PAGE_INDEX, $openStripeForm)
-            ->add(Crud::PAGE_INDEX, $Activeruser);
+            ->add(Crud::PAGE_INDEX, $Activeruser)
+            ->add(Crud::PAGE_INDEX, $completionLt80)
+            ->add(Crud::PAGE_INDEX, $completionGte80)
+            ->add(Crud::PAGE_INDEX, $completionSortAsc)
+            ->add(Crud::PAGE_INDEX, $completionSortDesc)
+            ->add(Crud::PAGE_INDEX, $completionReset);
             //->add(Crud::PAGE_INDEX, $deleteStripe);
     }
 
@@ -181,6 +216,90 @@ class UserCrudController extends AbstractCrudController
         $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
 
         return $csvExporter->createResponseFromQueryBuilder($queryBuilder, $fields, 'utilisateurs.csv');
+    }
+
+    private function buildCompletionUrl(?string $filter, ?string $sort): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $params = $request ? $request->query->all() : [];
+
+        if ($filter === 'all') {
+            unset($params['completionFilter']);
+        } elseif ($filter !== null) {
+            $params['completionFilter'] = $filter;
+        }
+
+        if ($sort === 'none') {
+            unset($params['completionSort']);
+        } elseif ($sort !== null) {
+            $params['completionSort'] = $sort;
+        }
+
+        return $this->adminUrlGenerator
+            ->setAll($params)
+            ->setAction(Action::INDEX)
+            ->generateUrl();
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        $qb->leftJoin(
+            WpUsermeta::class,
+            'umCompletion',
+            'WITH',
+            'umCompletion.userId = entity.id AND umCompletion.metaKey = :completionMetaKey'
+        )->setParameter('completionMetaKey', 'profile_completion_rate');
+
+        $request = $this->requestStack->getCurrentRequest();
+        $completionFilter = $request ? $request->query->get('completionFilter') : null;
+        $completionSort = $request ? $request->query->get('completionSort') : null;
+
+        $completionExpr = "(CASE WHEN umCompletion.metaValue IS NULL OR umCompletion.metaValue = '' THEN 0 ELSE umCompletion.metaValue END)";
+
+        if ($completionFilter === 'lt80') {
+            $qb->andWhere($completionExpr . ' < 80');
+        } elseif ($completionFilter === 'gte80') {
+            $qb->andWhere($completionExpr . ' >= 80');
+        }
+
+        if ($completionSort === 'asc') {
+            $qb->addOrderBy($completionExpr, 'ASC');
+        } elseif ($completionSort === 'desc') {
+            $qb->addOrderBy($completionExpr, 'DESC');
+        }
+
+        return $qb;
+    }
+
+    private function getProfileCompletionRate(User $user): int
+    {
+        $rate = (int) $this->service_manager->getUserStringDataValue((int) $user->getId(), 'profile_completion_rate');
+
+        if ($rate < 0) {
+            return 0;
+        }
+
+        if ($rate > 100) {
+            return 100;
+        }
+
+        return $rate;
+    }
+
+    private function renderCompletionRateBadge(User $user): string
+    {
+        $rate = $this->getProfileCompletionRate($user);
+
+        $class = 'badge badge-success';
+        if ($rate < 50) {
+            $class = 'badge badge-danger';
+        } elseif ($rate < 80) {
+            $class = 'badge badge-warning';
+        }
+
+        return sprintf('<span class="%s">%d%%</span>', $class, $rate);
     }
 
     public function stripeForm(AdminContext $context)
