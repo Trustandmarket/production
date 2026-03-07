@@ -81,8 +81,12 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('enabled', 'Compte Actif?'),
             //AssociationField::new('abonnements', 'Abonnements')->hideOnForm(),
             BooleanField::new('is_verified', 'Email vérifié?'),
-            IdField::new('id', 'Portefeuille?')->setTemplatePath('admin/user/Fields/mangopay.html.twig'),
-            IdField::new('id', 'KYC')->setTemplatePath('admin/user/Fields/kyc.html.twig'),
+            TextField::new('id', 'Completion Rate')
+                ->formatValue([$this, 'formatCompletionRate'])
+                ->renderAsHtml()
+                ->onlyOnIndex(),
+            //IdField::new('id', 'Portefeuille?')->setTemplatePath('admin/user/Fields/mangopay.html.twig'),
+            //IdField::new('id', 'KYC')->setTemplatePath('admin/user/Fields/kyc.html.twig'),
             TextField::new('date_naissance', 'Date de naissance')->onlyOnDetail(),
             DateTimeField::new('userRegistered', 'Date de creation')->onlyOnIndex(),
             //DateTimeField::new('last_activity_at', 'Dernière Connexion'),
