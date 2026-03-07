@@ -2043,4 +2043,24 @@ class AdminController extends AbstractController
             return new Response('Non');
         }
     }
+    public function profileCompletionBadge(int $id)
+    {
+        $rate = (int) $this->sm->getUserStringDataValue($id, 'profile_completion_rate');
+
+        if ($rate < 0) {
+            $rate = 0;
+        } elseif ($rate > 100) {
+            $rate = 100;
+        }
+
+        $class = 'badge badge-success';
+        if ($rate < 50) {
+            $class = 'badge badge-danger';
+        } elseif ($rate < 80) {
+            $class = 'badge badge-warning';
+        }
+
+        return new Response(sprintf('<span class="%s">%d%%</span>', $class, $rate));
+    }
+
 }
