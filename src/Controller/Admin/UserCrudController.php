@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Controller\Admin;
 
@@ -30,6 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -40,6 +41,7 @@ class UserCrudController extends AbstractCrudController
     private $requestStack;
     private $emailVerifier;
     private $payment;
+    private $logger;
     /**
      * @var ServiceManager
      */
@@ -47,7 +49,8 @@ class UserCrudController extends AbstractCrudController
 
     public function __construct(ServiceManager $service_manager,
                                 EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator,
-                                RequestStack $requestStack, EmailVerifier $emailVerifier, Payment $payment)
+                                RequestStack $requestStack, EmailVerifier $emailVerifier, Payment $payment,
+                                LoggerInterface $logger)
     {
         $this->service_manager = $service_manager;
         $this->em = $em;
@@ -55,6 +58,7 @@ class UserCrudController extends AbstractCrudController
         $this->requestStack = $requestStack;
         $this->emailVerifier = $emailVerifier;
         $this->payment = $payment;
+        $this->logger = $logger;
     }
 
     public static function getEntityFqcn(): string
@@ -66,7 +70,7 @@ class UserCrudController extends AbstractCrudController
     {
         return $crud
             ->setPageTitle('index', 'Liste des utilisateurs')
-            ->setPageTitle('detail', 'Détails Utilisateur')
+            ->setPageTitle('detail', 'DÃ©tails Utilisateur')
             ->setPageTitle('edit', 'Modifier Utilisateur')
             ->setEntityLabelInSingular('Utilisateur')
             ->setEntityLabelInPlural('Utilisateurs')
@@ -75,6 +79,8 @@ class UserCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        $this->logger->info('UserCrudController.configureFields called', ['page' => $pageName]);
+
         return [
 
             FormField::addTab('Donnees de base')->setIcon('fa fa-users')->onlyOnDetail(),
@@ -82,10 +88,10 @@ class UserCrudController extends AbstractCrudController
             TextField::new('display_name', 'Noms'),
             TextField::new('email_canonical', 'Email'),
             ArrayField::new('roles', 'Roles'),
-            //TextField::new('last_activity_at', 'Dernière Connexion'),
+            //TextField::new('last_activity_at', 'DerniÃ¨re Connexion'),
             BooleanField::new('enabled', 'Compte Actif?'),
             //AssociationField::new('abonnements', 'Abonnements')->hideOnForm(),
-            BooleanField::new('is_verified', 'Email vérifié?'),
+            BooleanField::new('is_verified', 'Email vÃ©rifiÃ©?'),
             TextField::new('id', 'Completion Rate')
                 ->formatValue(function ($value, $entity) {
                     if (!$entity instanceof User) {
@@ -98,7 +104,7 @@ class UserCrudController extends AbstractCrudController
                 ->onlyOnIndex(),
             TextField::new('date_naissance', 'Date de naissance')->onlyOnDetail(),
             DateTimeField::new('userRegistered', 'Date de creation')->onlyOnIndex(),
-            //DateTimeField::new('last_activity_at', 'Dernière Connexion'),
+            //DateTimeField::new('last_activity_at', 'DerniÃ¨re Connexion'),
             DateTimeField::new('updatedAt', 'Date de MAJ')->onlyOnIndex(),
 
             FormField::addTab('Donnees uniques utilisateur')->onlyOnDetail(),
@@ -141,6 +147,8 @@ class UserCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $this->logger->info('UserCrudController.configureActions called');
+
         $export = Action::new('export')
             ->linkToUrl(function () {
                 $request = $this->requestStack->getCurrentRequest();
@@ -211,6 +219,8 @@ class UserCrudController extends AbstractCrudController
 
     public function export(AdminContext $context, CsvExporter $csvExporter)
     {
+        $this->logger->info('UserCrudController.export called');
+
         $fields = FieldCollection::new($this->configureFields(Crud::PAGE_INDEX));
         $filters = $this->container->get(FilterFactory::class)->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
         $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
@@ -243,39 +253,72 @@ class UserCrudController extends AbstractCrudController
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
-        $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
+        try {
+            $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-        $qb->leftJoin(
-            WpUsermeta::class,
-            'umCompletion',
-            'WITH',
-            'umCompletion.userId = entity.id AND umCompletion.metaKey = :completionMetaKey'
-        )->setParameter('completionMetaKey', 'profile_completion_rate');
+            $qb->leftJoin(
+                WpUsermeta::class,
+                'umCompletion',
+                'WITH',
+                'umCompletion.userId = entity.id AND umCompletion.metaKey = :completionMetaKey'
+            )->setParameter('completionMetaKey', 'profile_completion_rate');
 
-        $request = $this->requestStack->getCurrentRequest();
-        $completionFilter = $request ? $request->query->get('completionFilter') : null;
-        $completionSort = $request ? $request->query->get('completionSort') : null;
+            $request = $this->requestStack->getCurrentRequest();
+            $completionFilter = $request ? $request->query->get('completionFilter') : null;
+            $completionSort = $request ? $request->query->get('completionSort') : null;
 
-        $completionExpr = "(CASE WHEN umCompletion.metaValue IS NULL OR umCompletion.metaValue = '' THEN 0 ELSE umCompletion.metaValue END)";
+            $completionExpr = "(CASE WHEN umCompletion.metaValue IS NULL OR umCompletion.metaValue = '' THEN 0 ELSE umCompletion.metaValue END)";
 
-        if ($completionFilter === 'lt80') {
-            $qb->andWhere($completionExpr . ' < 80');
-        } elseif ($completionFilter === 'gte80') {
-            $qb->andWhere($completionExpr . ' >= 80');
+            if ($completionFilter === 'lt80') {
+                $qb->andWhere($completionExpr . ' < 80');
+            } elseif ($completionFilter === 'gte80') {
+                $qb->andWhere($completionExpr . ' >= 80');
+            }
+
+            if ($completionSort === 'asc') {
+                $qb->addOrderBy($completionExpr, 'ASC');
+            } elseif ($completionSort === 'desc') {
+                $qb->addOrderBy($completionExpr, 'DESC');
+            }
+
+            $params = [];
+            foreach ($qb->getParameters() as $parameter) {
+                $params[$parameter->getName()] = $parameter->getValue();
+            }
+
+            $this->logger->info('UserCrudController.createIndexQueryBuilder DQL', [
+                'completionFilter' => $completionFilter,
+                'completionSort' => $completionSort,
+                'dql' => $qb->getDQL(),
+                'params' => $params,
+            ]);
+
+            return $qb;
+        } catch (\Throwable $e) {
+            $this->logger->error('UserCrudController.createIndexQueryBuilder failed', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
         }
-
-        if ($completionSort === 'asc') {
-            $qb->addOrderBy($completionExpr, 'ASC');
-        } elseif ($completionSort === 'desc') {
-            $qb->addOrderBy($completionExpr, 'DESC');
-        }
-
-        return $qb;
     }
 
     private function getProfileCompletionRate(User $user): int
     {
-        $rate = (int) $this->service_manager->getUserStringDataValue((int) $user->getId(), 'profile_completion_rate');
+        try {
+            $rate = (int) $this->service_manager->getUserStringDataValue((int) $user->getId(), 'profile_completion_rate');
+        } catch (\Throwable $e) {
+            $this->logger->error('Error reading profile_completion_rate', [
+                'user_id' => $user->getId(),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return 0;
+        }
 
         if ($rate < 0) {
             return 0;
@@ -287,6 +330,7 @@ class UserCrudController extends AbstractCrudController
 
         return $rate;
     }
+
 
     private function renderCompletionRateBadge(User $user): string
     {
@@ -334,11 +378,11 @@ class UserCrudController extends AbstractCrudController
                 $this->em->flush();
             }
 
-            return new JsonResponse(['message' => 'Compte Stripe supprimé avec succès', 'delete' => $deletedItem], 200);
+            return new JsonResponse(['message' => 'Compte Stripe supprimÃ© avec succÃ¨s', 'delete' => $deletedItem], 200);
         }
 
         // If the account was not deleted, return an error message
-        return new JsonResponse(['error' => 'Échec de la suppression du compte Stripe', 'delete' => $deletedItem], 400);
+        return new JsonResponse(['error' => 'Ã‰chec de la suppression du compte Stripe', 'delete' => $deletedItem], 400);
     }
 
 
@@ -519,7 +563,7 @@ class UserCrudController extends AbstractCrudController
             $userId,
             'vendor_account_country'
         );
-        //Information bancaire: Région
+        //Information bancaire: RÃ©gion
         $regionCompte = $this->service_manager->readUserMeta(
             $userId,
             'vendor_account_region'
@@ -631,7 +675,7 @@ class UserCrudController extends AbstractCrudController
             'regionCompte' => $regionCompte,
             'activities' => $this->service_manager->postCategorie1('product_activity'),
             'principal_activity' => $principal_activity,
-            //Données Facture
+            //DonnÃ©es Facture
             'user' => $this->service_manager->userById($userId),
             'prenom' => $prenom,
             'nom' => $nom,
@@ -739,14 +783,14 @@ class UserCrudController extends AbstractCrudController
         $accountToken = $this->payment->createStripeAccountToken($userType, $data);
         if (empty($accountToken['id'])) return ['token' => $accountToken, 'data' => $data];
 
-        // 🔹 Create Stripe Account from Token
+        // ðŸ”¹ Create Stripe Account from Token
         $stripeAccount = $this->payment->createStripeUserFromToken($accountToken['id']);
         if (empty($stripeAccount['id'])) return ['token' => $accountToken, 'data' => $data];
 
         $this->service_manager->updateUserMeta($userId, 'mp_user_id_sandbox', $stripeAccount['id']);
         $this->payment->updateStripeUser($stripeAccount['id'], $userType, $data);
 
-        // 🔹 Create Stripe Person if required
+        // ðŸ”¹ Create Stripe Person if required
         if($userType != 'ROLE_ABONNE'){
             $stripePersonToken = $this->payment->createStripePersonToken($data);
             if (!empty($stripePersonToken['id'])) {
@@ -761,3 +805,8 @@ class UserCrudController extends AbstractCrudController
     }
 
 }
+
+
+
+
+
