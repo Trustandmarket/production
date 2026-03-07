@@ -207,12 +207,12 @@ class UserCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $export)
             ->add(Crud::PAGE_INDEX, $openStripeForm)
-            ->add(Crud::PAGE_INDEX, $Activeruser)
-            ->add(Crud::PAGE_INDEX, $completionLt80)
+            ->add(Crud::PAGE_INDEX, $Activeruser);
+            /*->add(Crud::PAGE_INDEX, $completionLt80)
             ->add(Crud::PAGE_INDEX, $completionGte80)
             ->add(Crud::PAGE_INDEX, $completionSortAsc)
             ->add(Crud::PAGE_INDEX, $completionSortDesc)
-            ->add(Crud::PAGE_INDEX, $completionReset);
+            ->add(Crud::PAGE_INDEX, $completionReset);*/
             //->add(Crud::PAGE_INDEX, $deleteStripe);
     }
 
