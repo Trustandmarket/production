@@ -165,46 +165,14 @@ class UserCrudController extends AbstractCrudController
             ->setCssClass('btn btn-danger')
             ->createAsGlobalAction();
 
-        /*$deleteStripe = Action::new('deleteStripe', 'Supprimer Stripe')
-            ->linkToCrudAction('deleteStripeAction')
-            ->setIcon('fas fa-unlink') // More relevant icon
-            ->setCssClass('btn btn-warning text-red') // Yellow to differentiate from Delete
-            ->displayAsLink();*/
-
         $Activeruser = Action::new('Activeruser', 'Mail activation')
             ->linkToCrudAction('ActivercompteAction');
-
-       /* $completionLt80 = Action::new('completionLt80', 'Completion < 80%')
-            ->linkToUrl($this->buildCompletionUrl('lt80', null))
-            ->createAsGlobalAction();
-
-        $completionGte80 = Action::new('completionGte80', 'Completion >= 80%')
-            ->linkToUrl($this->buildCompletionUrl('gte80', null))
-            ->createAsGlobalAction();
-
-        $completionSortAsc = Action::new('completionSortAsc', 'Completion asc')
-            ->linkToUrl($this->buildCompletionUrl(null, 'asc'))
-            ->createAsGlobalAction();
-
-        $completionSortDesc = Action::new('completionSortDesc', 'Completion desc')
-            ->linkToUrl($this->buildCompletionUrl(null, 'desc'))
-            ->createAsGlobalAction();
-
-        $completionReset = Action::new('completionReset', 'Reset completion')
-            ->linkToUrl($this->buildCompletionUrl('all', 'none'))
-            ->createAsGlobalAction();*/
 
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $export)
             ->add(Crud::PAGE_INDEX, $openStripeForm)
             ->add(Crud::PAGE_INDEX, $Activeruser);
-            /*->add(Crud::PAGE_INDEX, $completionLt80)
-            ->add(Crud::PAGE_INDEX, $completionGte80)
-            ->add(Crud::PAGE_INDEX, $completionSortAsc)
-            ->add(Crud::PAGE_INDEX, $completionSortDesc)
-            ->add(Crud::PAGE_INDEX, $completionReset);*/
-            //->add(Crud::PAGE_INDEX, $deleteStripe);
     }
 
 
