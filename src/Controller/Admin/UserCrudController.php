@@ -152,26 +152,12 @@ class UserCrudController extends AbstractCrudController
             ->setCssClass('btn btn-success')
             ->createAsGlobalAction();
 
-        // New Action Button to Open the Stripe Form
-        $openStripeForm = Action::new('openStripeForm', 'Supprimer Compte Stripe')
-            ->linkToUrl(function () {
-                $request = $this->requestStack->getCurrentRequest();
-                return $this->adminUrlGenerator->setAll($request->query->all())
-                    ->setAction('stripeForm')
-                    ->generateUrl();
-            })
-            ->setIcon('fas fa-credit-card')
-            ->linkToCrudAction('stripeForm')
-            ->setCssClass('btn btn-danger')
-            ->createAsGlobalAction();
-
         $Activeruser = Action::new('Activeruser', 'Mail activation')
             ->linkToCrudAction('ActivercompteAction');
 
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $export)
-            ->add(Crud::PAGE_INDEX, $openStripeForm)
             ->add(Crud::PAGE_INDEX, $Activeruser);
     }
 
