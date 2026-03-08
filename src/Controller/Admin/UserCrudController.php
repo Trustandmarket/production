@@ -3,19 +3,27 @@
 namespace App\Controller\Admin;
 
 use App\Entity\{Departement, User, WpPosts, WpTermTaxonomy, WpUsermeta};
+use App\Filter\CompletionRateFilter;
 use App\Security\EmailVerifier;
 use App\Service\Export\UserCsvExporter;
 use App\Service\{Payment, ServiceManager};
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud};
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField,
     AssociationField,
     BooleanField,
@@ -135,7 +143,28 @@ class UserCrudController extends AbstractCrudController
             TextField::new('informationsFacturationUtilisateur.numeroTva', 'Numero Tva')->setColumns(4)->hideOnIndex()->hideOnForm(),
         ];
     }
-
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(NumericFilter::new('id', 'Id'))
+            ->add(TextFilter::new('displayName', 'Noms'))
+            ->add(TextFilter::new('email_canonical', 'Email'))
+            ->add(ChoiceFilter::new('roles', 'Roles')->setChoices([
+                'ROLE_USER' => 'ROLE_USER',
+                'ROLE_VENDEUR' => 'ROLE_VENDEUR',
+                'ROLE_ORGANISATEUR' => 'ROLE_ORGANISATEUR',
+                'ROLE_ADMIN' => 'ROLE_ADMIN',
+                'ROLE_SUPER_ADMIN' => 'ROLE_SUPER_ADMIN',
+            ]))
+            ->add(ChoiceFilter::new('enabled', 'Compte Actif?')->setChoices([
+                'Oui' => 1,
+                'Non' => 0,
+            ]))
+            ->add(BooleanFilter::new('isVerified', 'Email verifie?'))
+            ->add(DateTimeFilter::new('userRegistered', 'Date de creation'))
+            ->add(DateTimeFilter::new('updatedAt', 'Date de MAJ'))
+            ->add(CompletionRateFilter::new('completionRate', 'Completion Rate'));
+    }
     public function configureActions(Actions $actions): Actions
     {
         $this->logger->info('UserCrudController.configureActions called');
@@ -201,12 +230,15 @@ class UserCrudController extends AbstractCrudController
         try {
             $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-            $qb->leftJoin(
-                WpUsermeta::class,
-                'umCompletion',
-                'WITH',
-                'umCompletion.userId = entity.id AND umCompletion.metaKey = :completionMetaKey'
-            )->setParameter('completionMetaKey', 'profile_completion_rate');
+            if (!$this->hasJoinAlias($qb, 'umCompletion')) {
+                $qb->leftJoin(
+                    WpUsermeta::class,
+                    'umCompletion',
+                    'WITH',
+                    'umCompletion.userId = entity.id AND umCompletion.metaKey = :completionMetaKey'
+                );
+            }
+            $qb->setParameter('completionMetaKey', 'profile_completion_rate');
 
             $request = $this->requestStack->getCurrentRequest();
             $completionFilter = $request ? $request->query->get('completionFilter') : null;
@@ -249,7 +281,20 @@ class UserCrudController extends AbstractCrudController
             throw $e;
         }
     }
+    private function hasJoinAlias(QueryBuilder $queryBuilder, string $alias): bool
+    {
+        $joins = $queryBuilder->getDQLPart('join');
 
+        foreach ($joins as $joinParts) {
+            foreach ($joinParts as $join) {
+                if ($join instanceof Join && $join->getAlias() === $alias) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
     private function getProfileCompletionRate(User $user): int
     {
         try {
