@@ -2043,6 +2043,25 @@ class AdminController extends AbstractController
             return new Response('Non');
         }
     }
+
+    public function publishedAnnoncesCount(int $id): Response
+    {
+        $count = (int) $this->entityManager->getRepository(WpPosts::class)
+            ->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->andWhere('p.postAuthor = :userId')
+            ->andWhere('p.postType = :postType')
+            ->andWhere('p.postStatus = :postStatus')
+            ->andWhere('p.postParent = :postParent')
+            ->setParameter('userId', $id)
+            ->setParameter('postType', 'product')
+            ->setParameter('postStatus', 'publish')
+            ->setParameter('postParent', 0)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return new Response((string) $count);
+    }
     public function profileCompletionBadge(int $id)
     {
         $rate = (int) $this->sm->getUserStringDataValue($id, 'profile_completion_rate');
@@ -2064,3 +2083,4 @@ class AdminController extends AbstractController
     }
 
 }
+

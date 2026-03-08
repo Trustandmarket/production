@@ -93,6 +93,7 @@ class UserCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('display_name', 'Noms'),
             TextField::new('email_canonical', 'Email')->setTemplatePath('admin/user/Fields/email_link.html.twig'),
+            IdField::new('id', 'Annonces publiees')->setTemplatePath('admin/user/Fields/published_annonces_count.html.twig')->onlyOnIndex(),
             ArrayField::new('roles', 'Roles')->setTemplatePath('admin/user/Fields/roles.html.twig'),
             //TextField::new('last_activity_at', 'DerniÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¨re Connexion'),
             BooleanField::new('enabled', 'Compte Actif?'),
@@ -783,5 +784,4 @@ class UserCrudController extends AbstractCrudController
     }
 
 }
-
 
