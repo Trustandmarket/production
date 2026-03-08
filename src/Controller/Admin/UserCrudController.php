@@ -150,11 +150,13 @@ class UserCrudController extends AbstractCrudController
             ->add(TextFilter::new('displayName', 'Noms'))
             ->add(TextFilter::new('email_canonical', 'Email'))
             ->add(ChoiceFilter::new('roles', 'Roles')->setChoices([
-                'ROLE_USER' => 'ROLE_USER',
-                'ROLE_VENDEUR' => 'ROLE_VENDEUR',
-                'ROLE_ORGANISATEUR' => 'ROLE_ORGANISATEUR',
-                'ROLE_ADMIN' => 'ROLE_ADMIN',
-                'ROLE_SUPER_ADMIN' => 'ROLE_SUPER_ADMIN',
+                'Abonne' => 'ROLE_ABONNE',
+                'Auto-entrepreneur' => 'ROLE_AUTO_ENTREPRENEUR',
+                'Societe' => 'ROLE_SOCIETE',
+                'Commerce' => 'ROLE_COMMERCE',
+                'Contributeur' => 'ROLE_CONTRIBUTEUR',
+                'Super Admin' => 'ROLE_SUPER_ADMIN',
+                'Utilisateur' => 'ROLE_USER',
             ]))
             ->add(ChoiceFilter::new('enabled', 'Compte Actif?')->setChoices([
                 'Oui' => 1,
@@ -796,4 +798,6 @@ class UserCrudController extends AbstractCrudController
     }
 
 }
+
+
 
