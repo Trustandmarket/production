@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\{Departement, User, WpPosts, WpTermTaxonomy, WpUsermeta};
 use App\Filter\CompletionRateFilter;
+use App\Filter\ProfileRoleFilter;
 use App\Security\EmailVerifier;
 use App\Service\Export\UserCsvExporter;
 use App\Service\{Payment, ServiceManager};
@@ -149,15 +150,7 @@ class UserCrudController extends AbstractCrudController
             ->add(NumericFilter::new('id', 'Id'))
             ->add(TextFilter::new('displayName', 'Noms'))
             ->add(TextFilter::new('email_canonical', 'Email'))
-            ->add(ChoiceFilter::new('roles', 'Roles')->setChoices([
-                'ROLE_ABONNE' => 'ROLE_ABONNE',
-                'ROLE_AUTO_ENTREPRENEUR' => 'ROLE_AUTO_ENTREPRENEUR',
-                'ROLE_SOCIETE' => 'ROLE_SOCIETE',
-                'ROLE_COMMERCE' => 'ROLE_COMMERCE',
-                'ROLE_CONTRIBUTEUR' => 'ROLE_CONTRIBUTEUR',
-                'ROLE_SUPER_ADMIN' => 'ROLE_SUPER_ADMIN',
-                'ROLE_USER' => 'ROLE_USER',
-            ]))
+            ->add(ProfileRoleFilter::new('roles', 'Roles'))
             ->add(ChoiceFilter::new('enabled', 'Compte Actif?')->setChoices([
                 'Oui' => 1,
                 'Non' => 0,
@@ -798,9 +791,4 @@ class UserCrudController extends AbstractCrudController
     }
 
 }
-
-
-
-
-
 
