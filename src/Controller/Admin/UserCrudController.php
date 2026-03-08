@@ -20,10 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField,
     AssociationField,
@@ -147,17 +144,12 @@ class UserCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add(NumericFilter::new('id', 'Id'))
-            ->add(TextFilter::new('displayName', 'Noms'))
             ->add(TextFilter::new('email_canonical', 'Email'))
             ->add(ProfileRoleFilter::new('roles', 'Roles'))
             ->add(ChoiceFilter::new('enabled', 'Compte Actif?')->setChoices([
                 'Oui' => 1,
                 'Non' => 0,
             ]))
-            ->add(BooleanFilter::new('isVerified', 'Email verifie?'))
-            ->add(DateTimeFilter::new('userRegistered', 'Date de creation'))
-            ->add(DateTimeFilter::new('updatedAt', 'Date de MAJ'))
             ->add(CompletionRateFilter::new('completionRate', 'Completion Rate'));
     }
     public function configureActions(Actions $actions): Actions
