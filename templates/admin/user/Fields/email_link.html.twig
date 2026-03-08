@@ -1,0 +1,6 @@
+{% set url = ea_url()
+    .setController('App\\Controller\\Admin\\UserCrudController')
+    .setAction('detail')
+    .setEntityId(entity.primaryKeyValue)
+%}
+<a href="{{ url }}">{{ field.value }}</a>
