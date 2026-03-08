@@ -95,20 +95,7 @@ class UserCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('display_name', 'Noms'),
             TextField::new('email_canonical', 'Email'),
-            TextField::new('roles', 'Roles')
-                ->formatValue(static function ($value) {
-                    $roles = is_array($value) ? $value : [];
-
-                    $businessRoles = array_values(array_filter($roles, static function ($role) {
-                        return $role !== 'ROLE_USER';
-                    }));
-
-                    if (!empty($businessRoles)) {
-                        return implode(', ', $businessRoles);
-                    }
-
-                    return implode(', ', $roles);
-                }),
+            ArrayField::new('roles', 'Roles')->setTemplatePath('admin/user/Fields/roles.html.twig'),
             //TextField::new('last_activity_at', 'DerniÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¨re Connexion'),
             BooleanField::new('enabled', 'Compte Actif?'),
             //AssociationField::new('abonnements', 'Abonnements')->hideOnForm(),
@@ -811,6 +798,7 @@ class UserCrudController extends AbstractCrudController
     }
 
 }
+
 
 
 

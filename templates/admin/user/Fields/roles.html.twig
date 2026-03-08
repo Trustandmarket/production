@@ -1,0 +1,17 @@
+{% set roles = field.value %}
+{% if roles is not iterable %}
+    {% set roles = roles ? [roles] : [] %}
+{% endif %}
+
+{% set businessRoles = [] %}
+{% for role in roles %}
+    {% if role != 'ROLE_USER' %}
+        {% set businessRoles = businessRoles|merge([role]) %}
+    {% endif %}
+{% endfor %}
+
+{% if businessRoles is not empty %}
+    {{ businessRoles|join(', ') }}
+{% else %}
+    {{ roles|join(', ') }}
+{% endif %}
