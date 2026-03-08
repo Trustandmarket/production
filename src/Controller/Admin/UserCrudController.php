@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\{Departement, User, WpPosts, WpTermTaxonomy, WpUsermeta};
 use App\Security\EmailVerifier;
-use App\Service\Export\CsvExporter;
+use App\Service\Export\UserCsvExporter;
 use App\Service\{Payment, ServiceManager};
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -176,7 +176,7 @@ class UserCrudController extends AbstractCrudController
     }
 
 
-    public function export(AdminContext $context, CsvExporter $csvExporter)
+    public function export(AdminContext $context, UserCsvExporter $csvExporter)
     {
         $this->logger->info('UserCrudController.export called');
 
@@ -184,7 +184,7 @@ class UserCrudController extends AbstractCrudController
         $filters = $this->container->get(FilterFactory::class)->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
         $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
 
-        return $csvExporter->createResponseFromQueryBuilder($queryBuilder, $fields, 'utilisateurs.csv');
+        return $csvExporter->createResponseFromQueryBuilder($queryBuilder, 'utilisateurs.csv');
     }
 
     private function buildCompletionUrl(?string $filter, ?string $sort): string
@@ -765,3 +765,4 @@ class UserCrudController extends AbstractCrudController
     }
 
 }
+
