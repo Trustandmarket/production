@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
     name: 'app:profile:send-completion-reminders',
-    description: 'Relance les pros avec profile_completion_rate < seuil, envoi Brevo (mode AbonnementController) + tracabilite anti-spam.'
+    description: 'Relance les pros avec profile_completion_rate < seuil, envoi Brevo + tracabilite anti-spam + recap admin final.'
 )]
 class ProfileSendCompletionRemindersCommand extends Command
 {
@@ -39,11 +39,12 @@ class ProfileSendCompletionRemindersCommand extends Command
         $this
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Calcule sans envoyer ni ecrire en base.')
             ->addOption('threshold', null, InputOption::VALUE_REQUIRED, 'Seuil minimum requis', '80')
-            ->addOption('cooldown-days', null, InputOption::VALUE_REQUIRED, 'Cooldown entre 2 relances (jours)', '7')
+            ->addOption('cooldown-days', null, InputOption::VALUE_REQUIRED, 'Cooldown entre 2 relances (jours)', '14')
             ->addOption('limit', null, InputOption::VALUE_REQUIRED, 'Nombre max d envois (0 = illimite)', '0')
-            ->addOption('template-id', null, InputOption::VALUE_REQUIRED, 'Template Brevo ID (obligatoire pour envoi reel)', '57')
-            ->addOption('admin-bcc', null, InputOption::VALUE_REQUIRED, 'Email BCC admin/commercial', 'commerce@trustandmarket.com')
-            ->addOption('base-url', null, InputOption::VALUE_REQUIRED, 'URL de base pour le lien profil', 'https://rec.trustandmarket.com')
+            ->addOption('template-id', null, InputOption::VALUE_REQUIRED, 'Template Brevo ID utilisateur', '57')
+            ->addOption('admin-summary-to', null, InputOption::VALUE_REQUIRED, 'Email admin pour recap final', 'commerce@trustandmarket.com')
+            ->addOption('admin-summary-template-id', null, InputOption::VALUE_REQUIRED, 'Template Brevo ID recap admin final (0 = desactive)', '58')
+            ->addOption('base-url', null, InputOption::VALUE_REQUIRED, 'URL de base pour le lien profil', 'https://trustandmarket.com')
             ->addOption('locale', null, InputOption::VALUE_REQUIRED, 'Locale du lien profil', 'fr');
     }
 
@@ -56,7 +57,8 @@ class ProfileSendCompletionRemindersCommand extends Command
         $cooldownDays = max(0, (int) $input->getOption('cooldown-days'));
         $limit = max(0, (int) $input->getOption('limit'));
         $templateId = max(0, (int) $input->getOption('template-id'));
-        $adminBcc = trim((string) $input->getOption('admin-bcc'));
+        $adminSummaryTo = trim((string) $input->getOption('admin-summary-to'));
+        $adminSummaryTemplateId = max(0, (int) $input->getOption('admin-summary-template-id'));
         $baseUrl = rtrim((string) $input->getOption('base-url'), '/');
         $locale = (string) $input->getOption('locale');
 
@@ -69,7 +71,7 @@ class ProfileSendCompletionRemindersCommand extends Command
         }
 
         if (!$isProd && !$dryRun) {
-            $io->warning(sprintf('environnement=%s: envoi Brevo desactive (mode AbonnementController). Lance en --dry-run ou en prod.', $environnement));
+            $io->warning(sprintf('environnement=%s: envoi Brevo desactive (mode abonnement). Lance en --dry-run ou en prod.', $environnement));
             return Command::SUCCESS;
         }
 
@@ -83,6 +85,9 @@ class ProfileSendCompletionRemindersCommand extends Command
         $skippedCooldown = 0;
         $skippedNoEmail = 0;
         $errors = 0;
+
+        /** @var array<int, array{id:int,email:string,name:string,rate:int}> $notifiedUsers */
+        $notifiedUsers = [];
 
         foreach ($users as $user) {
             $processed++;
@@ -140,13 +145,6 @@ class ProfileSendCompletionRemindersCommand extends Command
                 ],
             ];
 
-            if ($adminBcc !== '') {
-                $payload['bcc'] = [[
-                    'email' => $adminBcc,
-                    'name' => 'Trust & Market',
-                ]];
-            }
-
             $result = $this->brevoMailer->sendTemplate($payload);
             if (!$result['ok']) {
                 $errors++;
@@ -157,7 +155,49 @@ class ProfileSendCompletionRemindersCommand extends Command
             $this->serviceManager->updateUserMeta((int) $user->getId(), self::META_LAST_SENT_AT_KEY, $now->format(DateTimeInterface::ATOM));
             $currentCount = (int) $this->serviceManager->getUserStringDataValue((int) $user->getId(), self::META_SENT_COUNT_KEY);
             $this->serviceManager->updateUserMeta((int) $user->getId(), self::META_SENT_COUNT_KEY, (string) ($currentCount + 1));
+
             $sent++;
+            $notifiedUsers[] = [
+                'id' => (int) $user->getId(),
+                'email' => $email,
+                'name' => $displayName,
+                'rate' => $rate,
+            ];
+        }
+
+        if (!$dryRun && $isProd && $adminSummaryTo !== '' && $adminSummaryTemplateId > 0) {
+            $summaryLines = [];
+            foreach ($notifiedUsers as $u) {
+                $summaryLines[] = sprintf('#%d | %s | %s | %d%%', $u['id'], $u['email'], $u['name'], $u['rate']);
+            }
+
+            $adminPayload = [
+                'to' => [[
+                    'email' => $adminSummaryTo,
+                    'name' => 'Trust & Market',
+                ]],
+                'templateId' => $adminSummaryTemplateId,
+                'params' => [
+                    'date_jour' => $now->format('d-m-Y H:i:s'),
+                    'processed' => $processed,
+                    'eligible' => $eligible,
+                    'sent' => $sent,
+                    'skipped_rate' => $skippedRate,
+                    'skipped_cooldown' => $skippedCooldown,
+                    'skipped_no_email' => $skippedNoEmail,
+                    'errors' => $errors,
+                    'threshold' => $threshold,
+                    'cooldown_days' => $cooldownDays,
+                    'summary_text' => $summaryLines ? implode("\n", $summaryLines) : 'Aucun utilisateur notifie.',
+                    'users_json' => json_encode($notifiedUsers, JSON_UNESCAPED_UNICODE),
+                ],
+            ];
+
+            $adminResult = $this->brevoMailer->sendTemplate($adminPayload);
+            if (!$adminResult['ok']) {
+                $errors++;
+                $io->warning('Echec envoi recap admin final: ' . $adminResult['error']);
+            }
         }
 
         $io->success(sprintf(
