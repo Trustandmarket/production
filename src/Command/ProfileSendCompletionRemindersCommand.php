@@ -41,7 +41,7 @@ class ProfileSendCompletionRemindersCommand extends Command
             ->addOption('threshold', null, InputOption::VALUE_REQUIRED, 'Seuil minimum requis', '80')
             ->addOption('cooldown-days', null, InputOption::VALUE_REQUIRED, 'Cooldown entre 2 relances (jours)', '7')
             ->addOption('limit', null, InputOption::VALUE_REQUIRED, 'Nombre max d envois (0 = illimite)', '0')
-            ->addOption('template-id', null, InputOption::VALUE_REQUIRED, 'Template Brevo ID (obligatoire pour envoi reel)', '0')
+            ->addOption('template-id', null, InputOption::VALUE_REQUIRED, 'Template Brevo ID (obligatoire pour envoi reel)', '57')
             ->addOption('admin-bcc', null, InputOption::VALUE_REQUIRED, 'Email BCC admin/commercial', 'commerce@trustandmarket.com')
             ->addOption('base-url', null, InputOption::VALUE_REQUIRED, 'URL de base pour le lien profil', 'https://rec.trustandmarket.com')
             ->addOption('locale', null, InputOption::VALUE_REQUIRED, 'Locale du lien profil', 'fr');
