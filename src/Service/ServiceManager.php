@@ -44,6 +44,7 @@ class ServiceManager
 {
     private $router;
     private $entityManager;
+    private $local;
 
     /**
      * ServiceManager constructor.
