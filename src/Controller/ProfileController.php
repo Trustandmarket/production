@@ -73,6 +73,8 @@ class ProfileController extends AbstractController
      */
     public function detailsProfessionnel(Request $request)
     {
+        error_log('[detailsProfessionnel] entered');
+        
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $arr = explode('-', $request->get('id'));
         $user_id = $arr[array_key_last($arr)];
