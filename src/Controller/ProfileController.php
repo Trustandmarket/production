@@ -72,27 +72,7 @@ class ProfileController extends AbstractController
      * @return Response
      */
     public function detailsProfessionnel(Request $request)
-    {
-        $rawId = $request->get('id');
-
-        if ($rawId === 'infos-profil-1279') {
-        return new Response(json_encode([
-                'step' => 'before-render',
-                'detailsPro_data_type' => gettype($detailsPro['data'] ?? null),
-                'detailsPro_data_count' => is_array($detailsPro['data'] ?? null) ? count($detailsPro['data']) : null,
-                'pages' => $detailsPro['pages'] ?? null,
-                'lastComment' => $lastComment,
-                'competence_type' => gettype($competence),
-                'raison_sociale_null' => $raison_sociale === null,
-                'principal_activity_null' => $principal_activity === null,
-                'statut_kyc_null' => $statut_kyc === null,
-                'avatar_type' => gettype($avatar),
-                'departements_count' => is_array($departements) || $departements instanceof \Countable ? count($departements) : null,
-            ]), 200, ['Content-Type' => 'application/json']);
-        }
-
-
-        
+    {        
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $arr = explode('-', $request->get('id'));
         $user_id = $arr[array_key_last($arr)];
@@ -139,12 +119,19 @@ class ProfileController extends AbstractController
         $departements = $this->em->getRepository(Departement::class)->findAll();
 
         //Donnees Documents kyc
+        if ($rawId === 'infos-profil-1279') {
+            return new Response('before kyc');
+        }
         $statut_kyc = null;
         $bankUserId = $this->service_manager->getUserStringDataValue($user_id, 'mp_user_id_sandbox');
         if ($bankUserId) {
             $statut_kyc = $this->payment->isUserKycValidated($bankUserId, $user->getRoles());
             $this->service_manager->updateUserMeta($user_id, 'kyc_doc_status', $statut_kyc);
         }
+        if ($rawId === 'infos-profil-1279') {
+            return new Response('after kyc');
+        }
+
         $avatar = '';
         $avatars = $this->service_manager->readUserMeta($user_id, 'basic_user_avatar');
         if ($avatars && $avatars->getMetaValue()) {
