@@ -76,8 +76,18 @@ class ProfileController extends AbstractController
         $rawId = $request->get('id');
 
         if ($rawId === 'infos-profil-1279') {
-            return new Response('controller reached for 1279');
+        $arr = explode('-', $rawId);
+        $user_id = $arr[array_key_last($arr)];
+        $user = $this->em->getRepository(User::class)->find($user_id);
+
+        return new Response(json_encode([
+                'step' => 'user',
+                'user_id' => $user_id,
+                'user_found' => $user !== null,
+                'roles' => $user ? $user->getRoles() : null,
+            ]), 200, ['Content-Type' => 'application/json']);
         }
+
         
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $arr = explode('-', $request->get('id'));
