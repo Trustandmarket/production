@@ -120,18 +120,14 @@ class ProfileController extends AbstractController
 
         //Donnees Documents kyc
         if ($rawId === 'infos-profil-1279') {
-            return new Response('before kyc');
+            return new Response('hello OK');
         }
         $statut_kyc = null;
         $bankUserId = $this->service_manager->getUserStringDataValue($user_id, 'mp_user_id_sandbox');
         if ($bankUserId) {
             $statut_kyc = $this->payment->isUserKycValidated($bankUserId, $user->getRoles());
             $this->service_manager->updateUserMeta($user_id, 'kyc_doc_status', $statut_kyc);
-        }
-        if ($rawId === 'infos-profil-1279') {
-            return new Response('after kyc');
-        }
-
+        }        
         $avatar = '';
         $avatars = $this->service_manager->readUserMeta($user_id, 'basic_user_avatar');
         if ($avatars && $avatars->getMetaValue()) {
