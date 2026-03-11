@@ -15,12 +15,12 @@ class ProfileCompletionCalculator
         $userId = (int) $user->getId();
         $score = 0;
 
-        // Identite (15)
+        // Identite (30)
         $avatarMeta = $this->serviceManager->readUserMeta($userId, 'basic_user_avatar');
         if ($avatarMeta && $avatarMeta->getMetaValue()) {
             $img = @unserialize($avatarMeta->getMetaValue());
             if (is_array($img) && !empty($img)) {
-                $score += 5;
+                $score += 21;
             }
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'last_name'))) {
@@ -30,13 +30,13 @@ class ProfileCompletionCalculator
             $score += 3;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'sexe'))) {
-            $score += 2;
+            $score += 1;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'bdaytime'))) {
-            $score += 4;
+            $score += 1;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'nationalityCountry'))) {
-            $score += 3;
+            $score += 1;
         }
 
         // Contact et activite (15)
@@ -65,35 +65,35 @@ class ProfileCompletionCalculator
             $score += 1;
         }
 
-        // Adresse domicile (15)
+        // Adresse domicile (5)
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'numeroNomRue_domicile'))) {
-            $score += 5;
+            $score += 1;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'codePostal_domicile'))) {
-            $score += 3;
+            $score += 1;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'ville_domicile'))) {
-            $score += 3;
+            $score += 1;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'region_domicile'))) {
-            $score += 2;
+            $score += 1;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'pays_domicile'))) {
-            $score += 2;
+            $score += 1;
         }
 
-        // Contenu de profil (50)
+        // Contenu de profil (40)
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'description'))) {
-            $score += 35;
+            $score += 30;
         }
         if ($this->hasValue($this->serviceManager->getUserStringDataValue($userId, 'reference'))) {
-            $score += 15;
+            $score += 10;
         }
 
-        // Portfolio (5)
+        // Portfolio (10)
         $portfolio = $this->serviceManager->getUserStringDataValue($userId, 'portfolio');
         if ($this->hasValue($portfolio)) {
-            $score += 5;
+            $score += 10;
         }
 
         if ($score < 0) {
