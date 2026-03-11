@@ -106,6 +106,9 @@ class ProfileController extends AbstractController
         $competences = $this->service_manager->readUserMeta($user_id, 'competence');
         $raison_sociale = $this->service_manager->readUserMeta($user_id, 'raison_sociale');
         //Activite
+        if ($rawId === 'infos-profil-1279') {
+            return new Response('hello OK');
+        }
         $principal_activity = $this->service_manager->readUserMeta($user_id, 'activite_principale');
         if ($principal_activity) {
             $principal_activity = $this->em->getRepository(WpTermTaxonomy::class)->findOneBy(['termTaxonomyId' => $principal_activity->getMetaValue()]);
@@ -119,9 +122,6 @@ class ProfileController extends AbstractController
         $departements = $this->em->getRepository(Departement::class)->findAll();
 
         //Donnees Documents kyc
-        if ($rawId === 'infos-profil-1279') {
-            return new Response('hello OK');
-        }
         $statut_kyc = null;
         $bankUserId = $this->service_manager->getUserStringDataValue($user_id, 'mp_user_id_sandbox');
         if ($bankUserId) {
