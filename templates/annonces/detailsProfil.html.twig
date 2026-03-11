@@ -137,10 +137,12 @@
                             <div class="row ml-0">
                                 <h1 class=""
                                     style="margin-bottom: 0.2rem;">{% if detailsPro.nom_commercial == '' %}{{ detailsPro.first_name }}{% else %}{{ detailsPro.nom_commercial }}{% endif %} </h1>
+                               {# 
                                 {% if statut_kyc is defined and statut_kyc %}<img title="Profil fournisseur validé" style="width: 50px; height: auto;" src="{{ absolute_url(asset('assets/img/svg/check-mark-3280.svg')) }}"/>
-                                {% elseif statut_kyc is defined and not statut_kyc %}<img
-                                    title="Profil fournisseur non validé" style="width: 50px; height: auto;"
-                                    src="{{ absolute_url(asset('assets/img/svg/yellow-check-mark-circular-tick-16216.svg')) }}"/>{% endif %}
+                                    {% elseif statut_kyc is defined and not statut_kyc %}<img
+                                        title="Profil fournisseur non validé" style="width: 50px; height: auto;"
+                                        src="{{ absolute_url(asset('assets/img/svg/yellow-check-mark-circular-tick-16216.svg')) }}"/>{% endif %}
+                                #}
                             </div>
                             {% if principal_activity %}<h2 class="mt-1" style="margin-bottom: 0px;font-size:large;">{{ principal_activity.description }}</h2>{% endif %}
                             {% if detailsPro.experience is defined %}
