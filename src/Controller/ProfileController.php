@@ -76,6 +76,11 @@ class ProfileController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $arr = explode('-', $request->get('id'));
         $user_id = $arr[array_key_last($arr)];
+         dump([
+        'raw_id' => $rawId,
+        'parsed_user_id' => $user_id,
+        'viewer_id' => $this->getUser() ? $this->getUser()->getId() : null,
+        ]);
         $user = $this->em->getRepository(User::class)->find($user_id);
         $profileCompletionRate = (int) $this->service_manager->getUserStringDataValue((int) $user_id, 'profile_completion_rate');
         $isOwner = (int) $this->getUser()->getId() === (int) $user_id;
