@@ -119,16 +119,12 @@ class ProfileController extends AbstractController
         $departements = $this->em->getRepository(Departement::class)->findAll();
 
         //Donnees Documents kyc
-        $rawId = $request->get('id');
         $statut_kyc = null;
         $bankUserId = $this->service_manager->getUserStringDataValue($user_id, 'mp_user_id_sandbox');
         if ($bankUserId) {
             $statut_kyc = $this->payment->isUserKycValidated($bankUserId, $user->getRoles());
             $this->service_manager->updateUserMeta($user_id, 'kyc_doc_status', $statut_kyc);
         }  
-        if ($rawId === 'infos-profil-1279') {
-            return new Response('after OK again');
-        }      
         $avatar = '';
         $avatars = $this->service_manager->readUserMeta($user_id, 'basic_user_avatar');
         if ($avatars && $avatars->getMetaValue()) {
