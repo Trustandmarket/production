@@ -76,16 +76,18 @@ class ProfileController extends AbstractController
         $rawId = $request->get('id');
 
         if ($rawId === 'infos-profil-1279') {
-        $arr = explode('-', $rawId);
-        $user_id = $arr[array_key_last($arr)];
-        $user = $this->em->getRepository(User::class)->find($user_id);
-        $bankUserId = $this->service_manager->getUserStringDataValue($user_id, 'mp_user_id_sandbox');
-
         return new Response(json_encode([
-                'step' => 'user-bank',
-                'user_found' => $user !== null,
-                'bank_user_id' => $bankUserId,
-                'has_roles' => $user ? $user->getRoles() : null,
+                'step' => 'before-render',
+                'detailsPro_data_type' => gettype($detailsPro['data'] ?? null),
+                'detailsPro_data_count' => is_array($detailsPro['data'] ?? null) ? count($detailsPro['data']) : null,
+                'pages' => $detailsPro['pages'] ?? null,
+                'lastComment' => $lastComment,
+                'competence_type' => gettype($competence),
+                'raison_sociale_null' => $raison_sociale === null,
+                'principal_activity_null' => $principal_activity === null,
+                'statut_kyc_null' => $statut_kyc === null,
+                'avatar_type' => gettype($avatar),
+                'departements_count' => is_array($departements) || $departements instanceof \Countable ? count($departements) : null,
             ]), 200, ['Content-Type' => 'application/json']);
         }
 
