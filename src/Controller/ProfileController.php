@@ -78,13 +78,15 @@ class ProfileController extends AbstractController
         if ($rawId === 'infos-profil-1279') {
         $arr = explode('-', $rawId);
         $user_id = $arr[array_key_last($arr)];
-        $user = $this->em->getRepository(User::class)->find($user_id);
+        $detailsPro = $this->annonces_access_layer->readAllProData($user_id, 1);
 
         return new Response(json_encode([
-                'step' => 'user',
-                'user_id' => $user_id,
-                'user_found' => $user !== null,
-                'roles' => $user ? $user->getRoles() : null,
+                'step' => 'detailsPro',
+                'type' => gettype($detailsPro),
+                'is_array' => is_array($detailsPro),
+                'keys' => is_array($detailsPro) ? array_keys($detailsPro) : null,
+                'has_data' => is_array($detailsPro) && array_key_exists('data', $detailsPro),
+                'has_pages' => is_array($detailsPro) && array_key_exists('pages', $detailsPro),
             ]), 200, ['Content-Type' => 'application/json']);
         }
 
