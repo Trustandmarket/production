@@ -128,7 +128,10 @@ class ProfileController extends AbstractController
         if ($bankUserId) {
             $statut_kyc = $this->payment->isUserKycValidated($bankUserId, $user->getRoles());
             $this->service_manager->updateUserMeta($user_id, 'kyc_doc_status', $statut_kyc);
-        }        
+        }  
+        if ($rawId === 'infos-profil-1279') {
+            return new Response('after kyc');
+        }      
         $avatar = '';
         $avatars = $this->service_manager->readUserMeta($user_id, 'basic_user_avatar');
         if ($avatars && $avatars->getMetaValue()) {
