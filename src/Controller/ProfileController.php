@@ -120,9 +120,6 @@ class ProfileController extends AbstractController
 
         //Donnees Documents kyc
         $rawId = $request->get('id');
-        if ($rawId === 'infos-profil-1279') {
-            return new Response('hello OK');
-        }
         $statut_kyc = null;
         $bankUserId = $this->service_manager->getUserStringDataValue($user_id, 'mp_user_id_sandbox');
         if ($bankUserId) {
@@ -130,7 +127,7 @@ class ProfileController extends AbstractController
             $this->service_manager->updateUserMeta($user_id, 'kyc_doc_status', $statut_kyc);
         }  
         if ($rawId === 'infos-profil-1279') {
-            return new Response('after kyc');
+            return new Response('after OK again');
         }      
         $avatar = '';
         $avatars = $this->service_manager->readUserMeta($user_id, 'basic_user_avatar');
