@@ -43,6 +43,25 @@
     {# END JSON LD #}
 
     <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+    <!-- Google tag (gtag.js) event - delayed navigation helper -->
+    <script>
+        // Helper function to delay opening a URL until a gtag event is sent.
+        // Call it in response to an action that should navigate to a URL.
+        function gtagSendEvent(url) {
+            var callback = function () {
+            if (typeof url === 'string') {
+                window.location = url;
+            }
+            };
+            gtag('event', 'conversion_event_signup_2', {
+            'event_callback': callback,
+            'event_timeout': 2000,
+            // <event_parameters>
+            });
+            return false;
+        }
+    </script>
+
 {% endblock %}
 
 {% block title %}Trust & Market | {{ include('Seo/Meta/title.html.twig', {code: 'creer-un-compte'}) }}{% endblock %}
