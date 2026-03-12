@@ -1,0 +1,8 @@
+{% set url = ea_url()
+    .setController('App\\Controller\\Admin\\UserCrudController')
+    .setAction('detail')
+    .setEntityId(entity.primaryKeyValue)
+%}
+<a href="{{ url }}" style="display: inline-block; max-width: 150px; white-space: normal; overflow-wrap: anywhere; line-height: 1.25;">
+    {{ field.value }}
+</a>
