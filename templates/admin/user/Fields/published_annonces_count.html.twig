@@ -1,11 +1,43 @@
-<div style="display: inline-flex; align-items: center; gap: 6px;">
-    <span>{{ render(controller('App\\Controller\\Admin\\AdminController::publishedAnnoncesCount', {id: field.value})) }}</span>
-    <details style="display: inline-block; position: relative;">
-        <summary style="cursor: pointer; list-style: none; color: #6c757d; display: inline-flex; align-items: center;">
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
-        </summary>
-        <div style="position: absolute; top: 18px; left: -8px; z-index: 10; min-width: 180px; padding: 8px 10px; background: #1f2937; color: #fff; border-radius: 6px; box-shadow: 0 6px 18px rgba(0,0,0,.18); font-size: 12px; line-height: 1.35;">
-            Nombre d'annonces publiées
-        </div>
-    </details>
-</div>
+{{ render(controller('App\\Controller\\Admin\\AdminController::publishedAnnoncesCount', {id: field.value})) }}
+<script>
+(function () {
+    if (window.__eaAnnoncesHeaderTooltipInit) {
+        return;
+    }
+    window.__eaAnnoncesHeaderTooltipInit = true;
+
+    function initAnnoncesHeaderTooltip() {
+        var headers = document.querySelectorAll('th');
+        headers.forEach(function (th) {
+            if (!th || th.dataset.annoncesTooltipBound === '1') {
+                return;
+            }
+
+            var label = th.textContent ? th.textContent.replace(/\s+/g, ' ').trim() : '';
+            if (label !== 'Annonces') {
+                return;
+            }
+
+            th.dataset.annoncesTooltipBound = '1';
+            th.style.whiteSpace = 'nowrap';
+
+            var trigger = document.createElement('button');
+            trigger.type = 'button';
+            trigger.className = 'btn btn-link p-0 ml-1';
+            trigger.setAttribute('aria-label', "Nombre d'annonces publiées");
+            trigger.style.verticalAlign = 'middle';
+            trigger.style.color = '#6c757d';
+            trigger.innerHTML = '<i class="fa fa-info-circle" aria-hidden="true"></i>';
+            trigger.title = "Nombre d'annonces publiées";
+
+            th.appendChild(trigger);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAnnoncesHeaderTooltip, { once: true });
+    } else {
+        initAnnoncesHeaderTooltip();
+    }
+})();
+</script>
