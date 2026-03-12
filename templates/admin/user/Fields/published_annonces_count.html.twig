@@ -19,18 +19,40 @@
             }
 
             th.dataset.annoncesTooltipBound = '1';
-            th.style.whiteSpace = 'nowrap';
+
+            var sortableLink = th.querySelector('a');
+            var host = sortableLink || th;
+            host.style.position = 'relative';
+
+            var existingIcon = host.querySelector('.ea-annonces-info');
+            if (existingIcon) {
+                return;
+            }
 
             var trigger = document.createElement('button');
             trigger.type = 'button';
-            trigger.className = 'btn btn-link p-0 ml-1';
+            trigger.className = 'ea-annonces-info';
             trigger.setAttribute('aria-label', "Nombre d'annonces publiées");
-            trigger.style.verticalAlign = 'middle';
-            trigger.style.color = '#6c757d';
-            trigger.innerHTML = '<i class="fa fa-info-circle" aria-hidden="true"></i>';
             trigger.title = "Nombre d'annonces publiées";
+            trigger.style.position = 'absolute';
+            trigger.style.right = '0';
+            trigger.style.top = '50%';
+            trigger.style.transform = 'translateY(-50%)';
+            trigger.style.border = '0';
+            trigger.style.background = 'transparent';
+            trigger.style.padding = '0';
+            trigger.style.margin = '0';
+            trigger.style.color = '#6c757d';
+            trigger.style.cursor = 'pointer';
+            trigger.style.lineHeight = '1';
+            trigger.innerHTML = '<i class="fa fa-info-circle" aria-hidden="true"></i>';
 
-            th.appendChild(trigger);
+            var sortIcon = host.querySelector('.fa, .sort-arrow, svg');
+            if (sortIcon) {
+                sortIcon.style.opacity = '0';
+            }
+
+            host.appendChild(trigger);
         });
     }
 
