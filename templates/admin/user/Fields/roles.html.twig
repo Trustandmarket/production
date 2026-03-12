@@ -10,14 +10,14 @@
     {% endif %}
 {% endfor %}
 
-<div style="display: inline-flex; flex-wrap: wrap; gap: 4px; max-width: 150px; line-height: 1.2;">
+<div class="ea-user-roles" style="display: inline-flex; flex-wrap: wrap; gap: 4px; max-width: 150px; line-height: 1.2;">
     {% if businessRoles is not empty %}
         {% for role in businessRoles %}
-            <span class="badge badge-info" style="white-space: normal; overflow-wrap: anywhere;">
+            <span class="badge badge-info ea-user-role-badge" style="white-space: normal; overflow-wrap: anywhere;">
                 {{ role|replace({'ROLE_': ''}) }}
             </span>
         {% endfor %}
     {% else %}
-        <span class="badge badge-light">USER</span>
+        <span class="badge badge-light ea-user-role-badge">USER</span>
     {% endif %}
 </div>

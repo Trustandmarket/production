@@ -1,4 +1,4 @@
 {% set isEnabled = field.value == 1 %}
-<span class="badge {{ isEnabled ? 'badge-success' : 'badge-secondary' }}" style="min-width: 88px;">
+<span class="badge {{ isEnabled ? 'badge-success' : 'badge-secondary' }} ea-user-status-badge" style="min-width: 88px;">
     {{ isEnabled ? 'Actif' : 'Inactif' }}
 </span>
