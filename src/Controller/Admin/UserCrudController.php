@@ -76,10 +76,11 @@ class UserCrudController extends AbstractCrudController
     {
         return $crud
             ->setPageTitle('index', 'Liste des utilisateurs')
-            ->setPageTitle('detail', 'Détails Utilisateur')
-            ->setPageTitle('edit', 'Modifier Utilisateur')
+            ->setPageTitle('detail', 'Details utilisateur')
+            ->setPageTitle('edit', 'Modifier utilisateur')
             ->setEntityLabelInSingular('Utilisateur')
             ->setEntityLabelInPlural('Utilisateurs')
+            ->setHelp('index', 'Vue de triage: utilisez les filtres rapides pour traiter les profils incomplets, non verifies et inactifs.')
             ->setDefaultSort(['id' => 'DESC']);
     }
 
@@ -91,18 +92,20 @@ class UserCrudController extends AbstractCrudController
 
             FormField::addTab('Donnees de base')->setIcon('fa fa-users')->onlyOnDetail(),
             IdField::new('id')->hideOnForm(),
-            TextField::new('display_name', 'Noms'),
+            TextField::new('display_name', 'Utilisateur'),
             TextField::new('email_canonical', 'Email')->setTemplatePath('admin/user/Fields/email_link.html.twig'),
             IdField::new('id', 'Annonces publiees')->setTemplatePath('admin/user/Fields/published_annonces_count.html.twig')->onlyOnIndex(),
             ArrayField::new('roles', 'Roles')->setTemplatePath('admin/user/Fields/roles.html.twig'),
-            //TextField::new('last_activity_at', 'DerniÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¨re Connexion'),
-            BooleanField::new('enabled', 'Compte Actif?'),
-            //AssociationField::new('abonnements', 'Abonnements')->hideOnForm(),
-            BooleanField::new('is_verified', 'Email vérifié?'),
-            IdField::new('id', 'Completion Rate')->setTemplatePath('admin/user/Fields/completion_rate.html.twig'),
+            BooleanField::new('enabled', 'Compte')->setTemplatePath('admin/user/Fields/account_status.html.twig')->renderAsSwitch(false),
+            BooleanField::new('is_verified', 'Email')->setTemplatePath('admin/user/Fields/verification_status.html.twig')->renderAsSwitch(false),
+            TextField::new('id', 'Completion')
+                ->formatValue(function ($value, $entity) {
+                    return $entity instanceof User ? $this->getProfileCompletionRate($entity) : 0;
+                })
+                ->setTemplatePath('admin/user/Fields/completion_rate.html.twig')
+                ->onlyOnIndex(),
             TextField::new('date_naissance', 'Date de naissance')->onlyOnDetail(),
             DateTimeField::new('userRegistered', 'Date de creation')->onlyOnIndex(),
-            //DateTimeField::new('last_activity_at', 'DerniÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¨re Connexion'),
             DateTimeField::new('updatedAt', 'Date de MAJ')->onlyOnIndex(),
 
             FormField::addTab('Donnees uniques utilisateur')->onlyOnDetail(),
@@ -172,13 +175,61 @@ class UserCrudController extends AbstractCrudController
         $Activeruser = Action::new('Activeruser', 'Mail activation')
             ->linkToCrudAction('ActivercompteAction');
 
+        $incompleteProfiles = Action::new(
+            'incompleteProfiles',
+            sprintf('Profils < 80%% (%d)', $this->countIncompleteProfiles())
+        )
+            ->linkToUrl($this->buildIndexUrl([
+                'completionFilter' => 'lt80',
+                'verificationFilter' => null,
+                'statusFilter' => null,
+            ]))
+            ->createAsGlobalAction()
+            ->setCssClass('btn btn-warning');
+
+        $unverifiedUsers = Action::new(
+            'unverifiedUsers',
+            sprintf('Emails non verifies (%d)', $this->countUnverifiedUsers())
+        )
+            ->linkToUrl($this->buildIndexUrl([
+                'verificationFilter' => 'unverified',
+                'completionFilter' => null,
+                'statusFilter' => null,
+            ]))
+            ->createAsGlobalAction()
+            ->setCssClass('btn btn-outline-secondary');
+
+        $inactiveUsers = Action::new(
+            'inactiveUsers',
+            sprintf('Comptes inactifs (%d)', $this->countInactiveUsers())
+        )
+            ->linkToUrl($this->buildIndexUrl([
+                'statusFilter' => 'inactive',
+                'completionFilter' => null,
+                'verificationFilter' => null,
+            ]))
+            ->createAsGlobalAction()
+            ->setCssClass('btn btn-outline-dark');
+
+        $resetTriage = Action::new('resetTriage', 'Reinitialiser')
+            ->linkToUrl($this->buildIndexUrl([
+                'completionFilter' => null,
+                'completionSort' => null,
+                'verificationFilter' => null,
+                'statusFilter' => null,
+            ]))
+            ->createAsGlobalAction()
+            ->setCssClass('btn btn-light');
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $incompleteProfiles)
+            ->add(Crud::PAGE_INDEX, $unverifiedUsers)
+            ->add(Crud::PAGE_INDEX, $inactiveUsers)
+            ->add(Crud::PAGE_INDEX, $resetTriage)
             ->add(Crud::PAGE_INDEX, $export)
             ->add(Crud::PAGE_INDEX, $Activeruser);
     }
-
-
     public function export(AdminContext $context, UserCsvExporter $csvExporter)
     {
         $this->logger->info('UserCrudController.export called');
@@ -213,6 +264,26 @@ class UserCrudController extends AbstractCrudController
             ->generateUrl();
     }
 
+    private function buildIndexUrl(array $changes = []): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $params = $request ? $request->query->all() : [];
+
+        foreach ($changes as $key => $value) {
+            if ($value === null || $value === '') {
+                unset($params[$key]);
+                continue;
+            }
+
+            $params[$key] = $value;
+        }
+
+        return $this->adminUrlGenerator
+            ->setAll($params)
+            ->setAction(Action::INDEX)
+            ->generateUrl();
+    }
+
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         try {
@@ -231,6 +302,8 @@ class UserCrudController extends AbstractCrudController
             $request = $this->requestStack->getCurrentRequest();
             $completionFilter = $request ? $request->query->get('completionFilter') : null;
             $completionSort = $request ? $request->query->get('completionSort') : null;
+            $verificationFilter = $request ? $request->query->get('verificationFilter') : null;
+            $statusFilter = $request ? $request->query->get('statusFilter') : null;
 
             $completionExpr = "(CASE WHEN umCompletion.metaValue IS NULL OR umCompletion.metaValue = '' THEN 0 ELSE umCompletion.metaValue END)";
 
@@ -238,6 +311,22 @@ class UserCrudController extends AbstractCrudController
                 $qb->andWhere($completionExpr . ' < 80');
             } elseif ($completionFilter === 'gte80') {
                 $qb->andWhere($completionExpr . ' >= 80');
+            }
+
+            if ($verificationFilter === 'unverified') {
+                $qb->andWhere('entity.isVerified = :verificationFilterFalse');
+                $qb->setParameter('verificationFilterFalse', false);
+            } elseif ($verificationFilter === 'verified') {
+                $qb->andWhere('entity.isVerified = :verificationFilterTrue');
+                $qb->setParameter('verificationFilterTrue', true);
+            }
+
+            if ($statusFilter === 'inactive') {
+                $qb->andWhere('entity.enabled = :statusFilterInactive');
+                $qb->setParameter('statusFilterInactive', 0);
+            } elseif ($statusFilter === 'active') {
+                $qb->andWhere('entity.enabled = :statusFilterActive');
+                $qb->setParameter('statusFilterActive', 1);
             }
 
             if ($completionSort === 'asc') {
@@ -254,6 +343,8 @@ class UserCrudController extends AbstractCrudController
             $this->logger->info('UserCrudController.createIndexQueryBuilder DQL', [
                 'completionFilter' => $completionFilter,
                 'completionSort' => $completionSort,
+                'verificationFilter' => $verificationFilter,
+                'statusFilter' => $statusFilter,
                 'dql' => $qb->getDQL(),
                 'params' => $params,
             ]);
@@ -324,6 +415,43 @@ class UserCrudController extends AbstractCrudController
         return sprintf('<span class="%s">%d%%</span>', $class, $rate);
     }
 
+    private function countIncompleteProfiles(): int
+    {
+        return (int) $this->em->createQueryBuilder()
+            ->select('COUNT(entity.id)')
+            ->from(User::class, 'entity')
+            ->leftJoin(
+                WpUsermeta::class,
+                'umCompletionCount',
+                'WITH',
+                'umCompletionCount.userId = entity.id AND umCompletionCount.metaKey = :completionMetaKeyCount'
+            )
+            ->where("(umCompletionCount.metaValue IS NULL OR umCompletionCount.metaValue = '' OR umCompletionCount.metaValue < :completionThreshold)")
+            ->setParameter('completionMetaKeyCount', 'profile_completion_rate')
+            ->setParameter('completionThreshold', 80)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    private function countUnverifiedUsers(): int
+    {
+        return (int) $this->em->getRepository(User::class)->createQueryBuilder('entity')
+            ->select('COUNT(entity.id)')
+            ->andWhere('entity.isVerified = :isVerified')
+            ->setParameter('isVerified', false)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    private function countInactiveUsers(): int
+    {
+        return (int) $this->em->getRepository(User::class)->createQueryBuilder('entity')
+            ->select('COUNT(entity.id)')
+            ->andWhere('entity.enabled = :enabled')
+            ->setParameter('enabled', 0)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
     public function stripeForm(AdminContext $context)
     {
@@ -357,11 +485,11 @@ class UserCrudController extends AbstractCrudController
                 $this->em->flush();
             }
 
-            return new JsonResponse(['message' => 'Compte Stripe supprimÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© avec succÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¨s', 'delete' => $deletedItem], 200);
+            return new JsonResponse(['message' => 'Compte Stripe supprimÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© avec succÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¨s', 'delete' => $deletedItem], 200);
         }
 
         // If the account was not deleted, return an error message
-        return new JsonResponse(['error' => 'ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°chec de la suppression du compte Stripe', 'delete' => $deletedItem], 400);
+        return new JsonResponse(['error' => 'ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°chec de la suppression du compte Stripe', 'delete' => $deletedItem], 400);
     }
 
 
@@ -542,7 +670,7 @@ class UserCrudController extends AbstractCrudController
             $userId,
             'vendor_account_country'
         );
-        //Information bancaire: RÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©gion
+        //Information bancaire: RÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©gion
         $regionCompte = $this->service_manager->readUserMeta(
             $userId,
             'vendor_account_region'
@@ -654,7 +782,7 @@ class UserCrudController extends AbstractCrudController
             'regionCompte' => $regionCompte,
             'activities' => $this->service_manager->postCategorie1('product_activity'),
             'principal_activity' => $principal_activity,
-            //DonnÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©es Facture
+            //DonnÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©es Facture
             'user' => $this->service_manager->userById($userId),
             'prenom' => $prenom,
             'nom' => $nom,
@@ -762,14 +890,14 @@ class UserCrudController extends AbstractCrudController
         $accountToken = $this->payment->createStripeAccountToken($userType, $data);
         if (empty($accountToken['id'])) return ['token' => $accountToken, 'data' => $data];
 
-        // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ Create Stripe Account from Token
+        // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ Create Stripe Account from Token
         $stripeAccount = $this->payment->createStripeUserFromToken($accountToken['id']);
         if (empty($stripeAccount['id'])) return ['token' => $accountToken, 'data' => $data];
 
         $this->service_manager->updateUserMeta($userId, 'mp_user_id_sandbox', $stripeAccount['id']);
         $this->payment->updateStripeUser($stripeAccount['id'], $userType, $data);
 
-        // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ Create Stripe Person if required
+        // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ Create Stripe Person if required
         if($userType != 'ROLE_ABONNE'){
             $stripePersonToken = $this->payment->createStripePersonToken($data);
             if (!empty($stripePersonToken['id'])) {
@@ -784,4 +912,11 @@ class UserCrudController extends AbstractCrudController
     }
 
 }
+
+
+
+
+
+
+
 

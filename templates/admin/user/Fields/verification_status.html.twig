@@ -1,0 +1,4 @@
+{% set isVerified = field.value %}
+<span class="badge {{ isVerified ? 'badge-success' : 'badge-warning' }}" style="min-width: 104px;">
+    {{ isVerified ? 'Verifie' : 'Non verifie' }}
+</span>
