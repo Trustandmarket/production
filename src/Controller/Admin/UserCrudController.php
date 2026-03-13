@@ -302,7 +302,7 @@ class UserCrudController extends AbstractCrudController
 
     private function buildReminderHistoryLink(User $user): string
     {
-        return sprintf('<a href="%s">Voir l''historique des relances</a>', $this->buildReminderHistoryUrl($user));
+        return sprintf("<a href=\"%s\">Voir l'historique des relances</a>", $this->buildReminderHistoryUrl($user));
     }
 
     private function formatLastReminder(User $user): string
