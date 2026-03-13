@@ -1,6 +1,6 @@
 {% set reminderLog = entity.instance %}
 {% if reminderLog.user %}
-    {% set url = path('admin', {'_locale': app.request.locale|default('fr')}) ~ '?crudAction=detail&crudControllerFqcn=' ~ 'App\\\\Controller\\\\Admin\\\\UserCrudController'|url_encode ~ '&entityId=' ~ reminderLog.user.id %}
+    {% set url = path('admin_reminder_log_user_detail', {'_locale': app.request.locale|default('fr'), 'id': reminderLog.user.id}) %}
     <a href="{{ url }}">{{ reminderLog.userDisplayName ?: reminderLog.user }}</a>
 {% else %}
     <span>{{ reminderLog.userDisplayName ?: '-' }}</span>

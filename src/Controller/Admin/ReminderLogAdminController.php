@@ -51,4 +51,17 @@ class ReminderLogAdminController extends AbstractController
 
         return $this->redirect($url);
     }
+
+    #[Route('/{_locale}/admin/reminder-log/user/{id}/detail', name: 'admin_reminder_log_user_detail', requirements: ['_locale' => 'fr'])]
+    public function userDetail(string $_locale, int $id): RedirectResponse
+    {
+        $url = $this->adminUrlGenerator
+            ->setRoute('admin', ['_locale' => $_locale])
+            ->setController(UserCrudController::class)
+            ->setAction(Action::DETAIL)
+            ->setEntityId($id)
+            ->generateUrl();
+
+        return $this->redirect($url);
+    }
 }
