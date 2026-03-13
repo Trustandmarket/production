@@ -185,11 +185,6 @@ class ProfileSendCompletionRemindersCommand extends Command
         $this->entityManager->flush();
 
         if (!$dryRun && $isProd && $adminSummaryTo !== '' && $adminSummaryTemplateId > 0) {
-            $summaryLines = [];
-            foreach ($notifiedUsers as $u) {
-                $summaryLines[] = sprintf('#%d | %s | %s | %d%%', $u['id'], $u['email'], $u['name'], $u['rate']);
-            }
-
             $adminPayload = [
                 'to' => [[
                     'email' => $adminSummaryTo,
@@ -207,8 +202,6 @@ class ProfileSendCompletionRemindersCommand extends Command
                     'errors' => $errors,
                     'threshold' => $threshold,
                     'cooldown_days' => $cooldownDays,
-                    'summary_text' => $summaryLines ? implode("\n", $summaryLines) : 'Aucun utilisateur notifie.',
-                    'users_json' => json_encode($notifiedUsers, JSON_UNESCAPED_UNICODE),
                 ],
             ];
 
