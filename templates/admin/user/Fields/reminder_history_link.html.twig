@@ -1,6 +1,6 @@
 {% set userId = entity.instance.id ?? entity.primaryKeyValue ?? field.value ?? null %}
 {% if userId %}
-    {% set url = path('admin', {'_locale': app.request.locale|default('fr')}) ~ '?crudAction=index&crudControllerFqcn=' ~ 'App\\\\Controller\\\\Admin\\\\ReminderLogCrudController'|url_encode ~ '&userId=' ~ userId %}
+    {% set url = path('admin_reminder_log_user_history', {'_locale': app.request.locale|default('fr'), 'id': userId}) %}
     <a href="{{ url }}">Voir l'historique des relances</a>
 {% else %}
     <span>-</span>
