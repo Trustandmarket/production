@@ -6,7 +6,6 @@ use App\Entity\ReminderLog;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -21,13 +20,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class ReminderLogCrudController extends AbstractCrudController
 {
     public function __construct(
-        private readonly AdminUrlGenerator $adminUrlGenerator,
         private readonly RequestStack $requestStack
     ) {
     }
@@ -52,21 +49,7 @@ class ReminderLogCrudController extends AbstractCrudController
         yield IdField::new('id')->hideOnForm();
         yield DateTimeField::new('sentAt', 'Date d envoi')->hideOnForm();
         yield TextField::new('userDisplayName', 'Utilisateur')
-            ->formatValue(function ($value, ReminderLog $reminderLog) {
-                $user = $reminderLog->getUser();
-                if ($user === null) {
-                    return $reminderLog->getUserDisplayName() ?: '-';
-                }
-
-                $url = $this->adminUrlGenerator
-                    ->setController(UserCrudController::class)
-                    ->setAction(Action::DETAIL)
-                    ->setEntityId($user->getId())
-                    ->generateUrl();
-
-                return sprintf('<a href="%s">%s</a>', $url, htmlspecialchars($reminderLog->getUserDisplayName() ?: (string) $user));
-            })
-            ->renderAsHtml()
+            ->setTemplatePath('admin/user/Fields/reminder_log_user_link.html.twig')
             ->hideOnForm();
         yield TextField::new('userEmail', 'Email')->hideOnForm();
         yield TextField::new('type', 'Type')->hideOnForm();
