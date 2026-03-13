@@ -1,6 +1,7 @@
+{% set userId = field.value ?? entity.primaryKeyValue ?? entity.instance.id ?? null %}
 {% set url = ea_url()
     .setController('App\\Controller\\Admin\\ReminderLogCrudController')
     .setAction('index')
-    .set('userId', field.value)
+    .set('userId', userId)
 %}
 <a href="{{ url }}">Voir l'historique des relances</a>
