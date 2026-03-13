@@ -39,6 +39,22 @@ class WpPostsRepository extends ServiceEntityRepository
         }
     }
 
+    public function countPublishedProductsByUser(int $userId): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->andWhere('p.postAuthor = :userId')
+            ->andWhere('p.postType = :postType')
+            ->andWhere('p.postStatus = :postStatus')
+            ->andWhere('p.postParent = :postParent')
+            ->setParameter('userId', $userId)
+            ->setParameter('postType', 'product')
+            ->setParameter('postStatus', 'publish')
+            ->setParameter('postParent', 0)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 //    /**
 //     * @return WpPosts[] Returns an array of WpPosts objects
 //     */

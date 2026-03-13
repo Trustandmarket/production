@@ -2046,19 +2046,7 @@ class AdminController extends AbstractController
 
     public function publishedAnnoncesCount(int $id): Response
     {
-        $count = (int) $this->entityManager->getRepository(WpPosts::class)
-            ->createQueryBuilder('p')
-            ->select('COUNT(p.id)')
-            ->andWhere('p.postAuthor = :userId')
-            ->andWhere('p.postType = :postType')
-            ->andWhere('p.postStatus = :postStatus')
-            ->andWhere('p.postParent = :postParent')
-            ->setParameter('userId', $id)
-            ->setParameter('postType', 'product')
-            ->setParameter('postStatus', 'publish')
-            ->setParameter('postParent', 0)
-            ->getQuery()
-            ->getSingleScalarResult();
+        $count = $this->entityManager->getRepository(WpPosts::class)->countPublishedProductsByUser($id);
 
         return new Response((string) $count);
     }
