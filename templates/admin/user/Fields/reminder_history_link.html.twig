@@ -1,7 +1,7 @@
-{% set userId = field.value ?? entity.primaryKeyValue ?? entity.instance.id ?? null %}
-{% set url = ea_url()
-    .setController('App\\Controller\\Admin\\ReminderLogCrudController')
-    .setAction('index')
-    .set('userId', userId)
-%}
-<a href="{{ url }}">Voir l'historique des relances</a>
+{% set userId = entity.instance.id ?? entity.primaryKeyValue ?? field.value ?? null %}
+{% if userId %}
+    {% set url = path('admin', {'_locale': app.request.locale|default('fr')}) ~ '?crudAction=index&crudControllerFqcn=' ~ 'App\\\\Controller\\\\Admin\\\\ReminderLogCrudController'|url_encode ~ '&userId=' ~ userId %}
+    <a href="{{ url }}">Voir l'historique des relances</a>
+{% else %}
+    <span>-</span>
+{% endif %}
