@@ -1,6 +1,2 @@
-{% set url = ea_url()
-    .setController('App\\Controller\\Admin\\ReminderLogCrudController')
-    .setAction('index')
-    .set('userId', entity.primaryKeyValue)
-%}
+{% set url = path('admin', {'_locale': app.request.locale|default('fr')}) ~ '?crudAction=index&crudControllerFqcn=' ~ 'App\\\\Controller\\\\Admin\\\\ReminderLogCrudController'|url_encode ~ '&userId=' ~ entity.primaryKeyValue %}
 <a href="{{ url }}">Voir l'historique des relances</a>
