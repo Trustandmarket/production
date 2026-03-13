@@ -5,7 +5,6 @@ namespace App\Controller\Admin;
 use App\Entity\{User, WpUsermeta};
 use App\Filter\CompletionRateFilter;
 use App\Filter\ProfileRoleFilter;
-use App\Repository\ReminderLogRepository;
 use App\Security\EmailVerifier;
 use App\Service\Admin\UserEditViewBuilder;
 use App\Service\Admin\UserStripeManager;
@@ -53,7 +52,6 @@ class UserCrudController extends AbstractCrudController
     private $logger;
     private UserEditViewBuilder $userEditViewBuilder;
     private UserStripeManager $userStripeManager;
-    private ReminderLogRepository $reminderLogRepository;
     /**
      * @var ServiceManager
      */
@@ -63,7 +61,7 @@ class UserCrudController extends AbstractCrudController
                                 EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator,
                                 RequestStack $requestStack, EmailVerifier $emailVerifier, Payment $payment,
                                 LoggerInterface $logger, UserEditViewBuilder $userEditViewBuilder,
-                                UserStripeManager $userStripeManager, ReminderLogRepository $reminderLogRepository)
+                                UserStripeManager $userStripeManager)
     {
         $this->service_manager = $service_manager;
         $this->em = $em;
@@ -74,7 +72,6 @@ class UserCrudController extends AbstractCrudController
         $this->logger = $logger;
         $this->userEditViewBuilder = $userEditViewBuilder;
         $this->userStripeManager = $userStripeManager;
-        $this->reminderLogRepository = $reminderLogRepository;
     }
 
     public static function getEntityFqcn(): string
@@ -109,8 +106,8 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('enabled', 'Compte')->setTemplatePath('admin/user/Fields/account_status.html.twig')->renderAsSwitch(false),
             BooleanField::new('is_verified', 'Email')->setTemplatePath('admin/user/Fields/verification_status.html.twig')->renderAsSwitch(false)->hideOnIndex(),
             IdField::new('id', 'Completion')->setTemplatePath('admin/user/Fields/completion_rate.html.twig')->onlyOnIndex(),
-            TextField::new('id', 'Derniere relance')->formatValue(function ($value, User $user) { return $this->formatLastReminder($user); })->hideOnForm(),
-            TextField::new('id', 'Historique relances')->formatValue(function ($value, User $user) { return $this->buildReminderHistoryLink($user); })->renderAsHtml()->hideOnForm(),
+            IdField::new('id', 'Derniere relance')->setTemplatePath('admin/user/Fields/latest_reminder_field.html.twig')->hideOnForm(),
+            IdField::new('id', 'Historique relances')->setTemplatePath('admin/user/Fields/reminder_history_link.html.twig')->hideOnForm(),
             TextField::new('date_naissance', 'Date de naissance')->onlyOnDetail(),
             DateTimeField::new('userRegistered', 'Date de creation')->onlyOnIndex(),
             DateTimeField::new('updatedAt', 'Date de MAJ')->onlyOnIndex(),
@@ -290,32 +287,6 @@ class UserCrudController extends AbstractCrudController
             ->setAction(Action::INDEX)
             ->generateUrl();
     }
-
-    private function buildReminderHistoryUrl(User $user): string
-    {
-        return $this->adminUrlGenerator
-            ->setController(ReminderLogCrudController::class)
-            ->setAction(Action::INDEX)
-            ->set('userId', $user->getId())
-            ->generateUrl();
-    }
-
-    private function buildReminderHistoryLink(User $user): string
-    {
-        return sprintf("<a href=\"%s\">Voir l'historique des relances</a>", $this->buildReminderHistoryUrl($user));
-    }
-
-    private function formatLastReminder(User $user): string
-    {
-        $latestReminder = $this->reminderLogRepository->findLatestSentForUser($user);
-
-        if ($latestReminder === null || $latestReminder->getSentAt() === null) {
-            return 'Jamais';
-        }
-
-        return $latestReminder->getSentAt()->format('d/m/Y H:i');
-    }
-
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
@@ -688,6 +659,7 @@ class UserCrudController extends AbstractCrudController
     }
 
 }
+
 
 
 
