@@ -26,7 +26,7 @@ use App\Controller\Admin\ToutesCategories\WpTermTaxonomyCrudController as Toutes
 use App\Controller\Admin\Activities\WpTermTaxonomyCrudController as ActivitiesCrudController;
 use App\Controller\Admin\Configurations\{DepartementCrudController, OffreInterneCrudController};
 use App\Controller\Admin\Paiements\{AbonnementCrudController};
-use App\Entity\{OffreInterne, User, WpComments, Departement, WpTerms, WpTermTaxonomy, Abonnement};
+use App\Entity\{OffreInterne, ReminderLog, User, WpComments, Departement, WpTerms, WpTermTaxonomy, Abonnement};
 use App\Service\Payment;
 use App\Service\ServiceManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -120,6 +120,7 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToCrud('admin.menu.ops-speciales', 'fa fa-tasks', WpPosts::class)->setController(OpsSpecialesCrudController::class),
                 MenuItem::linkToCrud('admin.menu.promo-com', 'fa fa-ad', WpPosts::class)->setController(PromoComsCrudController::class),
                 MenuItem::linkToCrud('admin.menu.leads-gen', 'fa fa-pen-square', WpPosts::class)->setController(LeadsGenCrudController::class),
+                MenuItem::linkToCrud('Historique des relances', 'fa fa-bell', ReminderLog::class)->setController(ReminderLogCrudController::class),
             ]);
 
 
@@ -187,3 +188,4 @@ class DashboardController extends AbstractDashboardController
         //yield MenuItem::linkToCrud('The Label', 'fas fa-list', User::class);
     }
 }
+

@@ -2,11 +2,14 @@
 
 namespace App\Command;
 
+use App\Entity\ReminderLog;
+use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\BrevoMailer;
 use App\Service\ServiceManager;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,12 +27,14 @@ class ProfileSendCompletionRemindersCommand extends Command
     private const META_RATE_KEY = 'profile_completion_rate';
     private const META_LAST_SENT_AT_KEY = 'profile_completion_reminder_last_sent_at';
     private const META_SENT_COUNT_KEY = 'profile_completion_reminder_sent_count';
+    private const REMINDER_TYPE = 'profile_completion_reminder';
 
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly ServiceManager $serviceManager,
         private readonly BrevoMailer $brevoMailer,
-        private readonly ParameterBagInterface $parameterBag
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager
     ) {
         parent::__construct();
     }
@@ -125,8 +130,17 @@ class ProfileSendCompletionRemindersCommand extends Command
 
             $profileUrl = sprintf('%s/%s/profil-utilisateur/profil', $baseUrl, $locale);
             $displayName = (string) $user->getDisplayName();
+            $summary = sprintf('Relance completion %d%%, seuil %d%%, cooldown %d jours.', $rate, $threshold, $cooldownDays);
+            $context = [
+                'completion_rate' => $rate,
+                'required_rate' => $threshold,
+                'cooldown_days' => $cooldownDays,
+                'profile_url' => $profileUrl,
+                'dry_run' => $dryRun,
+            ];
 
             if ($dryRun) {
+                $this->entityManager->persist($this->buildReminderLog($user, $email, $displayName, 'dry_run', $templateId > 0 ? $templateId : null, $summary, $context, $now));
                 $sent++;
                 continue;
             }
@@ -148,6 +162,7 @@ class ProfileSendCompletionRemindersCommand extends Command
             $result = $this->brevoMailer->sendTemplate($payload);
             if (!$result['ok']) {
                 $errors++;
+                $this->entityManager->persist($this->buildReminderLog($user, $email, $displayName, 'failed', $templateId, $summary, $context + ['error' => $result['error']], $now));
                 $io->warning(sprintf('Echec envoi user_id=%d email=%s error=%s', (int) $user->getId(), $email, $result['error']));
                 continue;
             }
@@ -155,6 +170,8 @@ class ProfileSendCompletionRemindersCommand extends Command
             $this->serviceManager->updateUserMeta((int) $user->getId(), self::META_LAST_SENT_AT_KEY, $now->format(DateTimeInterface::ATOM));
             $currentCount = (int) $this->serviceManager->getUserStringDataValue((int) $user->getId(), self::META_SENT_COUNT_KEY);
             $this->serviceManager->updateUserMeta((int) $user->getId(), self::META_SENT_COUNT_KEY, (string) ($currentCount + 1));
+
+            $this->entityManager->persist($this->buildReminderLog($user, $email, $displayName, 'sent', $templateId, $summary, $context, $now));
 
             $sent++;
             $notifiedUsers[] = [
@@ -164,6 +181,8 @@ class ProfileSendCompletionRemindersCommand extends Command
                 'rate' => $rate,
             ];
         }
+
+        $this->entityManager->flush();
 
         if (!$dryRun && $isProd && $adminSummaryTo !== '' && $adminSummaryTemplateId > 0) {
             $summaryLines = [];
@@ -218,6 +237,23 @@ class ProfileSendCompletionRemindersCommand extends Command
         return $errors > 0 ? Command::FAILURE : Command::SUCCESS;
     }
 
+    private function buildReminderLog(User $user, string $email, string $displayName, string $status, ?int $templateId, string $payloadSummary, array $context, DateTimeImmutable $sentAt): ReminderLog
+    {
+        $log = new ReminderLog();
+        $log->setUser($user);
+        $log->setUserEmail($email);
+        $log->setUserDisplayName($displayName !== '' ? $displayName : $email);
+        $log->setType(self::REMINDER_TYPE);
+        $log->setChannel('email');
+        $log->setStatus($status);
+        $log->setTemplateId($templateId);
+        $log->setPayloadSummary($payloadSummary);
+        $log->setContextJson(json_encode($context, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        $log->setSentAt($sentAt);
+
+        return $log;
+    }
+
     private function parseDate(string $raw): ?DateTimeImmutable
     {
         if ($raw === '') {
@@ -231,3 +267,4 @@ class ProfileSendCompletionRemindersCommand extends Command
         }
     }
 }
+
