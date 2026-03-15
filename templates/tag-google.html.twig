@@ -7,5 +7,23 @@
   gtag('js', new Date());
 
   gtag('config', 'G-ZEETE77ZKR');
+
+  {% if app.request is defined and app.request.attributes.get('_route') == 'app_register' %}
+  // Helper to delay navigation until the conversion event is sent.
+  function gtagSendEvent(url) {
+    var callback = function () {
+      if (typeof url === 'string') {
+        window.location = url;
+      }
+    };
+
+    gtag('event', 'conversion_event_signup_3', {
+      'event_callback': callback,
+      'event_timeout': 2000
+    });
+
+    return false;
+  }
+  {% endif %}
 </script>
 {% endif %}
