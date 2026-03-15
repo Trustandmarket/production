@@ -10,10 +10,12 @@
 
   {% if app.request is defined and app.request.attributes.get('_route') == 'app_register' %}
   // Helper to delay navigation until the conversion event is sent.
-  function gtagSendEvent(url) {
+  function gtagSendEvent(target) {
     var callback = function () {
-      if (typeof url === 'string') {
-        window.location = url;
+      if (target && typeof target.submit === 'function') {
+        target.submit();
+      } else if (typeof target === 'string') {
+        window.location = target;
       }
     };
 

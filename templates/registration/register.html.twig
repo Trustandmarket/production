@@ -74,7 +74,7 @@
 {% endblock %}
 
 {% block body %}
-    {{ form_start(registrationForm, { 'attr': {'class': 'form-signin'}}) }}
+    {{ form_start(registrationForm, { 'attr': {'class': 'form-signin', 'id': 'registration-form'}}) }}
 
     <div class="text-center mb-4">
         <a href='/'>
@@ -159,7 +159,7 @@
     </div>
 
     <div class="text-center">
-        <button class="btn btn-lg btn-primary btn-md registration-button" type="submit">{{ 'inscription.titre'|trans }}
+        <button class="btn btn-lg btn-primary btn-md registration-button" type="submit" onclick="return gtagSendEvent(document.getElementById('registration-form'));">{{ 'inscription.titre'|trans }}
         </button>
     </div>
 
