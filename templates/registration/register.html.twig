@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block head %}
+    {% include 'tag-google.html.twig' %}
     {{ parent() }}
     <meta name="title" content="{{ include('Seo/Meta/title.html.twig', {code: 'creer-un-compte'}) }}">
     <meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'creer-un-compte'}) }}"/>
@@ -74,7 +75,7 @@
 {% endblock %}
 
 {% block body %}
-    {{ form_start(registrationForm, { 'attr': {'class': 'form-signin', 'id': 'registration-form'}}) }}
+    {{ form_start(registrationForm, { 'attr': {'class': 'form-signin', 'id': 'registration-form', 'onsubmit': 'return gtagSendEvent(this);'}}) }}
 
     <div class="text-center mb-4">
         <a href='/'>
@@ -159,7 +160,7 @@
     </div>
 
     <div class="text-center">
-        <button class="btn btn-lg btn-primary btn-md registration-button" type="submit" onclick="return gtagSendEvent(document.getElementById('registration-form'));">{{ 'inscription.titre'|trans }}
+        <button class="btn btn-lg btn-primary btn-md registration-button" type="submit">{{ 'inscription.titre'|trans }}
         </button>
     </div>
 
