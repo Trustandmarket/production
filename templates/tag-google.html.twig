@@ -1,5 +1,6 @@
 <!-- Google tag (gtag.js) -->
-{% if app.environment == 'prod' %}
+{% set is_google_tag_enabled = (environnement is defined and environnement == 'prod') or app.environment == 'prod' %}
+{% if is_google_tag_enabled %}
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEETE77ZKR"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
