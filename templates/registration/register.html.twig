@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block head %}
-    {% include 'tag-google.html.twig' %}
     {{ parent() }}
     <meta name="title" content="{{ include('Seo/Meta/title.html.twig', {code: 'creer-un-compte'}) }}">
     <meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'creer-un-compte'}) }}"/>
