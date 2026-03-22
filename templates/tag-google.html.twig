@@ -1,5 +1,6 @@
 <!-- Google tag (gtag.js) -->
-{% set is_google_tag_enabled = (environnement is defined and environnement == 'prod') or app.environment == 'prod' %}
+{% set is_register_route = app.request is defined and app.request.attributes.get('_route') == 'app_register' %}
+{% set is_google_tag_enabled = is_register_route or (environnement is defined and environnement == 'prod') or app.environment == 'prod' %}
 {% if is_google_tag_enabled %}
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZEETE77ZKR"></script>
 <script>
@@ -9,7 +10,7 @@
 
   gtag('config', 'G-ZEETE77ZKR');
 
-  {% if app.request is defined and app.request.attributes.get('_route') == 'app_register' %}
+  {% if is_register_route %}
   // Helper to delay navigation until the conversion event is sent.
   function gtagSendEvent(target) {
     var callback = function () {
