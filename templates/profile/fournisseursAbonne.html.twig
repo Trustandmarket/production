@@ -244,11 +244,19 @@
                             toastr.success('Mise a jour du profil effectuee avec succes.');
                             window.location = '{{ path('profile_profile' ) }}';
                         } else {
-                            $switchErrors.removeClass('d-none').text('Un probleme est survenu.');
+                            $switchErrors.removeClass('d-none').text(response.error || 'Un probleme est survenu.');
                         }
                     },
-                    error: function () {
-                        $switchErrors.removeClass('d-none').text('Un probleme est survenu.');
+                    error: function (xhr) {
+                        var message = 'Un probleme est survenu.';
+
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            message = xhr.responseJSON.error;
+                        } else if (xhr.responseText) {
+                            message = xhr.responseText;
+                        }
+
+                        $switchErrors.removeClass('d-none').text(message);
                     }
                 });
             });

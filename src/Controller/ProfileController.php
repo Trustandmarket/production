@@ -909,119 +909,133 @@ class ProfileController extends AbstractController
     public
     function devenirPro(Request $request)
     {
-        $r = 0;
-        $mangoPayAccount = $this->em
-            ->getRepository(WpUsermeta::class)
-            ->findOneBy([
-                'userId' => $this->getUser()->getId(),
-                'metaKey' => 'mp_user_id_sandbox',
-            ]);
-        $legalPersonType = "";
-        $newAccount = null;
-        $email = $this->getUser()->getEmailCanonical();
-        $firstName = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'first_name');
-        $lastName = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'last_name');
+        try {
+            $r = 0;
+            $mangoPayAccount = $this->em
+                ->getRepository(WpUsermeta::class)
+                ->findOneBy([
+                    'userId' => $this->getUser()->getId(),
+                    'metaKey' => 'mp_user_id_sandbox',
+                ]);
+            $legalPersonType = "";
+            $newAccount = null;
+            $email = $this->getUser()->getEmailCanonical();
+            $firstName = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'first_name');
+            $lastName = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'last_name');
 
-        $countryOfResidence = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'residenceCountry');
-        if ($countryOfResidence == "") {
-            $countryOfResidence = "FR";
-        }
+            $countryOfResidence = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'residenceCountry');
+            if ($countryOfResidence == "") {
+                $countryOfResidence = "FR";
+            } else {
+                $countryOfResidence = $countryOfResidence;
+            }
 
-        $nationality = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'nationalityCountry');
-        if ($nationality == "") {
-            $nationality = "FR";
-        }
+            $nationality = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'nationalityCountry');
+            if ($nationality == "") {
+                $nationality = "FR";
+            }
 
-        $birthday = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'bdaytime');
-        if ($birthday == "") {
-            $birthday = strtotime("01/01/2000");
-        } else {
-            $birthday = strtotime($birthday);
-        }
+            $birthday = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'bdaytime');
+            if ($birthday == "") {
+                $birthday = strtotime("01/01/2000");
+            } else {
+                $birthday = strtotime($birthday);
+            }
 
-        if ($request->get('role') == 'ROLE_AUTO_ENTREPRENEUR') {
-            $legalPersonType = "Soletrader";
-        } elseif ($request->get('role') == 'ROLE_SOCIETE') {
-            $legalPersonType = 'Organization';
-        }
+            if ($request->get('role') == 'ROLE_AUTO_ENTREPRENEUR') {
+                $legalPersonType = "Soletrader";
+            } elseif ($request->get('role') == 'ROLE_SOCIETE') {
+                $legalPersonType = 'Organization';
+            }
 
-        $parameters = json_decode($request->getContent());
-        //Siret
-        $this->service_manager->updateUserMeta($this->getUser()->getId(), 'siret', $parameters->compagny_number);
-        //nomEntreprise
-        $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_company', $parameters->compagny_name);
-        //pays
-        $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_country', $parameters->pays);
-        //numeroNomRue
-        $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_address_1', $parameters->adresse);
-        //codePostale
-        $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_postcode', $parameters->postal_code);
-        //ville
-        $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_city', $parameters->ville);
-        //etatCompte
-        $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_state', trim($parameters->region));
-        $user_new_role = $parameters->user_new_role;
-        if ($user_new_role == 'ROLE_AUTO_ENTREPRENEUR') {
-            $legalPersonType = "Soletrader";
-        } elseif ($user_new_role == 'ROLE_SOCIETE') {
-            $legalPersonType = 'Organization';
-        }
-        $user = $this->em->getRepository(User::class)->find($this->getUser()->getId());
-        if (sizeof($user->getAbonnements()) == 0) {
-            $forfait = $this->em->getRepository(OffreInterne::class)->findOneBySlug('gratuit');
-            $abonnement = new Abonnement();
-            $abonnement->setOffre($forfait);
-            $abonnement->setTarif(0);
-            $abonnement->setAbonnementActif(true);
-            $abonnement->setUser($user);
-            $this->em->persist($abonnement);
-            $this->em->flush();
-        }
-        if (in_array('ROLE_ABONNE', $this->getUser()->getRoles())) {
-            //Create Mp Account
-            if ($mangoPayAccount) {
-                $this->em->remove($mangoPayAccount);
+            $parameters = json_decode($request->getContent());
+            if (!$parameters) {
+                return new JsonResponse(['status' => 400, 'error' => 'Payload JSON invalide.']);
+            }
+
+            //Siret
+            $this->service_manager->updateUserMeta($this->getUser()->getId(), 'siret', $parameters->compagny_number);
+            //nomEntreprise
+            $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_company', $parameters->compagny_name);
+            //pays
+            $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_country', $parameters->pays);
+            //numeroNomRue
+            $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_address_1', $parameters->adresse);
+            //codePostale
+            $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_postcode', $parameters->postal_code);
+            //ville
+            $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_city', $parameters->ville);
+            //etatCompte
+            $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_state', trim($parameters->region));
+            $user_new_role = $parameters->user_new_role;
+            if ($user_new_role == 'ROLE_AUTO_ENTREPRENEUR') {
+                $legalPersonType = "Soletrader";
+            } elseif ($user_new_role == 'ROLE_SOCIETE') {
+                $legalPersonType = 'Organization';
+            }
+            $user = $this->em->getRepository(User::class)->find($this->getUser()->getId());
+            if (sizeof($user->getAbonnements()) == 0) {
+                $forfait = $this->em->getRepository(OffreInterne::class)->findOneBySlug('gratuit');
+                $abonnement = new Abonnement();
+                $abonnement->setOffre($forfait);
+                $abonnement->setTarif(0);
+                $abonnement->setAbonnementActif(true);
+                $abonnement->setUser($user);
+                $this->em->persist($abonnement);
                 $this->em->flush();
             }
-            $data = $this->getDataToUpdateMangopayUser();
-            $newAccount = $this->payment->createMangoUserLegal($data);
-            //Create Wallet
-            if ($newAccount) {
-                $this->service_manager->createUserMeta(
-                    $this->getUser()->getId(),
-                    'mp_user_id_sandbox',
-                    $newAccount->Id
-                );
-                $userWallets = $this->payment->getUserAbonneWalletsObjects($newAccount->Id);
-                if (sizeof($userWallets) == 0) {
-                    $this->payment->createWallet(
-                        $newAccount->Id,
-                        "Utilisateur professionnel",
-                        'EUR'
+            if (in_array('ROLE_ABONNE', $this->getUser()->getRoles())) {
+                //Create Mp Account
+                if ($mangoPayAccount) {
+                    $this->em->remove($mangoPayAccount);
+                    $this->em->flush();
+                }
+                $data = $this->getDataToUpdateMangopayUser();
+                $newAccount = $this->payment->createMangoUserLegal($data);
+                //Create Wallet
+                if ($newAccount) {
+                    $this->service_manager->createUserMeta(
+                        $this->getUser()->getId(),
+                        'mp_user_id_sandbox',
+                        $newAccount->Id
                     );
                     $userWallets = $this->payment->getUserAbonneWalletsObjects($newAccount->Id);
+                    if (sizeof($userWallets) == 0) {
+                        $this->payment->createWallet(
+                            $newAccount->Id,
+                            "Utilisateur professionnel",
+                            'EUR'
+                        );
+                        $userWallets = $this->payment->getUserAbonneWalletsObjects($newAccount->Id);
+                    }
+                    $r = $this->service_manager->devenirPro($this->getUser()->getId(), $user_new_role);
+                    //Update user
+                    $data = $this->getDataToUpdateMangopayUser();
+                    $this->payment->updateUserLegal($newAccount->Id, 'UserLegal', $data);
+                    return new JsonResponse(['data' => $newAccount, 'status' => 200]);
+                } else {
+                    return new JsonResponse(['data' => $newAccount, 'status' => 500, 'error' => 'La creation du compte professionnel a echoue.']);
                 }
-                $r = $this->service_manager->devenirPro($this->getUser()->getId(), $user_new_role);
-                //Update user
-                $data = $this->getDataToUpdateMangopayUser();
-                $this->payment->updateUserLegal($newAccount->Id, 'UserLegal', $data);
-                return new JsonResponse(['data' => $newAccount, 'status' => 200]);
-            } else {
-                return new JsonResponse(['data' => $newAccount, 'status' => 500]);
             }
-        }
-        // Update Userlegal identity to became society...
+            // Update Userlegal identity to became society...
 
-        if (in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles())) {
-            if ($mangoPayAccount) {
-                $data = $this->getDataToUpdateMangopayUser();
-                $this->payment->updateUserLegal($mangoPayAccount->getMetaValue(), 'UserLegal', $data);
-                $r = $this->service_manager->devenirPro(
-                    $this->getUser()->getId(),
-                    'ROLE_SOCIETE'
-                );
+            if (in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles())) {
+                if ($mangoPayAccount) {
+                    $data = $this->getDataToUpdateMangopayUser();
+                    $this->payment->updateUserLegal($mangoPayAccount->getMetaValue(), 'UserLegal', $data);
+                    $r = $this->service_manager->devenirPro(
+                        $this->getUser()->getId(),
+                        'ROLE_SOCIETE'
+                    );
+                }
+                return new JsonResponse(['data' => $mangoPayAccount, 'status' => 200]);
             }
-            return new JsonResponse(['data' => $mangoPayAccount, 'status' => 200]);
+        } catch (\Throwable $e) {
+            error_log('[profile_app_switch] ' . $e->getMessage());
+            return new JsonResponse([
+                'status' => 500,
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 
