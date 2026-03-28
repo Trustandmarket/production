@@ -515,30 +515,35 @@
                                             </div>
                                         {% endif %}
                                         {#  Fin gestion pour Societe #}
-                                        {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
-                                            <div class="d-flex justify-content-between flex-wrap" style="gap: 12px;">
-                                                <button id="societe"
-                                                        type="button"
-                                                        class="btn btn-md float-left p-3 js-open-company-switch-form"
-                                                        data-role="ROLE_SOCIETE"
-                                                        data-role-label="{{ 'profil-utilisateur.fournisseurs-abonne.societe'|trans }}">
-                                                    {{ 'profil-utilisateur.fournisseurs-abonne.passez-societe'|trans }}
-                                                </button>
-                                                <button id="enregProfile2"
-                                                        class="btn btn-md btn-success float-right  p-3" type="submit">
-                                                    {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-bouton-confirmer'|trans }}
-                                                </button>
-                                            </div>
-                                            {% include 'profile/_professional_switch_form.html.twig' with { switch_form_prefix: 'company-switch' } %}
-                                        {% else %}
-                                            <button id="enregProfile2" class="btn btn-md btn-success float-right p-3"
-                                                    type="submit">
-                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-bouton-confirmer'|trans }}
-                                            </button>
-                                        {% endif %}
+                                        <button id="enregProfile2" class="btn btn-md btn-success float-right p-3"
+                                                type="submit">
+                                            {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-bouton-confirmer'|trans }}
+                                        </button>
                                     </div>
                                 </div>
                             </form>
+                            {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
+                                <div class="mt-4">
+                                    <div class="border p-4 bg-white professional-switch-card">
+                                        <div class="mb-3">
+                                            <h3 class="h5 mb-2">Passage vers un profil societe</h3>
+                                            <p class="mb-3">
+                                                Votre profil actuel est <span class="professional-switch-role">auto-entrepreneur</span>.
+                                                Si votre activite evolue, vous pouvez demander le passage au profil
+                                                <span class="professional-switch-role">societe</span> avec un formulaire dedie.
+                                            </p>
+                                            <button id="societe"
+                                                    type="button"
+                                                    class="btn btn-md p-3 js-open-company-switch-form"
+                                                    data-role="ROLE_SOCIETE"
+                                                    data-role-label="{{ 'profil-utilisateur.fournisseurs-abonne.societe'|trans }}">
+                                                {{ 'profil-utilisateur.fournisseurs-abonne.passez-societe'|trans }}
+                                            </button>
+                                        </div>
+                                        {% include 'profile/_professional_switch_form.html.twig' with { switch_form_prefix: 'company-switch' } %}
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                     <!-- Fin des modifs -->
