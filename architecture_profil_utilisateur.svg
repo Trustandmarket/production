@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="980" viewBox="0 0 1700 980">
+  <defs>
+    <style>
+      .title { font: 700 28px Arial, sans-serif; fill: #1f2937; }
+      .label { font: 700 18px Arial, sans-serif; fill: #111827; }
+      .text { font: 15px Arial, sans-serif; fill: #374151; }
+      .small { font: 14px Arial, sans-serif; fill: #4b5563; }
+      .box { stroke: #1f2937; stroke-width: 2; rx: 18; ry: 18; }
+      .arrow { stroke: #374151; stroke-width: 2.5; fill: none; marker-end: url(#m2); }
+    </style>
+    <marker id="m2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#374151"/>
+    </marker>
+  </defs>
+
+  <rect width="1700" height="980" fill="#f8fafc"/>
+  <text x="850" y="44" text-anchor="middle" class="title">Pôle Profil Utilisateur - Vue Technique</text>
+
+  <rect x="60" y="110" width="290" height="170" class="box" fill="#dbeafe"/>
+  <text x="205" y="150" text-anchor="middle" class="label">Pages Profil</text>
+  <text x="205" y="182" text-anchor="middle" class="text">index.html.twig</text>
+  <text x="205" y="206" text-anchor="middle" class="text">dashboard.html.twig</text>
+  <text x="205" y="230" text-anchor="middle" class="text">fournisseurs.html.twig</text>
+  <text x="205" y="254" text-anchor="middle" class="text">fournisseursAbonne.html.twig</text>
+
+  <rect x="420" y="90" width="360" height="210" class="box" fill="#e9d5ff"/>
+  <text x="600" y="130" text-anchor="middle" class="label">ProfileController</text>
+  <text x="600" y="162" text-anchor="middle" class="text">index() / updateUserData()</text>
+  <text x="600" y="186" text-anchor="middle" class="text">fournisseurs() / fournisseursAbonne()</text>
+  <text x="600" y="210" text-anchor="middle" class="text">devenirPro()</text>
+  <text x="600" y="234" text-anchor="middle" class="text">updateBillingProfileData()</text>
+  <text x="600" y="258" text-anchor="middle" class="text">portfolio(), reservations(), annonces()...</text>
+
+  <rect x="850" y="80" width="360" height="230" class="box" fill="#dcfce7"/>
+  <text x="1030" y="120" text-anchor="middle" class="label">Services Utilisés</text>
+  <text x="1030" y="152" text-anchor="middle" class="text">ServiceManager</text>
+  <text x="1030" y="176" text-anchor="middle" class="text">ProfileCompletionCalculator</text>
+  <text x="1030" y="200" text-anchor="middle" class="text">Payment (partiellement historique)</text>
+  <text x="1030" y="224" text-anchor="middle" class="text">ToolsMeta / Panier / DAL Annonces</text>
+  <text x="1030" y="254" text-anchor="middle" class="small">orchestration métier + lecture/écriture des données</text>
+
+  <rect x="1280" y="100" width="320" height="190" class="box" fill="#fde68a"/>
+  <text x="1440" y="140" text-anchor="middle" class="label">Méta utilisateur</text>
+  <text x="1440" y="172" text-anchor="middle" class="text">getUserStringDataValue()</text>
+  <text x="1440" y="196" text-anchor="middle" class="text">getUserMetadata()</text>
+  <text x="1440" y="220" text-anchor="middle" class="text">updateUserMeta()</text>
+  <text x="1440" y="244" text-anchor="middle" class="text">readUserMeta()</text>
+
+  <rect x="250" y="420" width="430" height="220" class="box" fill="#fbcfe8"/>
+  <text x="465" y="460" text-anchor="middle" class="label">Flux 1 - Mise À Jour Profil</text>
+  <text x="465" y="492" text-anchor="middle" class="text">POST /profil-utilisateur/updateProfil</text>
+  <text x="465" y="516" text-anchor="middle" class="text">maj wp_users (email, display_name, username)</text>
+  <text x="465" y="540" text-anchor="middle" class="text">maj wp_usermeta (identité, adresses, médias, billing)</text>
+  <text x="465" y="564" text-anchor="middle" class="text">maj UserUniqueData</text>
+  <text x="465" y="588" text-anchor="middle" class="text">recompute profile completion</text>
+
+  <rect x="760" y="420" width="430" height="220" class="box" fill="#fecaca"/>
+  <text x="975" y="460" text-anchor="middle" class="label">Flux 2 - Changement De Rôle</text>
+  <text x="975" y="492" text-anchor="middle" class="text">POST /profil-utilisateur/devenir-pro</text>
+  <text x="975" y="516" text-anchor="middle" class="text">maj billing metadata</text>
+  <text x="975" y="540" text-anchor="middle" class="text">création abonnement si nécessaire</text>
+  <text x="975" y="564" text-anchor="middle" class="text">ServiceManager::devenirPro(userId, role)</text>
+  <text x="975" y="588" text-anchor="middle" class="text">maj roles dans wp_users</text>
+
+  <rect x="1270" y="410" width="340" height="240" class="box" fill="#e5e7eb"/>
+  <text x="1440" y="450" text-anchor="middle" class="label">Données Manipulées</text>
+  <text x="1440" y="482" text-anchor="middle" class="text">Identité : first_name, last_name, sexe, bdaytime</text>
+  <text x="1440" y="506" text-anchor="middle" class="text">Adresses : domicile, livraison, billing</text>
+  <text x="1440" y="530" text-anchor="middle" class="text">Entreprise : billing_company, siret, tva</text>
+  <text x="1440" y="554" text-anchor="middle" class="text">Médias : avatar, portfolio, videos</text>
+  <text x="1440" y="578" text-anchor="middle" class="text">Rôle : ROLE_ABONNE / ROLE_AUTO_ENTREPRENEUR / ROLE_SOCIETE</text>
+
+  <rect x="430" y="750" width="860" height="150" class="box" fill="#e0f2fe"/>
+  <text x="860" y="790" text-anchor="middle" class="label">Persistance</text>
+  <text x="860" y="822" text-anchor="middle" class="text">wp_users : données principales utilisateur + roles</text>
+  <text x="860" y="846" text-anchor="middle" class="text">wp_usermeta : majorité des données de profil et fournisseur</text>
+  <text x="860" y="870" text-anchor="middle" class="text">autres tables : abonnements, posts, options, taxonomies</text>
+
+  <line x1="350" y1="195" x2="420" y2="195" class="arrow"/>
+  <line x1="780" y1="195" x2="850" y2="195" class="arrow"/>
+  <line x1="1210" y1="195" x2="1280" y2="195" class="arrow"/>
+  <line x1="600" y1="300" x2="465" y2="420" class="arrow"/>
+  <line x1="600" y1="300" x2="975" y2="420" class="arrow"/>
+  <line x1="1030" y1="310" x2="975" y2="420" class="arrow"/>
+  <line x1="1440" y1="290" x2="1440" y2="410" class="arrow"/>
+  <line x1="465" y1="640" x2="700" y2="750" class="arrow"/>
+  <line x1="975" y1="640" x2="1020" y2="750" class="arrow"/>
+  <line x1="1440" y1="650" x2="1140" y2="750" class="arrow"/>
+
+  <text x="392" y="182" class="small">routes profil</text>
+  <text x="816" y="182" class="small">services</text>
+  <text x="1238" y="182" class="small">meta I/O</text>
+</svg>

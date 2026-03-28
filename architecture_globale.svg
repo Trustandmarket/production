@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="920" viewBox="0 0 1600 920">
+  <defs>
+    <style>
+      .title { font: 700 28px Arial, sans-serif; fill: #1f2937; }
+      .label { font: 700 18px Arial, sans-serif; fill: #111827; }
+      .text { font: 15px Arial, sans-serif; fill: #374151; }
+      .small { font: 14px Arial, sans-serif; fill: #4b5563; }
+      .box { stroke: #1f2937; stroke-width: 2; rx: 18; ry: 18; }
+      .arrow { stroke: #374151; stroke-width: 2.5; fill: none; marker-end: url(#m); }
+    </style>
+    <marker id="m" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#374151"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="920" fill="#f8fafc"/>
+  <text x="800" y="48" text-anchor="middle" class="title">Architecture Globale Du Projet</text>
+
+  <rect x="70" y="130" width="250" height="120" class="box" fill="#dbeafe"/>
+  <text x="195" y="170" text-anchor="middle" class="label">Front / Navigateur</text>
+  <text x="195" y="200" text-anchor="middle" class="text">Twig rend HTML</text>
+  <text x="195" y="224" text-anchor="middle" class="text">JS inline + jQuery</text>
+
+  <rect x="390" y="110" width="320" height="170" class="box" fill="#e9d5ff"/>
+  <text x="550" y="150" text-anchor="middle" class="label">Controllers Symfony</text>
+  <text x="550" y="180" text-anchor="middle" class="text">ProfileController</text>
+  <text x="550" y="204" text-anchor="middle" class="text">PaymentController</text>
+  <text x="550" y="228" text-anchor="middle" class="text">RegistrationController</text>
+  <text x="550" y="252" text-anchor="middle" class="text">AbonnementController, DevisController...</text>
+
+  <rect x="790" y="100" width="340" height="190" class="box" fill="#dcfce7"/>
+  <text x="960" y="140" text-anchor="middle" class="label">Services Applicatifs</text>
+  <text x="960" y="172" text-anchor="middle" class="text">ServiceManager</text>
+  <text x="960" y="196" text-anchor="middle" class="text">Payment</text>
+  <text x="960" y="220" text-anchor="middle" class="text">Panier / Chat / ToolsMeta</text>
+  <text x="960" y="244" text-anchor="middle" class="text">ProfileCompletionCalculator</text>
+
+  <rect x="1210" y="120" width="280" height="150" class="box" fill="#fee2e2"/>
+  <text x="1350" y="160" text-anchor="middle" class="label">Intégrations Externes</text>
+  <text x="1350" y="192" text-anchor="middle" class="text">Stripe</text>
+  <text x="1350" y="216" text-anchor="middle" class="text">Brevo</text>
+  <text x="1350" y="240" text-anchor="middle" class="text">MangoPay (historique)</text>
+
+  <rect x="430" y="390" width="250" height="140" class="box" fill="#fde68a"/>
+  <text x="555" y="430" text-anchor="middle" class="label">Repositories</text>
+  <text x="555" y="460" text-anchor="middle" class="text">UserRepository</text>
+  <text x="555" y="484" text-anchor="middle" class="text">Autres repositories Doctrine</text>
+
+  <rect x="760" y="370" width="400" height="180" class="box" fill="#fecaca"/>
+  <text x="960" y="410" text-anchor="middle" class="label">Entités / Modèle</text>
+  <text x="960" y="442" text-anchor="middle" class="text">User / Abonnement / UserUniqueData</text>
+  <text x="960" y="466" text-anchor="middle" class="text">WpUsermeta / WpPosts / WpOptions</text>
+  <text x="960" y="490" text-anchor="middle" class="text">WpTermTaxonomy / WpTermRelationships</text>
+  <text x="960" y="520" text-anchor="middle" class="small">Modèle hybride Symfony + héritage WordPress</text>
+
+  <rect x="500" y="660" width="920" height="170" class="box" fill="#e5e7eb"/>
+  <text x="960" y="700" text-anchor="middle" class="label">Base De Données</text>
+  <text x="960" y="732" text-anchor="middle" class="text">wp_users : identité principale, login, rôles</text>
+  <text x="960" y="756" text-anchor="middle" class="text">wp_usermeta : profil, facturation, entreprise, médias, KYC, complétion</text>
+  <text x="960" y="780" text-anchor="middle" class="text">wp_posts / wp_options : contenu et configuration hérités de WordPress</text>
+
+  <rect x="90" y="420" width="250" height="110" class="box" fill="#cffafe"/>
+  <text x="215" y="460" text-anchor="middle" class="label">Templates Twig</text>
+  <text x="215" y="490" text-anchor="middle" class="text">templates/profile</text>
+  <text x="215" y="514" text-anchor="middle" class="text">templates/admin, payment, ...</text>
+
+  <line x1="320" y1="190" x2="390" y2="190" class="arrow"/>
+  <line x1="710" y1="190" x2="790" y2="190" class="arrow"/>
+  <line x1="1130" y1="190" x2="1210" y2="190" class="arrow"/>
+  <line x1="550" y1="280" x2="555" y2="390" class="arrow"/>
+  <line x1="960" y1="290" x2="960" y2="370" class="arrow"/>
+  <line x1="215" y1="250" x2="215" y2="420" class="arrow"/>
+  <line x1="680" y1="460" x2="760" y2="460" class="arrow"/>
+  <line x1="960" y1="550" x2="960" y2="660" class="arrow"/>
+
+  <text x="355" y="176" class="small">HTTP</text>
+  <text x="742" y="176" class="small">orchestration</text>
+  <text x="1160" y="176" class="small">API calls</text>
+  <text x="575" y="340" class="small">Doctrine</text>
+  <text x="980" y="618" class="small">persistance</text>
+</svg>
