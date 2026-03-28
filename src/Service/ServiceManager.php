@@ -8034,11 +8034,13 @@ class ServiceManager
         $this->entityManager->persist($u);
         $this->entityManager->flush();
 
-/*        $query = $this->entityManager
-            ->createQuery('UPDATE App\Entity\User p SET p.roles=:pc WHERE p.id=:id')
-            ->setParameter('id', $userId)
-            ->setParameter('pc', "[\"" . $role . "\"]");
-        $r = $query->getResult();*/
+        $this->entityManager->getConnection()->executeStatement(
+            'UPDATE wp_users SET roles = :roles WHERE id = :id',
+            [
+                'roles' => json_encode([$role], JSON_UNESCAPED_UNICODE),
+                'id' => $userId,
+            ]
+        );
 
         $query = $this->entityManager
             ->createQuery('SELECT wc FROM App\Entity\WpUsermeta wc
