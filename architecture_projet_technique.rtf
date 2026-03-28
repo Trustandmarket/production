@@ -1,0 +1,303 @@
+{\rtf1\ansi\deff0
+{\fonttbl
+{\f0 Calibri;}
+{\f1 Consolas;}
+}
+\viewkind4\uc1\pard\sa120\sl276\slmult1\f0\fs22\b Architecture Technique Du Projet\par
+\b0\par
+Cette version est plus technique que le document de synth\'e8se. Elle d\'e9taille les couches logiques, les flux de donn\'e9es, le p\'f4le profil utilisateur et les pistes de d\'e9coupage des gros fichiers.\par
+\par
+\b 1. Architecture Technique Globale\par
+\b0\par
+\f1
++---------------------+\tab    HTTP / Twig / JS inline    \tab +---------------------------+\par
+| Navigateur / Front  | ----------------------------------> | Controllers Symfony       |\par
+| templates + public/ |                                     | src/Controller/*          |\par
++---------------------+ <---------------------------------- +---------------------------+\par
+\tab\tab\tab\tab\tab rendu HTML / JSON\par
+\par
+\tab\tab\tab\tab\tab appels m\'e9tier\par
+\tab\tab\tab\tab\tab v\par
++---------------------------+\tab  lecture / calcul / orchestration  \tab +-------------------------+\par
+| Services applicatifs      | --------------------------------------> | Doctrine ORM            |\par
+| ServiceManager            |                                         | EntityManager           |\par
+| Payment / Panier / Chat   | <-------------------------------------- | Repositories            |\par
+| ProfileCompletionCalc     |            entit\'e9s et collections     |                         |\par
++---------------------------+\tab\tab\tab\tab\tab +-------------------------+\par
+\par
+\tab\tab\tab\tab\tab acc\'e8s SQL / mapping\par
+\tab\tab\tab\tab\tab v\par
++---------------------------+\par
+| Base de donn\'e9es hybride |\par
+| wp_users                  |\par
+| wp_usermeta               |\par
+| wp_posts / wp_options     |\par
+| tables m\'e9tier Symfony   |\par
++---------------------------+\par
+\par
+\tab\tab\tab\tab\tab int\'e9grations\par
+\tab\tab\tab\tab\tab v\par
++---------------------------+\par
+| APIs externes             |\par
+| Stripe                    |\par
+| Brevo                     |\par
+| MangoPay (historique)     |\par
++---------------------------+\par
+\f0
+\par
+\b 2. Couches Et Responsabilit\'e9s\par
+\b0\par
+\b 2.1. Couche pr\'e9sentation\par
+\b0\par
+Le front est principalement g\'e9n\'e9r\'e9 c\'f4t\'e9 serveur avec Twig. Le dossier \f1 templates/\f0 est structur\'e9 par domaines : \f1 profile\f0, \f1 admin\f0, \f1 payment\f0, \f1 registration\f0, \f1 devis\f0, \f1 chat\f0, etc.\par
+\par
+Le JavaScript est en grande partie inline dans les templates. Cela rend certaines pages rapides \'e0 modifier, mais augmente le couplage entre structure HTML, comportement front et variables Twig.\par
+\par
+\b 2.2. Couche HTTP / contr\'f4leurs\par
+\b0\par
+Les controllers servent d'orchestrateurs. Ils :\par
+- contr\'f4lent l'acc\'e8s,\par
+- chargent les donn\'e9es,\par
+- d\'e9l\'e8guent une partie de la logique aux services,\par
+- pr\'e9parent le contexte Twig,\par
+- retournent soit des vues HTML, soit du JSON.\par
+\par
+Le principal point de concentration m\'e9tier est \f1 src/Controller/ProfileController.php\f0.\par
+\par
+\b 2.3. Couche services\par
+\b0\par
+Le projet repose fortement sur \f1 ServiceManager\f0, qui joue plusieurs r\'f4les :\par
+- acc\'e8s aux m\'e9tadonn\'e9es utilisateur,\par
+- requ\'eates m\'e9tier,\par
+- helpers m\'e9tier,\par
+- agr\'e9gation de donn\'e9es,\par
+- certains traitements transverses.\par
+\par
+Autres services importants :\par
+- \f1 Payment\f0 : comptes de paiement, Stripe, restes historiques MangoPay.\par
+- \f1 Panier\f0 : panier et flux marchands.\par
+- \f1 Chat\f0 : messagerie.\par
+- \f1 ProfileCompletionCalculator\f0 : calcul du taux de compl\'e9tion.\par
+- \f1 BrevoMailer\f0 : envoi d'e-mails.\par
+\par
+\b 2.4. Couche donn\'e9es\par
+\b0\par
+Les donn\'e9es utilisateur sont r\'e9parties entre :\par
+- \f1 wp_users\f0 : identit\'e9 principale, login, e-mail, r\'f4les ;\par
+- \f1 wp_usermeta\f0 : presque toutes les informations profil, facturation, entreprise, portfolio, KYC, compl\'e9tion ;\par
+- d'autres tables WordPress comme \f1 wp_posts\f0 et \f1 wp_options\f0 ;\par
+- des entit\'e9s m\'e9tier comme \f1 Abonnement\f0 ou \f1 UserUniqueData\f0.\par
+\par
+\b 3. Diagramme Technique : Flux Standard D'une Page Profil\par
+\b0\par
+\f1
+Browser\par
+  |\par
+  | GET /profil-utilisateur/profil\par
+  v\par
+ProfileController::index()\par
+  |\par
+  |-- getUser()\par
+  |-- ServiceManager::getUserStringDataValue(...) x N\par
+  |-- EntityManager->getRepository(...)->find(...)\par
+  |-- recomputeAndPersistProfileCompletion(...)\par
+  v\par
+render('profile/index.html.twig', data[])\par
+  |\par
+  v\par
+Twig + JS inline + HTML\par
+\f0
+\par
+Constat technique : \f1 ProfileController::index()\f0 construit manuellement un grand agr\'e9gat de donn\'e9es de vue. Cela le rend lisible fonctionnellement, mais lourd en maintenance et testabilit\'e9.\par
+\par
+\b 4. Diagramme Technique : Mise \'c0 Jour Du Profil Utilisateur\par
+\b0\par
+\f1
+Utilisateur\par
+  |\par
+  | POST /profil-utilisateur/updateProfil\par
+  v\par
+ProfileController::updateUserData(Request)\par
+  |\par
+  |-- update wp_users (email, display_name, username)\par
+  |-- update wp_usermeta (first_name, last_name, telephone, adresses, ...)\par
+  |-- update UserUniqueData (departement, nom_commercial)\par
+  |-- update avatar / videos / portfolio\par
+  |-- optional payment-related data sync\par
+  |-- recompute profile completion\par
+  v\par
+JSON response\par
+\f0
+\par
+Cette action est tr\'e8s dense : elle touche plusieurs types de donn\'e9es et plusieurs supports de persistance dans une seule m\'e9thode.\par
+\par
+\b 5. Focus Technique : P\'f4le Profil Utilisateur\par
+\b0\par
+\b 5.1. Point d'entr\'e9e principal\par
+\b0\par
+Le p\'f4le profil est domin\'e9 par \f1 src/Controller/ProfileController.php\f0. Il couvre :\par
+- affichage du profil,\par
+- mise \'e0 jour du profil,\par
+- portfolio et vid\'e9os,\par
+- fournisseur / fournisseur abonn\'e9,\par
+- changement de r\'f4le,\par
+- facturation,\par
+- r\'e9servations,\par
+- annonces,\par
+- dashboard,\par
+- param\'e8tres,\par
+- suppression de brouillons,\par
+- commentaires.\par
+\par
+\b 5.2. Source de v\'e9rit\'e9 des donn\'e9es profil\par
+\b0\par
+La donn\'e9e profil est tr\'e8s \'e9clat\'e9e. Les m\'e9thodes suivantes sont structurantes :\par
+- \f1 ServiceManager::getUserStringDataValue(int \$userId, string \$tag)\f0 : lecture de la derni\'e8re valeur d'une cl\'e9 dans \f1 wp_usermeta\f0.\par
+- \f1 ServiceManager::getUserMetadata(int \$userId, array \$keys)\f0 : lecture group\'e9e de m\'e9tadonn\'e9es.\par
+- \f1 ServiceManager::updateUserMeta(...)\f0 : mise \'e0 jour des m\'e9tadonn\'e9es.\par
+\par
+Cons\'e9quence : le controller doit conna\'eetre de nombreuses cl\'e9s m\'e9tier (\f1 billing_company\f0, \f1 region_domicile\f0, \f1 siret\f0, \f1 basic_user_avatar\f0, etc.).\par
+\par
+\b 5.3. Flux fournisseur et bascule de r\'f4le\par
+\b0\par
+Le flux fournisseur repose principalement sur trois routes :\par
+- \f1 fournisseurs()\f0 : affichage du profil fournisseur si utilisateur d\'e9j\'e0 professionnel.\par
+- \f1 fournisseursAbonne()\f0 : page de bascule depuis un profil abonn\'e9.\par
+- \f1 devenirPro()\f0 : endpoint de changement de profil.\par
+\par
+\f1
+Abonne -----> fournisseursAbonne.html.twig -----> profile_app_switch\par
+Auto-ent ----> fournisseurs.html.twig -----------> profile_app_switch\par
+\f0
+\par
+Le endpoint \f1 profile_app_switch\f0 :\par
+- valide le JSON entrant,\par
+- met \'e0 jour les m\'e9tadonn\'e9es de facturation,\par
+- assure la pr\'e9sence d'un abonnement si n\'e9cessaire,\par
+- d\'e9l\'e8gue le changement effectif du r\'f4le \'e0 \f1 ServiceManager::devenirPro()\f0.\par
+\par
+\b 5.4. Diagramme Technique : Changement de r\'f4le\par
+\b0\par
+\f1
+Utilisateur\par
+  |\par
+  | clic CTA\par
+  v\par
+Twig page profile/fournisseursAbonne.html.twig\par
+ou\par
+Twig page profile/fournisseurs.html.twig\par
+  |\par
+  | submit AJAX JSON\par
+  v\par
+ProfileController::devenirPro(Request)\par
+  |\par
+  |-- updateUserMeta(siret, billing_company, billing_country, ...)\par
+  |-- ensure Abonnement exists\par
+  |-- ServiceManager::devenirPro(userId, role)\par
+  |     |-- User->setRoles([role])\par
+  |     |-- Doctrine flush\par
+  |     \-- SQL update wp_users.roles\par
+  v\par
+JSON status\par
+\f0
+\par
+\b 5.5. Risques techniques observ\'e9s sur le p\'f4le profil\par
+\b0\par
+- Gros volume de variables de vue construites manuellement.\par
+- Multiplicit\'e9 des formulaires sur certaines pages.\par
+- Logique m\'e9tier et logique de rendu encore proches.\par
+- D\'e9pendance forte \'e0 des cl\'e9s de m\'e9tadonn\'e9es litt\'e9rales.\par
+- Historique d'int\'e9grations de paiement qui complique certaines branches du code.\par
+\par
+\b 6. Diagramme Technique : Lecture Des M\'e9tadonn\'e9es Utilisateur\par
+\b0\par
+\f1
+Controller\par
+  |\par
+  | asks meta key by key\par
+  v\par
+ServiceManager::getUserStringDataValue(userId, tag)\par
+  |\par
+  v\par
+WpUsermetaRepository->findOneBy(userId, metaKey, latest umetaId)\par
+  |\par
+  v\par
+wp_usermeta\par
+\f0
+\par
+Cette m\'e9canique est simple, mais sur les grosses pages elle provoque une forte dispersion des appels et un volume important de lectures unitaires.\par
+\par
+\b 7. Diagramme Technique : Templates Et Front\par
+\b0\par
+\f1
+Twig page\par
+  |\par
+  |-- HTML structure\par
+  |-- Twig conditions on roles\par
+  |-- inline JS handlers\par
+  |-- AJAX JSON calls\par
+  v\par
+Browser DOM\par
+  |\par
+  | submit\par
+  v\par
+endpoint JSON or HTML render\par
+\f0
+\par
+Le projet utilise donc un mode hybride classique :\par
+- SSR pour le rendu,\par
+- jQuery / JS inline pour les interactions locales,\par
+- endpoints JSON pour certains formulaires.\par
+\par
+\b 8. D\'e9coupage Recommand\'e9 Des Fichiers Denses\par
+\b0\par
+\b 8.1. ProfileController\par
+\b0\par
+D\'e9coupage technique sugg\'e9r\'e9 :\par
+- \f1 ProfileReadController\f0 : index, dashboard, parameters, comments.\par
+- \f1 ProfileUpdateController\f0 : \f1 updateProfil\f0, \f1 updateUserNotification\f0, \f1 updateUserPassword\f0.\par
+- \f1 ProfileProfessionalController\f0 : \f1 fournisseurs\f0, \f1 fournisseursAbonne\f0, \f1 devenirPro\f0, \f1 updateBillingProfileData\f0, \f1 updateBankingProfileData\f0.\par
+- \f1 ProfileMediaController\f0 : portfolio, delete portfolio, videos, images secondaires.\par
+- \f1 ProfileAnnouncementController\f0 : annonces, drafts, publication, edition.\par
+- \f1 ProfileReservationController\f0 : reservations, annulations.\par
+\par
+\b 8.2. ServiceManager\par
+\b0\par
+Extraction progressive sugg\'e9r\'e9e :\par
+- \f1 UserMetaService\f0.\par
+- \f1 ProfileAssembler\f0 ou \f1 ProfileViewBuilder\f0.\par
+- \f1 ProfessionalProfileService\f0.\par
+- \f1 BillingProfileService\f0.\par
+- \f1 ProfileMediaService\f0.\par
+- \f1 RoleTransitionService\f0.\par
+\par
+\b 8.3. Templates profil\par
+\b0\par
+Extraction progressive sugg\'e9r\'e9e :\par
+- un partial par bloc fonctionnel,\par
+- un script JS cibl\'e9 par bloc,\par
+- un composant pour les changements de r\'f4les,\par
+- un composant pour les formulaires de facturation,\par
+- un composant pour portfolio / vid\'e9os.\par
+\par
+\b 8.4. Valeur du refactoring\par
+\b0\par
+Le gain attendu n'est pas seulement esth\'e9tique. Le d\'e9coupage permet :\par
+- des changements plus s\'fbrs,\par
+- moins de r\'e9gressions,\par
+- des responsabilit\'e9s compr\'e9hensibles,\par
+- un diagnostic plus rapide en production,\par
+- une meilleure onboarding pour un nouveau d\'e9veloppeur.\par
+\par
+\b 9. Recommandation Finale\par
+\b0\par
+La zone la plus rentable \'e0 restructurer en premier est clairement le p\'f4le profil utilisateur. Le couple \f1 ProfileController\f0 + \f1 ServiceManager\f0 concentre les principales dette techniques et les principales opportunit\'e9s de stabilisation.\par
+\par
+Strat\'e9gie recommand\'e9e :\par
+1. Continuer \'e0 dissocier les formulaires et partials Twig.\par
+2. Extraire les flux professionnels (fournisseur, facturation, changement de r\'f4le) dans un sous-p\'f4le clair.\par
+3. Extraire les acc\'e8s \f1 wp_usermeta\f0 dans un service d\'e9di\'e9.\par
+4. D\'e9couper ensuite \f1 ProfileController\f0 par sous-domaines.\par
+\par
+Le projet est tout \'e0 fait compatible avec un refactoring progressif et incr\'e9mental.\par
+}
