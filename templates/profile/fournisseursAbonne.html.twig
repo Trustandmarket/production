@@ -61,7 +61,7 @@
         }
 
         .professional-switch-role {
-            font-weight: 700;
+            font-weight: 700 !important;
         }
 
         @media (max-width: 575.98px) {
@@ -164,7 +164,7 @@
             var $switchErrors = $('#professional-switch-form-errors');
             var $switchRole = $('#professional-switch-role');
             var $switchHelp = $('#professional-switch-form-help');
-            var defaultHelpText = 'Completez ce formulaire pour passer a un profil <span class="professional-switch-role">professionnel</span>.';
+            var defaultHelpText = 'Completez ce formulaire pour passer a un profil <span class="professional-switch-role" style="font-weight:700 !important;">professionnel</span>.';
 
             function resetProfessionalForm() {
                 $('#adresse').val(initialValues.adresse);
@@ -184,7 +184,7 @@
                 var roleLabel = $(this).data('role-label');
 
                 $switchRole.val(role);
-                $switchHelp.html('Completez ce formulaire pour passer au profil <span class="professional-switch-role">' + roleLabel + '</span>.');
+                $switchHelp.html('Completez ce formulaire pour passer au profil <span class="professional-switch-role" style="font-weight:700 !important;">' + roleLabel + '</span>.');
                 $switchErrors.addClass('d-none').empty();
                 $switchWrapper.removeClass('d-none');
 
