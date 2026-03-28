@@ -131,6 +131,7 @@ class ProfileController extends AbstractController
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
             'detailsPro' => $detailsPro['data'],
+            'profileCompletionRate' => $profileCompletionRate,
             'lastComment' => $lastComment,
             'noPage' => $noPage,
             'pages' => $detailsPro['pages'],
