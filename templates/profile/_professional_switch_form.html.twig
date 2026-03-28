@@ -7,8 +7,6 @@
             </p>
         </div>
 
-        <div id="professional-switch-form-errors" class="alert alert-danger d-none" role="alert"></div>
-
         <form id="professional-switch-form" method="post" action="{{ path('profile_app_switch') }}">
             <input type="hidden" name="user_new_role" id="professional-switch-role" value="">
 
@@ -49,6 +47,8 @@
                 <label for="compagny_name">Denomination sociale *</label>
                 <input type="text" id="compagny_name" name="compagny_name" value="{{ nomEntreprise|default('') }}" class="form-control" placeholder="Denomination sociale" required>
             </div>
+
+            <div id="professional-switch-form-errors" class="alert alert-danger d-none mb-3" role="alert"></div>
 
             <div class="d-flex justify-content-between align-items-center mt-4 professional-switch-actions">
                 <button type="button" class="btn btn-secondary" id="professional-switch-cancel">Annuler</button>
