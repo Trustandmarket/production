@@ -1060,6 +1060,7 @@ class ProfileController extends AbstractController
             "user_country" => $userMetadata['pays_domicile'] ?? '',
             "user_postcode" => $userMetadata['codePostal_domicile'] ?? '',
             "user_city" => $userMetadata['ville_domicile'] ?? '',
+            "region" => $userMetadata['region_domicile'] ?? '',
             "region_domicile" => $userMetadata['region_domicile'] ?? '',
             "user_address_1_livraison" => $userMetadata['numeroNomRue_livraison'] ?? '',
             "user_country_livraison" => $userMetadata['pays_livraison'] ?? '',
@@ -1069,6 +1070,7 @@ class ProfileController extends AbstractController
             //Company Datas
             "siret" => $userMetadata['siret'] ?? '',
             "tva" => $userMetadata['tva'] ?? '',
+            "compagny_name" => $userMetadata['billing_company'] ?? '',
             "billing_company" => $userMetadata['billing_company'] ?? '',
             "billing_address_1" => $userMetadata['billing_address_1'] ?? '',
             "billing_country" => $userMetadata['billing_country'] ?? '',
