@@ -985,50 +985,47 @@ class ProfileController extends AbstractController
                 $this->em->flush();
             }
             if (in_array('ROLE_ABONNE', $this->getUser()->getRoles())) {
-                //Create Mp Account
+                // MangoPay no longer used here: keep local role switch only.
                 if ($mangoPayAccount) {
                     $this->em->remove($mangoPayAccount);
                     $this->em->flush();
                 }
-                $data = $this->getDataToUpdateMangopayUser();
-                $newAccount = $this->payment->createMangoUserLegal($data);
-                //Create Wallet
-                if ($newAccount) {
-                    $this->service_manager->createUserMeta(
-                        $this->getUser()->getId(),
-                        'mp_user_id_sandbox',
-                        $newAccount->Id
-                    );
-                    $userWallets = $this->payment->getUserAbonneWalletsObjects($newAccount->Id);
-                    if (sizeof($userWallets) == 0) {
-                        $this->payment->createWallet(
-                            $newAccount->Id,
-                            "Utilisateur professionnel",
-                            'EUR'
-                        );
-                        $userWallets = $this->payment->getUserAbonneWalletsObjects($newAccount->Id);
-                    }
-                    $r = $this->service_manager->devenirPro($this->getUser()->getId(), $user_new_role);
-                    //Update user
-                    $data = $this->getDataToUpdateMangopayUser();
-                    $this->payment->updateUserLegal($newAccount->Id, 'UserLegal', $data);
-                    return new JsonResponse(['data' => $newAccount, 'status' => 200]);
-                } else {
-                    return new JsonResponse(['data' => $newAccount, 'status' => 500, 'error' => 'La creation du compte professionnel a echoue.']);
-                }
+                // $data = $this->getDataToUpdateMangopayUser();
+                // $newAccount = $this->payment->createMangoUserLegal($data);
+                // if ($newAccount) {
+                //     $this->service_manager->createUserMeta(
+                //         $this->getUser()->getId(),
+                //         'mp_user_id_sandbox',
+                //         $newAccount->Id
+                //     );
+                //     $userWallets = $this->payment->getUserAbonneWalletsObjects($newAccount->Id);
+                //     if (sizeof($userWallets) == 0) {
+                //         $this->payment->createWallet(
+                //             $newAccount->Id,
+                //             "Utilisateur professionnel",
+                //             'EUR'
+                //         );
+                //         $userWallets = $this->payment->getUserAbonneWalletsObjects($newAccount->Id);
+                //     }
+                //     $data = $this->getDataToUpdateMangopayUser();
+                //     $this->payment->updateUserLegal($newAccount->Id, 'UserLegal', $data);
+                // }
+                $r = $this->service_manager->devenirPro($this->getUser()->getId(), $user_new_role);
+                return new JsonResponse(['data' => null, 'status' => 200]);
             }
             // Update Userlegal identity to became society...
 
             if (in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles())) {
-                if ($mangoPayAccount) {
-                    $data = $this->getDataToUpdateMangopayUser();
-                    $this->payment->updateUserLegal($mangoPayAccount->getMetaValue(), 'UserLegal', $data);
-                    $r = $this->service_manager->devenirPro(
-                        $this->getUser()->getId(),
-                        'ROLE_SOCIETE'
-                    );
-                }
-                return new JsonResponse(['data' => $mangoPayAccount, 'status' => 200]);
+                // MangoPay update disabled: keep local role switch only.
+                // if ($mangoPayAccount) {
+                //     $data = $this->getDataToUpdateMangopayUser();
+                //     $this->payment->updateUserLegal($mangoPayAccount->getMetaValue(), 'UserLegal', $data);
+                // }
+                $r = $this->service_manager->devenirPro(
+                    $this->getUser()->getId(),
+                    'ROLE_SOCIETE'
+                );
+                return new JsonResponse(['data' => null, 'status' => 200]);
             }
         } catch (\Throwable $e) {
             error_log('[profile_app_switch] ' . $e->getMessage());
