@@ -516,14 +516,20 @@
                                         {% endif %}
                                         {#  Fin gestion pour Societe #}
                                         {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
-                                            <div class="d-flex justify-content-between">
-                                                <a id="societe"
-                                                   class="btn btn-md float-left p-3 switch">{{ 'profil-utilisateur.fournisseurs-abonne.passez-societe'|trans }}</a>
+                                            <div class="d-flex justify-content-between flex-wrap" style="gap: 12px;">
+                                                <button id="societe"
+                                                        type="button"
+                                                        class="btn btn-md float-left p-3 js-open-company-switch-form"
+                                                        data-role="ROLE_SOCIETE"
+                                                        data-role-label="{{ 'profil-utilisateur.fournisseurs-abonne.societe'|trans }}">
+                                                    {{ 'profil-utilisateur.fournisseurs-abonne.passez-societe'|trans }}
+                                                </button>
                                                 <button id="enregProfile2"
                                                         class="btn btn-md btn-success float-right  p-3" type="submit">
                                                     {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-bouton-confirmer'|trans }}
                                                 </button>
                                             </div>
+                                            {% include 'profile/_professional_switch_form.html.twig' with { switch_form_prefix: 'company-switch' } %}
                                         {% else %}
                                             <button id="enregProfile2" class="btn btn-md btn-success float-right p-3"
                                                     type="submit">
@@ -551,11 +557,19 @@
         {{ parent() }}
         <script src="{{ asset('toastr/toastr.min.js') }}"></script>
         <script src="{{ asset('assets/phone/js/intlTelInput.min.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.all.min.js"></script>
 
         <script>
             $(document).ready(function () {
                 var docWidth = document.documentElement.offsetWidth;
+                var companySwitchInitialValues = {
+                    adresse: '{{ numeroNomRue|default('')|e('js') }}',
+                    ville: '{{ ville|default('')|e('js') }}',
+                    pays: '{{ pays|default('')|e('js') }}',
+                    postal_code: '{{ codePostal|default('')|e('js') }}',
+                    region: '{{ etatComte|default('')|e('js') }}',
+                    compagny_number: '{{ siret|default('')|e('js') }}',
+                    compagny_name: '{{ nomEntreprise|default('')|e('js') }}'
+                };
                 [].forEach.call(document.querySelectorAll('*'), function (el) {
                     if (el.offsetWidth > docWidth) {
                         console.log(el);
@@ -631,87 +645,98 @@
                     return re.test(email);
                 }
 
-                $(document).on('click', '.switch', function (e) {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: "Pour changer de profil, veuillez  renseigner l’adresse de votre entreprise",
-                        html: `<div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="adresse">Adresse *</label>
-                        <input type="text" id="adresse" value="{{ numeroNomRue }}" class="form-control" placeholder="Adresse"></div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="ville">Ville *</label>
-                        <input type="text" id="ville" value="{{ ville }}" class="form-control" placeholder="Ville"></div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <select id="pays" id="pays" class="form-control" style="border: 1px solid #d9d9d9;
-                            border-radius: 0.1875em;background: rgba(0,0,0,0); box-shadow: inset 0 1px 1px rgba(0,0,0,.06), 0 0 0 3px rgba(0,0,0,0);"><option value="">Pays de residence...</option>{% include 'countryProfile.html.twig' %}</select></select>
-                        </div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="postal_code">Code Postale *</label>
-                        <input type="text" id="postal_code" value="{{ codePostal }}" class="form-control" placeholder="Code Postale"></div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="region">Region *</label>
-                        <input type="text" id="region" value="{{ etatComte }}" class="form-control" placeholder="Region"></div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="compagny_number">Siret *</label>
-                        <input type="text" id="compagny_number" value="{{ siret }}" class="form-control" placeholder="Siret"></div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="compagny_name">Dénomination sociale *</label>
-                        <input type="text" id="compagny_name" value="{{ nomEntreprise }}" class="form-control" placeholder="Dénomination sociale"></div>`,
-                        cancelButtonText: "Annuler",
-                        confirmButtonText: "Valider",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        reverseButtons: true,
-                        focusConfirm: false,
-                        preConfirm: () => {
-                            const adresse = Swal.getPopup().querySelector('#adresse').value
-                            const ville = Swal.getPopup().querySelector('#ville').value
-                            const pays = Swal.getPopup().querySelector('#pays').value
-                            const postal_code = Swal.getPopup().querySelector('#postal_code').value
-                            const region = Swal.getPopup().querySelector('#region').value
-                            const compagny_number = Swal.getPopup().querySelector('#compagny_number').value
-                            const compagny_name = Swal.getPopup().querySelector('#compagny_name').value
-                            if (!adresse || !ville || !pays || !postal_code || !region || !compagny_number || !compagny_name) {
-                                Swal.showValidationMessage(`Veuillez remplir les champs du formulaire`)
-                            }
-                            return {
-                                adresse: adresse,
-                                ville: ville,
-                                pays: pays,
-                                postal_code: postal_code,
-                                region: region,
-                                compagny_number: compagny_number,
-                                compagny_name: compagny_name,
-                                user_new_role: 'ROLE_SOCIETE'
-                            }
-                        }
-                    }).then((result) => {
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ path('profile_app_switch') }}",
-                                type: 'POST',
-                                processData: false,
-                                dataType: 'json',
-                                contentType: 'application/json',
-                                data: JSON.stringify(result.value),
-                                success: function (response) {
-                                    if (response.status == 200) {
-                                        console.log(JSON.stringify(result.value));
-                                        console.log(response);
-                                        swal.fire("Succès!", "Mise a jour du profil effectuée avec succès.", response.status);
-                                        window.location = '{{ path('profile_profile' ) }}';
-                                    } else {
-                                        swal.fire("Erreur!", "Un probleme est survenu", response.status);
-                                    }
-                                },
-                                error: function (response) {
-                                    swal.fire("Erreur!", "Un probleme est survenu", response.status);
-                                }
-                            });
-                        }
-                    })
+                var $companySwitchWrapper = $('#company-switch-wrapper');
+                var $companySwitchForm = $('#company-switch-form');
+                var $companySwitchErrors = $('#company-switch-errors');
+                var $companySwitchRole = $('#company-switch-role');
+                var $companySwitchHelp = $('#company-switch-help');
+
+                function resetCompanySwitchForm() {
+                    $('#company-switch-adresse').val(companySwitchInitialValues.adresse);
+                    $('#company-switch-ville').val(companySwitchInitialValues.ville);
+                    $('#company-switch-pays').val(companySwitchInitialValues.pays);
+                    $('#company-switch-postal_code').val(companySwitchInitialValues.postal_code);
+                    $('#company-switch-region').val(companySwitchInitialValues.region);
+                    $('#company-switch-compagny_number').val(companySwitchInitialValues.compagny_number);
+                    $('#company-switch-compagny_name').val(companySwitchInitialValues.compagny_name);
+                    $companySwitchRole.val('');
+                    $companySwitchHelp.html('Completez ce formulaire pour passer a un profil <span class="professional-switch-role">professionnel</span>.');
+                    $companySwitchErrors.addClass('d-none').empty();
+                }
+
+                $('.js-open-company-switch-form').on('click', function () {
+                    var role = $(this).data('role');
+                    var roleLabel = $(this).data('role-label');
+
+                    $companySwitchRole.val(role);
+                    $companySwitchHelp.html('Completez ce formulaire pour passer au profil <span class="professional-switch-role">' + roleLabel + '</span>.');
+                    $companySwitchErrors.addClass('d-none').empty();
+                    $companySwitchWrapper.removeClass('d-none');
+
+                    $('html, body').animate({
+                        scrollTop: $companySwitchWrapper.offset().top - 40
+                    }, 300);
                 });
 
+                $('#company-switch-cancel').on('click', function () {
+                    resetCompanySwitchForm();
+                    $companySwitchWrapper.addClass('d-none');
+                });
+
+                $companySwitchForm.on('submit', function (e) {
+                    e.preventDefault();
+
+                    var payload = {
+                        adresse: $('#company-switch-adresse').val().trim(),
+                        ville: $('#company-switch-ville').val().trim(),
+                        pays: $('#company-switch-pays').val(),
+                        postal_code: $('#company-switch-postal_code').val().trim(),
+                        region: $('#company-switch-region').val().trim(),
+                        compagny_number: $('#company-switch-compagny_number').val().trim(),
+                        compagny_name: $('#company-switch-compagny_name').val().trim(),
+                        user_new_role: $companySwitchRole.val()
+                    };
+
+                    if (!payload.user_new_role) {
+                        $companySwitchErrors.removeClass('d-none').text('Veuillez d abord choisir le profil souhaite.');
+                        return;
+                    }
+
+                    if (!payload.adresse || !payload.ville || !payload.pays || !payload.postal_code || !payload.region || !payload.compagny_number || !payload.compagny_name) {
+                        $companySwitchErrors.removeClass('d-none').text('Veuillez remplir les champs du formulaire.');
+                        return;
+                    }
+
+                    $companySwitchErrors.addClass('d-none').empty();
+
+                    $.ajax({
+                        url: "{{ path('profile_app_switch') }}",
+                        type: 'POST',
+                        processData: false,
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify(payload),
+                        success: function (response) {
+                            if (response.status == 200) {
+                                toastr.success('Mise a jour du profil effectuee avec succes.');
+                                window.location = '{{ path('profile_profile' ) }}';
+                            } else {
+                                $companySwitchErrors.removeClass('d-none').text(response.error || 'Un probleme est survenu.');
+                            }
+                        },
+                        error: function (xhr) {
+                            var message = 'Un probleme est survenu.';
+
+                            if (xhr.responseJSON && xhr.responseJSON.error) {
+                                message = xhr.responseJSON.error;
+                            } else if (xhr.responseText) {
+                                message = xhr.responseText;
+                            }
+
+                            $companySwitchErrors.removeClass('d-none').text(message);
+                        }
+                    });
+                });
                 toastr.options = {
                     "closeButton": true,
                     "debug": false,
@@ -1269,3 +1294,4 @@
         </script>
 
     {% endblock %}
+

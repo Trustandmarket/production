@@ -1031,7 +1031,7 @@ class ProfileController extends AbstractController
             error_log('[profile_app_switch] ' . $e->getMessage());
             return new JsonResponse([
                 'status' => 500,
-                'error' => $e->getMessage(),
+                'error' => 'Le changement de profil est temporairement indisponible. Contactez le support si le problème persiste.',
             ], 500);
         }
     }

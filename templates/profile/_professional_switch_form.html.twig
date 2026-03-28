@@ -1,58 +1,60 @@
-<div id="professional-switch-form-wrapper" class="mt-4 d-none">
+{% set switch_form_prefix = switch_form_prefix|default('professional-switch') %}
+
+<div id="{{ switch_form_prefix }}-wrapper" class="mt-4 d-none">
     <div class="border p-4 bg-white professional-switch-card">
         <div class="mb-3 text-center">
             <h3 class="h5 mb-2">Renseignez les informations de votre entreprise</h3>
-            <p class="mb-0" id="professional-switch-form-help">
+            <p class="mb-0" id="{{ switch_form_prefix }}-help">
                 Completez ce formulaire pour passer a un profil <strong>professionnel</strong>.
             </p>
         </div>
 
-        <form id="professional-switch-form" method="post" action="{{ path('profile_app_switch') }}">
-            <input type="hidden" name="user_new_role" id="professional-switch-role" value="">
+        <form id="{{ switch_form_prefix }}-form" method="post" action="{{ path('profile_app_switch') }}">
+            <input type="hidden" name="user_new_role" id="{{ switch_form_prefix }}-role" value="">
 
             <div class="form-group">
-                <label for="adresse">Adresse *</label>
-                <input type="text" id="adresse" name="adresse" value="{{ numeroNomRue|default('') }}" class="form-control" placeholder="Adresse" required>
+                <label for="{{ switch_form_prefix }}-adresse">Adresse *</label>
+                <input type="text" id="{{ switch_form_prefix }}-adresse" name="adresse" value="{{ numeroNomRue|default('') }}" class="form-control" placeholder="Adresse" required>
             </div>
 
             <div class="form-group">
-                <label for="ville">Ville *</label>
-                <input type="text" id="ville" name="ville" value="{{ ville|default('') }}" class="form-control" placeholder="Ville" required>
+                <label for="{{ switch_form_prefix }}-ville">Ville *</label>
+                <input type="text" id="{{ switch_form_prefix }}-ville" name="ville" value="{{ ville|default('') }}" class="form-control" placeholder="Ville" required>
             </div>
 
             <div class="form-group">
-                <label for="pays">Pays *</label>
-                <select id="pays" name="pays" class="form-control" required>
+                <label for="{{ switch_form_prefix }}-pays">Pays *</label>
+                <select id="{{ switch_form_prefix }}-pays" name="pays" class="form-control" required>
                     <option value="">Pays de residence...</option>
                     {% include 'countryProfile.html.twig' %}
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="postal_code">Code postal *</label>
-                <input type="text" id="postal_code" name="postal_code" value="{{ codePostal|default('') }}" class="form-control" placeholder="Code postal" required>
+                <label for="{{ switch_form_prefix }}-postal_code">Code postal *</label>
+                <input type="text" id="{{ switch_form_prefix }}-postal_code" name="postal_code" value="{{ codePostal|default('') }}" class="form-control" placeholder="Code postal" required>
             </div>
 
             <div class="form-group">
-                <label for="region">Region *</label>
-                <input type="text" id="region" name="region" value="{{ etatComte|default('') }}" class="form-control" placeholder="Region" required>
+                <label for="{{ switch_form_prefix }}-region">Region *</label>
+                <input type="text" id="{{ switch_form_prefix }}-region" name="region" value="{{ etatComte|default('') }}" class="form-control" placeholder="Region" required>
             </div>
 
             <div class="form-group">
-                <label for="compagny_number">Siret *</label>
-                <input type="text" id="compagny_number" name="compagny_number" value="{{ siret|default('') }}" class="form-control" placeholder="Siret" required>
+                <label for="{{ switch_form_prefix }}-compagny_number">Siret *</label>
+                <input type="text" id="{{ switch_form_prefix }}-compagny_number" name="compagny_number" value="{{ siret|default('') }}" class="form-control" placeholder="Siret" required>
             </div>
 
             <div class="form-group">
-                <label for="compagny_name">Denomination sociale *</label>
-                <input type="text" id="compagny_name" name="compagny_name" value="{{ nomEntreprise|default('') }}" class="form-control" placeholder="Denomination sociale" required>
+                <label for="{{ switch_form_prefix }}-compagny_name">Denomination sociale *</label>
+                <input type="text" id="{{ switch_form_prefix }}-compagny_name" name="compagny_name" value="{{ nomEntreprise|default('') }}" class="form-control" placeholder="Denomination sociale" required>
             </div>
 
-            <div id="professional-switch-form-errors" class="alert alert-danger d-none mb-3" role="alert"></div>
+            <div id="{{ switch_form_prefix }}-errors" class="alert alert-danger d-none mb-3" role="alert"></div>
 
             <div class="d-flex justify-content-between align-items-center mt-4 professional-switch-actions">
-                <button type="button" class="btn btn-secondary" id="professional-switch-cancel">Annuler</button>
-                <button type="submit" class="btn btn-bg-primary" id="professional-switch-submit">Valider</button>
+                <button type="button" class="btn btn-secondary" id="{{ switch_form_prefix }}-cancel">Annuler</button>
+                <button type="submit" class="btn btn-bg-primary" id="{{ switch_form_prefix }}-submit">Valider</button>
             </div>
         </form>
     </div>

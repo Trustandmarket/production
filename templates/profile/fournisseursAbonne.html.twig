@@ -129,7 +129,7 @@
                                 {{ 'profil-utilisateur.fournisseurs-abonne.passez-societe'|trans }}
                             </button>
                         </div>
-                        {% include 'profile/_professional_switch_form.html.twig' %}
+                        {% include 'profile/_professional_switch_form.html.twig' with { switch_form_prefix: 'professional-switch' } %}
                     </div>
                 </div>
             </div>
@@ -167,21 +167,21 @@
                 }
             });
 
-            var $switchWrapper = $('#professional-switch-form-wrapper');
+            var $switchWrapper = $('#professional-switch-wrapper');
             var $switchForm = $('#professional-switch-form');
-            var $switchErrors = $('#professional-switch-form-errors');
+            var $switchErrors = $('#professional-switch-errors');
             var $switchRole = $('#professional-switch-role');
-            var $switchHelp = $('#professional-switch-form-help');
+            var $switchHelp = $('#professional-switch-help');
             var defaultHelpText = 'Completez ce formulaire pour passer a un profil <span class="professional-switch-role">professionnel</span>.';
 
             function resetProfessionalForm() {
-                $('#adresse').val(initialValues.adresse);
-                $('#ville').val(initialValues.ville);
-                $('#pays').val(initialValues.pays);
-                $('#postal_code').val(initialValues.postal_code);
-                $('#region').val(initialValues.region);
-                $('#compagny_number').val(initialValues.compagny_number);
-                $('#compagny_name').val(initialValues.compagny_name);
+                $('#professional-switch-adresse').val(initialValues.adresse);
+                $('#professional-switch-ville').val(initialValues.ville);
+                $('#professional-switch-pays').val(initialValues.pays);
+                $('#professional-switch-postal_code').val(initialValues.postal_code);
+                $('#professional-switch-region').val(initialValues.region);
+                $('#professional-switch-compagny_number').val(initialValues.compagny_number);
+                $('#professional-switch-compagny_name').val(initialValues.compagny_name);
                 $switchRole.val('');
                 $switchHelp.html(defaultHelpText);
                 $switchErrors.addClass('d-none').empty();
@@ -210,13 +210,13 @@
                 e.preventDefault();
 
                 var payload = {
-                    adresse: $('#adresse').val().trim(),
-                    ville: $('#ville').val().trim(),
-                    pays: $('#pays').val(),
-                    postal_code: $('#postal_code').val().trim(),
-                    region: $('#region').val().trim(),
-                    compagny_number: $('#compagny_number').val().trim(),
-                    compagny_name: $('#compagny_name').val().trim(),
+                    adresse: $('#professional-switch-adresse').val().trim(),
+                    ville: $('#professional-switch-ville').val().trim(),
+                    pays: $('#professional-switch-pays').val(),
+                    postal_code: $('#professional-switch-postal_code').val().trim(),
+                    region: $('#professional-switch-region').val().trim(),
+                    compagny_number: $('#professional-switch-compagny_number').val().trim(),
+                    compagny_name: $('#professional-switch-compagny_name').val().trim(),
                     user_new_role: $switchRole.val()
                 };
 
