@@ -882,12 +882,19 @@ class ProfileController extends AbstractController
     public function fournisseursAbonne()
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        if (in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles()) || in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles())) {
+        if (in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles()) || in_array('ROLE_SOCIETE', $this->getUser()->getRoles())) {
             return $this->redirectToRoute('profile_fournisseurs');
         }
         return $this->render('profile/fournisseursAbonne.html.twig', [
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
+            'numeroNomRue' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_address_1'),
+            'ville' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_city'),
+            'codePostal' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_postcode'),
+            'etatComte' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_state'),
+            'siret' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'siret'),
+            'nomEntreprise' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_company'),
+            'pays' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_country'),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'page_name' => 'Fournisseur de service'

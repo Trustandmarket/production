@@ -19,7 +19,6 @@
     <link href="{{ absolute_url(asset('assets/css/style.css')) }}" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('assets/css/tagsinput/tagify.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.min.css" rel="stylesheet">
     <!-- owl carousel css -->
     <link rel="stylesheet" type="text/css"
           href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
@@ -55,43 +54,26 @@
             color: #fff;
             background: #008778 !important;
         }
-        .swal2-icon{
-            color: #FF7E10 !important;
-            border-color: #FF7E10 !important;
-        }
 
-        .swal2-cancel{
-            background-color: #262626 !important;
-        }
-        .swal2-confirm{
-            background-color: #FF7E10 !important;
-        }
-        .swal2-container {
-            zoom: 0.7;
+        .professional-switch-card {
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
 
         @media (max-width: 575.98px) {
             main, .container {
                 margin-top: 70px;
             }
-            .swal2-container {
-                zoom: 0.67 !important;
-            }
 
-            .swal2-title {
-                font-size: 1.275em !important;
+            .professional-switch-actions {
+                gap: 12px;
+                flex-direction: column;
             }
         }
 
         @media (min-width: 576px) and (max-width: 767.98px) {
             main, .container {
                 margin-top: 100px;
-            }
-            .swal2-container {
-                zoom: 0.65 !important;
-            }
-            .swal2-title {
-                font-size: 1.475em !important;
             }
         }
     </style>
@@ -115,26 +97,27 @@
                             {{ 'profil-utilisateur.fournisseurs-abonne.ou'|trans|raw }}
                             <strong>{{ 'profil-utilisateur.fournisseurs-abonne.societe'|trans|raw }}</strong>
                         </p>
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <form class="switch" method="post" action="{{ path('profile_app_switch') }}">
-                                    <input hidden name="user_new_role" value="ROLE_AUTO_ENTREPRENEUR">
-                                    <div>
-                                        <button id="passer-entrepreneur" type="submit"
-                                           class="switch btn btn-md fl-uppercase rounded config-btn enregProfile">{{ 'profil-utilisateur.fournisseurs-abonne.passez-auto-entrepreneur'|trans }}</button>
-                                    </div>
-                                </form>
-                            </div>
-                            <div>
-                                <form class="switch" method="post" action="{{ path('profile_app_switch') }}">
-                                    <input hidden name="user_new_role" class="user_new_role" value="ROLE_SOCIETE">
-                                    <div>
-                                        <button type="submit" id="passer-societe"
-                                           class="btn btn-md fl-uppercase rounded config-btn enregProfile1">{{ 'profil-utilisateur.fournisseurs-abonne.passez-societe'|trans }}</button>
-                                    </div>
-                                </form>
-                            </div>
+                        <div class="d-flex justify-content-between flex-wrap" style="gap: 12px;">
+                            <button
+                                id="passer-entrepreneur"
+                                type="button"
+                                class="btn btn-md fl-uppercase rounded config-btn enregProfile js-open-professional-form"
+                                data-role="ROLE_AUTO_ENTREPRENEUR"
+                                data-role-label="{{ 'profil-utilisateur.fournisseurs-abonne.auto-entrepreneur'|trans }}"
+                            >
+                                {{ 'profil-utilisateur.fournisseurs-abonne.passez-auto-entrepreneur'|trans }}
+                            </button>
+                            <button
+                                type="button"
+                                id="passer-societe"
+                                class="btn btn-md fl-uppercase rounded config-btn enregProfile1 js-open-professional-form"
+                                data-role="ROLE_SOCIETE"
+                                data-role-label="{{ 'profil-utilisateur.fournisseurs-abonne.societe'|trans }}"
+                            >
+                                {{ 'profil-utilisateur.fournisseurs-abonne.passez-societe'|trans }}
+                            </button>
                         </div>
+                        {% include 'profile/_professional_switch_form.html.twig' %}
                     </div>
                 </div>
             </div>
@@ -153,10 +136,18 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('toastr/toastr.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.all.min.js"></script>
     <script>
         $(document).ready(function () {
             var docWidth = document.documentElement.offsetWidth;
+            var initialValues = {
+                adresse: '{{ numeroNomRue|default('')|e('js') }}',
+                ville: '{{ ville|default('')|e('js') }}',
+                pays: '{{ pays|default('')|e('js') }}',
+                postal_code: '{{ codePostal|default('')|e('js') }}',
+                region: '{{ etatComte|default('')|e('js') }}',
+                compagny_number: '{{ siret|default('')|e('js') }}',
+                compagny_name: '{{ nomEntreprise|default('')|e('js') }}'
+            };
 
             [].forEach.call(document.querySelectorAll('*'), function (el) {
                 if (el.offsetWidth > docWidth) {
@@ -164,79 +155,90 @@
                 }
             });
 
-            $(document).on('submit', '.switch', function (e) {
+            var $switchWrapper = $('#professional-switch-form-wrapper');
+            var $switchForm = $('#professional-switch-form');
+            var $switchErrors = $('#professional-switch-form-errors');
+            var $switchRole = $('#professional-switch-role');
+            var $switchHelp = $('#professional-switch-form-help');
+            var defaultHelpText = 'Completez ce formulaire pour passer a un profil professionnel.';
+
+            function resetProfessionalForm() {
+                $('#adresse').val(initialValues.adresse);
+                $('#ville').val(initialValues.ville);
+                $('#pays').val(initialValues.pays);
+                $('#postal_code').val(initialValues.postal_code);
+                $('#region').val(initialValues.region);
+                $('#compagny_number').val(initialValues.compagny_number);
+                $('#compagny_name').val(initialValues.compagny_name);
+                $switchRole.val('');
+                $switchHelp.text(defaultHelpText);
+                $switchErrors.addClass('d-none').empty();
+            }
+
+            $('.js-open-professional-form').on('click', function () {
+                var role = $(this).data('role');
+                var roleLabel = $(this).data('role-label');
+
+                $switchRole.val(role);
+                $switchHelp.text('Completez ce formulaire pour passer au profil ' + roleLabel + '.');
+                $switchErrors.addClass('d-none').empty();
+                $switchWrapper.removeClass('d-none');
+
+                $('html, body').animate({
+                    scrollTop: $switchWrapper.offset().top - 40
+                }, 300);
+            });
+
+            $('#professional-switch-cancel').on('click', function () {
+                resetProfessionalForm();
+                $switchWrapper.addClass('d-none');
+            });
+
+            $switchForm.on('submit', function (e) {
                 e.preventDefault();
-                console.log($(this).find('input[name="user_new_role"]').val());
-                Swal.fire({
-                    title: "Pour passer à un profil professionnel, veuillez  renseigner l’adresse de votre entreprise",
-                    html: `<div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="adresse">Adresse *</label>
-                        <input type="text" id="adresse" class="form-control" placeholder="Adresse"></div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="ville">Ville *</label>
-                        <input type="text" id="ville" class="form-control" placeholder="Ville"></div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <select id="pays" id="pays" class="form-control" style="border: 1px solid #d9d9d9;
-                            border-radius: 0.1875em;background: rgba(0,0,0,0); box-shadow: inset 0 1px 1px rgba(0,0,0,.06), 0 0 0 3px rgba(0,0,0,0);"><option value="" selected>Pays de residence...</option>{% include 'Tools/CountryRegister.html.twig' %}</select></select>
-                        </div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="postal_code">Code Postale *</label>
-                        <input type="text" id="postal_code" class="form-control" placeholder="Code Postale"></div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="region">Region *</label>
-                        <input type="text" id="region" class="form-control" placeholder="Region"></div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="compagny_number">Siret *</label>
-                        <input type="text" id="compagny_number" class="form-control" placeholder="Siret"></div>
-                        <div class="form-floating col-md-10 m-auto p-2">
-                        <label class="float-left" for="compagny_name">Dénomination sociale *</label>
-                        <input type="text" id="compagny_name" class="form-control" placeholder="Dénomination sociale"></div>`,
-                    cancelButtonText: "Annuler",
-                    confirmButtonText: "Valider",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    focusConfirm: false,
-                    preConfirm: () => {
-                        const adresse = Swal.getPopup().querySelector('#adresse').value
-                        const ville = Swal.getPopup().querySelector('#ville').value
-                        const pays = Swal.getPopup().querySelector('#pays').value
-                        const postal_code = Swal.getPopup().querySelector('#postal_code').value
-                        const region = Swal.getPopup().querySelector('#region').value
-                        const compagny_number = Swal.getPopup().querySelector('#compagny_number').value
-                        const compagny_name = Swal.getPopup().querySelector('#compagny_name').value
-                        const user_new_role = $(this).find('input[name="user_new_role"]').val()
-                        if (!adresse || !ville || !pays || !postal_code || !region || !compagny_number || !compagny_name) {
-                            Swal.showValidationMessage(`Veuillez remplir les champs du formulaire`)
+
+                var payload = {
+                    adresse: $('#adresse').val().trim(),
+                    ville: $('#ville').val().trim(),
+                    pays: $('#pays').val(),
+                    postal_code: $('#postal_code').val().trim(),
+                    region: $('#region').val().trim(),
+                    compagny_number: $('#compagny_number').val().trim(),
+                    compagny_name: $('#compagny_name').val().trim(),
+                    user_new_role: $switchRole.val()
+                };
+
+                if (!payload.user_new_role) {
+                    $switchErrors.removeClass('d-none').text('Veuillez d abord choisir le profil souhaite.');
+                    return;
+                }
+
+                if (!payload.adresse || !payload.ville || !payload.pays || !payload.postal_code || !payload.region || !payload.compagny_number || !payload.compagny_name) {
+                    $switchErrors.removeClass('d-none').text('Veuillez remplir les champs du formulaire.');
+                    return;
+                }
+
+                $switchErrors.addClass('d-none').empty();
+
+                $.ajax({
+                    url: "{{ path('profile_app_switch') }}",
+                    type: 'POST',
+                    processData: false,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    success: function (response) {
+                        if (response.status == 200) {
+                            toastr.success('Mise a jour du profil effectuee avec succes.');
+                            window.location = '{{ path('profile_profile' ) }}';
+                        } else {
+                            $switchErrors.removeClass('d-none').text('Un probleme est survenu.');
                         }
-                        return {adresse: adresse, ville: ville, pays: pays, postal_code: postal_code, region: region, compagny_number: compagny_number,
-                             compagny_name: compagny_name,user_new_role: user_new_role}
+                    },
+                    error: function () {
+                        $switchErrors.removeClass('d-none').text('Un probleme est survenu.');
                     }
-                }).then((result) => {
-                    if(result.value){
-                        $.ajax({
-                            url: "{{path('profile_app_switch')}}",
-                            type: 'POST',
-                            processData: false,
-                            dataType: 'json',
-                            contentType: 'application/json',
-                            data: JSON.stringify(result.value),
-                            success: function (response) {
-                                if (response.status == 200) {
-                                    console.log(JSON.stringify(result.value));
-                                    console.log(response);
-                                    swal.fire("Succès!", "Mise a jour du profil effectuée avec succès.", response.status);
-                                    window.location = '{{ path('profile_profile' ) }}';
-                                } else {
-                                    swal.fire("Erreur!","Un probleme est survenu", response.status);
-                                }
-                            },
-                            error: function (response) {
-                                swal.fire("Erreur!","Un probleme est survenu", response.status);
-                            }
-                        });
-                    }
-                })
+                });
             });
 
             toastr.options = {
@@ -255,9 +257,7 @@
                 "hideEasing": "linear",
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut"
-            }
-
+            };
         });
     </script>
-
 {% endblock %}
