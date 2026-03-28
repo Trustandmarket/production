@@ -1,0 +1,258 @@
+{\rtf1\ansi\deff0
+{\fonttbl
+{\f0 Calibri;}
+{\f1 Consolas;}
+}
+\viewkind4\uc1\pard\sa120\sl276\slmult1\f0\fs22\b Architecture Du Projet\par
+\b0\par
+Ce document synth\'e9tise l'architecture du projet observ\'e9 dans le repository \f1 production\f0. Il est orient\'e9 reprise de contexte, maintenance et refactoring progressif.\par
+\par
+\b 1. Vue D'Ensemble\par
+\b0\par
+Le projet est une application web Symfony rendue majoritairement c\'f4t\'e9 serveur avec Twig. Il s'appuie sur Doctrine pour l'acc\'e8s aux donn\'e9es, mais dans un contexte hybride avec des entit\'e9s et tables issues d'un univers WordPress comme \f1 wp_users\f0, \f1 wp_usermeta\f0, \f1 wp_posts\f0 et \f1 wp_options\f0.\par
+\par
+Les grandes briques sont les suivantes :\par
+- \b Pr\'e9sentation\b0 : templates Twig dans \f1 templates/\f0, organis\'e9s par domaine fonctionnel.\par
+- \b Entr\'e9e HTTP\b0 : controllers Symfony dans \f1 src/Controller/\f0.\par
+- \b Logique m\'e9tier\b0 : services applicatifs dans \f1 src/Service/\f0, avec un r\'f4le central de \f1 ServiceManager\f0.\par
+- \b Persistance\b0 : entit\'e9s Doctrine dans \f1 src/Entity/\f0 et repositories dans \f1 src/Repository/\f0.\par
+- \b S\'e9curit\'e9\b0 : chargement utilisateur, v\'e9rifications, e-mail verification, filtres de r\'f4les.\par
+- \b Int\'e9grations externes\b0 : Stripe, Brevo, et des traces historiques de MangoPay.\par
+\par
+\b 2. Structure Des Dossiers\par
+\b0\par
+\f1
+production/\par
+|- public/\par
+|- src/\par
+|  |- Command/\par
+|  |- Controller/\par
+|  |- Entity/\par
+|  |- EventListener/\par
+|  |- Filter/\par
+|  |- Form/\par
+|  |- Repository/\par
+|  |- Security/\par
+|  \- Service/\par
+|- templates/\par
+|  |- profile/\par
+|  |- admin/\par
+|  |- payment/\par
+|  |- registration/\par
+|  |- devis/\par
+|  |- chat/\par
+|  |- partials/\par
+|  \- ...\par
+\- translations/\par
+\f0
+\par
+\b 3. Couche Contr\'f4leurs\par
+\b0\par
+Le dossier \f1 src/Controller/\f0 contient les points d'entr\'e9e HTTP, organis\'e9s par domaine m\'e9tier. Les contr\'f4leurs principaux visibles sont notamment :\par
+- \f1 ProfileController.php\f0 : espace profil utilisateur, fournisseur, param\'e8tres, annonces, r\'e9servations, changement de r\'f4le, etc.\par
+- \f1 PaymentController.php\f0 : flux de paiement et comptes de paiement.\par
+- \f1 RegistrationController.php\f0 : inscription et initialisation des comptes.\par
+- \f1 AbonnementController.php\f0 : logique d'abonnement.\par
+- \f1 DevisController.php\f0 : logique devis et interactions commerciales.\par
+- \f1 ChatController.php\f0 : messagerie.\par
+- \f1 HomeController.php\f0, \f1 BlogController.php\f0, \f1 NewsletterController.php\f0, etc.\par
+\par
+Constat : l'organisation fonctionnelle est claire, mais certains contr\'f4leurs, en particulier \f1 ProfileController.php\f0, portent un tr\'e8s grand nombre de responsabilit\'e9s.\par
+\par
+\b 4. Couche Services\par
+\b0\par
+Les services du dossier \f1 src/Service/\f0 concentrent la logique applicative transversale.\par
+\par
+Services rep\'e9r\'e9s :\par
+- \f1 ServiceManager.php\f0 : tr\'e8s grosse couche de services g\'e9n\'e9ralistes, lecture et \'e9criture de m\'e9tadonn\'e9es utilisateur, requ\'eates m\'e9tier, calculs et aides diverses.\par
+- \f1 Payment.php\f0 : int\'e9grations paiement et comptes de paiement.\par
+- \f1 Panier.php\f0 : logique de panier.\par
+- \f1 Chat.php\f0 : m\'e9canismes conversationnels.\par
+- \f1 ToolsMeta.php\f0 : helpers m\'e9tier / m\'e9tadonn\'e9es.\par
+- \f1 ProfileCompletionCalculator.php\f0 : calcul du taux de compl\'e9tion du profil.\par
+- \f1 BrevoMailer.php\f0 : e-mails / int\'e9gration Brevo.\par
+\par
+Constat : \f1 ServiceManager\f0 sert de couche de service centrale, mais il agr\'e8ge beaucoup de responsabilit\'e9s diff\'e9rentes.\par
+\par
+\b 5. Persistance Et Donn\'e9es\par
+\b0\par
+Le projet utilise Doctrine, avec un mod\'e8le m\'e9tier qui m\'e9lange objets applicatifs et tables h\'e9rit\'e9es de WordPress.\par
+\par
+Entit\'e9s notables :\par
+- \f1 User\f0 : utilisateur principal, stock\'e9 dans \f1 wp_users\f0.\par
+- \f1 WpUsermeta\f0 : m\'e9tadonn\'e9es utilisateur.\par
+- \f1 WpPosts\f0, \f1 WpOptions\f0, \f1 WpTermTaxonomy\f0, \f1 WpTermRelationships\f0 : objets WordPress r\'e9utilis\'e9s dans le coeur applicatif.\par
+- \f1 Abonnement\f0 : abonnement utilisateur.\par
+\par
+Le stockage du profil semble tr\'e8s largement distribu\'e9 entre :\par
+- la table \f1 wp_users\f0 pour les champs principaux,\par
+- la table \f1 wp_usermeta\f0 pour la plupart des donn\'e9es profil, facturation, portfolio, vid\'e9os, documents, compl\'e9tion, etc.\par
+\par
+Cette architecture apporte de la souplesse, mais complexifie la tra\'e7abilit\'e9 de la source de v\'e9rit\'e9 des donn\'e9es.\par
+\par
+\b 6. Pr\'e9sentation Et Templates\par
+\b0\par
+Le dossier \f1 templates/\f0 est organis\'e9 par domaine fonctionnel :\par
+- \f1 profile/\f0 : espace utilisateur, profil, fournisseur, dashboard, param\'e8tres, annonces.\par
+- \f1 admin/\f0 : back-office.\par
+- \f1 payment/\f0 : \'e9crans de paiement.\par
+- \f1 registration/\f0, \f1 reset_password/\f0, \f1 chat/\f0, \f1 devis/\f0, etc.\par
+\par
+Le rendu est majoritairement c\'f4t\'e9 serveur. Une partie du comportement front repose sur du JavaScript inline dans les templates Twig, souvent avec jQuery.\par
+\par
+\b 7. Focus D\'e9taill\'e9 : P\'f4le Profil Utilisateur\par
+\b0\par
+Le p\'f4le profil utilisateur est la zone la plus dense du projet. Il est principalement pilot\'e9 par \f1 src/Controller/ProfileController.php\f0 et par les templates du dossier \f1 templates/profile/\f0.\par
+\par
+\b 7.1. Routes principales du p\'f4le profil\par
+\b0\par
+Parmi les routes visibles dans \f1 ProfileController\f0, on retrouve notamment :\par
+- \f1 /profil-utilisateur/profil-abonne\f0 : profil abonné.\par
+- \f1 /profil-utilisateur/profil\f0 : profil principal.\par
+- \f1 /profil-utilisateur/updateProfil\f0 : mise \'e0 jour du profil.\par
+- \f1 /profil-utilisateur/fournisseurs\f0 : profil fournisseur.\par
+- \f1 /profil-utilisateur/abonne/fournisseurs\f0 : passage abonné vers fournisseur.\par
+- \f1 /profil-utilisateur/devenir-pro\f0 : changement de type de profil.\par
+- \f1 /profil-utilisateur/update/billing\f0 : mise \'e0 jour facturation.\par
+- \f1 /profil-utilisateur/dashboard\f0 : tableau de bord.\par
+- \f1 /profil-utilisateur/parametres\f0 et \f1 /abonne/parametres\f0.\par
+- \f1 /profil-utilisateur/annonces\f0, cr\'e9ation et \'e9dition d'annonces.\par
+- \f1 /profil-utilisateur/reservations\f0.\par
+- \f1 /profil-utilisateur/comments\f0.\par
+\par
+\b 7.2. Templates profil\par
+\b0\par
+Le dossier \f1 templates/profile/\f0 contient entre autres :\par
+- \f1 dashboard.html.twig\f0 et \f1 dashboardAbonne.html.twig\f0.\par
+- \f1 fournisseurs.html.twig\f0 et \f1 fournisseursAbonne.html.twig\f0.\par
+- \f1 parameters.html.twig\f0 et \f1 parametersAbonne.html.twig\f0.\par
+- \f1 annonces.html.twig\f0, \f1 creerAnnonces.html.twig\f0, \f1 reservations.html.twig\f0.\par
+- \f1 _professional_switch_form.html.twig\f0 : partial de formulaire de bascule de profil.\par
+\par
+\b 7.3. Flux fonctionnel du profil utilisateur\par
+\b0\par
+Le flux g\'e9n\'e9ral du profil suit ce sch\'e9ma :\par
+1. Le controller collecte un grand nombre de m\'e9tadonn\'e9es utilisateur via \f1 ServiceManager::getUserStringDataValue()\f0.\par
+2. Il pr\'e9pare le contexte Twig.\par
+3. Le template rend un ou plusieurs formulaires.\par
+4. Les soumissions appellent des routes de mise \'e0 jour.\par
+5. Les mises \'e0 jour pers\'e8rent principalement dans \f1 wp_usermeta\f0 via \f1 updateUserMeta()\f0, et parfois dans \f1 wp_users\f0.\par
+\par
+\b 7.4. Donn\'e9es g\'e9r\'e9es par le p\'f4le profil\par
+\b0\par
+Le p\'f4le profil couvre des familles de donn\'e9es nombreuses :\par
+- Identit\'e9 : pr\'e9nom, nom, sexe, date de naissance, nationalit\'e9, pays de r\'e9sidence, t\'e9l\'e9phone.\par
+- Profil public : titre, description, comp\'e9tences, r\'e9f\'e9rences, avatar, portfolio, vid\'e9os.\par
+- Adresses : domicile, livraison, facturation.\par
+- Facturation et entreprise : \f1 billing_company\f0, \f1 billing_country\f0, \f1 billing_city\f0, \f1 billing_state\f0, \f1 siret\f0, \f1 tva\f0.\par
+- Banque / payout : compte, IBAN, titulaire, adresse du titulaire.\par
+- Documents de conformit\'e9 / KYC.\par
+- R\'f4les de profil : abonn\'e9, auto-entrepreneur, soci\'e9t\'e9.\par
+- Annonces et r\'e9servations.\par
+\par
+\b 7.5. Sp\'e9cificit\'e9s de conception\par
+\b0\par
+Le p\'f4le profil a plusieurs caract\'e9ristiques structurelles :\par
+- logique m\'e9tier, logique de persistance et pr\'e9paration de vue tr\'e8s proches dans le m\'eame controller ;\par
+- forte d\'e9pendance \'e0 \f1 wp_usermeta\f0 ;\par
+- front partiellement pilot\'e9 par JavaScript inline ;\par
+- coexistence de plusieurs formulaires sur une m\'eame page ;\par
+- historique d'int\'e9grations de paiement qui influence encore le code du profil pro.\par
+\par
+\b 7.6. Exemple : parcours de bascule de profil\par
+\b0\par
+Le parcours de bascule de profil, r\'e9cemment retravaill\'e9, illustre bien le fonctionnement du p\'f4le :\par
+- \f1 fournisseursAbonne.html.twig\f0 permet la bascule depuis un compte abonn\'e9.\par
+- \f1 fournisseurs.html.twig\f0 permet la bascule \f1 auto-entrepreneur -> soci\'e9t\'e9\f0.\par
+- le partial \f1 _professional_switch_form.html.twig\f0 porte le formulaire r\'e9utilisable.\par
+- le endpoint \f1 profile_app_switch\f0 centralise la logique de changement.\par
+- la mise \'e0 jour r\'e9elle du r\'f4le passe par \f1 ServiceManager::devenirPro()\f0.\par
+\par
+\b 8. Points Forts Observ\'e9s\par
+\b0\par
+- Organisation des templates par domaine fonctionnel.\par
+- Contr\'f4leurs nomm\'e9s de mani\'e8re claire.\par
+- R\'e9utilisation de partials Twig possible et d\'e9j\'e0 amorc\'e9e.\par
+- Services m\'e9tier identifiables.\par
+- Traductions centralis\'e9es.\par
+\par
+\b 9. Points De Vigilance\par
+\b0\par
+- \f1 ProfileController.php\f0 est tr\'e8s dense et m\'e9lange beaucoup de sujets.\par
+- \f1 ServiceManager.php\f0 est une classe tr\'e8s volumineuse et tr\'e8s transverse.\par
+- Les m\'e9tadonn\'e9es utilisateur dispers\'e9es rendent la compr\'e9hension plus difficile.\par
+- La coexistence de plusieurs formulaires sur certaines pages augmente le risque de collisions front.\par
+- Les anciennes int\'e9grations externes laissent du code mort ou semi-actif.\par
+\par
+\b 10. Pistes De D\'e9coupage Des Fichiers Denses\par
+\b0\par
+Cette section propose des pistes de refactoring progressif, sans r\'e9\'e9criture massive.\par
+\par
+\b 10.1. D\'e9coupage de \f1 ProfileController.php\f0\par
+\b0\par
+Piste recommand\'e9e : d\'e9couper par sous-domaines fonctionnels.\par
+\par
+Exemple de d\'e9coupage :\par
+- \f1 ProfileViewController\f0 : affichage du profil, dashboard, param\'e8tres.\par
+- \f1 ProfileUpdateController\f0 : mise \'e0 jour des donn\'e9es profil.\par
+- \f1 ProfileBillingController\f0 : facturation, comptes bancaires, bascules de profil professionnel.\par
+- \f1 ProfileMediaController\f0 : portfolio, vid\'e9os, images secondaires.\par
+- \f1 ProfileAdsController\f0 : annonces, brouillons, publication.\par
+- \f1 ProfileReservationController\f0 : r\'e9servations et annulations.\par
+\par
+Avantage : responsabilit\'e9s plus claires, tests plus simples, onboarding facilit\'e9.\par
+\par
+\b 10.2. D\'e9coupage de \f1 ServiceManager.php\f0\par
+\b0\par
+Piste recommand\'e9e : extraire par famille de responsabilit\'e9s.\par
+\par
+Exemple de services cibles :\par
+- \f1 UserMetaService\f0 : lecture / \'e9criture des m\'e9tadonn\'e9es utilisateur.\par
+- \f1 ProfileDataService\f0 : assemblage des donn\'e9es de profil pour les vues.\par
+- \f1 ProfileRoleService\f0 : changements de r\'f4le et r\'e8gles associ\'e9es.\par
+- \f1 BillingProfileService\f0 : donn\'e9es entreprise et facturation.\par
+- \f1 ProfileMediaService\f0 : portfolio, images, vid\'e9os.\par
+- \f1 AnnouncementProfileService\f0 : lien entre profil et annonces.\par
+\par
+Avantage : r\'e9duction du couplage, meilleure testabilit\'e9, disparition de la classe fourre-tout.\par
+\par
+\b 10.3. D\'e9coupage des templates profil\par
+\b0\par
+Piste recommand\'e9e : s\'e9parer syst\'e9matiquement les blocs de formulaire.\par
+\par
+Exemples :\par
+- un partial par formulaire majeur ;\par
+- un partial par carte fonctionnelle ;\par
+- scripts JS rattach\'e9s par bloc au lieu d'un gros script inline de page.\par
+\par
+Dans le cas de \f1 fournisseurs.html.twig\f0, la s\'e9paration entre formulaire principal et bascule de r\'f4le est un bon exemple de direction saine.\par
+\par
+\b 10.4. Cr\'e9er des objets de donn\'e9es ou builders de vue\par
+\b0\par
+Le nombre de variables pass\'e9es aux templates est important. Une piste utile est d'introduire :\par
+- des DTO de vue,\par
+- ou des builders de vue similaires \'e0 \f1 Admin\\UserEditViewBuilder\f0.\par
+\par
+Avantage : controllers plus lisibles, contrats de vue plus stables, moins de variables dispers\'e9es.\par
+\par
+\b 10.5. R\'e9duire le JavaScript inline\par
+\b0\par
+Piste recommand\'e9e : d\'e9placer progressivement les comportements front dans des fichiers JS cibl\'e9s par page ou par composant.\par
+\par
+Avantage : scripts plus testables, moins de collisions, relecture plus simple.\par
+\par
+\b 11. Recommandation Pragmatique De Priorisation\par
+\b0\par
+Si un refactoring progressif est lanc\'e9, l'ordre recommand\'e9 serait :\par
+1. D\'e9couper les formulaires et partials Twig les plus sensibles.\par
+2. Extraire la logique de bascule de r\'f4le et de facturation de \f1 ProfileController\f0.\par
+3. Introduire un service d\'e9di\'e9 aux m\'e9tadonn\'e9es utilisateur.\par
+4. D\'e9couper \f1 ProfileController\f0 par sous-domaines.\par
+5. D\'e9couper ensuite \f1 ServiceManager\f0 par familles de responsabilit\'e9s.\par
+\par
+\b 12. Conclusion\par
+\b0\par
+Le projet repose sur une architecture Symfony/Twig solide dans son organisation globale, mais avec une forte concentration de logique dans quelques fichiers centraux, en particulier \f1 ProfileController.php\f0 et \f1 ServiceManager.php\f0. Le p\'f4le profil utilisateur est la zone la plus critique pour la maintenabilit\'e9, car il concentre beaucoup de parcours, de donn\'e9es et de variations de formulaires.\par
+\par
+Le projet se pr\'eate bien \'e0 un refactoring progressif, orient\'e9 par s\'e9paration des responsabilit\'e9s, r\'e9utilisation de partials, et extraction de services cibl\'e9s.\par
+}
