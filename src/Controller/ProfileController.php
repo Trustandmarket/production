@@ -66,85 +66,6 @@ class ProfileController extends AbstractController
         $this->local = $_SERVER['APP_FILES_LOCAL_URL'];
     }
 
-    /**
-     * Lot 1 moved to ProfilePublicController.
-     * @param Request $request
-     * @return Response
-     */
-    public function detailsProfessionnel(Request $request)
-    {        
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $arr = explode('-', $request->get('id'));
-        $user_id = $arr[array_key_last($arr)];
-        $user = $this->em->getRepository(User::class)->find($user_id);
-        $profileCompletionRate = (int) $this->service_manager->getUserStringDataValue((int) $user_id, 'profile_completion_rate');
-        $isOwner = (int) $this->getUser()->getId() === (int) $user_id;
-
-        if ($profileCompletionRate < 80 && !$isOwner) {
-            return $this->redirectToRoute('index', ['_locale' => $request->getLocale()]);
-        }
-        $noPage = 1;
-        if ($request->get('noPage')) {
-            $noPage = $request->get('noPage');
-        }
-        $detailsPro = $this->annonces_access_layer->readAllProData($user_id, $noPage);
-        //Commentaires rÃ©cents
-        $lastComment = '';
-        $idDernierPost = $this->em->getRepository(wpPosts::class)->findBy(['postAuthor' => $user_id], ['id' => 'DESC']);
-        if ($idDernierPost != null) {
-            $idDernierPost = $idDernierPost['0']->getId();
-            $lastComment = $this->em
-                ->getRepository(wpComments::class)
-                ->findBy(['commentPostId' => $idDernierPost]);
-            if ($lastComment != null) {
-                $lastComment = $lastComment['0']->getCommentContent();
-            } else {
-                $lastComment = '';
-            }
-        }
-
-        $competences = $this->service_manager->readUserMeta($user_id, 'competence');
-        $raison_sociale = $this->service_manager->readUserMeta($user_id, 'raison_sociale');
-        //Activite
-        $principal_activity = $this->service_manager->readUserMeta($user_id, 'activite_principale');
-        if ($principal_activity) {
-            $principal_activity = $this->em->getRepository(WpTermTaxonomy::class)->findOneBy(['termTaxonomyId' => $principal_activity->getMetaValue()]);
-        }
-        //COMPETENCE
-        $competence = array();
-        if ($competences) {
-            $competence = explode(',', $competences->getMetaValue());
-        }
-        //Departement
-        $departements = $this->em->getRepository(Departement::class)->findAll();
-
-        // Legacy KYC status is no longer used on the public profile page.
-        $statut_kyc = null;
-        $avatar = '';
-        $avatars = $this->service_manager->readUserMeta($user_id, 'basic_user_avatar');
-        if ($avatars && $avatars->getMetaValue()) {
-            $img = @unserialize($avatars->getMetaValue());
-            $avatar = end($img);
-        }
-        return $this->render('annonces/detailsProfil.html.twig', [
-            'user' => $user,
-            'header' => $this->service_manager->naveMenuItem(10),
-            'footer' => $this->service_manager->naveMenuItem(18),
-            'detailsPro' => $detailsPro['data'],
-            'profileCompletionRate' => $profileCompletionRate,
-            'lastComment' => $lastComment,
-            'noPage' => $noPage,
-            'pages' => $detailsPro['pages'],
-            'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
-            'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
-            'competence' => $competence,
-            'raison_sociale' => $raison_sociale,
-            'principal_activity' => $principal_activity,
-            'statut_kyc' => $statut_kyc,
-            'avatar' => $avatar,
-            'departements' => $departements
-        ]);
-    }
 
     /**
      * @Route("/{_locale}/profil-utilisateur/profil-abonne", name="home_profil", requirements={"_locale": "fr"})
@@ -782,23 +703,6 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * Lot 1 moved to ProfileReferentialController.
-     * @param Request $request
-     * @return Response
-     */
-    public function sousCategorie(Request $request)
-    {
-        $o = 0;
-        if ($request->get('o')) {
-            $o = $request->get('o');
-        }
-        return $this->render('profile/sous_categorie.html.twig', [
-            'categorie' => $this->service_manager->postCategorieWithMultilang('product_cat', $request->get('id')),
-            'option' => $o,
-        ]);
-    }
-
-    /**
      * Show seller details page
      * @Route("/{_locale}/profil-utilisateur/fournisseurs", name="fournisseurs")
      */
@@ -1221,26 +1125,6 @@ class ProfileController extends AbstractController
         $this->em->flush();
         //Email annulation devis
         //Fin Email devis
-        return $this->render('admin/resultat.html.twig', [
-            'result' => 1,
-        ]);
-    }
-
-    /**
-     * Lot 1 moved to ProfileReservationController.
-     * @param Request $request
-     * @return Response
-     */
-    public function cancelReservationAnnounce(Request $request)
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        $r = $this->em->getRepository(WpPosts::class)->find($request->get('id'));
-        if ($r->getPostType() == 'shop_order') {
-            $r->setPostStatus('wc-cancelled');
-        }
-        $this->em->persist($r);
-        $this->em->flush();
         return $this->render('admin/resultat.html.twig', [
             'result' => 1,
         ]);
@@ -3009,76 +2893,6 @@ class ProfileController extends AbstractController
             ]);
         }
         return new JsonResponse(['html' => $html, 'pagination' => $pagination]);
-    }
-
-    /**
-     * Lot 1 moved to ProfileReservationController.
-     */
-    public function reservations()
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        $userId = $this->getUser()->getId();
-        return $this->render('profile/reservations.html.twig', [
-            'header' => $this->service_manager->naveMenuItem(10),
-            'footer' => $this->service_manager->naveMenuItem(18),
-            'annoncesBrouillon' => $this->service_manager->readListAnnonceDataOfUser(
-                $userId,
-                'draft'
-            ),
-            'annoncesModeration' => $this->service_manager->readListAnnonceDataOfUser(
-                $userId,
-                'moderation'
-            ),
-            'annoncesRejetees' => $this->service_manager->readListAnnonceDataOfUser(
-                $userId,
-                'trash'
-            ),
-            'annoncesPubliees' => $this->service_manager->readListAnnonceDataOfUser(
-                $userId,
-                'publish'
-            ),
-            'annoncesReserves' => $this->service_manager->readListAnnonceDataOfUser(
-                $userId,
-                'reserved'
-            ),
-            'annoncesTerminees' => $this->service_manager->readListAnnonceDataOfUser(
-                $userId,
-                'ended'
-            ),
-            'annoncesAnnulees' => $this->service_manager->readListAnnonceDataOfUser(
-                $userId,
-                'drop'
-            ),
-            'devisEnAttente' => $this->service_manager->readListDevisDataOfUser(
-                $userId,
-                'devis-pending'
-            ),
-            'devisEnBrouillon' => $this->service_manager->readListDevisDataOfUser(
-                $userId,
-                'devis-draft'
-            ),
-
-            // For clients reservations
-            'reservationsEnCours' => $this->service_manager->readListReservationOfUser(
-                $userId,
-                'wc-in-progress'
-            ),
-            'reservationsTerminees' => $this->service_manager->readListReservationOfUser(
-                $userId,
-                'wc-completed'
-            ),
-            'reservationsAnnulees' => $this->service_manager->readListReservationOfUser(
-                $userId,
-                'wc-cancelled'
-            ),
-            'reservationsDevisEnAttente' => $this->service_manager->readListReservationDevisOfUser(
-                $userId,
-                'devis-pending'
-            ),
-            'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
-            'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
-        ]);
     }
 
     /**
