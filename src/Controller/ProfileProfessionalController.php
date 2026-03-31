@@ -228,7 +228,7 @@ class ProfileProfessionalController extends AbstractController
             ]);
         }
 
-        $data = $this->getDataToUpdateMangopayUser();
+        $data = $this->service_manager->getMangopayUserData($this->getUser()->getId(), $this->getUser()->getEmailCanonical());
 
         $existingCards = null;
         $card = null;
@@ -241,7 +241,7 @@ class ProfileProfessionalController extends AbstractController
         $this->service_manager->updateUserMeta($userId, 'vendor_account_region', $request->get('regionHolder'));
 
         if ($request->get('bank') == 'IBAN') {
-            $userData = $this->getDataToUpdateMangopayUser();
+            $userData = $this->service_manager->getMangopayUserData($this->getUser()->getId(), $this->getUser()->getEmailCanonical());
             $accountNumber = $request->get('iban');
             $detailsBic = $request->get('bic');
         }
@@ -282,7 +282,7 @@ class ProfileProfessionalController extends AbstractController
         $this->service_manager->updateUserMeta($userId, 'billing_email', $request->get('email'));
         $user_nationality = $this->service_manager->getUserStringDataValue($userId, 'vendor_account_country');
 
-        $data = $this->getDataToUpdateMangopayUser();
+        $data = $this->service_manager->getMangopayUserData($this->getUser()->getId(), $this->getUser()->getEmailCanonical());
 
         if ($request->get('doc') == 'identite' && !is_null($request->files->get('fileDoc'))) {
         }
@@ -304,68 +304,4 @@ class ProfileProfessionalController extends AbstractController
         ]);
     }
 
-    private function getDataToUpdateMangopayUser()
-    {
-        $keys = [
-            'first_name', 'last_name', 'telephone', 'sexe', 'billing_email', 'residenceCountry',
-            'nationalityCountry', 'mp_user_id_sandbox', 'bdaytime', 'numeroNomRue_domicile',
-            'pays_domicile', 'codePostal_domicile', 'telephone',
-            'ville_domicile', 'region_domicile', 'numeroNomRue_livraison', 'pays_livraison',
-            'codePostal_livraison', 'ville_livraison', 'region_livraison',
-            'siret', 'tva', 'billing_address_1', 'billing_company', 'billing_country', 'billing_postcode',
-            'billing_state', 'billing_city', 'billing_phone', 'billing_email', 'nom_commercial',
-            'vendor_account_type', 'vendor_account_name', 'vendor_account_address1', 'vendor_account_city', 'vendor_account_postcode', 'vendor_account_country',
-            'vendor_account_region'
-        ];
-
-        $userMetadata = $this->service_manager->getUserMetadata($this->getUser()->getId(), $keys);
-
-        $data = [
-            "firstname" => $userMetadata['first_name'] ?? '',
-            "lastname" => $userMetadata['last_name'] ?? '',
-            "phone" => $userMetadata['telephone'] ?? '',
-            "sexe" => isset($userMetadata['sexe']) ? ($userMetadata['sexe'] == 'femme' ? 'female' : 'male') : '',
-            "user_email" => $this->getUser()->getEmailCanonical(),
-            "countryOfResidence" => $userMetadata['residenceCountry'] ?? '',
-            "nationality" => $userMetadata['nationalityCountry'] ?? '',
-            "mpAccount" => $userMetadata['mp_user_id_sandbox'] ?? '',
-            "birthday" => $userMetadata['bdaytime'] ?? '',
-            "user_address_1" => $userMetadata['numeroNomRue_domicile'] ?? '',
-            "user_country" => $userMetadata['pays_domicile'] ?? '',
-            "user_postcode" => $userMetadata['codePostal_domicile'] ?? '',
-            "user_city" => $userMetadata['ville_domicile'] ?? '',
-            "region" => $userMetadata['region_domicile'] ?? '',
-            "region_domicile" => $userMetadata['region_domicile'] ?? '',
-            "user_address_1_livraison" => $userMetadata['numeroNomRue_livraison'] ?? '',
-            "user_country_livraison" => $userMetadata['pays_livraison'] ?? '',
-            "user_postcode_livraison" => $userMetadata['codePostal_livraison'] ?? '',
-            "user_city_livraison" => $userMetadata['ville_livraison'] ?? '',
-            "region_livraison" => $userMetadata['region_livraison'] ?? '',
-            "siret" => $userMetadata['siret'] ?? '',
-            "tva" => $userMetadata['tva'] ?? '',
-            "compagny_name" => $userMetadata['billing_company'] ?? '',
-            "billing_company" => $userMetadata['billing_company'] ?? '',
-            "billing_address_1" => $userMetadata['billing_address_1'] ?? '',
-            "billing_country" => $userMetadata['billing_country'] ?? '',
-            "billing_postcode" => $userMetadata['billing_postcode'] ?? '',
-            "billing_state" => $userMetadata['billing_state'] ?? '',
-            "billing_city" => $userMetadata['billing_city'] ?? '',
-            "billing_phone" => $userMetadata['billing_phone'] ?? '',
-            "billing_email" => $userMetadata['billing_email'] ?? '',
-            "nom_commercial" => $userMetadata['nom_commercial'] ?? '',
-            "vendor_account_type" => $userMetadata['vendor_account_type'] ?? '',
-            "vendor_account_name" => $userMetadata['vendor_account_name'] ?? '',
-            "vendor_account_address1" => $userMetadata['vendor_account_address1'] ?? '',
-            "vendor_account_city" => $userMetadata['vendor_account_city'] ?? '',
-            "vendor_account_postcode" => $userMetadata['vendor_account_postcode'] ?? '',
-            "vendor_account_country" => $userMetadata['vendor_account_country'] ?? '',
-            "vendor_account_region" => $userMetadata['vendor_account_region'] ?? '',
-        ];
-
-        if (empty($data["billing_email"])) {
-            $data["billing_email"] = $data["user_email"];
-        }
-
-        return $data;
-    }
 }
