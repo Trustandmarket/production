@@ -26,13 +26,6 @@ class ProfileMediaController extends AbstractController
         $this->em = $em;
     }
 
-    public function trierTableau($tabeauVideos)
-    {
-        $tab = array_unique($tabeauVideos);
-        $tab = array_filter($tab);
-        return $tab;
-    }
-
     /**
      * Update portfolio datas
      * @Route("/{_locale}/profil-utilisateur/portfolio", name="portfolio")
