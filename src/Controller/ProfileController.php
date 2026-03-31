@@ -67,7 +67,7 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/profil-utilisateur/details/{id}", name="detailsProfessionnel", requirements={"_locale": "fr"})
+     * Lot 1 moved to ProfilePublicController.
      * @param Request $request
      * @return Response
      */
@@ -782,7 +782,7 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @Route("/profil-utilisateur/{_locale}/sous_categorie/{id}", name="liste_sous_categorie")
+     * Lot 1 moved to ProfileReferentialController.
      * @param Request $request
      * @return Response
      */
@@ -1227,7 +1227,7 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/profil-utilisateur/cancelReservation/{id}", name="cancelledReservationAnnounce")
+     * Lot 1 moved to ProfileReservationController.
      * @param Request $request
      * @return Response
      */
@@ -3012,7 +3012,7 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/profil-utilisateur/reservations", name="reservations",methods={"GET"})
+     * Lot 1 moved to ProfileReservationController.
      */
     public function reservations()
     {
