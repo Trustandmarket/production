@@ -149,19 +149,6 @@
                                             <label for="numeroNomRue">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-numero-rue'|trans }}
                                                 *</label>
                                         </div>
-                                        <div class="md-form">
-                                            <input type="text" id="codePostal" name="codePostal" class="form-control"
-                                                   required value="{{ codePostal }}">
-                                            <label for="codePostal">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-code-postal'|trans }}
-                                                *</label>
-
-                                        </div>
-                                        <div class="md-form">
-                                            <input type="text" id="ville" name="ville" class="form-control" required
-                                                   value="{{ ville }}">
-                                            <label for="ville">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-ville'|trans }}
-                                                *</label>
-                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="md-form">
@@ -180,6 +167,18 @@
                                             <input type="email" id="email" name="email" class="form-control" required
                                                    value="{{ email }}">
                                             <label for="email">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-email'|trans }}
+                                                *</label>
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="text" id="codePostal" name="codePostal" class="form-control"
+                                                   required value="{{ codePostal }}">
+                                            <label for="codePostal">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-code-postal'|trans }}
+                                                *</label>
+                                        </div>
+                                        <div class="md-form">
+                                            <input type="text" id="ville" name="ville" class="form-control" required
+                                                   value="{{ ville }}">
+                                            <label for="ville">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-ville'|trans }}
                                                 *</label>
                                         </div>
                                         {# Gestion des fichiers pour les Auto Entrepreneur #}
