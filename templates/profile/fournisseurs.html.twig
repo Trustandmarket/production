@@ -181,6 +181,12 @@
                                             <label for="ville">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-ville'|trans }}
                                                 *</label>
                                         </div>
+                                        <div class="text-right" style="margin-top: 0.15rem;">
+                                            <button id="enregProfile2" class="btn btn-md btn-success p-3"
+                                                    type="submit">
+                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-bouton-confirmer'|trans }}
+                                            </button>
+                                        </div>
                                         {# Gestion des fichiers pour les Auto Entrepreneur #}
                                         {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
                                             <p class="mt-2 mb-3 guide">
@@ -280,12 +286,6 @@
 													</span>
                                             </p>
                                         {% endif %}
-                                    <div class="col-md-12 text-right" style="margin-top: 0.15rem;">
-                                        <button id="enregProfile2" class="btn btn-md btn-success p-3"
-                                                type="submit">
-                                            {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-bouton-confirmer'|trans }}
-                                        </button>
-                                    </div>
                                 </div>
                             </form>
                             {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
