@@ -200,6 +200,7 @@
                                                         {% endif %}
                                                         {% if identite|first.Status == "REFUSED" %}
                                                             {{ 'profil-utilisateur.status.validation_refusee'|trans }}
+                                                        {% endif %}
                                                     {% endif %}
 												</span><br>
                                                 <span>
@@ -279,6 +280,7 @@
 													</span>
                                             </p>
                                         {% endif %}
+                                </div>
                                 </div>
                             {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
                                 <div class="mt-4 pt-4 border-top">
