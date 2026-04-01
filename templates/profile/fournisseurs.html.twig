@@ -182,8 +182,6 @@
                                             <label for="email">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-email'|trans }}
                                                 *</label>
                                         </div>
-                                        <strong class="bg-warning guide">Vous devez télécharger les documents suivants
-                                            pour effectuer les vérifications de conformité</strong>
                                         {# Gestion des fichiers pour les Auto Entrepreneur #}
                                         {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
                                             <p class="mt-2 mb-3 guide">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-identite'|trans }}
@@ -222,25 +220,8 @@
                                                             Pas encore envoyé
                                                         {% endif %}
                                                     {% endif %}
-												</span><br>
-                                            <div class="md-form">
-                                                <select id="doc" name="doc" class="browser-default custom-select ">
-                                                    <option value="identite">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-identite'|trans }}</option>
-                                                    <option value="enregistrement">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-enregistrement'|trans }}</option>
-                                                </select>
-                                            </div>
-                                            <strong>
-                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-envoyer-document'|trans }}
-                                            </strong>
-                                            <div class="custom-file mb-3">
-                                                <input type="file"
-                                                       accept="image/png,image/jpeg,image/jpeg,.pdf,image/gif"
-                                                       class="custom-file-input" name="fileDoc" id="customFileLangg"
-                                                       lang="{{ app.request.getLocale() }}">
-                                                <label class="custom-file-label" for="customFileLangg">
-                                                    {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-selectionner-fichiers'|trans }}
-                                                </label>
-                                            </div>
+												</span>
+                                            </p>
                                         {% endif %}
                                         {#  Fin gestion pour Auto_Entrepreneur #}
 
@@ -306,54 +287,10 @@
                                                                 Pas encore envoyé
                                                             {% endif %}
                                                         {% endif %}
-													</span><br>
-                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-shareholder'|trans }}
-                                                -
-                                                <span>
-														{% if shareholder is not null and shareholder|length > 0 %}
-                                                            {% if shareholder|first.Status == "VALIDATION_ASKED" or shareholder|first.Status == "CREATED" %}
-                                                                {{ 'profil-utilisateur.status.validation_demandee'|trans }}
-                                                            {% endif %}
-                                                            {% if shareholder|first.Status == "VALIDATED" %}
-                                                                {{ 'profil-utilisateur.status.valide'|trans }}
-                                                            {% endif %}
-                                                            {% if shareholder|first.Status == "REFUSED" %}
-                                                                {{ 'profil-utilisateur.status.validation_refusee'|trans }}
-                                                            {% endif %}
-                                                        {% else %}
-                                                            {% if shareholder == null %}
-                                                            {% else %}
-                                                                Pas encore envoyé
-                                                            {% endif %}
-                                                        {% endif %}
 													</span>
                                             </p>
-                                            {#  {{dump(kbis)}}  {{dump(shareholder)}} #}
-                                            <div class="md-form">
-                                                <select id="doc" name="doc" class="browser-default custom-select ">
-                                                    <option value="identite"
-                                                            selected>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-identite'|trans }}</option>
-                                                    <option value="enregistrement"
-                                                            selected>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-enregistrement'|trans }}</option>
-                                                    <option value="statuts"
-                                                            selected>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-statut'|trans }}</option>
-                                                    <option value="shareholder"
-                                                            selected>{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-shareholder'|trans }}</option>
-                                                </select>
-                                            </div>
-                                            <strong>
-                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-envoyer-document'|trans }}
-                                            </strong>
-                                            <div class="custom-file mb-3">
-                                                <input type="file" class="custom-file-input" name="fileDoc"
-                                                       id="customFileLangg" lang="{{ app.request.getLocale() }}">
-                                                <label class="custom-file-label" for="customFileLangg">
-                                                    {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-selectionner-fichiers'|trans }}
-                                                </label>
-                                            </div>
-                                        {% endif %}
-                                        {#  Fin gestion pour Societe #}
-                                        <button id="enregProfile2" class="btn btn-md btn-success float-right p-3"
+                                    <div class="col-md-12 text-right mt-3">
+                                        <button id="enregProfile2" class="btn btn-md btn-success p-3"
                                                 type="submit">
                                             {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-bouton-confirmer'|trans }}
                                         </button>
