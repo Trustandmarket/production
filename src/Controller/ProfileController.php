@@ -14,7 +14,7 @@ use App\Entity\{Abonnement,
     WpUsermeta,
     WpTermRelationships
 };
-use App\Service\{Payment, Panier, ProfileCompletionCalculator, ServiceManager, ToolsMeta};
+use App\Service\{AvatarManager, Payment, Panier, ProfileCompletionCalculator, ServiceManager, ToolsMeta};
 use App\Service\DataAccessLayer\Annonces;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,6 +43,7 @@ class ProfileController extends AbstractController
     private $requestStack;
     private $em;
     private $profileCompletionCalculator;
+    private $avatarManager;
 
     public function __construct(
         ServiceManager $service_manager,
@@ -52,6 +53,7 @@ class ProfileController extends AbstractController
         Payment $payment,
         Panier $panier,
         ProfileCompletionCalculator $profileCompletionCalculator,
+        AvatarManager $avatarManager,
         EntityManagerInterface $em
     )
     {
@@ -62,6 +64,7 @@ class ProfileController extends AbstractController
         $this->payment = $payment;
         $this->panier = $panier;
         $this->profileCompletionCalculator = $profileCompletionCalculator;
+        $this->avatarManager = $avatarManager;
         $this->em = $em;
         $this->local = $_SERVER['APP_FILES_LOCAL_URL'];
     }
@@ -415,27 +418,9 @@ class ProfileController extends AbstractController
         }
 
         // Avatar
-        $avatarUrl = null;
-        if ($request->get('crop_image')) {
-            $image_array_1 = explode(";", $request->get('crop_image'));
-            $image_array_2 = explode(",", $image_array_1[1]);
-            $avatarUrl = base64_decode($image_array_2[1]);
-            $base_name = time() . '.png';
-            file_put_contents($this->getParameter('avatar_directory') . '/' . $base_name, $avatarUrl);
-            $ids = '';
-            if ($avatarUrl != '' && $avatarUrl) {
-                $avatars = $this->service_manager->readUserMeta($userId, 'basic_user_avatar');
-                if ($avatars && $avatars->getMetaValue()) {
-                    $img = @unserialize($avatars->getMetaValue());
-                    $img[sizeof($img)] = $this->local . '/avatars/' . $base_name;
-                    $ids = @serialize($img);
-                } else {
-                    $img = [$this->local . '/avatars/' . $base_name];
-                    $ids = @serialize($img);
-                }
-                $this->service_manager->updateUserMeta($userId, 'basic_user_avatar', $ids);
-                $this->requestStack->getSession()->set('avatar', $this->local . '/avatars/' . $base_name);
-            }
+        $avatarUrl = $this->avatarManager->saveCroppedAvatar($userId, $request->get('crop_image'));
+        if ($avatarUrl) {
+            $this->requestStack->getSession()->set('avatar', $avatarUrl);
         }
         //DESCRIPTION
         $this->service_manager->updateUserMeta($userId, 'description', trim($request->get('description')));
