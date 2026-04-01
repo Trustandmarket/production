@@ -184,8 +184,7 @@
                                         </div>
                                         {# Gestion des fichiers pour les Auto Entrepreneur #}
                                         {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
-                                            <p class="mt-2 mb-3 guide">{{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-identite'|trans }}
-                                                -
+                                            <p class="mt-2 mb-3 guide">
                                                 <span>
 													{% if identite is not null and identite|length > 0 %}
                                                         {% if identite|first.Status == "VALIDATION_ASKED" or identite|first.Status == "CREATED" %}
@@ -201,8 +200,6 @@
                                                         Pas encore envoyé
                                                     {% endif %}
 												</span><br>
-                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-enregistrement'|trans }}
-                                                -
                                                 <span>
 													{% if enregistrement is not null and enregistrement|length > 0 %}
                                                         {% if enregistrement|first.Status == "VALIDATION_ASKED" or enregistrement|first.Status == "CREATED" %}
@@ -228,8 +225,6 @@
                                         {# Gestion des fichiers pour les Societe #}
                                         {% if app.user.roles.0 == "ROLE_SOCIETE" %}
                                             <p class="mt-2 mb-3 guide">
-                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-identite'|trans }}
-                                                -
                                                 <span>
 														{% if identite is not null and identite|length > 0 %}
                                                             {% if identite|first.Status == "VALIDATION_ASKED" or identite|first.Status == "CREATED" %}
@@ -248,8 +243,6 @@
                                                             {% endif %}
                                                         {% endif %}
 													</span><br>
-                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-preuve-enregistrement'|trans }}
-                                                -
                                                 <span>
 														{% if enregistrement is not null and enregistrement|length > 0 %}
                                                             {% if enregistrement|first.Status == "VALIDATION_ASKED" or enregistrement|first.Status == "CREATED" %}
@@ -268,8 +261,6 @@
                                                             {% endif %}
                                                         {% endif %}
 													</span><br>
-                                                {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-statut'|trans }}
-                                                -
                                                 <span>
 														{% if statuts is not null and statuts|length > 0 %}
                                                             {% if statuts|first.Status == "VALIDATION_ASKED" or statuts|first.Status == "CREATED" %}
