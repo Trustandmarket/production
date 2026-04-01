@@ -541,7 +541,7 @@ profil-utilisateur:
       formulaire-fournisseurs-pays: "Choice of countries ...",
       formulaire-fournisseurs-region: "Account holder's region",
       formulaire-fournisseurs-bouton-enregistrer: Save,
-      formulaire-details-facture-titre: "Detail of your invoice",
+      formulaire-details-facture-titre: "Your company information",
       formulaire-details-facture-prenom: "first name",
       formulaire-details-facture-nom: "last name",
       formulaire-details-facture-nom-entreprise: "Company Name",
