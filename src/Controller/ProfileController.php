@@ -418,7 +418,10 @@ class ProfileController extends AbstractController
         }
 
         // Avatar
-        $avatarUrl = $this->avatarManager->saveCroppedAvatar($userId, $request->get('crop_image'));
+        $avatarUrl = $this->avatarManager->saveUploadedAvatar($userId, $request->files->get('avatar'));
+        if (!$avatarUrl) {
+            $avatarUrl = $this->avatarManager->saveCroppedAvatar($userId, $request->get('crop_image'));
+        }
         if ($avatarUrl) {
             $this->requestStack->getSession()->set('avatar', $avatarUrl);
         }

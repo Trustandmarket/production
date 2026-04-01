@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class AvatarManager
@@ -33,6 +34,36 @@ class AvatarManager
         }
 
         $sourceImage = imagecreatefromstring($decodedImage);
+        if ($sourceImage === false) {
+            return null;
+        }
+
+        $destinationDirectory = rtrim((string) $this->parameterBag->get('avatar_directory'), '/\\');
+
+        if (!is_dir($destinationDirectory)) {
+            mkdir($destinationDirectory, 0777, true);
+        }
+
+        [$fileName, $saved] = $this->saveResizedAvatar($userId, $sourceImage, $destinationDirectory);
+        imagedestroy($sourceImage);
+
+        if (!$saved || !$fileName) {
+            return null;
+        }
+
+        $avatarUrl = $this->local . '/avatars/' . $fileName;
+        $this->storeAvatarMeta($userId, $avatarUrl);
+
+        return $avatarUrl;
+    }
+
+    public function saveUploadedAvatar(int $userId, ?UploadedFile $uploadedFile): ?string
+    {
+        if (!$uploadedFile) {
+            return null;
+        }
+
+        $sourceImage = $this->createImageFromUploadedFile($uploadedFile);
         if ($sourceImage === false) {
             return null;
         }
@@ -93,6 +124,26 @@ class AvatarManager
         imagefilledrectangle($image, 0, 0, self::TARGET_SIZE, self::TARGET_SIZE, $background);
 
         return $image;
+    }
+
+    private function createImageFromUploadedFile(UploadedFile $uploadedFile)
+    {
+        $mimeType = (string) $uploadedFile->getMimeType();
+        $pathname = $uploadedFile->getPathname();
+
+        if (in_array($mimeType, ['image/jpeg', 'image/jpg'], true)) {
+            return imagecreatefromjpeg($pathname);
+        }
+
+        if ($mimeType === 'image/png') {
+            return imagecreatefrompng($pathname);
+        }
+
+        if ($mimeType === 'image/webp' && function_exists('imagecreatefromwebp')) {
+            return imagecreatefromwebp($pathname);
+        }
+
+        return false;
     }
 
     private function saveResizedAvatar(int $userId, $sourceImage, string $destinationDirectory): array

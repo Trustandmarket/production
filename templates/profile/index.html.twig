@@ -34,8 +34,6 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
     <!-- Custom css for camroll -->
     <link href="{{ asset('assets/css/camroll/camroll_slider.css') }}" rel="stylesheet" type="text/css">
-    <!-- Crop css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" integrity="sha512-cyzxRvewl+FOKTtpBzYjW6x6IAYUCZy3sGP40hn+DQkqeluGRCax7qztK2ImL64SA+C7kVWdLI6wvdlStawhyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- owl carousel css -->
     <link rel="stylesheet" type="text/css"
           href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
@@ -581,7 +579,7 @@
                                         <small>{{ 'profil-utilisateur.formulaire-profil.ajouter-photo-profil'|trans }}</small>
                                     </label>
                                     <input type="file" class="custom-file-input is-valid" id="imageUpload" name="avatar"
-                                           lang="{{ app.request.getLocale() }}" accept="image/png,image/jpeg">
+                                           lang="{{ app.request.getLocale() }}" accept="image/png,image/jpeg,image/webp">
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -590,7 +588,6 @@
                                            value="{{ last_name }}">
                                     <label for="last_name">{{ 'profil-utilisateur.formulaire-profil.nom'|trans }}*</label>
                                 </div>
-                                <input type="text" hidden value="" id="crop_image" name="crop_image">
                                 <div class="md-form">
                                     <input type="text" id="first_name" required name="first_name" class="form-control"
                                            value="{{ first_name }}">
@@ -996,7 +993,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 
     <!-- Crop cdn -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" integrity="sha512-6lplKUSl86rUVprDIjiW8DuOniNX8UDoRATqZSds/7t6zCQZfaCe3e5zcGaQwxa8Kpn5RTM9Fvl3X2lLV4grPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- cdnjs for lazy load -->
     <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
@@ -1356,65 +1352,21 @@
                 $("[for=numeroNomRue_livraison]").addClass("active");
             });
 
-            let $modal = $('#modal');
-            let image = document.getElementById('sample_image');
-            let crop_image = "";
-            let cropper;
-
             document.getElementById('imageUpload').addEventListener('change', function (event) {
                 let fileInput = event.target;
                 let file = fileInput.files[0];
-                let files = event.target.files;
                 let message_size = '';
                 if (fileInput.files.length !== 0 && file.size > 1048576) {
                     fileInput.value = "";
                     message_size = "{{ 'systeme.requetes.taille_fichier_avatar'|trans }}";
                     toastr.warning(message_size);
-                }else if(fileInput.files.length !== 0 && file.size < 1048576){
-                    //Handle crop
-                    let done = function(url){
-                        image.src = url;
-                        $modal.modal('show');
-                    };
+                } else if (fileInput.files.length !== 0 && file.size < 1048576) {
                     const reader = new FileReader();
-                    reader.onload = function(event)
-                    {
-                        done(reader.result);
+                    reader.onload = function (loadEvent) {
+                        $('#blah').html('<img class="img-fluid m-auto avatar-preview" id="avatar-preview" style="max-height:400px" width="100%" src="' + loadEvent.target.result + '" >');
                     };
-                    reader.readAsDataURL(files[0]);
+                    reader.readAsDataURL(file);
                 }
-            });
-
-            $modal.on('shown.bs.modal', function() {
-                let cropper = new Cropper(image, {
-                    aspectRatio: 1,
-                    viewMode: 3,
-                    preview:'.preview'
-                });
-            }).on('hidden.bs.modal', function(){
-                cropper.destroy();
-                cropper = null;
-                $('#imageUpload').val('');
-            });
-
-            $('#crop').click(function(){
-                canvas = cropper.getCroppedCanvas({
-                    width:400,
-                    height:400
-                });
-
-                canvas.toBlob(function(blob){
-                    url = URL.createObjectURL(blob);
-                    let reader = new FileReader();
-                    reader.readAsDataURL(blob);
-                    reader.onloadend = function(){
-                        let base64data = reader.result;
-
-                        $('#blah').html('<img class="img-fluid m-auto avatar-preview" id="avatar-preview" style="max-height:400px" width="100%" src="' + url  + '" >');
-                        crop_image = base64data;
-                        $modal.modal('hide');
-                    };
-                });
             });
 
             // input tags
@@ -1422,7 +1374,6 @@
 
             $('#updateProfile').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
                 e.preventDefault();
-                $('#crop_image').val(crop_image);
                 $('#telephone').val($('#telephone').val().replace(/\s/g, ''));
 
                 $('#send').addClass('running');
