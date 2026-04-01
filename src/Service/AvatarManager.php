@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class AvatarManager
 {
+    private const MAX_FILE_SIZE = 1048576;
     private const TARGET_SIZE = 300;
     private const WEBP_QUALITY = 85;
     private const JPG_QUALITY = 85;
@@ -60,6 +61,10 @@ class AvatarManager
     public function saveUploadedAvatar(int $userId, ?UploadedFile $uploadedFile): ?string
     {
         if (!$uploadedFile) {
+            return null;
+        }
+
+        if ($uploadedFile->getSize() !== null && $uploadedFile->getSize() > self::MAX_FILE_SIZE) {
             return null;
         }
 
