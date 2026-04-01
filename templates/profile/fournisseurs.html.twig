@@ -219,7 +219,6 @@
                                                     {% else %}
                                                         {% if enregistrement == null %}
                                                         {% else %}
-                                                            Pas encore envoyé
                                                         {% endif %}
                                                     {% endif %}
 												</span>
@@ -244,7 +243,6 @@
                                                         {% else %}
                                                             {% if identite == null %}
                                                             {% else %}
-                                                                Pas encore envoyé
                                                             {% endif %}
                                                         {% endif %}
 													</span><br>
@@ -262,7 +260,6 @@
                                                         {% else %}
                                                             {% if enregistrement == null %}
                                                             {% else %}
-                                                                Pas encore envoyé
                                                             {% endif %}
                                                         {% endif %}
 													</span><br>
@@ -280,7 +277,6 @@
                                                         {% else %}
                                                             {% if statuts == null %}
                                                             {% else %}
-                                                                Pas encore envoyé
                                                             {% endif %}
                                                         {% endif %}
 													</span>
@@ -289,7 +285,10 @@
                                 </div>
                             </form>
                             {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
-                                <div class="mt-4">
+                                <div class="my-4">
+                                    <hr class="my-0">
+                                </div>
+                                <div>
                                     <div class="border p-4 bg-white professional-switch-card">
                                         <div class="mb-3">
                                             <h3 class="h5 mb-2">Passage vers un profil societe</h3>
