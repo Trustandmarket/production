@@ -119,7 +119,7 @@ home:
     pied-de-page: { titre: 'Inscrivez-vous à notre newsletter Trust & Market', blog: Blog, a-propos: 'A propos', aide: Aide, nos-conditions: 'Nos Conditions', retour-experience: 'Retour d''experience', formulaire-champ-prenom: 'Votre prenom', formulaire-champ-email: 'Votre email', formulaire-boutton-valider: ENVOYER, contrat: 'tous droits réservés', subscribe-newsletter: 'Inscription Newsletter' }
     bouton: { studio-video: 'Studio Vidéo', evenementiel: Evènementiels, realisation-video: 'Réalisation vidéo', studio-photo: 'Studio photo', chorale: Chorale, groupe-de-musique: 'Groupes de musique', production-musicale: 'Production Musicale', musicien: Musicien, photographe: Photographe, studio-enregistrement: 'Studio musique' }
     liens: { studio-enregistrement: 'Studio musique', mixage: 'Mixage et mastering audio', groupe-de-musique: 'Groupe de musique', chorale: Chorale, sonorisation: Sonorisation, dj: Dj, video-mariage: 'Vidéo mariage', shooting-photo: 'Shooting photo', photographe: photographe, videaste: vidéaste }
-    texte: { slogan: 'Offres de services pour la production musicale.' }
+    texte: { slogan: '' }
     formulaire-champs: { titre-formulaire: 'Services, produits et accessoires dédiés à la musique et à l''évènementiel.', type-de-prestation: 'Type de prestation', services-proposes: 'Services proposés', code-postal-ville: 'Code postal et/ou ville', bouton-recherche: RECHERCHER, prestation: Prestations, besoin: Besoins, recherche-sous-categories: 'Recherche des sous catégories...' }
 projet:
     titre: 'Décrivez-nous votre projet'
