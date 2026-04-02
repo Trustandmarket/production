@@ -57,6 +57,15 @@
             zoom: 0.7;
         }
 
+        .phone-field-label {
+            position: static !important;
+            display: block !important;
+            margin-bottom: 0.5rem !important;
+            transform: none !important;
+            color: #757575 !important;
+            pointer-events: auto !important;
+        }
+
 
         @media (max-width: 575.98px) {
             main, .container {
@@ -158,7 +167,7 @@
                                                 *</label>
                                         </div>
                                         <div class="md-form">
-                                            <label for="tel" class="active d-block mb-2">{{ 'profil-utilisateur.formulaire-profil.telephone'|trans }}</label>
+                                            <label for="telephone" class="phone-field-label active">{{ 'profil-utilisateur.formulaire-profil.telephone'|trans }}</label>
                                             <input type="text" id="telephone" name="telephone" class="form-control"
                                                    value="{{ telephone }}">
                                         </div>
