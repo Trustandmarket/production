@@ -186,99 +186,6 @@
                                                 {{ 'profil-utilisateur.fournisseurs.formulaire-details-facture-bouton-confirmer'|trans }}
                                             </button>
                                         </div>
-                                        {# Gestion des fichiers pour les Auto Entrepreneur #}
-                                        {% if app.user.roles.0 == "ROLE_AUTO_ENTREPRENEUR" %}
-                                            <p class="mt-2 mb-3 guide">
-                                                <span>
-													{% if identite is not null and identite|length > 0 %}
-                                                        {% if identite|first.Status == "VALIDATION_ASKED" or identite|first.Status == "CREATED" %}
-                                                            {{ 'profil-utilisateur.status.validation_demandee'|trans }}
-                                                        {% endif %}
-                                                        {% if identite|first.Status == "VALIDATED" %}
-                                                            {{ 'profil-utilisateur.status.valide'|trans }}
-                                                        {% endif %}
-                                                        {% if identite|first.Status == "REFUSED" %}
-                                                            {{ 'profil-utilisateur.status.validation_refusee'|trans }}
-                                                        {% endif %}
-                                                    {% endif %}
-												</span><br>
-                                                <span>
-													{% if enregistrement is not null and enregistrement|length > 0 %}
-                                                        {% if enregistrement|first.Status == "VALIDATION_ASKED" or enregistrement|first.Status == "CREATED" %}
-                                                            {{ 'profil-utilisateur.status.validation_demandee'|trans }}
-                                                        {% endif %}
-                                                        {% if enregistrement|first.Status == "VALIDATED" %}
-                                                            {{ 'profil-utilisateur.status.valide'|trans }}
-                                                        {% endif %}
-                                                        {% if enregistrement|first.Status == "REFUSED" %}
-                                                            {{ 'profil-utilisateur.status.validation_refusee'|trans }}
-                                                        {% endif %}
-                                                    {% else %}
-                                                        {% if enregistrement == null %}
-                                                        {% else %}
-                                                        {% endif %}
-                                                    {% endif %}
-												</span>
-                                            </p>
-                                        {% endif %}
-                                        {#  Fin gestion pour Auto_Entrepreneur #}
-
-                                        {# Gestion des fichiers pour les Societe #}
-                                        {% if app.user.roles.0 == "ROLE_SOCIETE" %}
-                                            <p class="mt-2 mb-3 guide">
-                                                <span>
-														{% if identite is not null and identite|length > 0 %}
-                                                            {% if identite|first.Status == "VALIDATION_ASKED" or identite|first.Status == "CREATED" %}
-                                                                {{ 'profil-utilisateur.status.validation_demandee'|trans }}
-                                                            {% endif %}
-                                                            {% if identite|first.Status == "VALIDATED" %}
-                                                                {{ 'profil-utilisateur.status.valide'|trans }}
-                                                            {% endif %}
-                                                            {% if identite|first.Status == "REFUSED" %}
-                                                                {{ 'profil-utilisateur.status.validation_refusee'|trans }}
-                                                            {% endif %}
-                                                        {% else %}
-                                                            {% if identite == null %}
-                                                            {% else %}
-                                                            {% endif %}
-                                                        {% endif %}
-													</span><br>
-                                                <span>
-														{% if enregistrement is not null and enregistrement|length > 0 %}
-                                                            {% if enregistrement|first.Status == "VALIDATION_ASKED" or enregistrement|first.Status == "CREATED" %}
-                                                                {{ 'profil-utilisateur.status.validation_demandee'|trans }}
-                                                            {% endif %}
-                                                            {% if enregistrement|first.Status == "VALIDATED" %}
-                                                                {{ 'profil-utilisateur.status.valide'|trans }}
-                                                            {% endif %}
-                                                            {% if enregistrement|first.Status == "REFUSED" %}
-                                                                {{ 'profil-utilisateur.status.validation_refusee'|trans }}
-                                                            {% endif %}
-                                                        {% else %}
-                                                            {% if enregistrement == null %}
-                                                            {% else %}
-                                                            {% endif %}
-                                                        {% endif %}
-													</span><br>
-                                                <span>
-														{% if statuts is not null and statuts|length > 0 %}
-                                                            {% if statuts|first.Status == "VALIDATION_ASKED" or statuts|first.Status == "CREATED" %}
-                                                                {{ 'profil-utilisateur.status.validation_demandee'|trans }}
-                                                            {% endif %}
-                                                            {% if statuts|first.Status == "VALIDATED" %}
-                                                                {{ 'profil-utilisateur.status.valide'|trans }}
-                                                            {% endif %}
-                                                            {% if statuts|first.Status == "REFUSED" %}
-                                                                {{ 'profil-utilisateur.status.validation_refusee'|trans }}
-                                                            {% endif %}
-                                                        {% else %}
-                                                            {% if statuts == null %}
-                                                            {% else %}
-                                                            {% endif %}
-                                                        {% endif %}
-													</span>
-                                            </p>
-                                        {% endif %}
                                 </div>
                                 </div>
                             </form>
@@ -611,12 +518,12 @@
                         $("#etatComite").addClass("is-invalid");
                     }
                 });
-                // Modification des données bancaires de l'utilisateur
+                // Mise a jour des informations entreprise
 
-                $('#updateBillingProfileData').on('submit', function (e) { // On emp�che le navigateur de soumettre le formulaire
+                $('#updateBillingProfileData').on('submit', function (e) {
                     e.preventDefault();
-                    if ($('#prenom').val() != '') { // remove space in phone
-                        $('#telephone').val($('#telephone').val().replace(/\s/g, ''));
+                    if ($('#siret').val() != '') {
+                        $('#telephone').val($('#telephone').val().replace(/\\s/g, ''));
                         $('#enregProfile2').addClass('running');
                         toastr.info('{{ 'systeme.requetes.requete-en-cours'|trans }}');
                         let $form = $(this);
@@ -629,24 +536,17 @@
                             processData: false,
                             data: data,
                             success: function (response) {
-                                console.log(response)
                                 if (response.result == 1) {
-                                    if (response.stripeUserUpdate.error) {
-                                        let errorMsg = response.stripeUserUpdate.error.message;
-                                        toastr.clear();
-                                        toastr.error("Erreur Stripe : " + errorMsg);
-                                    } else {
-                                        toastr.clear();
-                                        toastr.success('{{ 'systeme.requetes.succes'|trans }}');
-                                        window.location = "";
-                                    }
-                                } else if (response.result == 0) {
+                                    toastr.clear();
+                                    toastr.success(response.message || '{{ 'systeme.requetes.succes'|trans }}');
+                                    window.location = "";
+                                } else {
                                     $('#enregProfile2').removeClass('running');
                                     toastr.clear();
                                     toastr.error('{{ 'systeme.requetes.erreur'|trans }}');
                                 }
                             },
-                            error: function (response) {
+                            error: function () {
                                 $('#enregProfile2').removeClass('running');
                                 toastr.clear();
                                 toastr.error('{{ 'systeme.requetes.erreur'|trans }}');

@@ -43,14 +43,6 @@ class ProfileProfessionalController extends AbstractController
             return $this->redirectToRoute('profile_fournisseursAbonne');
         }
 
-        $typeCompte = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'vendor_account_type');
-        $nomCompte = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'vendor_account_name');
-        $adresseDetenteur = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'vendor_account_address1');
-        $villeCompte = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'vendor_account_city');
-        $codePostaleCompte = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'vendor_account_postcode');
-        $paysCompte = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'vendor_account_country');
-        $regionCompte = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'vendor_account_region');
-
         $nomEntreprise = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_company');
         $pays = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_country');
         $numeroNomRue = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_address_1');
@@ -62,22 +54,9 @@ class ProfileProfessionalController extends AbstractController
         $siret = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'siret');
         $tva = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'tva');
 
-        $identite = null;
-        $enregistrement = null;
-        $statuts = null;
-        $shareholder = null;
-        $bankUserId = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'mp_user_id_sandbox');
-
         return $this->render('profile/fournisseurs.html.twig', [
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
-            'typeCompte' => $typeCompte,
-            'nomCompte' => $nomCompte,
-            'adresseDetenteur' => $adresseDetenteur,
-            'villeCompte' => $villeCompte,
-            'codePostaleCompte' => $codePostaleCompte,
-            'paysCompte' => $paysCompte,
-            'regionCompte' => $regionCompte,
             'siret' => $siret,
             'tva' => $tva,
             'nomEntreprise' => $nomEntreprise,
@@ -88,11 +67,6 @@ class ProfileProfessionalController extends AbstractController
             'etatComte' => $etatComte,
             'telephone' => $telephone,
             'email' => $email,
-            'identite' => $identite,
-            'enregistrement' => $enregistrement,
-            'statuts' => $statuts,
-            'shareholder' => $shareholder,
-            'bankUserId' => $bankUserId,
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'page_name' => 'Fournisseur de service'
@@ -193,64 +167,6 @@ class ProfileProfessionalController extends AbstractController
     }
 
     /**
-     * @Route("/profil-utilisateur/{_locale}/updateBankingProfileData", name="updateBankingProfileData")
-     * @param Request $request
-     * @return Response
-     */
-    public function updateBankingProfileData(Request $request)
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $userId = $this->getUser()->getId();
-        $mpAccount = $this->service_manager->getUserStringDataValue($userId, 'mp_user_id_sandbox');
-        $stripePersonAccount = $this->service_manager->getUserStringDataValue($userId, 'stripe_person_user');
-
-        $userType = '';
-        if (in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles())) {
-            $userType = 'ROLE_AUTO_ENTREPRENEUR';
-        }
-        if (in_array('ROLE_SOCIETE', $this->getUser()->getRoles())) {
-            $userType = 'ROLE_SOCIETE';
-        }
-        $prenom = $this->service_manager->getUserStringDataValue($userId, 'billing_first_name');
-        $nom = $this->service_manager->getUserStringDataValue($userId, 'billing_last_name');
-        $pays = $this->service_manager->getUserStringDataValue($userId, 'billing_country');
-        $user_nationality = $this->service_manager->getUserStringDataValue($userId, 'vendor_account_country');
-
-        if ($user_nationality == '') {
-            $user_nationality = $pays;
-        }
-        $email = $this->service_manager->getUserStringDataValue($userId, 'billing_email');
-        $birthday = $this->service_manager->getUserStringDataValue($userId, 'bdaytime');
-        if (empty($nom) || empty($prenom) || empty($pays) || empty($user_nationality)) {
-            return new JsonResponse([
-                'result' => 11,
-                'error' => 'Des informations nécessaires sont introuvables, mettez à jour votre profil.'
-            ]);
-        }
-
-        $data = $this->service_manager->getMangopayUserData($this->getUser()->getId(), $this->getUser()->getEmailCanonical());
-
-        $existingCards = null;
-        $card = null;
-        $this->service_manager->updateUserMeta($userId, 'vendor_account_type', $request->get('bank'));
-        $this->service_manager->updateUserMeta($userId, 'vendor_account_name', $request->get('accountHolder'));
-        $this->service_manager->updateUserMeta($userId, 'vendor_account_address1', $request->get('addressHolder'));
-        $this->service_manager->updateUserMeta($userId, 'vendor_account_city', $request->get('cityHolder'));
-        $this->service_manager->updateUserMeta($userId, 'vendor_account_postcode', $request->get('codePostalHolder'));
-        $this->service_manager->updateUserMeta($userId, 'vendor_account_country', $request->get('countryHolder'));
-        $this->service_manager->updateUserMeta($userId, 'vendor_account_region', $request->get('regionHolder'));
-
-        if ($request->get('bank') == 'IBAN') {
-            $userData = $this->service_manager->getMangopayUserData($this->getUser()->getId(), $this->getUser()->getEmailCanonical());
-            $accountNumber = $request->get('iban');
-            $detailsBic = $request->get('bic');
-        }
-        return new JsonResponse([
-            'result' => 1, 'existingCards' => $existingCards, 'card' => $card
-        ]);
-    }
-
-    /**
      * @Route("/{_locale}/profil-utilisateur/update/billing", name="updateBillingProfileData")
      * @param Request $request
      * @return RedirectResponse|Response
@@ -259,17 +175,7 @@ class ProfileProfessionalController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $userId = $this->getUser()->getId();
-        $stripeData = '';
-        $stripePersonData = '';
-        $accountToken = '';
-        $updateStripeData = '';
-        $userType = '';
-        if (in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles())) {
-            $userType = 'ROLE_AUTO_ENTREPRENEUR';
-        }
-        if (in_array('ROLE_SOCIETE', $this->getUser()->getRoles())) {
-            $userType = 'ROLE_SOCIETE';
-        }
+
         $this->service_manager->updateUserMeta($userId, 'tva', $request->get('tva'));
         $this->service_manager->updateUserMeta($userId, 'siret', $request->get('siret'));
         $this->service_manager->updateUserMeta($userId, 'billing_company', $request->get('nomEntreprise'));
@@ -280,27 +186,10 @@ class ProfileProfessionalController extends AbstractController
         $this->service_manager->updateUserMeta($userId, 'billing_state', trim($request->get('etatComte')));
         $this->service_manager->updateUserMeta($userId, 'billing_phone', $request->get('telephone'));
         $this->service_manager->updateUserMeta($userId, 'billing_email', $request->get('email'));
-        $user_nationality = $this->service_manager->getUserStringDataValue($userId, 'vendor_account_country');
-
-        $data = $this->service_manager->getMangopayUserData($this->getUser()->getId(), $this->getUser()->getEmailCanonical());
-
-        if ($request->get('doc') == 'identite' && !is_null($request->files->get('fileDoc'))) {
-        }
-        if ($request->get('doc') == 'enregistrement' && !is_null($request->files->get('fileDoc'))) {
-        }
-        if ($request->get('doc') == 'kbis' && !is_null($request->files->get('fileDoc'))) {
-        }
-        if ($request->get('doc') == 'statuts' && !is_null($request->files->get('fileDoc'))) {
-        }
-        if ($request->get('doc') == 'shareholder' && !is_null($request->files->get('fileDoc'))) {
-        }
 
         return new JsonResponse([
             'result' => 1,
-            'stripeUserUpdate' => $stripePersonData,
-            'datas' => $stripeData,
-            'token' => $accountToken,
-            'updateStripeData' => $updateStripeData
+            'message' => 'Informations mises a jour.'
         ]);
     }
 
