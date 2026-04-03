@@ -91,7 +91,7 @@
         <div class="alert alert-danger">{{ message }}</div>
     {% endfor %}
     {% for message in app.session.flashbag.get('register_activity_error') %}
-        <div class="alert alert-danger">{{ message ?: 'inscription.activite-principale-erreur'|trans }}</div>
+        <div class="alert alert-danger">{{ message is not empty ? message : ('inscription.activite-principale-erreur'|trans) }}</div>
     {% endfor %}
     <div class="form-label-group">
         {{ form_widget(registrationForm.first_name , {'attr':{'class':'form-control input-custom','type':'text', 'id':'inputPrenom','name':'first_name','required':'required', 'autofocus':'autofocus'}}) }}
