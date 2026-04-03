@@ -52,36 +52,42 @@ class RegistrationController extends AbstractController
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
+        $selectedRole = $request->get('role_user');
+        $selectedActivity = $request->get('activite');
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_REGISTER');
-            if ($recaptcha['response']) {
-                $user->setPassword(
-                    $userPasswordHasher->hashPassword(
-                        $user,
-                        $form->get('plainPassword')->getData()
-                    )
-                );
-                $rolesArray = [$request->get('role_user')];
-                $user->setUserEmail($user->getEmailCanonical());
-                $user->setUsernameCanonical($user->getEmailCanonical());
-                $user->setUserActivationKey($request->get('registration_form')['_token']);
-                $user->setUserNicename($request->get('registration_form')['first_name']);
-                $user->setDisplayName($request->get('registration_form')['first_name'] . ' ' . $request->get('registration_form')['last_name']);
-                $user->setUserActivationKey($request->get('registration_form')['_token']);
-                $user->setDateNaissance($request->get('registration_form')['dateNaissance']);
-                $user->setRoles($rolesArray);
+            if (in_array($selectedRole, ['ROLE_AUTO_ENTREPRENEUR', 'ROLE_SOCIETE'], true) && empty(trim((string) $selectedActivity))) {
+                $this->addFlash('register_activity_error', '');
+            } else {
+                $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_REGISTER');
+                if ($recaptcha['response']) {
+                    $user->setPassword(
+                        $userPasswordHasher->hashPassword(
+                            $user,
+                            $form->get('plainPassword')->getData()
+                        )
+                    );
+                    $rolesArray = [$request->get('role_user')];
+                    $user->setUserEmail($user->getEmailCanonical());
+                    $user->setUsernameCanonical($user->getEmailCanonical());
+                    $user->setUserActivationKey($request->get('registration_form')['_token']);
+                    $user->setUserNicename($request->get('registration_form')['first_name']);
+                    $user->setDisplayName($request->get('registration_form')['first_name'] . ' ' . $request->get('registration_form')['last_name']);
+                    $user->setUserActivationKey($request->get('registration_form')['_token']);
+                    $user->setDateNaissance($request->get('registration_form')['dateNaissance']);
+                    $user->setRoles($rolesArray);
 
-                $entityManager->persist($user);
-                $entityManager->flush();
-                // Updates meta data
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    // Updates meta data
 
-                //Pour le first name
-                $meta = new WpUsermeta();
-                $meta->setUserId($user->getId());
-                $meta->setMetaKey('first_name');
-                $meta->setMetaValue($request->get('registration_form')['first_name']);
-                $entityManager->persist($meta);
-                $entityManager->flush();
+                    //Pour le first name
+                    $meta = new WpUsermeta();
+                    $meta->setUserId($user->getId());
+                    $meta->setMetaKey('first_name');
+                    $meta->setMetaValue($request->get('registration_form')['first_name']);
+                    $entityManager->persist($meta);
+                    $entityManager->flush();
 
                 $this->service_manager->updateUserMeta($user->getId(), 'nom_commercial', $request->get('registration_form')['first_name']);
 
@@ -108,6 +114,10 @@ class RegistrationController extends AbstractController
                 $meta->setMetaValue($request->get('residence'));
                 $entityManager->persist($meta);
                 $entityManager->flush();
+
+                if (in_array($selectedRole, ['ROLE_AUTO_ENTREPRENEUR', 'ROLE_SOCIETE'], true) && !empty(trim((string) $selectedActivity))) {
+                    $this->service_manager->updateUserMeta($user->getId(), 'activite_principale', trim((string) $selectedActivity));
+                }
 
                 //Date de naissance
                 $meta = new WpUsermeta();
@@ -221,9 +231,10 @@ class RegistrationController extends AbstractController
                 // Close cURL session
                 curl_close($ch);
 
-                return $this->redirectToRoute('app_registration_confirmation_email');
-            } else {
-                $this->addFlash('register_recaptcha_error', '');
+                    return $this->redirectToRoute('app_registration_confirmation_email');
+                } else {
+                    $this->addFlash('register_recaptcha_error', '');
+                }
             }
 
         }
@@ -231,6 +242,9 @@ class RegistrationController extends AbstractController
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
             'environnement' => $this->getParameter('environnement'),
+            'activities' => $this->service_manager->postCategorie1('product_activity'),
+            'selected_role' => $selectedRole,
+            'selected_activity' => $selectedActivity,
         ]);
     }
 

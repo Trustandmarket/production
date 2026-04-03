@@ -50,6 +50,8 @@ inscription:
     abonne: Abonn√©
     societe: Soci√©t√©
     auto-entrepreneur: Auto-Entrepreneur
+    activite-principale: 'Votre activitÈ principale'
+    activite-principale-erreur: 'Veuillez sÈlectionner votre activitÈ principale.'
     code-postal: 'Code postal, ville ou r√©gion'
     passe: 'Mot de passe'
     confirmation: 'Confirmation du mot de passe'
