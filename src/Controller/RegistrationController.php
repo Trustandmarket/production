@@ -57,7 +57,7 @@ class RegistrationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (in_array($selectedRole, ['ROLE_AUTO_ENTREPRENEUR', 'ROLE_SOCIETE'], true) && empty(trim((string) $selectedActivity))) {
-                $this->addFlash('register_activity_error', '');
+                $this->addFlash('register_activity_error', 'Veuillez sélectionner votre activité principale.');
             } else {
                 $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_REGISTER');
                 if ($recaptcha['response']) {

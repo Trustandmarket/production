@@ -51,8 +51,6 @@ inscription:
   abonne: Subscriber
   societe: Society
   auto-entrepreneur: "Self Entrepreuneur"
-  activite-principale: "Your main activity"
-  activite-principale-erreur: "Please select your main activity."
   code-postal: "Postal code, city or region"
   passe: Password
   confirmation: "Password Confirmation"
