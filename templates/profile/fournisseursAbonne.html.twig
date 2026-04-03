@@ -158,7 +158,8 @@
                 postal_code: '{{ codePostal|default('')|e('js') }}',
                 region: '{{ etatComte|default('')|e('js') }}',
                 compagny_number: '{{ siret|default('')|e('js') }}',
-                compagny_name: '{{ nomEntreprise|default('')|e('js') }}'
+                compagny_name: '{{ nomEntreprise|default('')|e('js') }}',
+                activite: '{{ current_activity_id|default('')|e('js') }}'
             };
 
             [].forEach.call(document.querySelectorAll('*'), function (el) {
@@ -182,6 +183,7 @@
                 $('#professional-switch-region').val(initialValues.region);
                 $('#professional-switch-compagny_number').val(initialValues.compagny_number);
                 $('#professional-switch-compagny_name').val(initialValues.compagny_name);
+                $('#professional-switch-activite').val(initialValues.activite);
                 $switchRole.val('');
                 $switchHelp.html(defaultHelpText);
                 $switchErrors.addClass('d-none').empty();
@@ -217,6 +219,7 @@
                     region: $('#professional-switch-region').val().trim(),
                     compagny_number: $('#professional-switch-compagny_number').val().trim(),
                     compagny_name: $('#professional-switch-compagny_name').val().trim(),
+                    activite: $('#professional-switch-activite').val(),
                     user_new_role: $switchRole.val()
                 };
 
@@ -225,7 +228,7 @@
                     return;
                 }
 
-                if (!payload.adresse || !payload.ville || !payload.pays || !payload.postal_code || !payload.region || !payload.compagny_number || !payload.compagny_name) {
+                if (!payload.adresse || !payload.ville || !payload.pays || !payload.postal_code || !payload.region || !payload.compagny_number || !payload.compagny_name || !payload.activite) {
                     $switchErrors.removeClass('d-none').text('Veuillez remplir les champs du formulaire.');
                     return;
                 }

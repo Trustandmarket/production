@@ -50,6 +50,18 @@
                 <input type="text" id="{{ switch_form_prefix }}-compagny_name" name="compagny_name" value="{{ nomEntreprise|default('') }}" class="form-control" placeholder="Denomination sociale" required>
             </div>
 
+            <div class="form-group">
+                <label for="{{ switch_form_prefix }}-activite">{{ 'profil-utilisateur.formulaire-profil.activite'|trans }} *</label>
+                <select id="{{ switch_form_prefix }}-activite" name="activite" class="form-control" required>
+                    <option value="">{{ 'profil-utilisateur.formulaire-profil.activite'|trans }}</option>
+                    {% for item in activities|default([]) %}
+                        <option value="{{ item.termId }}" {% if current_activity_id is defined and current_activity_id and item.termId == current_activity_id %}selected{% endif %}>
+                            {% if app.request.locale == 'en' %}{{ item.content }}{% else %}{{ item.name }}{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div id="{{ switch_form_prefix }}-errors" class="alert alert-danger d-none mb-3" role="alert"></div>
 
             <div class="d-flex justify-content-between align-items-center mt-4 professional-switch-actions">

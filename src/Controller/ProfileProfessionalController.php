@@ -42,6 +42,7 @@ class ProfileProfessionalController extends AbstractController
         if (in_array('ROLE_ABONNE', $this->getUser()->getRoles())) {
             return $this->redirectToRoute('profile_fournisseursAbonne');
         }
+        $currentActivityId = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'activite_principale');
 
         $nomEntreprise = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_company');
         $pays = $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_country');
@@ -67,6 +68,8 @@ class ProfileProfessionalController extends AbstractController
             'etatComte' => $etatComte,
             'telephone' => $telephone,
             'email' => $email,
+            'activities' => $this->service_manager->postCategorie1('product_activity'),
+            'current_activity_id' => $currentActivityId,
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'page_name' => 'Fournisseur de service'
@@ -92,6 +95,8 @@ class ProfileProfessionalController extends AbstractController
             'siret' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'siret'),
             'nomEntreprise' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_company'),
             'pays' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'billing_country'),
+            'activities' => $this->service_manager->postCategorie1('product_activity'),
+            'current_activity_id' => $this->service_manager->getUserStringDataValue($this->getUser()->getId(), 'activite_principale'),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'page_name' => 'Fournisseur de service'
@@ -125,6 +130,10 @@ class ProfileProfessionalController extends AbstractController
             $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_postcode', $parameters->postal_code);
             $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_city', $parameters->ville);
             $this->service_manager->updateUserMeta($this->getUser()->getId(), 'billing_state', trim($parameters->region));
+            if (empty(trim((string) ($parameters->activite ?? '')))) {
+                return new JsonResponse(['status' => 400, 'error' => 'Veuillez sélectionner votre activité principale.'], 400);
+            }
+            $this->service_manager->updateUserMeta($this->getUser()->getId(), 'activite_principale', trim((string) $parameters->activite));
 
             $user_new_role = $parameters->user_new_role;
             $user = $this->em->getRepository(User::class)->find($this->getUser()->getId());

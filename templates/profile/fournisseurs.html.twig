@@ -250,7 +250,8 @@
                     postal_code: '{{ codePostal|default('')|e('js') }}',
                     region: '{{ etatComte|default('')|e('js') }}',
                     compagny_number: '{{ siret|default('')|e('js') }}',
-                    compagny_name: '{{ nomEntreprise|default('')|e('js') }}'
+                    compagny_name: '{{ nomEntreprise|default('')|e('js') }}',
+                    activite: '{{ current_activity_id|default('')|e('js') }}'
                 };
                 [].forEach.call(document.querySelectorAll('*'), function (el) {
                     if (el.offsetWidth > docWidth) {
@@ -294,6 +295,7 @@
                     $('#company-switch-region').val(companySwitchInitialValues.region);
                     $('#company-switch-compagny_number').val(companySwitchInitialValues.compagny_number);
                     $('#company-switch-compagny_name').val(companySwitchInitialValues.compagny_name);
+                    $('#company-switch-activite').val(companySwitchInitialValues.activite);
                     $companySwitchRole.val('');
                     $companySwitchHelp.html('Completez ce formulaire pour passer a un profil <span class="professional-switch-role">professionnel</span>.');
                     $companySwitchErrors.addClass('d-none').empty();
@@ -329,6 +331,7 @@
                         region: $('#company-switch-region').val().trim(),
                         compagny_number: $('#company-switch-compagny_number').val().trim(),
                         compagny_name: $('#company-switch-compagny_name').val().trim(),
+                        activite: $('#company-switch-activite').val(),
                         user_new_role: $companySwitchRole.val()
                     };
 
@@ -337,7 +340,7 @@
                         return;
                     }
 
-                    if (!payload.adresse || !payload.ville || !payload.pays || !payload.postal_code || !payload.region || !payload.compagny_number || !payload.compagny_name) {
+                    if (!payload.adresse || !payload.ville || !payload.pays || !payload.postal_code || !payload.region || !payload.compagny_number || !payload.compagny_name || !payload.activite) {
                         $companySwitchErrors.removeClass('d-none').text('Veuillez remplir les champs du formulaire.');
                         return;
                     }
