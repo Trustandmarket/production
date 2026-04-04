@@ -106,7 +106,7 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('enabled', 'Compte')->setTemplatePath('admin/user/Fields/account_status.html.twig')->renderAsSwitch(false),
             BooleanField::new('is_verified', 'Email')->setTemplatePath('admin/user/Fields/verification_status.html.twig')->renderAsSwitch(false)->hideOnIndex(),
             IdField::new('id', 'Completion')->setTemplatePath('admin/user/Fields/completion_rate.html.twig')->onlyOnIndex(),
-            IdField::new('id', 'Activit? principale')->setTemplatePath('admin/user/Fields/main_activity_field.html.twig')->onlyOnIndex(),
+            IdField::new('id', 'ActivitÃ© principale')->setTemplatePath('admin/user/Fields/main_activity_field.html.twig')->onlyOnIndex(),
             IdField::new('id', 'Historique relances')->setTemplatePath('admin/user/Fields/reminder_history_link.html.twig')->hideOnForm(),
             TextField::new('date_naissance', 'Date de naissance')->onlyOnDetail(),
             DateTimeField::new('userRegistered', 'Date de creation')->onlyOnIndex(),
@@ -479,10 +479,10 @@ class UserCrudController extends AbstractCrudController
         $deletedItem = $this->userStripeManager->deleteStripeAccountById($stripeId);
 
         if (($deletedItem['deleted'] ?? false) === true) {
-            return new JsonResponse(['message' => 'Compte Stripe supprimé avec succès', 'delete' => $deletedItem], 200);
+            return new JsonResponse(['message' => 'Compte Stripe supprimï¿½ avec succï¿½s', 'delete' => $deletedItem], 200);
         }
 
-        return new JsonResponse(['error' => 'Échec de la suppression du compte Stripe', 'delete' => $deletedItem], 400);
+        return new JsonResponse(['error' => 'ï¿½chec de la suppression du compte Stripe', 'delete' => $deletedItem], 400);
     }
 
 
@@ -638,7 +638,7 @@ class UserCrudController extends AbstractCrudController
         $accountToken = $this->payment->createStripeAccountToken($userType, $data);
         if (empty($accountToken['id'])) return ['token' => $accountToken, 'data' => $data];
 
-        //Création du compte Stripe
+        //Crï¿½ation du compte Stripe
         $stripeAccount = $this->payment->createStripeUserFromToken($accountToken['id']);
         if (empty($stripeAccount['id'])) return ['token' => $accountToken, 'data' => $data];
 
