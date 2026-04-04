@@ -16,27 +16,26 @@ class UserMainActivityResolver
 
     public function resolveLabel(int $userId): string
     {
-        $storedValue = $this->serviceManager->getUserStringDataValue($userId, 'activite_principale');
+        $principalActivity = $this->serviceManager->readUserMeta($userId, 'activite_principale');
 
-        if ($storedValue === '') {
+        if (!$principalActivity || !$principalActivity->getMetaValue()) {
             return '';
         }
 
-        $possibleTermIds = [(string) $storedValue];
-
-        $taxonomy = $this->em->getRepository(WpTermTaxonomy::class)->findOneBy([
-            'termTaxonomyId' => $storedValue,
+        $principalActivity = $this->em->getRepository(WpTermTaxonomy::class)->findOneBy([
+            'termTaxonomyId' => $principalActivity->getMetaValue(),
         ]);
 
-        if ($taxonomy instanceof WpTermTaxonomy && $taxonomy->getTermId() !== null) {
-            $possibleTermIds[] = (string) $taxonomy->getTermId();
+        if (!$principalActivity instanceof WpTermTaxonomy) {
+            return '';
+        }
+
+        if ((string) $principalActivity->getDescription() !== '') {
+            return (string) $principalActivity->getDescription();
         }
 
         foreach ($this->serviceManager->postCategorie1('product_activity') as $activity) {
-            $activityTermId = (string) ($activity->termId ?? '');
-            $activityTaxonomyId = (string) ($activity->termTaxonomyId ?? '');
-
-            if (in_array($activityTermId, $possibleTermIds, true) || in_array($activityTaxonomyId, $possibleTermIds, true)) {
+            if ((string) ($activity->termId ?? '') === (string) $principalActivity->getTermId()) {
                 return (string) ($activity->name ?? '');
             }
         }
