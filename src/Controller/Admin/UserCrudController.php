@@ -110,10 +110,7 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('enabled', 'Compte')->setTemplatePath('admin/user/Fields/account_status.html.twig')->renderAsSwitch(false),
             BooleanField::new('is_verified', 'Email')->setTemplatePath('admin/user/Fields/verification_status.html.twig')->renderAsSwitch(false)->hideOnIndex(),
             IdField::new('id', 'Completion')->setTemplatePath('admin/user/Fields/completion_rate.html.twig')->onlyOnIndex(),
-            TextField::new('id', 'ActivitÃ© principale')
-                ->formatValue(fn ($value) => $this->userMainActivityResolver->resolveLabel((int) $value))
-                ->hideOnForm()
-                ->onlyOnIndex(),
+            IdField::new('id', 'Activité principale')->setTemplatePath('admin/user/Fields/main_activity_field.html.twig')->onlyOnIndex(),
             IdField::new('id', 'Historique relances')->setTemplatePath('admin/user/Fields/reminder_history_link.html.twig')->hideOnForm(),
             TextField::new('date_naissance', 'Date de naissance')->onlyOnDetail(),
             DateTimeField::new('userRegistered', 'Date de creation')->onlyOnIndex(),
@@ -167,6 +164,13 @@ class UserCrudController extends AbstractCrudController
             ]))
             ->add(CompletionRateFilter::new('completionRate', 'Completion Rate'));
     }
+    public function mainActivityLabel(int $id): Response
+    {
+        return $this->render('admin/user/Fields/main_activity.html.twig', [
+            'label' => $this->userMainActivityResolver->resolveLabel($id),
+        ]);
+    }
+
     public function configureActions(Actions $actions): Actions
     {
         $this->logger->info('UserCrudController.configureActions called');
