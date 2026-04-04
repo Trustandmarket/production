@@ -6,6 +6,7 @@ use App\Entity\{User, WpUsermeta};
 use App\Filter\CompletionRateFilter;
 use App\Filter\ProfileRoleFilter;
 use App\Security\EmailVerifier;
+use App\Service\Admin\UserMainActivityResolver;
 use App\Service\Admin\UserEditViewBuilder;
 use App\Service\Admin\UserStripeManager;
 use App\Service\Export\UserCsvExporter;
@@ -52,6 +53,7 @@ class UserCrudController extends AbstractCrudController
     private $logger;
     private UserEditViewBuilder $userEditViewBuilder;
     private UserStripeManager $userStripeManager;
+    private UserMainActivityResolver $userMainActivityResolver;
     /**
      * @var ServiceManager
      */
@@ -61,7 +63,8 @@ class UserCrudController extends AbstractCrudController
                                 EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator,
                                 RequestStack $requestStack, EmailVerifier $emailVerifier, Payment $payment,
                                 LoggerInterface $logger, UserEditViewBuilder $userEditViewBuilder,
-                                UserStripeManager $userStripeManager)
+                                UserStripeManager $userStripeManager,
+                                UserMainActivityResolver $userMainActivityResolver)
     {
         $this->service_manager = $service_manager;
         $this->em = $em;
@@ -72,6 +75,7 @@ class UserCrudController extends AbstractCrudController
         $this->logger = $logger;
         $this->userEditViewBuilder = $userEditViewBuilder;
         $this->userStripeManager = $userStripeManager;
+        $this->userMainActivityResolver = $userMainActivityResolver;
     }
 
     public static function getEntityFqcn(): string
@@ -106,7 +110,10 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('enabled', 'Compte')->setTemplatePath('admin/user/Fields/account_status.html.twig')->renderAsSwitch(false),
             BooleanField::new('is_verified', 'Email')->setTemplatePath('admin/user/Fields/verification_status.html.twig')->renderAsSwitch(false)->hideOnIndex(),
             IdField::new('id', 'Completion')->setTemplatePath('admin/user/Fields/completion_rate.html.twig')->onlyOnIndex(),
-            IdField::new('id', 'Derniere relance')->setTemplatePath('admin/user/Fields/latest_reminder_field.html.twig')->hideOnForm(),
+            TextField::new('id', 'Activité principale')
+                ->formatValue(fn ($value) => $this->userMainActivityResolver->resolveLabel((int) $value))
+                ->hideOnForm()
+                ->onlyOnIndex(),
             IdField::new('id', 'Historique relances')->setTemplatePath('admin/user/Fields/reminder_history_link.html.twig')->hideOnForm(),
             TextField::new('date_naissance', 'Date de naissance')->onlyOnDetail(),
             DateTimeField::new('userRegistered', 'Date de creation')->onlyOnIndex(),

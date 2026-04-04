@@ -2,6 +2,7 @@
 
 namespace App\Service\Export;
 
+use App\Service\Admin\UserMainActivityResolver;
 use DateTimeInterface;
 use Doctrine\ORM\QueryBuilder;
 use Goodby\CSV\Export\Standard\Exporter;
@@ -12,6 +13,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserCsvExporter
 {
+    public function __construct(
+        private readonly UserMainActivityResolver $userMainActivityResolver
+    ) {
+    }
+
     public function createResponseFromQueryBuilder(QueryBuilder $queryBuilder, string $filename): Response
     {
         $result = $queryBuilder
@@ -37,6 +43,7 @@ class UserCsvExporter
             'enabled' => 'Compte Actif?',
             'is_verified' => 'Email verifie?',
             'completion_rate' => 'Completion Rate',
+            'main_activity' => 'Activité principale',
             'userRegistered' => 'Date de creation',
             'updatedAt' => 'Date de MAJ',
         ]];
@@ -50,6 +57,7 @@ class UserCsvExporter
                 'enabled' => !empty($row['enabled']) ? 'Oui' : 'Non',
                 'is_verified' => !empty($row['is_verified']) ? 'Oui' : 'Non',
                 'completion_rate' => sprintf('%s%%', (string) ($row['completion_rate'] ?? 0)),
+                'main_activity' => isset($row['id']) ? $this->userMainActivityResolver->resolveLabel((int) $row['id']) : '',
                 'userRegistered' => ($row['userRegistered'] ?? null) instanceof DateTimeInterface
                     ? $row['userRegistered']->format('d-m-Y H:i:s')
                     : ($row['userRegistered'] ?? null),
