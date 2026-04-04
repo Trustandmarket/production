@@ -143,49 +143,147 @@ class ExperiencesController extends AbstractController
         foreach ($experience['exp_options'] as $key => $value) {
             $exp_besoins_options = $exp_besoins_options . ' * ' . $value['metaValue'];
         }
-        // Prepare the data
-        $data = [
-            'to' => [
+        $mailParams = [
+            "intitule_experience" => $experience['exp_type_experience'] . ' ' . $experience['exp_ville'] . ' ' . $experience['exp_univers'],
+            "statut_experience" => $request->get('status'),
+            "besoins_experience" => $exp_besoins_options,
+            "precisions_experience" => $experience['exp_precisions'],
+            "email_createur" => $this->getUser()->getEmailCanonical(),
+        ];
+
+        $this->sendBrevoTemplateEmail(
+            [
                 [
                     'email' => $this->getUser()->getEmailCanonical(),
                     'name' => $this->getUser()->getEmailCanonical()
                 ]
             ],
-            'bcc' => [
-                [
+            15,
+            $mailParams
+        );
+
+        foreach ($this->getExperienceProfessionalRecipients($this->getUser()->getId()) as $recipient) {
+            $this->sendBrevoTemplateEmail(
+                [[
+                    'email' => $recipient['email'],
+                    'name' => $recipient['name'],
+                ]],
+                61,
+                $mailParams,
+                [[
                     'email' => 'commerce@trustandmarket.com',
-                    'name' => "Trust & Market"
-                ]
-            ],
-            'templateId' => 15,
-            'params' => [
-                "intitule_experience" => $experience['exp_type_experience'] . ' ' . $experience['exp_ville'] . ' ' . $experience['exp_univers'],
-                "statut_experience" => $request->get('status'),
-                "besoins_experience" => $exp_besoins_options,
-                "precisions_experience" => $experience['exp_precisions']
-            ]
+                    'name' => 'Trust & Market',
+                ]]
+            );
+        }
+
+        return new JsonResponse(json_encode(['response' => 'success']));
+    }
+
+    private function getExperienceProfessionalRecipients(?int $excludeUserId = null): array
+    {
+        $targetActivities = [
+            "Studio d'enregistrement",
+            'Mixage audio',
+            'Mastering audio',
         ];
 
-        // Initialize cURL
-        $ch = curl_init();
+        $activityRows = $this->service_manager->postCategorie1('product_activity');
+        $activityIds = [];
 
-        // Set the cURL options
+        foreach ($activityRows as $activityRow) {
+            if (!in_array($activityRow['name'] ?? '', $targetActivities, true)) {
+                continue;
+            }
+
+            if (!empty($activityRow['termTaxonomyId'])) {
+                $activityIds[] = (string) $activityRow['termTaxonomyId'];
+            }
+
+            if (!empty($activityRow['termId'])) {
+                $activityIds[] = (string) $activityRow['termId'];
+            }
+        }
+
+        $activityIds = array_values(array_unique(array_filter($activityIds)));
+
+        if (empty($activityIds)) {
+            return [];
+        }
+
+        $connection = $this->entityManager->getConnection();
+        $sql = <<<SQL
+SELECT DISTINCT u.id, u.email_canonical, u.display_name
+FROM wp_users u
+INNER JOIN wp_usermeta um ON um.user_id = u.id
+WHERE um.meta_key = :metaKey
+  AND um.meta_value IN (:activityIds)
+  AND (
+    u.roles LIKE :roleAuto
+    OR u.roles LIKE :roleSociete
+  )
+SQL;
+
+        $params = [
+            'metaKey' => 'activite_principale',
+            'activityIds' => $activityIds,
+            'roleAuto' => '%ROLE_AUTO_ENTREPRENEUR%',
+            'roleSociete' => '%ROLE_SOCIETE%',
+        ];
+        $types = [
+            'activityIds' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+        ];
+
+        if ($excludeUserId !== null) {
+            $sql .= ' AND u.id <> :excludeUserId';
+            $params['excludeUserId'] = $excludeUserId;
+        }
+
+        $rows = $connection->executeQuery($sql, $params, $types)->fetchAllAssociative();
+
+        $recipients = [];
+        foreach ($rows as $row) {
+            if (empty($row['email_canonical'])) {
+                continue;
+            }
+
+            $recipients[$row['email_canonical']] = [
+                'email' => $row['email_canonical'],
+                'name' => $row['display_name'] ?: $row['email_canonical'],
+            ];
+        }
+
+        return array_values($recipients);
+    }
+
+    private function sendBrevoTemplateEmail(array $to, int $templateId, array $params, array $bcc = []): void
+    {
+        if (empty($to)) {
+            return;
+        }
+
+        $data = [
+            'to' => $to,
+            'templateId' => $templateId,
+            'params' => $params,
+        ];
+
+        if (!empty($bcc)) {
+            $data['bcc'] = $bcc;
+        }
+
+        $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://api.brevo.com/v3/smtp/email');
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'accept: application/json',
-            'api-key: ' . $_SERVER['SENDBLUE_API_KEY'], // Replace with your actual API key
+            'api-key: ' . $_SERVER['SENDBLUE_API_KEY'],
             'content-type: application/json'
         ]);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-        // Execute the request
-        $response = curl_exec($ch);
-        // Close cURL session
+        curl_exec($ch);
         curl_close($ch);
-
-        return new JsonResponse(json_encode(['response' => 'success']));
     }
 
     /**
