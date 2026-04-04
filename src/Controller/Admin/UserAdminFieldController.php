@@ -31,7 +31,7 @@ class UserAdminFieldController extends AbstractController
             ]);
 
             return $this->render('admin/user/Fields/main_activity.html.twig', [
-                'label' => '',
+                'label' => '[ERREUR] ' . $e->getMessage(),
             ]);
         }
     }
