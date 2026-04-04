@@ -169,13 +169,18 @@ class ExperiencesController extends AbstractController
                     'name' => $recipient['name'],
                 ]],
                 61,
-                $mailParams,
-                [[
-                    'email' => 'commerce@trustandmarket.com',
-                    'name' => 'Trust & Market',
-                ]]
+                $mailParams
             );
         }
+
+        $this->sendBrevoTemplateEmail(
+            [[
+                'email' => 'commerce@trustandmarket.com',
+                'name' => 'Trust & Market',
+            ]],
+            61,
+            $mailParams
+        );
 
         return new JsonResponse(json_encode(['response' => 'success']));
     }
