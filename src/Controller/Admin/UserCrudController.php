@@ -37,6 +37,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField,
 };
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use Psr\Log\LoggerInterface;
