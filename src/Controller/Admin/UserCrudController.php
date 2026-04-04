@@ -6,7 +6,6 @@ use App\Entity\{User, WpUsermeta};
 use App\Filter\CompletionRateFilter;
 use App\Filter\ProfileRoleFilter;
 use App\Security\EmailVerifier;
-use App\Service\Admin\UserMainActivityResolver;
 use App\Service\Admin\UserEditViewBuilder;
 use App\Service\Admin\UserStripeManager;
 use App\Service\Export\UserCsvExporter;
@@ -37,7 +36,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField,
 };
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use Psr\Log\LoggerInterface;
@@ -54,7 +52,6 @@ class UserCrudController extends AbstractCrudController
     private $logger;
     private UserEditViewBuilder $userEditViewBuilder;
     private UserStripeManager $userStripeManager;
-    private UserMainActivityResolver $userMainActivityResolver;
     /**
      * @var ServiceManager
      */
@@ -64,8 +61,7 @@ class UserCrudController extends AbstractCrudController
                                 EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator,
                                 RequestStack $requestStack, EmailVerifier $emailVerifier, Payment $payment,
                                 LoggerInterface $logger, UserEditViewBuilder $userEditViewBuilder,
-                                UserStripeManager $userStripeManager,
-                                UserMainActivityResolver $userMainActivityResolver)
+                                UserStripeManager $userStripeManager)
     {
         $this->service_manager = $service_manager;
         $this->em = $em;
@@ -76,7 +72,6 @@ class UserCrudController extends AbstractCrudController
         $this->logger = $logger;
         $this->userEditViewBuilder = $userEditViewBuilder;
         $this->userStripeManager = $userStripeManager;
-        $this->userMainActivityResolver = $userMainActivityResolver;
     }
 
     public static function getEntityFqcn(): string
@@ -111,7 +106,7 @@ class UserCrudController extends AbstractCrudController
             BooleanField::new('enabled', 'Compte')->setTemplatePath('admin/user/Fields/account_status.html.twig')->renderAsSwitch(false),
             BooleanField::new('is_verified', 'Email')->setTemplatePath('admin/user/Fields/verification_status.html.twig')->renderAsSwitch(false)->hideOnIndex(),
             IdField::new('id', 'Completion')->setTemplatePath('admin/user/Fields/completion_rate.html.twig')->onlyOnIndex(),
-            IdField::new('id', 'Activité principale')->setTemplatePath('admin/user/Fields/main_activity_field.html.twig')->onlyOnIndex(),
+            IdField::new('id', 'Activit? principale')->setTemplatePath('admin/user/Fields/main_activity_field.html.twig')->onlyOnIndex(),
             IdField::new('id', 'Historique relances')->setTemplatePath('admin/user/Fields/reminder_history_link.html.twig')->hideOnForm(),
             TextField::new('date_naissance', 'Date de naissance')->onlyOnDetail(),
             DateTimeField::new('userRegistered', 'Date de creation')->onlyOnIndex(),
@@ -164,12 +159,6 @@ class UserCrudController extends AbstractCrudController
                 'Non' => 0,
             ]))
             ->add(CompletionRateFilter::new('completionRate', 'Completion Rate'));
-    }
-    public function mainActivityLabel(int $id): Response
-    {
-        return $this->render('admin/user/Fields/main_activity.html.twig', [
-            'label' => $this->userMainActivityResolver->resolveLabel($id),
-        ]);
     }
 
     public function configureActions(Actions $actions): Actions
@@ -490,10 +479,10 @@ class UserCrudController extends AbstractCrudController
         $deletedItem = $this->userStripeManager->deleteStripeAccountById($stripeId);
 
         if (($deletedItem['deleted'] ?? false) === true) {
-            return new JsonResponse(['message' => 'Compte Stripe supprimÃ© avec succÃ¨s', 'delete' => $deletedItem], 200);
+            return new JsonResponse(['message' => 'Compte Stripe supprimé avec succès', 'delete' => $deletedItem], 200);
         }
 
-        return new JsonResponse(['error' => 'Ã‰chec de la suppression du compte Stripe', 'delete' => $deletedItem], 400);
+        return new JsonResponse(['error' => 'Échec de la suppression du compte Stripe', 'delete' => $deletedItem], 400);
     }
 
 
@@ -649,14 +638,14 @@ class UserCrudController extends AbstractCrudController
         $accountToken = $this->payment->createStripeAccountToken($userType, $data);
         if (empty($accountToken['id'])) return ['token' => $accountToken, 'data' => $data];
 
-        //CrÃ©ation du compte Stripe
+        //Création du compte Stripe
         $stripeAccount = $this->payment->createStripeUserFromToken($accountToken['id']);
         if (empty($stripeAccount['id'])) return ['token' => $accountToken, 'data' => $data];
 
         $this->service_manager->updateUserMeta($userId, 'mp_user_id_sandbox', $stripeAccount['id']);
         $this->payment->updateStripeUser($stripeAccount['id'], $userType, $data);
 
-        // Cr?ation de la personne Stripe pour les comptes non abonn?s
+        // Creation de la personne Stripe pour les comptes non abonnes
         if($userType != 'ROLE_ABONNE'){
             $stripePersonToken = $this->payment->createStripePersonToken($data);
             if (!empty($stripePersonToken['id'])) {
@@ -671,6 +660,8 @@ class UserCrudController extends AbstractCrudController
     }
 
 }
+
+
 
 
 
