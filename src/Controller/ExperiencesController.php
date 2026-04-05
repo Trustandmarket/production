@@ -306,7 +306,9 @@ SQL;
         $id = $request->get('postId');
         $default_exp = '';
         $exp = $this->entityManager->getRepository(WpPosts::class)->find($id);
-        $exp->setPostStatus(strtolower($request->get('status')));
+        $previousStatus = strtolower((string) $exp->getPostStatus());
+        $newStatus = strtolower((string) $request->get('status'));
+        $exp->setPostStatus($newStatus);
         if ($this->service_manager->slugify($request->get('type_experience')) == 'divertissement-et-evenementiels') {
             $default_exp = 'exp_evenementiel';
         } else {
@@ -390,6 +392,47 @@ SQL;
         }
         foreach ($experience['exp_options'] as $key => $value) {
             $exp_besoins_options = $exp_besoins_options . ' * ' . $value['metaValue'];
+        }
+
+        $mailParams = [
+            "intitule_experience" => $experience['exp_type_experience'] . ' ' . $experience['exp_ville'] . ' ' . $experience['exp_univers'],
+            "statut_experience" => $request->get('status'),
+            "besoins_experience" => $exp_besoins_options,
+            "precisions_experience" => $experience['exp_precisions'],
+            "email_createur" => $this->getUser()->getEmailCanonical(),
+        ];
+
+        if ($previousStatus !== 'publish' && $newStatus === 'publish') {
+            $this->sendBrevoTemplateEmail(
+                [
+                    [
+                        'email' => $this->getUser()->getEmailCanonical(),
+                        'name' => $this->getUser()->getEmailCanonical()
+                    ]
+                ],
+                15,
+                $mailParams
+            );
+
+            foreach ($this->getExperienceProfessionalRecipients($this->getUser()->getId()) as $recipient) {
+                $this->sendBrevoTemplateEmail(
+                    [[
+                        'email' => $recipient['email'],
+                        'name' => $recipient['name'],
+                    ]],
+                    61,
+                    $mailParams
+                );
+            }
+
+            $this->sendBrevoTemplateEmail(
+                [[
+                    'email' => 'commerce@trustandmarket.com',
+                    'name' => 'Trust & Market',
+                ]],
+                61,
+                $mailParams
+            );
         }
 
         //Envoie du mail a l'admin
