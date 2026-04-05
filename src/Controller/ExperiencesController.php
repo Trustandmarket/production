@@ -162,25 +162,27 @@ class ExperiencesController extends AbstractController
             $mailParams
         );
 
-        foreach ($this->getExperienceProfessionalRecipients($this->getUser()->getId()) as $recipient) {
+        if (strtolower((string) $request->get('status')) === 'publish') {
+            foreach ($this->getExperienceProfessionalRecipients($this->getUser()->getId()) as $recipient) {
+                $this->sendBrevoTemplateEmail(
+                    [[
+                        'email' => $recipient['email'],
+                        'name' => $recipient['name'],
+                    ]],
+                    61,
+                    $mailParams
+                );
+            }
+
             $this->sendBrevoTemplateEmail(
                 [[
-                    'email' => $recipient['email'],
-                    'name' => $recipient['name'],
+                    'email' => 'commerce@trustandmarket.com',
+                    'name' => 'Trust & Market',
                 ]],
                 61,
                 $mailParams
             );
         }
-
-        $this->sendBrevoTemplateEmail(
-            [[
-                'email' => 'commerce@trustandmarket.com',
-                'name' => 'Trust & Market',
-            ]],
-            61,
-            $mailParams
-        );
 
         return new JsonResponse(json_encode(['response' => 'success']));
     }
