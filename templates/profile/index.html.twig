@@ -66,6 +66,30 @@
             color: #262626;
         }
 
+        .profile-completion-missing {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .profile-completion-missing-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #262626;
+            margin-bottom: 8px;
+        }
+
+        .profile-completion-missing-list {
+            margin: 0;
+            padding-left: 18px;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .profile-completion-missing-list li + li {
+            margin-top: 4px;
+        }
+
         
         .profile-section-title {
             white-space: nowrap;
@@ -232,25 +256,38 @@
 {% block body %}
     {% set profileCompletionTotalWeight = 100 %}
     {% set profileCompletionScore = 0 %}
+    {% set profileCompletionMissingItems = [] %}
 
     {# Identite (25) #}
     {% if avatar is defined and avatar %}
         {% set profileCompletionScore = profileCompletionScore + 5 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Ajouter une photo de profil']) %}
     {% endif %}
     {% if last_name is defined and last_name|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 4 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Renseigner votre nom']) %}
     {% endif %}
     {% if first_name is defined and first_name|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 4 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Renseigner votre prenom']) %}
     {% endif %}
     {% if sexe is defined and sexe|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 3 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Selectionner votre sexe']) %}
     {% endif %}
     {% if bdaytime is defined and bdaytime|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 5 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Renseigner votre date de naissance']) %}
     {% endif %}
     {% if birth_place is defined and birth_place|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 4 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Renseigner votre lieu de naissance']) %}
     {% endif %}
 
     {# Contact et activite (20) #}
@@ -259,48 +296,74 @@
     {% endif %}
     {% if telephone is defined and telephone|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 4 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Ajouter un numero de telephone']) %}
     {% endif %}
     {% if principal_activity is defined and principal_activity %}
         {% set profileCompletionScore = profileCompletionScore + 3 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Choisir une activite principale']) %}
     {% endif %}
     {% if competence is defined and competence|length > 0 %}
         {% set profileCompletionScore = profileCompletionScore + 10 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Ajouter au moins une competence']) %}
     {% endif %}
     {% if nom_commercial is defined and nom_commercial|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 1 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Renseigner un nom commercial']) %}
     {% endif %}
     {% if user.getUserUniqueData and user.getUserUniqueData.getDepartement %}
         {% set profileCompletionScore = profileCompletionScore + 1 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Selectionner un departement']) %}
     {% endif %}
 
     {# Adresse domicile (15) #}
     {% if numeroNomRue_domicile is defined and numeroNomRue_domicile|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 5 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Renseigner votre adresse de domicile']) %}
     {% endif %}
     {% if codePostal_domicile is defined and codePostal_domicile|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 3 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Renseigner le code postal du domicile']) %}
     {% endif %}
     {% if ville_domicile is defined and ville_domicile|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 3 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Renseigner la ville du domicile']) %}
     {% endif %}
     {% if region_domicile is defined and region_domicile|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 2 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Renseigner la region du domicile']) %}
     {% endif %}
     {% if pays_domicile is defined and pays_domicile|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 2 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Renseigner le pays du domicile']) %}
     {% endif %}
 
     {# Contenu de profil (25) #}
     {% if description is defined and description|striptags|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 20 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Completer la description du profil']) %}
     {% endif %}
     {% if reference is defined and reference|striptags|trim != '' %}
         {% set profileCompletionScore = profileCompletionScore + 5 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Ajouter des references']) %}
     {% endif %}
 
     {# Portfolio (15) #}
     {% if portfolio is defined and portfolio|length > 0 %}
         {% set profileCompletionScore = profileCompletionScore + 15 %}
+    {% else %}
+        {% set profileCompletionMissingItems = profileCompletionMissingItems|merge(['Ajouter au moins un element au portfolio']) %}
     {% endif %}
 
     {% set profileCompletionRate = profileCompletionScore %}
@@ -343,6 +406,18 @@
                         <small class="text-danger d-block mt-2">
                             Votre taux de remplissage doit etre >= 80% pour que votre profil soit publié.
                         </small>
+                    {% endif %}
+                    {% if profileCompletionMissingItems is not empty %}
+                        <div class="profile-completion-missing">
+                            <div class="profile-completion-missing-title">
+                                Il vous reste a completer :
+                            </div>
+                            <ul class="profile-completion-missing-list">
+                                {% for missingItem in profileCompletionMissingItems %}
+                                    <li>{{ missingItem }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     {% endif %}
                 </div>
                 <div class="mb-3">
