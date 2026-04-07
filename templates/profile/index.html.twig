@@ -404,13 +404,13 @@
                     </div>
                     {% if profileCompletionRate < 80 %}
                         <small class="text-danger d-block mt-2">
-                            Votre taux de remplissage doit etre >= 80% pour que votre profil soit publié.
+                            Votre taux de remplissage doit être >= 80% pour que votre profil soit publié.
                         </small>
                     {% endif %}
                     {% if profileCompletionMissingItems is not empty %}
                         <div class="profile-completion-missing">
                             <div class="profile-completion-missing-title">
-                                Il vous reste a completer :
+                                Il vous reste à compléter :
                             </div>
                             <ul class="profile-completion-missing-list">
                                 {% for missingItem in profileCompletionMissingItems %}
