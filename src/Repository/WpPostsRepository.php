@@ -55,6 +55,22 @@ class WpPostsRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function hasAnyTopLevelProductByUser(int $userId): bool
+    {
+        $count = (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->andWhere('p.postAuthor = :userId')
+            ->andWhere('p.postType = :postType')
+            ->andWhere('p.postParent = :postParent')
+            ->setParameter('userId', $userId)
+            ->setParameter('postType', 'product')
+            ->setParameter('postParent', 0)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $count > 0;
+    }
+
 //    /**
 //     * @return WpPosts[] Returns an array of WpPosts objects
 //     */

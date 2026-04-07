@@ -6,6 +6,8 @@ use App\Entity\User;
 use App\Entity\WpOptions;
 use App\Entity\WpPosts;
 use App\Entity\WpTermRelationships;
+use App\Repository\WpPostsRepository;
+use App\Service\BrevoContactService;
 use App\Service\DataAccessLayer\Annonces;
 use App\Service\ServiceManager;
 use DateTime;
@@ -25,15 +27,21 @@ class ProfileAnnouncementController extends AbstractController
     private $service_manager;
     private $annonces_access_layer;
     private $em;
+    private $wpPostsRepository;
+    private $brevoContactService;
 
     public function __construct(
         ServiceManager $service_manager,
         Annonces $annonces_access_layer,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        WpPostsRepository $wpPostsRepository,
+        BrevoContactService $brevoContactService
     ) {
         $this->service_manager = $service_manager;
         $this->annonces_access_layer = $annonces_access_layer;
         $this->em = $em;
+        $this->wpPostsRepository = $wpPostsRepository;
+        $this->brevoContactService = $brevoContactService;
     }
 
     public function trierTableau($tabeauVideos)
@@ -1113,6 +1121,7 @@ class ProfileAnnouncementController extends AbstractController
         $date = new DateTime();
         $id = 0;
         $state = $request->get('state');
+        $shouldMarkFirstOfferIn7Days = false;
         if ($request->get('titre') != '') {
             $ids = explode(', ', $request->get('titre'));
             $name = $ids[0];
@@ -1129,6 +1138,20 @@ class ProfileAnnouncementController extends AbstractController
             $oldImages = 0;
 
             if ($state == 'creation') {
+                $isProUser = in_array('ROLE_SOCIETE', $u->getRoles(), true)
+                    || in_array('ROLE_AUTO_ENTREPRENEUR', $u->getRoles(), true);
+                $userRegisteredAt = $u->getUserRegistered();
+                $isWithinFirst7Days = false;
+
+                if ($userRegisteredAt instanceof \DateTimeInterface) {
+                    $firstWeekDeadline = (clone $userRegisteredAt)->modify('+7 days');
+                    $isWithinFirst7Days = $date >= $userRegisteredAt && $date <= $firstWeekDeadline;
+                }
+
+                $shouldMarkFirstOfferIn7Days = $isProUser
+                    && $isWithinFirst7Days
+                    && !$this->wpPostsRepository->hasAnyTopLevelProductByUser((int) $uid);
+
                 if ($request->get('idPostEdited')) {
                     $oldImages = $this->em->getRepository(WpPosts::class)
                         ->findBy(['postParent' => $request->get('idPostEdited'), 'postType' => 'attachment']);
@@ -1162,6 +1185,13 @@ class ProfileAnnouncementController extends AbstractController
                     $idc,
                     $request->getLocale()
                 );
+
+                if ($shouldMarkFirstOfferIn7Days && $id > 0) {
+                    $this->brevoContactService->updateContactAttributes(
+                        $u->getEmailCanonical(),
+                        ['FIRST_OFFRE_IN_7DAYS' => true]
+                    );
+                }
             }
             $titre = '';
             $description = '';
