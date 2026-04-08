@@ -818,9 +818,9 @@
             $('.action_next').removeClass('disabled');
             actualStep = $(this).parent().attr('attr-step');
             if (actualStep == 2) {
-                var choixTitle = "Musique";
-                typeExperience = "Musique";
-                $('.step3').attr("attr-title", "Expérience: " + choixTitle)
+                var choixTitle = "Production musicale";
+                typeExperience = "Production musicale";
+                $('.step3').attr("attr-title", "Projet : " + choixTitle)
                 $('.step3').attr("attr-title", "Detaillez votre projet")
             }
         })
@@ -877,7 +877,7 @@
                     $(this).text('Valider ma demande')
                     $('.action_next').addClass('active');
                     $('.action_next').removeClass('disabled');
-                    $('.experience_create_content h1').text("Expérience: " + typeExperience);
+                    $('.experience_create_content h1').text("Projet : " + typeExperience);
                     $('.villeValue').text($(".field_ville").val());
                     $('.universValue').text($(".field_univers").val());
                     $('.precisionValue').val($(".field_precisions").val());
