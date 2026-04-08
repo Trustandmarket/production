@@ -87,6 +87,472 @@
     <link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox.css') }}"/>
     <link href="{{ asset('assets/css/experiences/create_exp.css') }} " rel="stylesheet">
     <link href="{{ asset('assets/css/style-aide.css') }} " rel="stylesheet">
+    <style>
+        .experience_create_content {
+            position: relative;
+        }
+
+        .experience_intro_shell {
+            margin-bottom: 2.5rem;
+            padding: 2.2rem;
+            border-radius: 32px;
+            background:
+                radial-gradient(circle at top left, rgba(241, 124, 48, 0.18), transparent 24%),
+                linear-gradient(135deg, #fff9f4 0%, #ffffff 48%, #f5f7fa 100%);
+            border: 1px solid rgba(241, 124, 48, 0.16);
+            box-shadow: 0 24px 60px rgba(16, 16, 16, 0.10);
+        }
+
+        .experience_intro_kicker {
+            margin: 0 0 .4rem 0;
+            font-size: .8rem;
+            font-family: "Palanquin Dark", sans-serif;
+            font-weight: 700;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: #f17c30;
+        }
+
+        .experience_intro_shell h1 {
+            margin-bottom: .75rem;
+            font-size: 3rem;
+            line-height: 1.05;
+            color: #121212;
+        }
+
+        .experience_intro_subtitle {
+            max-width: 760px;
+            margin: 0;
+            color: #474747;
+            font-size: 1.03rem;
+            line-height: 1.75;
+            font-family: "Palanquin", sans-serif;
+        }
+
+        .experience_intro_meta {
+            margin-top: 1.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .75rem;
+        }
+
+        .experience_intro_badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            padding: .72rem 1rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            box-shadow: 0 8px 20px rgba(17, 17, 17, 0.05);
+            color: #1f1f1f;
+            font-family: "Palanquin", sans-serif;
+            font-size: .95rem;
+        }
+
+        .experience_intro_badge i {
+            color: #f17c30;
+        }
+
+        .experience_stepper {
+            margin-bottom: 2rem;
+            padding: 1.25rem 1.4rem;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            box-shadow: 0 16px 36px rgba(17, 17, 17, 0.06);
+        }
+
+        .experience_stepper_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: .9rem;
+        }
+
+        .experience_stepper_eyebrow {
+            margin: 0;
+            font-size: .78rem;
+            font-family: "Palanquin Dark", sans-serif;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: #f17c30;
+        }
+
+        .experience_stepper_count {
+            margin: 0;
+            color: #1e1e1e;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: .95rem;
+        }
+
+        .experience_stepper_track {
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(17, 17, 17, 0.08);
+            overflow: hidden;
+        }
+
+        .experience_stepper_progress {
+            width: 25%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #f17c30 0%, #ffb787 100%);
+            transition: width .3s ease;
+        }
+
+        .experience_stepper_labels {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: .75rem;
+        }
+
+        .experience_stepper_label {
+            display: flex;
+            flex-direction: column;
+            gap: .25rem;
+            color: #858585;
+            transition: color .2s ease;
+        }
+
+        .experience_stepper_label strong {
+            font-size: .78rem;
+            font-family: "Palanquin Dark", sans-serif;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        .experience_stepper_label span {
+            font-family: "Palanquin", sans-serif;
+            font-size: .92rem;
+            line-height: 1.4;
+        }
+
+        .experience_stepper_label.is-active,
+        .experience_stepper_label.is-complete {
+            color: #151515;
+        }
+
+        .experience_stage_panel {
+            padding: 1.8rem;
+            border-radius: 28px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            box-shadow: 0 20px 44px rgba(17, 17, 17, 0.08);
+        }
+
+        .experience_stage_header {
+            margin-bottom: 1.2rem;
+        }
+
+        .experience_stage_header p {
+            margin: 0 0 .35rem 0;
+            color: #f17c30;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: .78rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+        }
+
+        .experience_stage_header h2 {
+            margin: 0;
+            color: #121212;
+            font-size: 2rem;
+            line-height: 1.15;
+        }
+
+        .experience_stage_header span {
+            display: block;
+            margin-top: .75rem;
+            color: #555;
+            font-family: "Palanquin", sans-serif;
+            line-height: 1.7;
+        }
+
+        .experience_stage_panel .list_option,
+        .step3 .list_field,
+        .step4 .recap_choix {
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
+            box-shadow: 0 18px 38px rgba(17, 17, 17, 0.06);
+        }
+
+        .experience_stage_panel .list_option {
+            padding: 1.6rem 1.5rem;
+        }
+
+        .step3 .list_field,
+        .step4 .recap_choix {
+            padding: 1.5rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .step3 .list_field label h2,
+        .step4 .recap_choix h2 {
+            margin-bottom: .7rem;
+            color: #121212;
+        }
+
+        .step3 .radios table td {
+            padding: .55rem .5rem;
+            vertical-align: middle;
+        }
+
+        .step3 .radios table td p {
+            font-family: "Palanquin", sans-serif;
+            color: #222;
+        }
+
+        .experience_card_option {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(241, 124, 48, 0.22) !important;
+            border-radius: 26px !important;
+            padding: 1.6rem 1.5rem !important;
+            background: linear-gradient(135deg, #fffaf6 0%, #ffffff 100%);
+            box-shadow: 0 18px 38px rgba(17, 17, 17, 0.06);
+        }
+
+        .experience_card_option::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+        }
+
+        .experience_card_option_icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(145deg, #101010 0%, #363636 100%);
+            color: #fff;
+            font-size: 1.2rem;
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.16);
+        }
+
+        .experience_card_option_tag {
+            display: inline-flex;
+            padding: .32rem .65rem;
+            border-radius: 999px;
+            background: rgba(241, 124, 48, 0.10);
+            color: #f17c30;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: .76rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            margin-bottom: .8rem;
+        }
+
+        .experience_card_option .list_option p {
+            font-family: "Palanquin", sans-serif;
+            color: #505050;
+            line-height: 1.7;
+        }
+
+        .experience_card_option.active {
+            background: linear-gradient(135deg, #fff4ea 0%, #ffffff 100%);
+            box-shadow: 0 24px 48px rgba(241, 124, 48, 0.13);
+            transform: translateY(-2px);
+        }
+
+        .experience_field_grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.2rem;
+        }
+
+        .experience_field_panel {
+            padding: 1.4rem;
+            border-radius: 22px;
+            background: #fff;
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            box-shadow: 0 14px 28px rgba(17, 17, 17, 0.05);
+        }
+
+        .experience_field_panel h3 {
+            margin: 0 0 .4rem 0;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: 1.15rem;
+            color: #121212;
+        }
+
+        .experience_field_panel p {
+            margin: 0 0 1rem 0;
+            color: #616161;
+            font-family: "Palanquin", sans-serif;
+            line-height: 1.6;
+        }
+
+        .input_rounded {
+            height: 54px;
+            border-radius: 16px;
+            border: 1px solid rgba(17, 17, 17, 0.12);
+            box-shadow: none;
+        }
+
+        .input_rounded:focus,
+        .field_precisions:focus,
+        .field_precisions_2:focus {
+            border-color: rgba(241, 124, 48, 0.7);
+            box-shadow: 0 0 0 4px rgba(241, 124, 48, 0.10);
+        }
+
+        .experience_choice_grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: .95rem;
+        }
+
+        .experience_choice_chip {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: .95rem 1rem;
+            border-radius: 18px;
+            border: 1px solid rgba(17, 17, 17, 0.10);
+            background: #fff;
+            cursor: pointer;
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+
+        .experience_choice_chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(17, 17, 17, 0.06);
+        }
+
+        .experience_choice_chip .radio_custom {
+            margin-left: 0 !important;
+            flex: 0 0 auto;
+            width: 18px !important;
+            height: 18px !important;
+            border-width: 2px !important;
+        }
+
+        .experience_choice_chip .radio_custom::before {
+            width: 18px !important;
+            height: 18px !important;
+        }
+
+        .experience_choice_chip span {
+            color: #202020;
+            font-family: "Palanquin", sans-serif;
+            line-height: 1.45;
+        }
+
+        .experience_choice_chip:has(.radio_custom:checked) {
+            border-color: rgba(241, 124, 48, 0.55);
+            box-shadow: 0 14px 26px rgba(241, 124, 48, 0.12);
+            background: #fff8f2;
+        }
+
+        .experience_section_title {
+            margin: 0 0 1rem 0;
+            font-size: 1.15rem;
+            font-family: "Palanquin Dark", sans-serif;
+            color: #111;
+        }
+
+        .field_precisions,
+        .field_precisions_2 {
+            min-height: 150px;
+            border-radius: 18px;
+            border: 1px solid rgba(17, 17, 17, 0.12);
+            padding: 1rem 1.1rem;
+        }
+
+        .experience_summary_block {
+            padding: 1.5rem;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #fff9f4 0%, #ffffff 100%);
+            border: 1px solid rgba(241, 124, 48, 0.16);
+            box-shadow: 0 18px 40px rgba(17, 17, 17, 0.06);
+        }
+
+        .inline_choix {
+            margin-bottom: .85rem;
+            align-items: flex-start;
+        }
+
+        .inline_choix h2 {
+            min-width: 160px;
+            color: #111;
+        }
+
+        .prefooter_action {
+            padding: 14px 18px;
+            border-top: 1px solid rgba(17, 17, 17, 0.08);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -8px 24px rgba(17, 17, 17, 0.05);
+        }
+
+        .action_prev,
+        .action_next {
+            padding: 11px 24px;
+            border-radius: 14px;
+            text-decoration: none;
+        }
+
+        .action_prev {
+            border-color: rgba(17, 17, 17, 0.12);
+            background: #fff;
+            color: #151515;
+        }
+
+        .action_next {
+            border-color: transparent;
+            background: rgba(17, 17, 17, 0.18);
+            color: #fff;
+        }
+
+        .action_next.active {
+            background: linear-gradient(135deg, #f17c30 0%, #ff9f60 100%);
+        }
+
+        @media (max-width: 992px) {
+            .experience_intro_shell {
+                padding: 1.5rem;
+                border-radius: 24px;
+            }
+
+            .experience_intro_shell h1 {
+                font-size: 2rem;
+                line-height: 1.1;
+            }
+
+            .experience_stepper_labels,
+            .experience_field_grid,
+            .experience_choice_grid {
+                grid-template-columns: 1fr;
+            }
+
+            .experience_stage_panel {
+                padding: 1.2rem;
+                border-radius: 22px;
+            }
+
+            .inline_choix {
+                flex-direction: column;
+                gap: .2rem;
+            }
+
+            .inline_choix h2 {
+                min-width: 0;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block header %}
@@ -103,15 +569,38 @@
         <main class="mt-2 pt-2">
             <div class="container experience_create_content">
                 <h1>Créez votre expérience unique avec Trust & Market</h1>
+                <div class="experience_intro_shell">
+                    <p class="experience_intro_kicker">Exp&eacute;rience sur mesure</p>
+                    <p class="experience_intro_subtitle">En quelques &eacute;tapes, nous pr&eacute;parons une demande claire &agrave; transmettre aux studios les plus adapt&eacute;s &agrave; votre besoin.</p>
+                    <div class="experience_intro_meta">
+                        <div class="experience_intro_badge"><i class="fas fa-shield-alt"></i><span>Gratuit, sans engagement</span></div>
+                        <div class="experience_intro_badge"><i class="fas fa-credit-card"></i><span>Aucune carte bancaire requise</span></div>
+                    </div>
+                </div>
+                <div class="experience_stepper">
+                    <div class="experience_stepper_header">
+                        <p class="experience_stepper_eyebrow">Parcours guid&eacute;</p>
+                        <p class="experience_stepper_count">Etape <span class="experience_step_count_current">1</span> sur 4</p>
+                    </div>
+                    <div class="experience_stepper_track">
+                        <div class="experience_stepper_progress"></div>
+                    </div>
+                    <div class="experience_stepper_labels">
+                        <div class="experience_stepper_label is-active" data-step-label="1"><strong>01</strong><span>Lancez-vous</span></div>
+                        <div class="experience_stepper_label" data-step-label="2"><strong>02</strong><span>Projet musical</span></div>
+                        <div class="experience_stepper_label" data-step-label="3"><strong>03</strong><span>D&eacute;taillez votre besoin</span></div>
+                        <div class="experience_stepper_label" data-step-label="4"><strong>04</strong><span>Validation</span></div>
+                    </div>
+                </div>
                 <div class="options">
-                    <div class="step1 steps" attr-step="1"
+                    <div class="step1 steps experience_stage_panel" attr-step="1"
                          attr-title="Créez votre expérience unique avec Trust & Market">
                         <div class="list_option">
                             <h2>Lancez - vous !</h2>
                             <p>Personnalisez votre expérience et faites-vous accompagner quelque soit votre besoin.</p>
                         </div>
                     </div>
-                    <div class="step2 steps" style="display: none;" attr-step="2"
+                    <div class="step2 steps experience_stage_panel" style="display: none;" attr-step="2"
                          attr-title="Créez votre expérience musicale">
                         <div class="list_option">
                             <h2>Musique</h2>
@@ -119,11 +608,6 @@
                             de musiciens, de batteur ou percussionniste, de choristes ou autres besoins pour un projet de production musicale.</p>
                         </div>
 
-                        {#parcours divertissement masqué pour le moment#}
-                        {# <div class="list_option">
-                            <h2>Divertissement et événementiels</h2>
-                            <p>Des services à personnaliser pour faire de vos évènements des moments uniques.</p>
-                        </div> #}
                     </div>
                     <div class="step3 steps" style="display: none;" attr-step="3" attr-title="Expérience: Musique">
                         <div class="form-group list_field musique_choose">
@@ -133,21 +617,6 @@
                         <div class="form-group list_field musique_choose">
                             <label for=""><h2>Quel est votre univers musical* ?</h2></label>
                             <input type="text" class="form-control input_rounded field_univers" name="univers">
-                        </div>
-                        <div class="form-group list_field divertissement_choose">
-                            <label for=""><h2>Votre évènement*</h2></label>
-                            <input type="text" class="form-control input_rounded field_nom_evt" name="nom_evt"
-                                   placeholder="Mariage, salon, séminaires, anniversaires, fête familiale, Bar-Mtzvah, baptême...">
-                        </div>
-                        <div class="form-group list_field divertissement_choose">
-                            <label for=""><h2>Lieu de votre évènement* ?</h2></label>
-                            <input type="text" class="form-control input_rounded field_lieu" name="lieu"
-                                   placeholder="Où ?">
-                        </div>
-                        <div class="form-group list_field divertissement_choose">
-                            <label for=""><h2>Nombre de participants à votre évènement* ?</h2></label>
-                            <input type="number" class="form-control input_rounded field_participants"
-                                   name="participants">
                         </div>
                         <div class="form-group list_field" style="margin-top: 2rem;">
                             <label for=""><h2>Choisissez vos besoins*</h2></label>
@@ -198,51 +667,6 @@
                                         <td><input type="checkbox" name="besoins[]" value="Choristes"
                                                    class="form-control radio_custom field_besoins"/></td>
                                     </tr>
-                                    <!-- DIVERTISSEMENT BESOINS -->
-                                    <tr class="divertissement_choose">
-                                        <td><p>Photo mariage</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Photo mariage"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Vidéo mariage</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Vidéo mariage"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Orchestre</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Orchestre"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="divertissement_choose">
-                                        <td><p>Chorale gospel</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Chorale gospel"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Sonorisation</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Sonorisation"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>DJ</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="DJ"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="divertissement_choose">
-                                        <td><p>Kits lumière</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Kits lumière"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Reportage photo</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Reportage photo"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Reportage vidéo</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Reportage vidéo"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="divertissement_choose">
-                                        <td><p>Traiteurs</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Traiteurs"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Salles</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Salles"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Voiture</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Voiture"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
 
                                     <tr class="musique_choose">
                                         <td colspan="6"><h2>Ajoutez vos options</h2></td>
@@ -278,18 +702,6 @@
                             <div class="inline_choix musique_choose">
                                 <h2>Style musical:</h2>
                                 <p style="font-weight: 300;" class="universValue">Paris 15ème</p>
-                            </div>
-                            <div class="inline_choix divertissement_choose">
-                                <h2>Votre évènement:</h2>
-                                <p style="font-weight: 300;" class="nomEvtValue">Paris 15ème</p>
-                            </div>
-                            <div class="inline_choix divertissement_choose">
-                                <h2>Le lieu:</h2>
-                                <p style="font-weight: 300;" class="lieuValue">Pop / Folk</p>
-                            </div>
-                            <div class="inline_choix divertissement_choose">
-                                <h2>Nombre de participants:</h2>
-                                <p style="font-weight: 300;" class="participantValue">Pop / Folk</p>
                             </div>
                             <div style="margin-top: 3rem;">
                                 <h2>Liste de vos besoins:</h2>
@@ -364,9 +776,25 @@
     <script>
         var actualStep = 1;
         var checkedCheck = 0;
-        var typeExperience;
+        var typeExperience = "Musique";
         var checkboxValues = [];
         var optionsValues = [];
+        function canProceedFromMusicDetails() {
+            return $("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0;
+        }
+        function updateStepper() {
+            $('.experience_step_count_current').text(actualStep);
+            $('.experience_stepper_progress').css('width', ((actualStep / 4) * 100) + '%');
+            $('.experience_stepper_label').removeClass('is-active is-complete');
+            $('.experience_stepper_label').each(function () {
+                let step = parseInt($(this).attr('data-step-label'));
+                if (step < actualStep) {
+                    $(this).addClass('is-complete');
+                } else if (step === actualStep) {
+                    $(this).addClass('is-active');
+                }
+            });
+        }
         $(document).on('click', '.list_option', function () {
             $(this).parent().find('.list_option').removeClass('active');
             $(this).addClass('active');
@@ -374,16 +802,10 @@
             $('.action_next').removeClass('disabled');
             actualStep = $(this).parent().attr('attr-step');
             if (actualStep == 2) {
-                var choixTitle = $(this).find('h2').text();
-                typeExperience = choixTitle;
+                var choixTitle = "Musique";
+                typeExperience = "Musique";
                 $('.step3').attr("attr-title", "Expérience: " + choixTitle)
-                if (typeExperience == "Musique") {
-                    $('.musique_choose').fadeIn()
-                    $('.divertissement_choose').fadeOut()
-                } else {
-                    $('.musique_choose').fadeOut()
-                    $('.divertissement_choose').fadeIn()
-                }
+                $('.step3').attr("attr-title", "Detaillez votre projet musical")
             }
         })
         $(document).on('change', '.besoins .radio_custom', function () {
@@ -392,18 +814,11 @@
             $('.besoins .radio_custom').each(function () {
                 if ($(this).is(":checked")) {
                     checkedCheck++
-                    if (typeExperience == "Musique") {
-                        if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "") {
-                            $('.action_next').addClass('active');
-                            $('.action_next').removeClass('disabled');
-                            actualStep = $(this).parent().parent().parent().parent().parent().parent().parent().attr('attr-step');
-                        }
-                    } else {
-                        if ($("input[name='nom_evt']").val() != "" && $("input[name='lieu']").val() != "" && $("input[name='participants']").val() != "") {
-                            $('.action_next').addClass('active');
-                            $('.action_next').removeClass('disabled');
-                            actualStep = $(this).parent().parent().parent().parent().parent().parent().parent().attr('attr-step');
-                        }
+                    if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "") {
+                        $('.action_next').addClass('active');
+                        $('.action_next').removeClass('disabled');
+                        actualStep = $(this).closest('.steps').attr('attr-step');
+                        updateStepper();
                     }
                 }
             });
@@ -414,24 +829,13 @@
             }
         })
         $(document).on('keyup', '.input_rounded', function () {
-            if (typeExperience == "Musique") {
-                if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
-                    $('.action_next').addClass('active');
-                    $('.action_next').removeClass('disabled');
-                    actualStep = $(this).parent().parent().attr('attr-step');
-                } else {
-                    $('.action_next').removeClass('active');
-                    $('.action_next').addClass('disabled');
-                }
+            if (canProceedFromMusicDetails()) {
+                $('.action_next').addClass('active');
+                $('.action_next').removeClass('disabled');
+                actualStep = $(this).closest('.steps').attr('attr-step');
             } else {
-                if ($("input[name='nom_evt']").val() != "" && $("input[name='lieu']").val() != "" && $("input[name='participants']").val() != "" && checkedCheck > 0) {
-                    $('.action_next').addClass('active');
-                    $('.action_next').removeClass('disabled');
-                    actualStep = $(this).parent().parent().attr('attr-step');
-                } else {
-                    $('.action_next').removeClass('active');
-                    $('.action_next').addClass('disabled');
-                }
+                $('.action_next').removeClass('active');
+                $('.action_next').addClass('disabled');
             }
         })
         $(document).on('click', '.action_next', function (e) {
@@ -441,6 +845,7 @@
                 $('.steps').css('display', 'none')
                 $('.step' + actualStep).css('display', '')
                 $('.experience_create_content h1').text($('.step' + actualStep).attr('attr-title'))
+                updateStepper();
                 $('.action_prev').removeClass('hidden');
                 if (actualStep > 2) {
                     $('.saveAndClose').fadeIn();
@@ -453,15 +858,12 @@
                     $(this).addClass('disabled');
                 }
                 if (actualStep == 4) {
-                    $(this).text('Valider')
+                    $(this).text('Valider ma demande')
                     $('.action_next').addClass('active');
                     $('.action_next').removeClass('disabled');
                     $('.experience_create_content h1').text("Expérience: " + typeExperience);
                     $('.villeValue').text($(".field_ville").val());
                     $('.universValue').text($(".field_univers").val());
-                    $('.nomEvtValue').text($(".field_nom_evt").val());
-                    $('.lieuValue').text($(".field_lieu").val());
-                    $('.participantValue').text($(".field_participants").val());
                     $('.precisionValue').val($(".field_precisions").val());
                     checkboxValues = [];
                     optionsValues = [];
@@ -488,16 +890,9 @@
                 if (actualStep > 3) {
                     $("html, body").animate({scrollTop: 0}, "slow");
                 } else if (actualStep == 3) {
-                    if (typeExperience == "Musique") {
-                        if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
-                            $(this).addClass('active');
-                            $(this).removeClass('disabled');
-                        }
-                    } else {
-                        if ($("input[name='nom_evt']").val() != "" && $("input[name='lieu']").val() != "" && $("input[name='participants']").val() != "" && checkedCheck > 0) {
-                            $(this).addClass('active');
-                            $(this).removeClass('disabled');
-                        }
+                    if (canProceedFromMusicDetails()) {
+                        $(this).addClass('active');
+                        $(this).removeClass('disabled');
                     }
                 }
             } else {
@@ -521,6 +916,7 @@
             }
             $('.step' + actualStep).css('display', '')
             $('.experience_create_content h1').text($('.step' + actualStep).attr('attr-title'))
+            updateStepper();
             $('.action_next').addClass('active');
             $('.action_next').removeClass('disabled');
             if (actualStep == 4) {
@@ -544,9 +940,6 @@
             var data = new FormData();
             data.append('ville', $(".field_ville").val());
             data.append('univers', $(".field_univers").val());
-            data.append('nom_evt', $(".field_nom_evt").val());
-            data.append('lieu_evt', $(".field_lieu").val());
-            data.append('participants_evt', $(".field_participants").val());
             checkboxValues = [];
             optionsValues = [];
             $('input[name="besoins[]"]:checked').each(function () {
@@ -601,6 +994,7 @@
         }
 
         $(document).ready(function (e) {
+            updateStepper();
 
             // live handler
             lc_lightbox('.carousel-card', {
