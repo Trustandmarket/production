@@ -211,6 +211,42 @@
 		font-weight: 400;
 		font-size: .98rem;
 	}
+	.experience_reassurance{
+		width: 100%;
+		margin-top: 1.35rem;
+		padding: 1rem 1.2rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: .8rem;
+		border-radius: 18px;
+		background: rgba(255, 255, 255, 0.82);
+		border: 1px solid rgba(17, 17, 17, 0.08);
+		box-shadow: 0 10px 24px rgba(17, 17, 17, 0.05);
+	}
+	.experience_reassurance_icon{
+		width: 42px;
+		height: 42px;
+		border-radius: 50%;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(241, 124, 48, 0.12);
+		color: #f17c30;
+		font-size: 1rem;
+		flex: 0 0 auto;
+	}
+	.experience_reassurance_text{
+		margin: 0;
+		color: #202020;
+		font-family: "Palanquin", sans-serif;
+		font-size: .98rem;
+		line-height: 1.55;
+	}
+	.experience_reassurance_text strong{
+		font-family: "Palanquin Dark", sans-serif;
+		font-weight: 700;
+	}
 	.experience_content a{
 		padding: 13px;
 		background-color: #f17c30;
@@ -270,6 +306,14 @@
 			height: 28px;
 			background: linear-gradient(180deg, rgba(241, 124, 48, 0.7), rgba(241, 124, 48, 0));
 		}
+		.experience_reassurance{
+			padding: .95rem 1rem;
+			align-items: flex-start;
+			justify-content: flex-start;
+		}
+		.experience_reassurance_text{
+			font-size: .93rem;
+		}
 	}
 	#trustBody {
 		padding-bottom: 100px;
@@ -325,6 +369,14 @@
 					</article>
 				</div>
 			</section>
+			<div class="experience_reassurance" aria-label="Informations de reassurance">
+				<div class="experience_reassurance_icon" aria-hidden="true">
+					<i class="fas fa-shield-alt"></i>
+				</div>
+				<p class="experience_reassurance_text">
+					<strong>C'est gratuit, sans engagement.</strong> Aucune carte bancaire requise.
+				</p>
+			</div>
 			<p>
 				<a href="{{path('experiences_creer_experience')}}">Démarrer</a>
 			</p>
