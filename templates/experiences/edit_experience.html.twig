@@ -87,6 +87,195 @@
     <link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox.css') }}"/>
     <link href="{{ asset('assets/css/experiences/edit_exp.css') }} " rel="stylesheet"/>
     <link href="{{ asset('assets/css/style-aide.css') }} " rel="stylesheet"/>
+    <style>
+        .experience_create_content {
+            position: relative;
+        }
+
+        .experience_create_content > h1 {
+            display: none;
+        }
+
+        .experience_intro_shell {
+            margin-bottom: 2.5rem;
+            padding: 2.2rem;
+            border-radius: 32px;
+            background:
+                radial-gradient(circle at top left, rgba(241, 124, 48, 0.18), transparent 24%),
+                linear-gradient(135deg, #fff9f4 0%, #ffffff 48%, #f5f7fa 100%);
+            border: 1px solid rgba(241, 124, 48, 0.16);
+            box-shadow: 0 24px 60px rgba(16, 16, 16, 0.10);
+        }
+
+        .experience_intro_kicker,
+        .experience_stepper_eyebrow {
+            margin: 0 0 .4rem 0;
+            font-size: .8rem;
+            font-family: "Palanquin Dark", sans-serif;
+            font-weight: 700;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: #f17c30;
+        }
+
+        .experience_intro_shell h1 {
+            margin-bottom: .75rem;
+            font-size: 3rem;
+            line-height: 1.05;
+            color: #121212;
+        }
+
+        .experience_intro_subtitle {
+            max-width: 760px;
+            margin: 0;
+            color: #474747;
+            font-size: 1.03rem;
+            line-height: 1.75;
+            font-family: "Palanquin", sans-serif;
+            font-weight: 300;
+        }
+
+        .experience_intro_meta {
+            margin-top: 1.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .75rem;
+        }
+
+        .experience_intro_badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            padding: .72rem 1rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            box-shadow: 0 8px 20px rgba(17, 17, 17, 0.05);
+            color: #1f1f1f;
+            font-family: "Palanquin", sans-serif;
+            font-size: .95rem;
+        }
+
+        .experience_intro_badge i {
+            color: #f17c30;
+        }
+
+        .experience_stepper {
+            margin-bottom: 2rem;
+            padding: 1.25rem 1.4rem;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            box-shadow: 0 16px 36px rgba(17, 17, 17, 0.06);
+        }
+
+        .experience_stepper_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: .9rem;
+        }
+
+        .experience_stepper_count {
+            margin: 0;
+            color: #1e1e1e;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: .95rem;
+        }
+
+        .experience_stepper_track {
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(17, 17, 17, 0.08);
+            overflow: hidden;
+        }
+
+        .experience_stepper_progress {
+            width: 25%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #f17c30 0%, #ffb787 100%);
+            transition: width .3s ease;
+        }
+
+        .experience_stepper_labels {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: .75rem;
+        }
+
+        .experience_stepper_label {
+            display: flex;
+            flex-direction: column;
+            gap: .25rem;
+            color: #858585;
+            transition: color .2s ease;
+        }
+
+        .experience_stepper_label strong {
+            font-size: .78rem;
+            font-family: "Palanquin Dark", sans-serif;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        .experience_stepper_label span {
+            font-family: "Palanquin", sans-serif;
+            font-size: .92rem;
+            line-height: 1.4;
+        }
+
+        .experience_stepper_label.is-active,
+        .experience_stepper_label.is-complete {
+            color: #151515;
+        }
+
+        .options > .steps,
+        .step4 .recap_choix {
+            padding: 1.8rem;
+            border-radius: 28px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            box-shadow: 0 20px 44px rgba(17, 17, 17, 0.08);
+        }
+
+        .step1 .list_option p,
+        .step2 .list_option p {
+            font-family: "Palanquin", sans-serif !important;
+            font-weight: 300 !important;
+            font-size: .98rem !important;
+            line-height: 1.8 !important;
+            color: #676767 !important;
+        }
+
+        .step2 .list_option {
+            margin-bottom: 0;
+            border-radius: 30px;
+            border: 1px solid rgba(241, 124, 48, 0.25);
+            background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(248,244,240,0.95) 100%);
+            box-shadow: 0 18px 40px rgba(16, 16, 16, 0.08);
+        }
+
+        .prefooter_action {
+            backdrop-filter: blur(12px);
+            background: rgba(255,255,255,0.92);
+            border-top: 1px solid rgba(17, 17, 17, 0.07);
+            box-shadow: 0 -12px 30px rgba(17, 17, 17, 0.06);
+        }
+
+        @media (max-width: 991px) {
+            .experience_intro_shell h1 {
+                font-size: 2.4rem;
+            }
+
+            .experience_stepper_labels {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block header %}
@@ -103,6 +292,30 @@
         <main class="mt-2 pt-2">
             <div class="container experience_create_content">
                 <h1>Créez votre expérience unique avec Trust & Market</h1>
+                <div class="experience_intro_shell">
+                    <p class="experience_intro_kicker">Modification en cours</p>
+                    <h1>Affinez votre projet musical</h1>
+                    <p class="experience_intro_subtitle">Mettez a jour votre demande en quelques instants pour nous permettre d'affiner la transmission aux studios les plus pertinents.</p>
+                    <div class="experience_intro_meta">
+                        <span class="experience_intro_badge"><i class="fa fa-shield"></i> Gratuit, sans engagement</span>
+                        <span class="experience_intro_badge"><i class="fa fa-pencil"></i> Vos informations restent modifiables</span>
+                    </div>
+                </div>
+                <div class="experience_stepper">
+                    <div class="experience_stepper_header">
+                        <p class="experience_stepper_eyebrow">Parcours guide</p>
+                        <p class="experience_stepper_count">Etape 1 sur 4</p>
+                    </div>
+                    <div class="experience_stepper_track">
+                        <div class="experience_stepper_progress"></div>
+                    </div>
+                    <div class="experience_stepper_labels">
+                        <div class="experience_stepper_label is-active"><strong>01</strong><span>Lancez-vous</span></div>
+                        <div class="experience_stepper_label"><strong>02</strong><span>Production musicale</span></div>
+                        <div class="experience_stepper_label"><strong>03</strong><span>Details du projet</span></div>
+                        <div class="experience_stepper_label"><strong>04</strong><span>Recapitulatif</span></div>
+                    </div>
+                </div>
                 <div class="options">
                     <div class="step1 steps" attr-step="1"
                          attr-title="Créez votre expérience unique avec Trust & Market">
@@ -456,9 +669,24 @@
             return array.filter((a, b) => array.indexOf(a) === b)
         }
 
+        function updateStepper(step) {
+            var progressWidth = (step / 4) * 100;
+            $('.experience_stepper_count').text('Etape ' + step + ' sur 4');
+            $('.experience_stepper_progress').css('width', progressWidth + '%');
+            $('.experience_stepper_label').removeClass('is-active is-complete');
+            $('.experience_stepper_label').each(function (index) {
+                if ((index + 1) < step) {
+                    $(this).addClass('is-complete');
+                } else if ((index + 1) === step) {
+                    $(this).addClass('is-active');
+                }
+            });
+        }
+
         $('.step1 .list_option').addClass('active')
         $('.action_next').addClass('active');
         $('.action_next').removeClass('disabled');
+        updateStepper(1);
         // actualStep = 2;
 
         $(document).on('click', '.list_option', function () {
@@ -536,6 +764,7 @@
                 $('.step' + actualStep).css('display', '')
                 var titreExp = $('.step' + actualStep).attr('attr-title');
                 $('.experience_create_content h1').text(titreExp == undefined ? "{{ experience.exp_type_experience }}" : titreExp)
+                updateStepper(actualStep);
                 $('.action_prev').removeClass('hidden');
                 if (actualStep > 2) {
                     $('.saveAndClose').fadeIn();
@@ -632,6 +861,7 @@
             }
             $('.step' + actualStep).css('display', '')
             $('.experience_create_content h1').text($('.step' + actualStep).attr('attr-title'))
+            updateStepper(actualStep);
             $('.action_next').addClass('active');
             $('.action_next').removeClass('disabled');
             if (actualStep == 4) {
