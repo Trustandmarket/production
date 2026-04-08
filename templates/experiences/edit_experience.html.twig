@@ -87,276 +87,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/lc_lightbox.css') }}"/>
     <link href="{{ asset('assets/css/experiences/edit_exp.css') }} " rel="stylesheet"/>
     <link href="{{ asset('assets/css/style-aide.css') }} " rel="stylesheet"/>
-    <style>
-        .experience_create_content {
-            position: relative;
-        }
-
-        .experience_create_content > h1 {
-            display: none;
-        }
-
-        .experience_intro_shell {
-            margin-bottom: 2.5rem;
-            padding: 2.2rem;
-            border-radius: 32px;
-            background:
-                radial-gradient(circle at top left, rgba(241, 124, 48, 0.18), transparent 24%),
-                linear-gradient(135deg, #fff9f4 0%, #ffffff 48%, #f5f7fa 100%);
-            border: 1px solid rgba(241, 124, 48, 0.16);
-            box-shadow: 0 24px 60px rgba(16, 16, 16, 0.10);
-        }
-
-        .experience_intro_kicker {
-            margin: 0 0 .4rem 0;
-            font-size: .8rem;
-            font-family: "Palanquin Dark", sans-serif;
-            font-weight: 700;
-            letter-spacing: .22em;
-            text-transform: uppercase;
-            color: #f17c30;
-        }
-
-        .experience_intro_shell h1 {
-            margin-bottom: .75rem;
-            font-size: 3rem;
-            line-height: 1.05;
-            color: #121212;
-        }
-
-        .experience_intro_subtitle {
-            max-width: 760px;
-            margin: 0;
-            color: #474747;
-            font-size: 1.03rem;
-            line-height: 1.75;
-            font-family: "Palanquin", sans-serif;
-        }
-
-        .step1 .list_option .experience_intro_subtitle,
-        .step2 .list_option p {
-            font-family: "Palanquin", sans-serif !important;
-            font-weight: 300 !important;
-            font-size: .98rem !important;
-            line-height: 1.8 !important;
-            color: #676767 !important;
-        }
-
-        .experience_intro_meta {
-            margin-top: 1.2rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: .75rem;
-        }
-
-        .experience_intro_badge {
-            display: inline-flex;
-            align-items: center;
-            gap: .55rem;
-            padding: .72rem 1rem;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.86);
-            border: 1px solid rgba(17, 17, 17, 0.08);
-            box-shadow: 0 8px 20px rgba(17, 17, 17, 0.05);
-            color: #1f1f1f;
-            font-family: "Palanquin", sans-serif;
-            font-size: .95rem;
-        }
-
-        .experience_intro_badge i {
-            color: #f17c30;
-        }
-
-        .experience_stepper {
-            margin-bottom: 2rem;
-            padding: 1.25rem 1.4rem;
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(17, 17, 17, 0.08);
-            box-shadow: 0 16px 36px rgba(17, 17, 17, 0.06);
-        }
-
-        .experience_stepper_header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: .9rem;
-        }
-
-        .experience_stepper_eyebrow,
-        .experience_stage_eyebrow {
-            margin: 0 0 .35rem 0;
-            color: #f17c30;
-            font-size: .78rem;
-            letter-spacing: .18em;
-            text-transform: uppercase;
-            font-family: "Palanquin Dark", sans-serif;
-        }
-
-        .experience_stepper_count {
-            margin: 0;
-            color: #1e1e1e;
-            font-family: "Palanquin Dark", sans-serif;
-            font-size: .95rem;
-        }
-
-        .experience_stepper_track {
-            width: 100%;
-            height: 6px;
-            border-radius: 999px;
-            background: rgba(17, 17, 17, 0.08);
-            overflow: hidden;
-        }
-
-        .experience_stepper_progress {
-            width: 25%;
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, #f17c30 0%, #ffb787 100%);
-            transition: width .3s ease;
-        }
-
-        .experience_stepper_labels {
-            margin-top: 1rem;
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: .75rem;
-        }
-
-        .experience_stepper_label {
-            display: flex;
-            flex-direction: column;
-            gap: .25rem;
-            color: #858585;
-            transition: color .2s ease;
-        }
-
-        .experience_stepper_label strong {
-            font-size: .78rem;
-            font-family: "Palanquin Dark", sans-serif;
-            letter-spacing: .14em;
-            text-transform: uppercase;
-        }
-
-        .experience_stepper_label span {
-            font-family: "Palanquin", sans-serif;
-            font-size: .92rem;
-            line-height: 1.4;
-        }
-
-        .experience_stepper_label.is-active,
-        .experience_stepper_label.is-complete {
-            color: #151515;
-        }
-
-        .experience_stage_panel,
-        .step4 .recap_choix {
-            padding: 1.8rem;
-            border-radius: 28px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
-            border: 1px solid rgba(17, 17, 17, 0.08);
-            box-shadow: 0 20px 44px rgba(17, 17, 17, 0.08);
-        }
-
-        .experience_stage_header {
-            margin-bottom: 1.2rem;
-        }
-
-        .experience_stage_header p {
-            margin: 0;
-            color: #666;
-            font-family: "Palanquin", sans-serif;
-            line-height: 1.7;
-        }
-
-        .experience_card_option {
-            position: relative;
-            overflow: hidden;
-            border-radius: 30px;
-            border: 1px solid rgba(241, 124, 48, 0.25);
-            background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(248,244,240,0.95) 100%);
-            box-shadow: 0 18px 40px rgba(16, 16, 16, 0.08);
-            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-        }
-
-        .experience_card_option:hover,
-        .experience_card_option.active {
-            transform: translateY(-2px);
-            border-color: rgba(241, 124, 48, 0.55);
-            box-shadow: 0 24px 52px rgba(16, 16, 16, 0.12);
-        }
-
-        .experience_card_option .list_option {
-            margin: 0;
-            padding: 2rem;
-            border: 0 !important;
-            background: transparent !important;
-            box-shadow: none !important;
-        }
-
-        .experience_field_grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 1.6rem;
-        }
-
-        .experience_field_panel {
-            margin-bottom: 1.4rem;
-            padding: 1.3rem 1.4rem;
-            border-radius: 24px;
-            background: rgba(255,255,255,0.86);
-            border: 1px solid rgba(17, 17, 17, 0.07);
-            box-shadow: 0 14px 30px rgba(17, 17, 17, 0.05);
-        }
-
-        .experience_summary_block {
-            margin-top: 2rem;
-            padding: 1.45rem 1.5rem;
-            border-radius: 24px;
-            background: linear-gradient(135deg, rgba(248,244,240,0.92) 0%, rgba(255,255,255,0.98) 100%);
-            border: 1px solid rgba(241, 124, 48, 0.18);
-        }
-
-        .step4 .inline_choix {
-            margin-bottom: 1.6rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(17, 17, 17, 0.08);
-        }
-
-        .prefooter_action {
-            backdrop-filter: blur(12px);
-            background: rgba(255,255,255,0.92);
-            border-top: 1px solid rgba(17, 17, 17, 0.07);
-            box-shadow: 0 -12px 30px rgba(17, 17, 17, 0.06);
-        }
-
-        @media (max-width: 991px) {
-            .experience_intro_shell h1 {
-                font-size: 2.4rem;
-            }
-
-            .experience_stepper_labels,
-            .experience_field_grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .experience_intro_shell,
-            .experience_stepper,
-            .experience_stage_panel,
-            .step4 .recap_choix {
-                padding: 1.4rem;
-                border-radius: 24px;
-            }
-
-            .experience_intro_shell h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
 {% endblock %}
 
 {% block header %}
@@ -373,88 +103,20 @@
         <main class="mt-2 pt-2">
             <div class="container experience_create_content">
                 <h1>Créez votre expérience unique avec Trust & Market</h1>
-                <div class="experience_intro_shell">
-                    <p class="experience_intro_kicker">Modification en cours</p>
-                    <h1>Affinez votre projet musical</h1>
-                    <p class="experience_intro_subtitle">Mettez Ã  jour votre demande en quelques instants pour nous permettre d'affiner la transmission aux studios les plus pertinents.</p>
-                    <div class="experience_intro_meta">
-                        <span class="experience_intro_badge"><i class="fa fa-shield"></i> Gratuit, sans engagement</span>
-                        <span class="experience_intro_badge"><i class="fa fa-pencil"></i> Vos informations restent modifiables</span>
-                    </div>
-                </div>
-                <div class="experience_stepper">
-                    <div class="experience_stepper_header">
-                        <p class="experience_stepper_eyebrow">Parcours guidÃ©</p>
-                        <p class="experience_stepper_count">Ã‰tape <span class="experience_stepper_current">1</span> sur 4</p>
-                    </div>
-                    <div class="experience_stepper_track">
-                        <div class="experience_stepper_progress"></div>
-                    </div>
-                    <div class="experience_stepper_labels">
-                        <div class="experience_stepper_label is-active" data-step-label="1">
-                            <strong>01</strong>
-                            <span>Lancez-vous</span>
-                        </div>
-                        <div class="experience_stepper_label" data-step-label="2">
-                            <strong>02</strong>
-                            <span>Production musicale</span>
-                        </div>
-                        <div class="experience_stepper_label" data-step-label="3">
-                            <strong>03</strong>
-                            <span>DÃ©tails du projet</span>
-                        </div>
-                        <div class="experience_stepper_label" data-step-label="4">
-                            <strong>04</strong>
-                            <span>RÃ©capitulatif</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="experience_intro_shell">
-                    <p class="experience_intro_kicker">Modification en cours</p>
-                    <h1>Affinez votre projet musical</h1>
-                    <p class="experience_intro_subtitle">Mettez à jour votre demande en quelques instants pour nous permettre d'affiner la transmission aux studios les plus pertinents.</p>
-                    <div class="experience_intro_meta">
-                        <span class="experience_intro_badge"><i class="fa fa-shield"></i> Gratuit, sans engagement</span>
-                        <span class="experience_intro_badge"><i class="fa fa-pencil"></i> Vos informations restent modifiables</span>
-                    </div>
-                </div>
-                <div class="experience_stepper">
-                    <div class="experience_stepper_header">
-                        <p class="experience_stepper_eyebrow">Parcours guidé</p>
-                        <p class="experience_stepper_count">Étape 1 sur 4</p>
-                    </div>
-                    <div class="experience_stepper_track">
-                        <div class="experience_stepper_progress"></div>
-                    </div>
-                    <div class="experience_stepper_labels">
-                        <div class="experience_stepper_label is-active"><strong>01</strong><span>Lancez-vous</span></div>
-                        <div class="experience_stepper_label"><strong>02</strong><span>Production musicale</span></div>
-                        <div class="experience_stepper_label"><strong>03</strong><span>Détails du projet</span></div>
-                        <div class="experience_stepper_label"><strong>04</strong><span>Récapitulatif</span></div>
-                    </div>
-                </div>
                 <div class="options">
-                    <div class="step1 steps experience_stage_panel" attr-step="1"
-                         attr-title="Affinez votre projet musical">
+                    <div class="step1 steps" attr-step="1"
+                         attr-title="Créez votre expérience unique avec Trust & Market">
                         <div class="list_option">
-                            <p class="experience_stage_eyebrow">Bienvenue</p>
                             <h2>Lancez - vous !</h2>
-                            <p class="experience_intro_subtitle">Personnalisez votre projet et faites-vous accompagner quelque soit votre besoin.</p>
+                            <p>Personnalisez votre expérience et faites-vous accompagner quelque soit votre besoin.</p>
                         </div>
                     </div>
-                    <div class="step2 steps experience_stage_panel" style="display: none;" attr-step="2"
-                         attr-title="Production musicale">
-                        <div class="experience_stage_header">
-                            <p class="experience_stage_eyebrow">Votre univers</p>
-                            <p>SÃ©lectionnez la catÃ©gorie de votre projet pour continuer avec un parcours clair et sur mesure.</p>
-                        </div>
-                        <div class="experience_card_option {{ experience.exp_type_experience == 'Musique' ? 'active' : '' }}">
+                    <div class="step2 steps" style="display: none;" attr-step="2"
+                         attr-title="Quel type d'expérience voulez-vous créer ?">
                         <div class="list_option {{ experience.exp_type_experience == 'Musique' ? 'active' : '' }}">
-                            <p class="experience_stage_eyebrow">CatÃ©gorie</p>
-                            <h2>PRODUCTION MUSICALE</h2>
+                            <h2>Musique</h2>
                             <p>Vous avez un besoin de studio d'enregistrement, de mixage audio, de mastering audio,
                             de musiciens, de batteur ou percussionniste, de choristes ou autres besoins pour un projet de production musicale.</p>
-                        </div>
                         </div>
                         {#parcours divertissement masqué pour le moment#}
                         {#<div class="list_option {{ experience.exp_type_experience == 'Divertissement et événementiels' ? 'active' : '' }}">
@@ -462,7 +124,7 @@
                             <p>Des services à personnaliser pour faire de vos évènements des moments uniques.</p>
                         </div>#}
                     </div>
-                    <div class="step3 steps experience_stage_panel" style="display: none;" attr-step="3" attr-title="Détaillez votre projet musical">
+                    <div class="step3 steps" style="display: none;" attr-step="3" attr-title="Expérience: Musique">
                         <div class="form-group list_field musique_choose">
                             <label for=""><h2>Dans quelle ville souhaitez-vous créer l'expérience* ?</h2></label>
                             <input type="text" class="form-control input_rounded field_ville" name="ville"
@@ -684,14 +346,14 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="form-group list_field experience_field_panel">
-                            <label for=""><h2>Des précisions pour personnaliser l'expérience</h2></label>
+                        <div class="form-group list_field">
+                            <label for=""><h2>Des précisions pour personnaliser l’expérience</h2></label>
                             <textarea name="precisions" id="precisions" class="field_precisions form-control" cols="30"
                                       rows="5"
                                       placeholder="Donnez-nous des détails pour nous permettre de personnaliser votre offre.">{{ experience.exp_precisions }}</textarea>
                         </div>
                     </div>
-                    <div class="step4 steps" style="display: none;" attr-step="4" attr-title="Récapitulatif de votre projet musical">
+                    <div class="step4 steps" style="display: none;" attr-step="4" attr-title="Expérience: Musique">
                         <div class="recap_choix">
                             <div class="inline_choix musique_choose">
                                 <h2>Ville:</h2>
@@ -786,7 +448,7 @@
     <script>
         var actualStep = 1;
         var checkedCheck = 0;
-        var typeExperience = "Musique";
+        var typeExperience = "{{ experience.exp_type_experience }}";
         var checkboxValues = [];
         var optionsValues = [];
 
@@ -794,18 +456,9 @@
             return array.filter((a, b) => array.indexOf(a) === b)
         }
 
-        function updateStepper(step) {
-            var progressWidth = (step / 4) * 100;
-            $('.experience_stepper_count').text('Étape ' + step + ' sur 4');
-            $('.experience_stepper_progress').css('width', progressWidth + '%');
-            $('.experience_stepper_label').removeClass('is-active');
-            $('.experience_stepper_label').eq(step - 1).addClass('is-active');
-        }
-
         $('.step1 .list_option').addClass('active')
         $('.action_next').addClass('active');
         $('.action_next').removeClass('disabled');
-        updateStepper(1);
         // actualStep = 2;
 
         $(document).on('click', '.list_option', function () {
@@ -828,7 +481,8 @@
             }
         })
         $(document).on('change', '.besoins .radio_custom', function () {
-                        checkedCheck = 0;
+            let that = $(this);
+            checkedCheck = 0;
             $('.besoins .radio_custom').each(function () {
                 if ($(this).is(":checked")) {
                     checkedCheck++
@@ -881,8 +535,7 @@
                 $('.steps').css('display', 'none')
                 $('.step' + actualStep).css('display', '')
                 var titreExp = $('.step' + actualStep).attr('attr-title');
-                $('.experience_create_content h1').text(titreExp == undefined ? "Affinez votre projet musical" : titreExp)
-                updateStepper(actualStep)
+                $('.experience_create_content h1').text(titreExp == undefined ? "{{ experience.exp_type_experience }}" : titreExp)
                 $('.action_prev').removeClass('hidden');
                 if (actualStep > 2) {
                     $('.saveAndClose').fadeIn();
@@ -910,9 +563,12 @@
                     $(this).text('Valider')
                     $('.action_next').addClass('active');
                     $('.action_next').removeClass('disabled');
-                    $('.experience_create_content h1').text("Récapitulatif de votre projet musical")
+                    $('.experience_create_content h1').text(typeExperience == undefined ? "Expérience: {{ experience.exp_type_experience }}" : "Expérience: " + typeExperience)
                     $('.villeValue').text($(".field_ville").val());
                     $('.universValue').text($(".field_univers").val());
+                    $('.nomEvtValue').text($(".field_nom_evt").val());
+                    $('.lieuValue').text($(".field_lieu").val());
+                    $('.participantValue').text($(".field_participants").val());
                     $('.precisionValue').val($(".field_precisions").val());
                     checkboxValues = [];
                     optionsValues = [];
@@ -936,7 +592,7 @@
                 if (actualStep > 3) {
                     $("html, body").animate({scrollTop: 0}, "slow");
                 } else if (actualStep == 3) {
-                    $('.experience_create_content h1').text("Récapitulatif de votre projet musical")
+                    $('.experience_create_content h1').text(typeExperience == undefined ? "Expérience: {{ experience.exp_type_experience }}" : "Expérience: " + typeExperience)
                     checkedCheck = 0;
                     $('.besoins .radio_custom').each(function () {
                         if ($(this).is(":checked")) {
@@ -976,7 +632,6 @@
             }
             $('.step' + actualStep).css('display', '')
             $('.experience_create_content h1').text($('.step' + actualStep).attr('attr-title'))
-            updateStepper(actualStep)
             $('.action_next').addClass('active');
             $('.action_next').removeClass('disabled');
             if (actualStep == 4) {
@@ -999,7 +654,10 @@
             var data = new FormData();
             data.append('ville', $(".field_ville").val());
             data.append('univers', $(".field_univers").val());
-                        $('input[name="besoins[]"]:checked').each(function () {
+            data.append('nom_evt', $(".field_nom_evt").val());
+            data.append('lieu_evt', $(".field_lieu").val());
+            data.append('participants_evt', $(".field_participants").val());
+            $('input[name="besoins[]"]:checked').each(function () {
                 data.append('besoins[]', this.checked ? $(this).val() : "");
             });
             $('input[name="options[]"]:checked').each(function () {
@@ -1208,5 +866,3 @@
     </script>
 
 {% endblock %}
-
-
