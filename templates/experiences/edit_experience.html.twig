@@ -411,21 +411,21 @@
                 </div>
                 <div class="options">
                     <div class="step1 steps experience_stage_panel" attr-step="1"
-                         attr-title="Créez votre expérience unique avec Trust & Market">
+                         attr-title="Affinez votre projet musical">
                         <div class="list_option">
                             <p class="experience_stage_eyebrow">Bienvenue</p>
                             <h2>Lancez - vous !</h2>
-                            <p>Personnalisez votre expérience et faites-vous accompagner quelque soit votre besoin.</p>
+                            <p class="experience_intro_subtitle">Personnalisez votre projet et faites-vous accompagner quelque soit votre besoin.</p>
                         </div>
                     </div>
                     <div class="step2 steps experience_stage_panel" style="display: none;" attr-step="2"
-                         attr-title="Quel type d'expérience voulez-vous créer ?">
+                         attr-title="Production musicale">
                         <div class="experience_stage_header">
                             <p class="experience_stage_eyebrow">Votre univers</p>
                             <p>SÃ©lectionnez la catÃ©gorie de votre projet pour continuer avec un parcours clair et sur mesure.</p>
                         </div>
                         <div class="experience_card_option {{ experience.exp_type_experience == 'Musique' ? 'active' : '' }}">
-                        <div class="list_option {{ experience.exp_type_experience == 'Musique' ? 'active' : '' }}">
+                        <div class="experience_stage_header>`r`n                            <p class="experience_stage_eyebrow">Votre univers</p>`r`n                            <p>S??lectionnez la cat??gorie de votre projet pour continuer avec un parcours clair et sur mesure.</p>`r`n                        </div>`r`n                        <div class="experience_card_option {{ experience.exp_type_experience == 'Musique' ? 'active' : '' }}">`r`n                        <div class="list_option {{ experience.exp_type_experience == 'Musique' ? 'active' : '' }}">
                             <p class="experience_stage_eyebrow">CatÃ©gorie</p>
                             <h2>PRODUCTION MUSICALE</h2>
                             <p>Vous avez un besoin de studio d'enregistrement, de mixage audio, de mastering audio,
@@ -437,7 +437,7 @@
                             <p>Des services à personnaliser pour faire de vos évènements des moments uniques.</p>
                         </div>#}
                     </div>
-                    <div class="step3 steps" style="display: none;" attr-step="3" attr-title="Expérience: Musique">
+                    <div class="step3 steps experience_stage_panel" style="display: none;" attr-step="3" attr-title="D??taillez votre projet musical">
                         <div class="form-group list_field musique_choose">
                             <label for=""><h2>Dans quelle ville souhaitez-vous créer l'expérience* ?</h2></label>
                             <input type="text" class="form-control input_rounded field_ville" name="ville"
@@ -659,14 +659,13 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="form-group list_field">
-                            <label for=""><h2>Des précisions pour personnaliser l’expérience</h2></label>
+                        <div class="form-group list_field experience_field_panel">`r`n                            <label for=""><h2>Des pr??cisions pour personnaliser l'exp??rience</h2></label>
                             <textarea name="precisions" id="precisions" class="field_precisions form-control" cols="30"
                                       rows="5"
                                       placeholder="Donnez-nous des détails pour nous permettre de personnaliser votre offre.">{{ experience.exp_precisions }}</textarea>
                         </div>
                     </div>
-                    <div class="step4 steps" style="display: none;" attr-step="4" attr-title="Expérience: Musique">
+                    <div class="step4 steps" style="display: none;" attr-step="4" attr-title="R??capitulatif de votre projet musical">
                         <div class="recap_choix">
                             <div class="inline_choix musique_choose">
                                 <h2>Ville:</h2>
@@ -761,18 +760,15 @@
     <script>
         var actualStep = 1;
         var checkedCheck = 0;
-        var typeExperience = "{{ experience.exp_type_experience }}";
+        var typeExperience = "Musique";
         var checkboxValues = [];
         var optionsValues = [];
 
-        function removeDuplicates(array) {
-            return array.filter((a, b) => array.indexOf(a) === b)
-        }
+        function removeDuplicates(array) {`r`n            return array.filter((a, b) => array.indexOf(a) === b)`r`n        }`r`n`r`n        function canProceedFromMusicDetails() {`r`n            return $("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0;`r`n        }`r`n`r`n        function updateStepper(step) {`r`n            var progressWidth = (step / 4) * 100;`r`n            $(".experience_stepper_current").text(step);`r`n            $(".experience_stepper_progress").css("width", progressWidth + "%");`r`n            $(".experience_stepper_label").each(function () {`r`n                var labelStep = parseInt($(this).attr("data-step-label"));`r`n                $(this).removeClass("is-active is-complete");`r`n                if (labelStep < step) {`r`n                    $(this).addClass("is-complete");`r`n                } else if (labelStep === step) {`r`n                    $(this).addClass("is-active");`r`n                }`r`n            });`r`n        }
 
         $('.step1 .list_option').addClass('active')
         $('.action_next').addClass('active');
-        $('.action_next').removeClass('disabled');
-        // actualStep = 2;
+        $('.action_next').removeClass('disabled');`r`n        updateStepper(1);`r`n        // actualStep = 2;
 
         $(document).on('click', '.list_option', function () {
             $(this).parent().find('.list_option').removeClass('active');
@@ -794,8 +790,7 @@
             }
         })
         $(document).on('change', '.besoins .radio_custom', function () {
-            let that = $(this);
-            checkedCheck = 0;
+                        checkedCheck = 0;
             $('.besoins .radio_custom').each(function () {
                 if ($(this).is(":checked")) {
                     checkedCheck++
@@ -848,7 +843,7 @@
                 $('.steps').css('display', 'none')
                 $('.step' + actualStep).css('display', '')
                 var titreExp = $('.step' + actualStep).attr('attr-title');
-                $('.experience_create_content h1').text(titreExp == undefined ? "{{ experience.exp_type_experience }}" : titreExp)
+                $('.experience_create_content h1').text(titreExp == undefined ? "Affinez votre projet musical" : titreExp)`r`n                updateStepper(actualStep)
                 $('.action_prev').removeClass('hidden');
                 if (actualStep > 2) {
                     $('.saveAndClose').fadeIn();
@@ -876,12 +871,9 @@
                     $(this).text('Valider')
                     $('.action_next').addClass('active');
                     $('.action_next').removeClass('disabled');
-                    $('.experience_create_content h1').text(typeExperience == undefined ? "Expérience: {{ experience.exp_type_experience }}" : "Expérience: " + typeExperience)
+                    $('.experience_create_content h1').text("R??capitulatif de votre projet musical")
                     $('.villeValue').text($(".field_ville").val());
                     $('.universValue').text($(".field_univers").val());
-                    $('.nomEvtValue').text($(".field_nom_evt").val());
-                    $('.lieuValue').text($(".field_lieu").val());
-                    $('.participantValue').text($(".field_participants").val());
                     $('.precisionValue').val($(".field_precisions").val());
                     checkboxValues = [];
                     optionsValues = [];
@@ -905,7 +897,7 @@
                 if (actualStep > 3) {
                     $("html, body").animate({scrollTop: 0}, "slow");
                 } else if (actualStep == 3) {
-                    $('.experience_create_content h1').text(typeExperience == undefined ? "Expérience: {{ experience.exp_type_experience }}" : "Expérience: " + typeExperience)
+                    $('.experience_create_content h1').text("R??capitulatif de votre projet musical")
                     checkedCheck = 0;
                     $('.besoins .radio_custom').each(function () {
                         if ($(this).is(":checked")) {
@@ -944,7 +936,7 @@
                 $("html, body").animate({scrollTop: 0}, "slow");
             }
             $('.step' + actualStep).css('display', '')
-            $('.experience_create_content h1').text($('.step' + actualStep).attr('attr-title'))
+            $('.experience_create_content h1').text($('.step' + actualStep).attr('attr-title'))`r`n            updateStepper(actualStep)
             $('.action_next').addClass('active');
             $('.action_next').removeClass('disabled');
             if (actualStep == 4) {
@@ -967,10 +959,7 @@
             var data = new FormData();
             data.append('ville', $(".field_ville").val());
             data.append('univers', $(".field_univers").val());
-            data.append('nom_evt', $(".field_nom_evt").val());
-            data.append('lieu_evt', $(".field_lieu").val());
-            data.append('participants_evt', $(".field_participants").val());
-            $('input[name="besoins[]"]:checked').each(function () {
+                        $('input[name="besoins[]"]:checked').each(function () {
                 data.append('besoins[]', this.checked ? $(this).val() : "");
             });
             $('input[name="options[]"]:checked').each(function () {
@@ -1179,3 +1168,4 @@
     </script>
 
 {% endblock %}
+
