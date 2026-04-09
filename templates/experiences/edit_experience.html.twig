@@ -326,8 +326,8 @@
                     </div>
                     <div class="step2 steps" style="display: none;" attr-step="2"
                          attr-title="Quel type d'expérience voulez-vous créer ?">
-                        <div class="list_option {{ experience.exp_type_experience == 'Musique' ? 'active' : '' }}">
-                            <h2>Musique</h2>
+                        <div class="list_option {{ experience.exp_type_experience == 'Production musicale' ? 'active' : '' }}">
+                            <h2>Production musicale</h2>
                             <p>Vous avez un besoin de studio d'enregistrement, de mixage audio, de mastering audio,
                             de musiciens, de batteur ou percussionniste, de choristes ou autres besoins pour un projet de production musicale.</p>
                         </div>
@@ -699,7 +699,7 @@
                 var choixTitle = $(this).find('h2').text();
                 typeExperience = choixTitle;
                 $('.step3').attr("attr-title", "Projet :" + choixTitle)
-                if (typeExperience == "Musique") {
+                if (typeExperience == "Production musicale") {
                     $('.musique_choose').fadeIn()
                     $('.divertissement_choose').fadeOut()
                 } else {
@@ -714,7 +714,7 @@
             $('.besoins .radio_custom').each(function () {
                 if ($(this).is(":checked")) {
                     checkedCheck++
-                    if (typeExperience == "Musique") {
+                    if (typeExperience == "Production musicale") {
                         if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "") {
                             $('.action_next').addClass('active');
                             $('.action_next').removeClass('disabled');
@@ -736,7 +736,7 @@
             }
         })
         $(document).on('keyup', '.input_rounded', function () {
-            if (typeExperience == "Musique") {
+            if (typeExperience == "Production musicale") {
                 if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
                     $('.action_next').addClass('active');
                     $('.action_next').removeClass('disabled');
@@ -779,7 +779,7 @@
                 if (actualStep == 2) {
                     $(this).addClass('active');
                     $(this).removeClass('disabled');
-                    if (typeExperience == "Musique") {
+                    if (typeExperience == "Production musicale") {
                         $('.musique_choose').fadeIn()
                         $('.divertissement_choose').fadeOut()
                     } else {
@@ -828,7 +828,7 @@
                             checkedCheck++
                         }
                     });
-                    if (typeExperience == "Musique") {
+                    if (typeExperience == "Production musicale") {
                         if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
                             $(this).addClass('active');
                             $(this).removeClass('disabled');
