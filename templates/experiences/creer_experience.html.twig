@@ -315,15 +315,11 @@
 
         .step3 .radios table {
             width: 100%;
+            table-layout: fixed;
         }
 
         .step3 .radios tr {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr) 42px;
-            column-gap: .9rem;
-            row-gap: .55rem;
-            align-items: center;
-            margin-bottom: .9rem;
+            display: table-row;
         }
 
         .step3 .radios table td {
@@ -332,14 +328,23 @@
         }
 
         .step3 .radios .radio_custom {
-            display: block;
-            margin: 0 auto !important;
+            display: inline-block;
+            margin: 0 !important;
             width: 18px !important;
             height: 18px !important;
         }
 
+        .step3 .radios tr td:nth-child(odd) {
+            width: 28%;
+            padding-right: 1rem;
+        }
+
+        .step3 .radios tr td:nth-child(even) {
+            width: 5.33%;
+            text-align: center;
+        }
+
         .step3 .radios td[colspan] {
-            grid-column: 1 / -1;
             padding-top: .35rem;
         }
 
@@ -348,7 +353,8 @@
             font-family: "Palanquin", sans-serif;
             color: #222;
             line-height: 1.35;
-            overflow-wrap: anywhere;
+            white-space: normal;
+            overflow-wrap: break-word;
         }
 
         .experience_card_option {
@@ -563,18 +569,6 @@
 
         .action_next.active {
             background: linear-gradient(135deg, #f17c30 0%, #ff9f60 100%);
-        }
-
-        @media (min-width: 1400px) {
-            .step3 .radios tr {
-                grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr) 42px minmax(0, 1fr) 42px;
-            }
-        }
-
-        @media (max-width: 1200px) {
-            .step3 .radios tr {
-                grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr) 42px;
-            }
         }
 
         @media (max-width: 992px) {
