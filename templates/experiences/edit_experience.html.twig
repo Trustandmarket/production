@@ -422,7 +422,7 @@
             }
 
             .saveAndClose--footer {
-                display: inline-flex;
+                display: none;
                 justify-content: center;
                 align-items: center;
                 min-width: 112px;
@@ -782,8 +782,10 @@
                 $('.action_prev').removeClass('hidden');
                 if (actualStep > 2) {
                     $('.saveAndClose').fadeIn();
+                    $('.saveAndClose--footer').css('display', 'inline-flex').hide().fadeIn();
                 } else {
                     $('.saveAndClose').fadeOut(300);
+                    $('.saveAndClose--footer').fadeOut(300);
                 }
                 if ($('.step' + actualStep).find('.list_option.active').length == 0 && actualStep != 4) {
                     $(this).removeClass('active');
@@ -848,8 +850,10 @@
             }
             if (actualStep > 2) {
                 $('.saveAndClose').fadeIn();
+                $('.saveAndClose--footer').css('display', 'inline-flex').hide().fadeIn();
             } else {
                 $('.saveAndClose').fadeOut(300);
+                $('.saveAndClose--footer').fadeOut(300);
             }
             $('.steps').css('display', 'none')
             if (actualStep > 3) {
