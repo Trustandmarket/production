@@ -404,6 +404,8 @@
                 left: 0;
                 right: 0;
                 bottom: 50px;
+                padding: 10px 14px;
+                gap: 10px;
             }
 
             .saveAndClose {
@@ -415,13 +417,40 @@
                 transform: translateX(-50%);
                 z-index: 1055;
                 margin: 0;
-                padding: 10px 16px;
-                border-radius: 12px;
+                min-width: 112px;
+                text-align: center;
+                padding: 11px 16px;
+                border-radius: 14px;
                 background: #fff;
                 border: 1px solid rgba(17, 17, 17, 0.12);
-                box-shadow: 0 8px 18px rgba(17, 17, 17, 0.08);
+                box-shadow: 0 10px 22px rgba(17, 17, 17, 0.08);
                 color: #151515;
                 white-space: nowrap;
+                font-family: "Palanquin", sans-serif;
+                font-size: .95rem;
+                line-height: 1;
+            }
+
+            .action_prev,
+            .action_next {
+                min-width: 112px;
+                text-align: center;
+                padding: 11px 16px;
+                border-radius: 14px;
+                font-family: "Palanquin", sans-serif;
+                font-size: .95rem;
+                line-height: 1;
+                box-shadow: none;
+            }
+
+            .action_prev {
+                background: #fff;
+                border: 1px solid rgba(17, 17, 17, 0.12);
+                color: #151515;
+            }
+
+            .action_next {
+                background: rgba(17, 17, 17, 0.16);
             }
         }
     </style>
@@ -435,7 +464,7 @@
 {% endblock %}
 
 {% block body %}
-    <p class="saveAndClose">Enregistrer et quitter</p>
+    <p class="saveAndClose">Enregistrer</p>
     <div id="trustBody" style="min-height: 67vh; margin-top: 54.4766px;" class="container">
         <!--Main layout-->
         <main class="mt-2 pt-2">
