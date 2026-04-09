@@ -355,11 +355,6 @@
                             <p>Vous avez un besoin de studio d'enregistrement, de mixage audio, de mastering audio,
                             de musiciens, de batteur ou percussionniste, de choristes ou autres besoins pour un projet de production musicale.</p>
                         </div>
-                        {#parcours divertissement masqué pour le moment#}
-                        {#<div class="list_option {{ experience.exp_type_experience == 'Divertissement et événementiels' ? 'active' : '' }}">
-                            <h2>Divertissement et événementiels</h2>
-                            <p>Des services à personnaliser pour faire de vos évènements des moments uniques.</p>
-                        </div>#}
                     </div>
                     <div class="step3 steps" style="display: none;" attr-step="3" attr-title="Projet : Production musicale">
                         <div class="form-group list_field musique_choose">
@@ -371,22 +366,6 @@
                             <label for=""><h2>Votre univers musical* ?</h2></label>
                             <input type="text" class="form-control input_rounded field_univers" name="univers"
                                    value="{{ experience.exp_univers }}">
-                        </div>
-                        <div class="form-group list_field divertissement_choose">
-                            <label for=""><h2>Votre évènement*</h2></label>
-                            <input type="text" class="form-control input_rounded field_nom_evt" name="nom_evt"
-                                   placeholder="Mariage, salon, séminaires, anniversaires, fête familiale, Bar-Mtzvah, baptême..."
-                                   value="{{ experience.exp_nom_evt }}">
-                        </div>
-                        <div class="form-group list_field divertissement_choose">
-                            <label for=""><h2>Lieu de votre évènement* ?</h2></label>
-                            <input type="text" class="form-control input_rounded field_lieu" name="lieu"
-                                   placeholder="Où ?" value="{{ experience.exp_lieu_evt }}">
-                        </div>
-                        <div class="form-group list_field divertissement_choose">
-                            <label for=""><h2>Nombre de participants à votre évènement* ?</h2></label>
-                            <input type="number" class="form-control input_rounded field_participants"
-                                   name="participants" value="{{ experience.exp_participants_evt }}">
                         </div>
                         <div class="form-group list_field" style="margin-top: 2rem;">
                             <label for=""><h2>Choisissez vos besoins</h2></label>
@@ -489,76 +468,6 @@
                                                                                  class="form-control radio_custom field_besoins"/>
                                         </td>
                                     </tr>
-                                    <!-- DIVERTISSEMENT BESOINS -->
-                                    <tr class="divertissement_choose">
-                                        <td><p>Photo mariage</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Photo mariage' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Photo mariage"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Vidéo mariage</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Vidéo mariage' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Vidéo mariage"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Orchestre</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Orchestre' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Orchestre"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="divertissement_choose">
-                                        <td><p>Chorale gospel</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Chorale gospel' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Chorale gospel"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Sonorisation</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Sonorisation' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Sonorisation"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>DJ</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'DJ' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="DJ"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="divertissement_choose">
-                                        <td><p>Kits lumière</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Kits lumière' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Kits lumière"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Reportage photo</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Reportage photo' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Reportage photo"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Reportage vidéo</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Reportage vidéo' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Reportage vidéo"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="divertissement_choose">
-                                        <td><p>Traiteurs</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Traiteurs' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Traiteurs"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Salles</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Salles' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Salles"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Voiture</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Voiture' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Voiture"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-
                                     <tr class="musique_choose">
                                         <td colspan="6"><h2>Ajoutez vos options</h2></td>
                                     </tr>
@@ -600,17 +509,6 @@
                                 <h2>Style musical:</h2>
                                 <p style="font-weight: 300;" class="universValue">Paris 15ème</p>
                             </div>
-                            <div class="inline_choix divertissement_choose">
-                                <h2>Votre évènement:</h2>
-                                <p style="font-weight: 300;" class="nomEvtValue">Paris 15ème</p>
-                            </div>
-                            <div class="inline_choix divertissement_choose">
-                                <h2>Le lieu:</h2>
-                                <p style="font-weight: 300;" class="lieuValue">Pop / Folk</p>
-                            </div>
-                            <div class="inline_choix divertissement_choose">
-                                <h2>Nombre de participants:</h2>
-                                <p style="font-weight: 300;" class="participantValue">Pop / Folk</p>
                             </div>
                             <div style="margin-top: 3rem;">
                                 <h2>Liste de vos besoins:</h2>
@@ -685,7 +583,7 @@
     <script>
         var actualStep = 1;
         var checkedCheck = 0;
-        var typeExperience = "{{ experience.exp_type_experience }}";
+        var typeExperience = "Production musicale";
         var checkboxValues = [];
         var optionsValues = [];
 
@@ -723,33 +621,17 @@
                 var choixTitle = $(this).find('h2').text();
                 typeExperience = choixTitle;
                 $('.step3').attr("attr-title", "Projet : " + choixTitle)
-                if (typeExperience == "Production musicale") {
-                    $('.musique_choose').fadeIn()
-                    $('.divertissement_choose').fadeOut()
-                } else {
-                    $('.musique_choose').fadeOut()
-                    $('.divertissement_choose').fadeIn()
-                }
             }
         })
         $(document).on('change', '.besoins .radio_custom', function () {
-            let that = $(this);
             checkedCheck = 0;
             $('.besoins .radio_custom').each(function () {
                 if ($(this).is(":checked")) {
                     checkedCheck++
-                    if (typeExperience == "Production musicale") {
-                        if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "") {
-                            $('.action_next').addClass('active');
-                            $('.action_next').removeClass('disabled');
-                            actualStep = $(this).parent().parent().parent().parent().parent().parent().parent().attr('attr-step');
-                        }
-                    } else {
-                        if ($("input[name='nom_evt']").val() != "" && $("input[name='lieu']").val() != "" && $("input[name='participants']").val() != "") {
-                            $('.action_next').addClass('active');
-                            $('.action_next').removeClass('disabled');
-                            actualStep = $(this).parent().parent().parent().parent().parent().parent().parent().attr('attr-step');
-                        }
+                    if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "") {
+                        $('.action_next').addClass('active');
+                        $('.action_next').removeClass('disabled');
+                        actualStep = $(this).parent().parent().parent().parent().parent().parent().parent().attr('attr-step');
                     }
                 }
             });
@@ -760,24 +642,13 @@
             }
         })
         $(document).on('keyup', '.input_rounded', function () {
-            if (typeExperience == "Production musicale") {
-                if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
-                    $('.action_next').addClass('active');
-                    $('.action_next').removeClass('disabled');
-                    actualStep = $(this).parent().parent().attr('attr-step');
-                } else {
-                    $('.action_next').removeClass('active');
-                    $('.action_next').addClass('disabled');
-                }
+            if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
+                $('.action_next').addClass('active');
+                $('.action_next').removeClass('disabled');
+                actualStep = $(this).parent().parent().attr('attr-step');
             } else {
-                if ($("input[name='nom_evt']").val() != "" && $("input[name='lieu']").val() != "" && $("input[name='participants']").val() != "" && checkedCheck > 0) {
-                    $('.action_next').addClass('active');
-                    $('.action_next').removeClass('disabled');
-                    actualStep = $(this).parent().parent().attr('attr-step');
-                } else {
-                    $('.action_next').removeClass('active');
-                    $('.action_next').addClass('disabled');
-                }
+                $('.action_next').removeClass('active');
+                $('.action_next').addClass('disabled');
             }
         })
         $(document).on('click', '.action_next', function (e) {
@@ -799,17 +670,9 @@
                     $(this).removeClass('active');
                     $(this).addClass('disabled');
                 }
-                // alert($('.step'+actualStep).find('.list_option.active').length);
                 if (actualStep == 2) {
                     $(this).addClass('active');
                     $(this).removeClass('disabled');
-                    if (typeExperience == "Production musicale") {
-                        $('.musique_choose').fadeIn()
-                        $('.divertissement_choose').fadeOut()
-                    } else {
-                        $('.musique_choose').fadeOut()
-                        $('.divertissement_choose').fadeIn()
-                    }
                 }
 
                 if (actualStep == 4) {
@@ -819,9 +682,6 @@
                     $('.experience_create_content h1').text(typeExperience == undefined ? "Projet : {{ experience.exp_type_experience }}" : "Projet : " + typeExperience)
                     $('.villeValue').text($(".field_ville").val());
                     $('.universValue').text($(".field_univers").val());
-                    $('.nomEvtValue').text($(".field_nom_evt").val());
-                    $('.lieuValue').text($(".field_lieu").val());
-                    $('.participantValue').text($(".field_participants").val());
                     $('.precisionValue').val($(".field_precisions").val());
                     checkboxValues = [];
                     optionsValues = [];
@@ -852,16 +712,9 @@
                             checkedCheck++
                         }
                     });
-                    if (typeExperience == "Production musicale") {
-                        if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
-                            $(this).addClass('active');
-                            $(this).removeClass('disabled');
-                        }
-                    } else {
-                        if ($("input[name='nom_evt']").val() != "" && $("input[name='lieu']").val() != "" && $("input[name='participants']").val() != "" && checkedCheck > 0) {
-                            $(this).addClass('active');
-                            $(this).removeClass('disabled');
-                        }
+                    if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
+                        $(this).addClass('active');
+                        $(this).removeClass('disabled');
                     }
                 }
             } else {
@@ -908,9 +761,6 @@
             var data = new FormData();
             data.append('ville', $(".field_ville").val());
             data.append('univers', $(".field_univers").val());
-            data.append('nom_evt', $(".field_nom_evt").val());
-            data.append('lieu_evt', $(".field_lieu").val());
-            data.append('participants_evt', $(".field_participants").val());
             $('input[name="besoins[]"]:checked').each(function () {
                 data.append('besoins[]', this.checked ? $(this).val() : "");
             });
