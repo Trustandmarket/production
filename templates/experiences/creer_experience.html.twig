@@ -327,6 +327,7 @@
             min-width: 0;
             padding: .15rem 0;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .experience_check_item span {
@@ -344,12 +345,18 @@
             display: inline-grid;
             place-content: center;
             width: 1.35rem !important;
+            min-width: 1.35rem !important;
+            max-width: 1.35rem !important;
             height: 1.35rem !important;
+            padding: 0 !important;
             margin: .1rem 0 0 0 !important;
             border: 0.14rem solid currentColor;
             border-radius: 50%;
             background: #fff;
             transform: none;
+            box-sizing: border-box;
+            cursor: pointer;
+            pointer-events: auto;
         }
 
         .step3 .radios .experience_check_item .radio_custom::before {
@@ -623,6 +630,10 @@
 
             .experience_checklist {
                 grid-template-columns: 1fr;
+            }
+
+            .step3 .radios .experience_check_item {
+                align-items: center;
             }
         }
     </style>
