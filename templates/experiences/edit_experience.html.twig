@@ -407,7 +407,7 @@
 
             .prefooter_action {
                 display: grid;
-                grid-template-columns: 1fr auto 1fr;
+                grid-template-columns: 1fr 1fr;
                 align-items: center;
                 position: sticky;
                 left: auto;
@@ -415,6 +415,10 @@
                 bottom: 0;
                 padding: 10px 14px;
                 gap: 10px;
+            }
+
+            .prefooter_action.has-save-action {
+                grid-template-columns: 1fr auto 1fr;
             }
 
             .saveAndClose--top {
@@ -471,6 +475,14 @@
             }
 
             .action_next {
+                justify-self: end;
+            }
+
+            .prefooter_action.has-save-action .action_prev {
+                justify-self: start;
+            }
+
+            .prefooter_action.has-save-action .action_next {
                 justify-self: end;
             }
         }
@@ -783,9 +795,11 @@
                 if (actualStep > 2) {
                     $('.saveAndClose').fadeIn();
                     $('.saveAndClose--footer').css('display', 'inline-flex').hide().fadeIn();
+                    $('.prefooter_action').addClass('has-save-action');
                 } else {
                     $('.saveAndClose').fadeOut(300);
                     $('.saveAndClose--footer').fadeOut(300);
+                    $('.prefooter_action').removeClass('has-save-action');
                 }
                 if ($('.step' + actualStep).find('.list_option.active').length == 0 && actualStep != 4) {
                     $(this).removeClass('active');
@@ -851,9 +865,11 @@
             if (actualStep > 2) {
                 $('.saveAndClose').fadeIn();
                 $('.saveAndClose--footer').css('display', 'inline-flex').hide().fadeIn();
+                $('.prefooter_action').addClass('has-save-action');
             } else {
                 $('.saveAndClose').fadeOut(300);
                 $('.saveAndClose--footer').fadeOut(300);
+                $('.prefooter_action').removeClass('has-save-action');
             }
             $('.steps').css('display', 'none')
             if (actualStep > 3) {
