@@ -259,6 +259,74 @@
             box-shadow: 0 18px 40px rgba(16, 16, 16, 0.08);
         }
 
+        .experience_checklist {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: .9rem 1.1rem;
+            width: 100%;
+        }
+
+        .experience_check_item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: .75rem;
+            min-width: 0;
+            width: 100%;
+            padding: .15rem 0;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .experience_check_item span {
+            min-width: 0;
+            font-family: "Palanquin", sans-serif;
+            color: #222;
+            line-height: 1.35;
+            white-space: normal;
+            overflow-wrap: break-word;
+        }
+
+        .step3 .radios .experience_check_item .radio_custom {
+            appearance: none;
+            flex: 0 0 auto;
+            display: inline-grid;
+            place-content: center;
+            width: 1.35rem !important;
+            min-width: 1.35rem !important;
+            max-width: 1.35rem !important;
+            height: 1.35rem !important;
+            padding: 0 !important;
+            margin: .1rem 0 0 0 !important;
+            border: 0.14rem solid currentColor;
+            border-radius: 50%;
+            background: #fff;
+            transform: none;
+            box-sizing: border-box;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .step3 .radios .experience_check_item .radio_custom::before {
+            content: "";
+            width: .7rem;
+            height: .7rem;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em #111;
+        }
+
+        .step3 .radios .experience_check_item .radio_custom:checked::before {
+            transform: scale(1);
+        }
+
+        @media (min-width: 1400px) {
+            .experience_checklist {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
         .prefooter_action {
             padding: 14px 18px;
             border-top: 1px solid rgba(17, 17, 17, 0.08);
@@ -297,6 +365,35 @@
 
             .experience_stepper_labels {
                 grid-template-columns: 1fr;
+            }
+
+            .step3 .radios {
+                overflow: hidden;
+                width: 100%;
+            }
+
+            .experience_checklist {
+                grid-template-columns: 1fr;
+                gap: .7rem;
+            }
+
+            .step3 .radios .experience_check_item {
+                align-items: center;
+                width: 100%;
+                padding: .85rem 1rem;
+                border: 1px solid rgba(17, 17, 17, 0.08);
+                border-radius: 16px;
+                background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,248,242,0.92) 100%);
+                box-shadow: 0 10px 22px rgba(17, 17, 17, 0.05);
+            }
+
+            .step3 .radios .experience_check_item span {
+                font-size: .98rem;
+                line-height: 1.4;
+            }
+
+            .step3 .radios .experience_check_item .radio_custom {
+                margin-top: 0 !important;
             }
         }
     </style>
@@ -370,126 +467,89 @@
                         <div class="form-group list_field" style="margin-top: 2rem;">
                             <label for=""><h2>Choisissez vos besoins</h2></label>
                             <div class="radios besoins">
-                                <table>
-                                    <tbody>
-                                    <tr class="musique_choose">
-                                        <td><p>Enregistrement studio</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Enregistrement studio' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Enregistrement studio"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Mixage audio</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Mixage audio' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Mixage audio"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Mastering audio</p></td>
-                                        <td style="width: 1%;white-space: nowrap;"><input type="checkbox"
-                                                                                          {% for item in experience.exp_besoins %}{% if item.metaValue == 'Mastering audio' %}checked{% endif %}{% endfor %}
-                                                                                          name="besoins[]"
-                                                                                          value="Mastering audio"
-                                                                                          class="form-control radio_custom field_besoins"/>
-                                        </td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td><p>Percussionniste</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Percussionniste' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Percussionniste"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Batteur</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Batteur' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Batteur"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Bassiste</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Bassiste' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Bassiste"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td><p>Guitariste</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Guitariste' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Guitariste"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Pianiste</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Pianiste' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Pianiste"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Cuivres</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Cuivres' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Cuivres"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td><p>Chœurs gospel</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Chœurs gospel' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Chœurs gospel"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Choristes</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Choristes' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Choristes"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Cours de guitare</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == '>Cours de guitare' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Cours de guitare"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td><p>Guitare</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Guitare' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Guitare"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Micros</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Micros' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Micros"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Amplis</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_besoins %}{% if item.metaValue == 'Amplis' %}checked{% endif %}{% endfor %}
-                                                   name="besoins[]" value="Amplis"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td style="padding-bottom: 2rem;"><p>Accessoires guitare</p></td>
-                                        <td style="padding-bottom: 2rem;"><input type="checkbox"
-                                                                                 {% for item in experience.exp_besoins %}{% if item.metaValue == 'Accessoires guitare' %}checked{% endif %}{% endfor %}
-                                                                                 value="Accessoires guitare"
-                                                                                 name="besoins[]"
-                                                                                 class="form-control radio_custom field_besoins"/>
-                                        </td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td colspan="6"><h2>Ajoutez vos options</h2></td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td><p>Captation vidéo</p</td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_options %}{% if item.metaValue == 'Captation vidéo' %}checked{% endif %}{% endfor %}
-                                                   name="options[]" value="Captation vidéo"
-                                                   class="form-control radio_custom field_options"/></td>
-                                        <td><p>Photographie</p></td>
-                                        <td>
-                                            <input type="checkbox" {% for item in experience.exp_options %}{% if item.metaValue == 'Photographie' %} checked{% endif %}{% endfor %}
-                                                   name="options[]" value="Photographie"
-                                                   class="form-control radio_custom field_options"/></td>
-                                        <td><p>Clip vidéo</p></td>
-                                        <td><input type="checkbox"
-                                                   {% for item in experience.exp_options %}{% if item.metaValue == 'Clip vidéo' %}checked{% endif %}{% endfor %}
-                                                   name="options[]" value="Clip vidéo"
-                                                   class="form-control radio_custom field_options"/></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                <div class="experience_checklist musique_choose">
+                                    <label class="experience_check_item">
+                                        <span>Enregistrement studio</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Enregistrement studio' %}checked{% endif %}{% endfor %} name="besoins[]" value="Enregistrement studio" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Mixage audio</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Mixage audio' %}checked{% endif %}{% endfor %} name="besoins[]" value="Mixage audio" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Mastering audio</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Mastering audio' %}checked{% endif %}{% endfor %} name="besoins[]" value="Mastering audio" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Percussionniste</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Percussionniste' %}checked{% endif %}{% endfor %} name="besoins[]" value="Percussionniste" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Batteur</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Batteur' %}checked{% endif %}{% endfor %} name="besoins[]" value="Batteur" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Bassiste</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Bassiste' %}checked{% endif %}{% endfor %} name="besoins[]" value="Bassiste" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Guitariste</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Guitariste' %}checked{% endif %}{% endfor %} name="besoins[]" value="Guitariste" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Pianiste</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Pianiste' %}checked{% endif %}{% endfor %} name="besoins[]" value="Pianiste" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Cuivres</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Cuivres' %}checked{% endif %}{% endfor %} name="besoins[]" value="Cuivres" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Choeurs gospel</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Chœurs gospel' or item.metaValue == 'Choeurs gospel' %}checked{% endif %}{% endfor %} name="besoins[]" value="Choeurs gospel" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Choristes</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Choristes' %}checked{% endif %}{% endfor %} name="besoins[]" value="Choristes" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Cours de guitare</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == '>Cours de guitare' or item.metaValue == 'Cours de guitare' %}checked{% endif %}{% endfor %} name="besoins[]" value="Cours de guitare" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Guitare</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Guitare' %}checked{% endif %}{% endfor %} name="besoins[]" value="Guitare" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Micros</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Micros' %}checked{% endif %}{% endfor %} name="besoins[]" value="Micros" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Amplis</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Amplis' %}checked{% endif %}{% endfor %} name="besoins[]" value="Amplis" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Accessoires guitare</span>
+                                        <input type="checkbox" {% for item in experience.exp_besoins %}{% if item.metaValue == 'Accessoires guitare' %}checked{% endif %}{% endfor %} value="Accessoires guitare" name="besoins[]" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                </div>
+                                <div class="musique_choose" style="margin-top: 2rem;">
+                                    <h2>Ajoutez vos options</h2>
+                                </div>
+                                <div class="experience_checklist musique_choose">
+                                    <label class="experience_check_item">
+                                        <span>Captation video</span>
+                                        <input type="checkbox" {% for item in experience.exp_options %}{% if item.metaValue == 'Captation vidéo' or item.metaValue == 'Captation video' %}checked{% endif %}{% endfor %} name="options[]" value="Captation video" class="form-control radio_custom field_options"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Photographie</span>
+                                        <input type="checkbox" {% for item in experience.exp_options %}{% if item.metaValue == 'Photographie' %}checked{% endif %}{% endfor %} name="options[]" value="Photographie" class="form-control radio_custom field_options"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Clip video</span>
+                                        <input type="checkbox" {% for item in experience.exp_options %}{% if item.metaValue == 'Clip vidéo' or item.metaValue == 'Clip video' %}checked{% endif %}{% endfor %} name="options[]" value="Clip video" class="form-control radio_custom field_options"/>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group list_field">
@@ -631,7 +691,7 @@
                     if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "") {
                         $('.action_next').addClass('active');
                         $('.action_next').removeClass('disabled');
-                        actualStep = $(this).parent().parent().parent().parent().parent().parent().parent().attr('attr-step');
+                        actualStep = $(this).closest('.steps').attr('attr-step');
                     }
                 }
             });
