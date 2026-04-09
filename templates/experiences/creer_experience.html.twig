@@ -318,7 +318,13 @@
             vertical-align: middle;
         }
 
+        .step3 .radios table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
         .step3 .radios table td p {
+            margin: 0;
             font-family: "Palanquin", sans-serif;
             color: #222;
         }
@@ -566,6 +572,36 @@
 
             .inline_choix h2 {
                 min-width: 0;
+            }
+
+            .step3 .radios {
+                overflow: hidden;
+            }
+
+            .step3 .radios table,
+            .step3 .radios tbody {
+                display: block;
+                width: 100%;
+            }
+
+            .step3 .radios tr {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: .75rem;
+                width: 100%;
+                margin-bottom: .9rem;
+            }
+
+            .step3 .radios td {
+                display: block;
+                width: 100% !important;
+                padding: 0;
+                white-space: normal !important;
+            }
+
+            .step3 .radios td[colspan] {
+                grid-column: 1 / -1;
+                padding-top: .35rem;
             }
         }
     </style>
