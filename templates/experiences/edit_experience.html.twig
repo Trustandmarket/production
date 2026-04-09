@@ -365,7 +365,7 @@
 
         @media (max-width: 991px) {
             #trustBody {
-                padding-bottom: 0;
+                padding-bottom: 170px;
             }
 
             .experience_intro_shell h1 {
@@ -409,13 +409,14 @@
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 align-items: center;
-                position: static !important;
-                left: auto !important;
-                right: auto !important;
-                bottom: auto !important;
+                position: fixed !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 84px !important;
                 padding: 10px 14px;
                 gap: 10px;
-                margin-top: 1rem;
+                margin-top: 0;
+                z-index: 1050;
             }
 
             .prefooter_action.has-save-action {
