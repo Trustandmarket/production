@@ -698,7 +698,7 @@
             if (actualStep == 2) {
                 var choixTitle = $(this).find('h2').text();
                 typeExperience = choixTitle;
-                $('.step3').attr("attr-title", "Projet :" + choixTitle)
+                $('.step3').attr("attr-title", "Projet : " + choixTitle)
                 if (typeExperience == "Production musicale") {
                     $('.musique_choose').fadeIn()
                     $('.divertissement_choose').fadeOut()
@@ -792,7 +792,7 @@
                     $(this).text('Valider')
                     $('.action_next').addClass('active');
                     $('.action_next').removeClass('disabled');
-                    $('.experience_create_content h1').text(typeExperience == undefined ? "Projet :{{ experience.exp_type_experience }}" : "Projet :" + typeExperience)
+                    $('.experience_create_content h1').text(typeExperience == undefined ? "Projet : {{ experience.exp_type_experience }}" : "Projet : " + typeExperience)
                     $('.villeValue').text($(".field_ville").val());
                     $('.universValue').text($(".field_univers").val());
                     $('.nomEvtValue').text($(".field_nom_evt").val());
