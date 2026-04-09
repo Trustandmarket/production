@@ -252,12 +252,12 @@
                     <h2 class="font-weight-bold">Expérience(s) en cours</h2>
                     {% for item in experiences_draft %}
                         <div class="experience_div">
-                            <h2>Expérience: {% if item.exp_type_experience == "Production musicale" %}
+                            <h2>Projet : {% if item.exp_type_experience == "Production musicale" %}
                                     {{ item.exp_type_experience }} - {{ item.exp_ville }} - {{ item.exp_univers }}
                                 {% else %}
                                     {{ item.exp_type_experience }} - {{ item.exp_lieu_evt }} - {{ item.exp_nom_evt }}
                                 {% endif %}</h2>
-                            <p>Plus que quelques étapes pour finaliser votre expérience</p>
+                            <p>Plus que quelques étapes pour finaliser votre projet</p>
                             <div class="footer_link">
                                 <div class="left_link">
                                     <a href="{{ path('experiences_edit_experience', {'id' : item.id}) }}"
@@ -274,12 +274,12 @@
                     <h2 class="font-weight-bold">Expérience(s) validée(s)</h2>
                     {% for item in experiences_publish %}
                         <div class="experience_div">
-                            <h2>Expérience: {% if item.exp_type_experience == "Production musicale" %}
+                            <h2>Projet : {% if item.exp_type_experience == "Production musicale" %}
                                     {{ item.exp_type_experience }} - {{ item.exp_ville }} - {{ item.exp_univers }}
                                 {% else %}
                                     {{ item.exp_type_experience }} - {{ item.exp_lieu_evt }} - {{ item.exp_nom_evt }}
                                 {% endif %}</h2>
-                            {# <p>Plus que quelques étapes pour finaliser votre expérience</p> #}
+                            {# <p>Plus que quelques étapes pour finaliser votre projet</p> #}
                             <div class="footer_link">
                                 <div class="left_link">
                                     <a class="delete"
@@ -303,7 +303,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content p-3">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Expérience <span class="apercuTitre"></span></h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Projet :  <span class="apercuTitre"></span></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -439,7 +439,7 @@
         actualStep = $(this).parent().attr('attr-step');
         if (actualStep == 2) {
             var choixTitle = $(this).find('h2').text();
-            $('.step3').attr("attr-title", "Expérience: " + choixTitle)
+            $('.step3').attr("attr-title", "Projet : " + choixTitle)
         }
     })
     $(document).on('change', '.besoins .radio_custom', function () {
@@ -688,7 +688,7 @@
         var urlPath = $(this).attr('href');
         swal({
             title: "Suppression de l'experience",
-            text: "Attention l'expérience sera Supprimée et n'apparaitra plus sur le site",
+            text: "Attention le projet sera Supprimé et n'apparaitra plus sur le site",
             type: "info",
             showCancelButton: true,
             confirmButtonClass: "btn-danger",
