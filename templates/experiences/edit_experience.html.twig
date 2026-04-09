@@ -821,7 +821,7 @@
                 if (actualStep > 3) {
                     $("html, body").animate({scrollTop: 0}, "slow");
                 } else if (actualStep == 3) {
-                    $('.experience_create_content h1').text(typeExperience == undefined ? "Projet :{{ experience.exp_type_experience }}" : "Projet :" + typeExperience)
+                    $('.experience_create_content h1').text(typeExperience == undefined ? "Projet : {{ experience.exp_type_experience }}" : "Projet : " + typeExperience)
                     checkedCheck = 0;
                     $('.besoins .radio_custom').each(function () {
                         if ($(this).is(":checked")) {
