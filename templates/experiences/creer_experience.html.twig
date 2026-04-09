@@ -331,6 +331,13 @@
             vertical-align: middle;
         }
 
+        .step3 .radios .radio_custom {
+            display: block;
+            margin: 0 auto !important;
+            width: 18px !important;
+            height: 18px !important;
+        }
+
         .step3 .radios td[colspan] {
             grid-column: 1 / -1;
             padding-top: .35rem;
@@ -556,6 +563,12 @@
 
         .action_next.active {
             background: linear-gradient(135deg, #f17c30 0%, #ff9f60 100%);
+        }
+
+        @media (max-width: 1200px) {
+            .step3 .radios tr {
+                grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr) 42px;
+            }
         }
 
         @media (max-width: 992px) {
