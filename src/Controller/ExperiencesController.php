@@ -100,7 +100,7 @@ class ExperiencesController extends AbstractController
             $request->getLocale()
         );
 
-        if ($this->service_manager->slugify($request->get('type_experience')) == 'musique') {
+        if (in_array($this->service_manager->slugify($request->get('type_experience')), ['musique', 'production-musicale'], true)) {
             if ($request->get('ville')) {
                 $ville = $this->service_manager->createPostMeta($id, 'exp_ville', $request->get('ville'), $request->getLocale());
             }
