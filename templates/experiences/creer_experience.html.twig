@@ -313,48 +313,57 @@
             color: #121212;
         }
 
-        .step3 .radios table {
-            width: 100%;
-            table-layout: fixed;
+        .experience_checklist {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: .9rem 1.1rem;
         }
 
-        .step3 .radios tr {
-            display: table-row;
+        .experience_check_item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: .75rem;
+            min-width: 0;
+            padding: .15rem 0;
+            cursor: pointer;
         }
 
-        .step3 .radios table td {
-            padding: .55rem .5rem;
-            vertical-align: middle;
-        }
-
-        .step3 .radios .radio_custom {
-            display: inline-block;
-            margin: 0 !important;
-            width: 18px !important;
-            height: 18px !important;
-        }
-
-        .step3 .radios tr td:nth-child(odd) {
-            width: 28%;
-            padding-right: 1rem;
-        }
-
-        .step3 .radios tr td:nth-child(even) {
-            width: 5.33%;
-            text-align: center;
-        }
-
-        .step3 .radios td[colspan] {
-            padding-top: .35rem;
-        }
-
-        .step3 .radios table td p {
-            margin: 0;
+        .experience_check_item span {
+            min-width: 0;
             font-family: "Palanquin", sans-serif;
             color: #222;
             line-height: 1.35;
             white-space: normal;
             overflow-wrap: break-word;
+        }
+
+        .step3 .radios .experience_check_item .radio_custom {
+            appearance: none;
+            flex: 0 0 auto;
+            display: inline-grid;
+            place-content: center;
+            width: 1.35rem !important;
+            height: 1.35rem !important;
+            margin: .1rem 0 0 0 !important;
+            border: 0.14rem solid currentColor;
+            border-radius: 50%;
+            background: #fff;
+            transform: none;
+        }
+
+        .step3 .radios .experience_check_item .radio_custom::before {
+            content: "";
+            width: .7rem;
+            height: .7rem;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em #111;
+        }
+
+        .step3 .radios .experience_check_item .radio_custom:checked::before {
+            transform: scale(1);
         }
 
         .experience_card_option {
@@ -571,6 +580,12 @@
             background: linear-gradient(135deg, #f17c30 0%, #ff9f60 100%);
         }
 
+        @media (min-width: 1400px) {
+            .experience_checklist {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
         @media (max-width: 992px) {
             .experience_intro_shell {
                 padding: 1.5rem;
@@ -606,30 +621,8 @@
                 overflow: hidden;
             }
 
-            .step3 .radios table,
-            .step3 .radios tbody {
-                display: block;
-                width: 100%;
-            }
-
-            .step3 .radios tr {
-                display: grid;
-                grid-template-columns: minmax(0, 1fr) auto;
-                gap: .75rem;
-                width: 100%;
-                margin-bottom: .9rem;
-            }
-
-            .step3 .radios td {
-                display: block;
-                width: 100% !important;
-                padding: 0;
-                white-space: normal !important;
-            }
-
-            .step3 .radios td[colspan] {
-                grid-column: 1 / -1;
-                padding-top: .35rem;
+            .experience_checklist {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -701,69 +694,69 @@
                         <div class="form-group list_field" style="margin-top: 2rem;">
                             <label for=""><h2>Choisissez vos besoins*</h2></label>
                             <div class="radios besoins">
-                                <table>
-                                    <tbody>
-                                    <tr class="musique_choose">
-                                        <td><p>Enregistrement studio</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Enregistrement studio"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Mixage audio</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Mixage audio"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Mastering audio</p></td>
-                                        <td style="width: 1%;white-space: nowrap;"><input type="checkbox"
-                                                                                          name="besoins[]"
-                                                                                          value="Mastering audio"
-                                                                                          class="form-control radio_custom field_besoins"/>
-                                        </td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td><p>Percussionniste</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Percussionniste"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Batteur</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Batteur"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Bassiste</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Bassiste"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td><p>Guitariste</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Guitariste"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Pianiste</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Pianiste"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Cuivres</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Cuivres"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td><p>Chœurs gospel</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Chœurs gospel"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                        <td><p>Choristes</p></td>
-                                        <td><input type="checkbox" name="besoins[]" value="Choristes"
-                                                   class="form-control radio_custom field_besoins"/></td>
-                                    </tr>
-
-                                    <tr class="musique_choose">
-                                        <td colspan="6"><h2>Ajoutez vos options</h2></td>
-                                    </tr>
-                                    <tr class="musique_choose">
-                                        <td><p>Captation vidéo</p</td>
-                                        <td><input type="checkbox" name="options[]" value="Captation vidéo"
-                                                   class="form-control radio_custom field_options"/></td>
-                                        <td><p>Photographie</p></td>
-                                        <td><input type="checkbox" name="options[]" value="Photographie"
-                                                   class="form-control radio_custom field_options"/></td>
-                                        <td><p>Clip vidéo</p></td>
-                                        <td><input type="checkbox" name="options[]" value="Clip vidéo"
-                                                   class="form-control radio_custom field_options"/></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                <div class="experience_checklist musique_choose">
+                                    <label class="experience_check_item">
+                                        <span>Enregistrement studio</span>
+                                        <input type="checkbox" name="besoins[]" value="Enregistrement studio" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Mixage audio</span>
+                                        <input type="checkbox" name="besoins[]" value="Mixage audio" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Mastering audio</span>
+                                        <input type="checkbox" name="besoins[]" value="Mastering audio" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Percussionniste</span>
+                                        <input type="checkbox" name="besoins[]" value="Percussionniste" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Batteur</span>
+                                        <input type="checkbox" name="besoins[]" value="Batteur" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Bassiste</span>
+                                        <input type="checkbox" name="besoins[]" value="Bassiste" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Guitariste</span>
+                                        <input type="checkbox" name="besoins[]" value="Guitariste" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Pianiste</span>
+                                        <input type="checkbox" name="besoins[]" value="Pianiste" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Cuivres</span>
+                                        <input type="checkbox" name="besoins[]" value="Cuivres" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Choeurs gospel</span>
+                                        <input type="checkbox" name="besoins[]" value="Choeurs gospel" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Choristes</span>
+                                        <input type="checkbox" name="besoins[]" value="Choristes" class="form-control radio_custom field_besoins"/>
+                                    </label>
+                                </div>
+                                <div class="musique_choose" style="margin-top: 2rem;">
+                                    <h2>Ajoutez vos options</h2>
+                                </div>
+                                <div class="experience_checklist musique_choose">
+                                    <label class="experience_check_item">
+                                        <span>Captation video</span>
+                                        <input type="checkbox" name="options[]" value="Captation video" class="form-control radio_custom field_options"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Photographie</span>
+                                        <input type="checkbox" name="options[]" value="Photographie" class="form-control radio_custom field_options"/>
+                                    </label>
+                                    <label class="experience_check_item">
+                                        <span>Clip video</span>
+                                        <input type="checkbox" name="options[]" value="Clip video" class="form-control radio_custom field_options"/>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group list_field">
