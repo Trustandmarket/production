@@ -718,6 +718,17 @@
                 justify-self: end;
             }
 
+            .prefooter_action .action_prev:hover,
+            .prefooter_action .action_prev:focus,
+            .prefooter_action .action_prev:active,
+            .prefooter_action .action_prev:visited {
+                background: #fff !important;
+                border: 1px solid rgba(17, 17, 17, 0.12) !important;
+                color: #151515 !important;
+                text-decoration: none;
+                outline: none;
+            }
+
             .prefooter_action.has-save-action .saveAndClose--footer {
                 visibility: visible;
                 opacity: 1;
@@ -1041,7 +1052,7 @@
                     $(this).addClass('disabled');
                 }
                 if (actualStep == 4) {
-                    $(this).text('Valider ma demande')
+                    $(this).text('Valider')
                     $('.action_next').addClass('active');
                     $('.action_next').removeClass('disabled');
                     $('.experience_create_content h1').text("Projet : " + typeExperience);
