@@ -319,7 +319,7 @@
 
         .step3 .radios tr {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr) 42px minmax(0, 1fr) 42px;
+            grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr) 42px;
             column-gap: .9rem;
             row-gap: .55rem;
             align-items: center;
@@ -563,6 +563,12 @@
 
         .action_next.active {
             background: linear-gradient(135deg, #f17c30 0%, #ff9f60 100%);
+        }
+
+        @media (min-width: 1400px) {
+            .step3 .radios tr {
+                grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr) 42px minmax(0, 1fr) 42px;
+            }
         }
 
         @media (max-width: 1200px) {
