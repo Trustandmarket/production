@@ -313,20 +313,35 @@
             color: #121212;
         }
 
+        .step3 .radios table {
+            width: 100%;
+        }
+
+        .step3 .radios tr {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr) 42px minmax(0, 1fr) 42px;
+            column-gap: .9rem;
+            row-gap: .55rem;
+            align-items: center;
+            margin-bottom: .9rem;
+        }
+
         .step3 .radios table td {
             padding: .55rem .5rem;
             vertical-align: middle;
         }
 
-        .step3 .radios table {
-            width: 100%;
-            table-layout: fixed;
+        .step3 .radios td[colspan] {
+            grid-column: 1 / -1;
+            padding-top: .35rem;
         }
 
         .step3 .radios table td p {
             margin: 0;
             font-family: "Palanquin", sans-serif;
             color: #222;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
         }
 
         .experience_card_option {
