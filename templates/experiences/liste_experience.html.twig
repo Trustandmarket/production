@@ -252,7 +252,7 @@
                     <h2 class="font-weight-bold">Expérience(s) en cours</h2>
                     {% for item in experiences_draft %}
                         <div class="experience_div">
-                            <h2>Expérience: {% if item.exp_type_experience == "Musique" %}
+                            <h2>Expérience: {% if item.exp_type_experience == "Production musicale" %}
                                     {{ item.exp_type_experience }} - {{ item.exp_ville }} - {{ item.exp_univers }}
                                 {% else %}
                                     {{ item.exp_type_experience }} - {{ item.exp_lieu_evt }} - {{ item.exp_nom_evt }}
@@ -274,7 +274,7 @@
                     <h2 class="font-weight-bold">Expérience(s) validée(s)</h2>
                     {% for item in experiences_publish %}
                         <div class="experience_div">
-                            <h2>Expérience: {% if item.exp_type_experience == "Musique" %}
+                            <h2>Expérience: {% if item.exp_type_experience == "Production musicale" %}
                                     {{ item.exp_type_experience }} - {{ item.exp_ville }} - {{ item.exp_univers }}
                                 {% else %}
                                     {{ item.exp_type_experience }} - {{ item.exp_lieu_evt }} - {{ item.exp_nom_evt }}
@@ -391,7 +391,7 @@
                 data = JSON.parse(data)
                 //console.log(data.id);
                 $('.spinner-grow').remove();
-                if (data.exp_type_experience == "Musique") {
+                if (data.exp_type_experience == "Production musicale") {
                     $('.optionDiv').fadeIn()
                     $('.apercuTitre').text(data.exp_type_experience + " - " + data.exp_ville + " - " + data.exp_univers)
                     $('.villeValue').text(data.exp_ville)
