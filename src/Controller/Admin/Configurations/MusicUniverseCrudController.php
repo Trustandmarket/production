@@ -88,17 +88,13 @@ class MusicUniverseCrudController extends AbstractCrudController
 
             if (!$file) {
                 $this->addFlash('danger', 'Veuillez selectionner un fichier CSV.');
-                return $this->redirectToRoute('admin', [
-                    '_locale' => $request->getLocale(),
-                ]);
+                return $this->redirectToRoute('admin', ['_locale' => $request->getLocale()]);
             }
 
             $path = $file->getRealPath();
             if (!$path || !is_readable($path)) {
                 $this->addFlash('danger', 'Le fichier CSV est illisible.');
-                return $this->redirectToRoute('admin', [
-                    '_locale' => $request->getLocale(),
-                ]);
+                return $this->redirectToRoute('admin', ['_locale' => $request->getLocale()]);
             }
 
             $created = 0;
@@ -108,19 +104,15 @@ class MusicUniverseCrudController extends AbstractCrudController
 
             $handle = fopen($path, 'r');
             if ($handle === false) {
-                $this->addFlash('danger', 'Impossible d’ouvrir le fichier CSV.');
-                return $this->redirectToRoute('admin', [
-                    '_locale' => $request->getLocale(),
-                ]);
+                $this->addFlash('danger', 'Impossible d\'ouvrir le fichier CSV.');
+                return $this->redirectToRoute('admin', ['_locale' => $request->getLocale()]);
             }
 
             $firstLine = fgets($handle);
             if ($firstLine === false) {
                 fclose($handle);
                 $this->addFlash('warning', 'Le fichier CSV est vide.');
-                return $this->redirectToRoute('admin', [
-                    '_locale' => $request->getLocale(),
-                ]);
+                return $this->redirectToRoute('admin', ['_locale' => $request->getLocale()]);
             }
 
             $delimiter = substr_count($firstLine, ';') > substr_count($firstLine, ',') ? ';' : ',';
@@ -130,9 +122,7 @@ class MusicUniverseCrudController extends AbstractCrudController
             if (!is_array($header)) {
                 fclose($handle);
                 $this->addFlash('danger', 'Entete CSV invalide.');
-                return $this->redirectToRoute('admin', [
-                    '_locale' => $request->getLocale(),
-                ]);
+                return $this->redirectToRoute('admin', ['_locale' => $request->getLocale()]);
             }
 
             $header = array_map(static fn ($h) => strtolower(trim((string) $h)), $header);
@@ -144,16 +134,21 @@ class MusicUniverseCrudController extends AbstractCrudController
                 rewind($handle);
             }
 
+            $repository = $this->em->getRepository(MusicUniverse::class);
+            $knownBySlug = [];
+            foreach ($repository->findAll() as $existing) {
+                $existingSlug = $existing->getSlug();
+                if ($existingSlug) {
+                    $knownBySlug[strtolower($existingSlug)] = $existing;
+                }
+            }
+
             while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
                 if (!is_array($row) || count(array_filter($row, static fn ($v) => trim((string) $v) !== '')) === 0) {
                     continue;
                 }
 
                 try {
-                    $label = null;
-                    $position = 0;
-                    $isActive = true;
-
                     if ($isHeader) {
                         $map = [];
                         foreach ($header as $i => $name) {
@@ -174,7 +169,7 @@ class MusicUniverseCrudController extends AbstractCrudController
                     }
 
                     $slug = strtolower((string) $this->slugger->slug($label));
-                    $entity = $this->em->getRepository(MusicUniverse::class)->findOneBy(['slug' => $slug]);
+                    $entity = $knownBySlug[$slug] ?? null;
 
                     if (!$entity) {
                         $entity = new MusicUniverse();
@@ -182,6 +177,7 @@ class MusicUniverseCrudController extends AbstractCrudController
                         $entity->setPosition($position);
                         $entity->setIsActive($isActive);
                         $this->em->persist($entity);
+                        $knownBySlug[$slug] = $entity;
                         $created++;
                     } else {
                         $entity->setLabel($label);
@@ -194,7 +190,18 @@ class MusicUniverseCrudController extends AbstractCrudController
                 }
             }
             fclose($handle);
-            $this->em->flush();
+
+            try {
+                $this->em->flush();
+            } catch (\Throwable $e) {
+                $this->addFlash('danger', 'Import interrompu: ' . $e->getMessage());
+                return $this->redirect(
+                    $this->adminUrlGenerator
+                        ->setController(self::class)
+                        ->setAction(Action::INDEX)
+                        ->generateUrl()
+                );
+            }
 
             $this->addFlash(
                 'success',
@@ -233,3 +240,4 @@ class MusicUniverseCrudController extends AbstractCrudController
         return in_array($v, ['1', 'true', 'oui', 'yes', 'y'], true);
     }
 }
+
