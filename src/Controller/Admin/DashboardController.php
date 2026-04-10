@@ -24,9 +24,9 @@ use App\Controller\Admin\ParcoursUtilisateur\Experiences\WpPostsCrudController a
 use App\Controller\Admin\ParcoursUtilisateur\UniversTrust\WpPostsCrudController as UniversTrustCrudController;
 use App\Controller\Admin\ToutesCategories\WpTermTaxonomyCrudController as ToutesCategoriesCrudController;
 use App\Controller\Admin\Activities\WpTermTaxonomyCrudController as ActivitiesCrudController;
-use App\Controller\Admin\Configurations\{DepartementCrudController, OffreInterneCrudController};
+use App\Controller\Admin\Configurations\{DepartementCrudController, OffreInterneCrudController, MusicUniverseCrudController};
 use App\Controller\Admin\Paiements\{AbonnementCrudController};
-use App\Entity\{OffreInterne, ReminderLog, User, WpComments, Departement, WpTerms, WpTermTaxonomy, Abonnement};
+use App\Entity\{OffreInterne, ReminderLog, User, WpComments, Departement, WpTerms, WpTermTaxonomy, Abonnement, MusicUniverse};
 use App\Service\Payment;
 use App\Service\ServiceManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -127,6 +127,7 @@ class DashboardController extends AbstractDashboardController
             yield MenuItem::subMenu('Parcours utilisateur', 'fa fa-solid fa-map')->setSubItems([
                 MenuItem::linkToCrud('Expériences', 'fa fa-ad', WpPosts::class)->setController(ExperiencesCrudController::class),
                 MenuItem::linkToCrud('Univers trust', 'fa fa-pen-square', WpPosts::class)->setController(UniversTrustCrudController::class),
+                MenuItem::linkToCrud('Univers musicaux', 'fa fa-music', MusicUniverse::class)->setController(MusicUniverseCrudController::class),
             ]);
         }
 
