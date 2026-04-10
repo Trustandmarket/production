@@ -1,0 +1,20 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block page_title %}Import CSV - Univers musicaux{% endblock %}
+
+{% block content %}
+    <div class="content-panel p-4">
+        <h3>Importer des univers musicaux (CSV)</h3>
+        <p>Colonnes supportées: <strong>label</strong> (obligatoire), <strong>position</strong> (optionnel), <strong>is_active</strong> (optionnel).</p>
+        <p>Exemple: <code>label;position;is_active</code></p>
+        <form method="post" enctype="multipart/form-data" action="{{ import_url }}">
+            <div class="form-group mb-3">
+                <label for="csv_file">Fichier CSV</label>
+                <input id="csv_file" name="csv_file" type="file" accept=".csv,text/csv" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Importer</button>
+            <a href="{{ index_url }}" class="btn btn-light">Retour</a>
+        </form>
+    </div>
+{% endblock %}
+
