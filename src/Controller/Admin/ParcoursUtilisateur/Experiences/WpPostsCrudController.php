@@ -9,6 +9,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class WpPostsCrudController extends AbstractCrudController
 {
@@ -201,6 +204,94 @@ SQL;
 
         return $this->render('admin/ParcoursUtilisateur/Experiences/edit.html.twig', [
             'exp' => $exp,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/parcours_utilisateur/experiences/bulk-delete", name="admin_parcours_experiences_bulk_delete", methods={"POST"})
+     */
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $token = (string) $request->request->get('_token', '');
+        if (!$this->isCsrfTokenValid('bulk_delete_experiences', $token)) {
+            return new JsonResponse([
+                'ok' => false,
+                'message' => 'Token CSRF invalide.',
+            ], 403);
+        }
+
+        $rawIds = $request->request->all('ids');
+        if (!is_array($rawIds)) {
+            $rawIds = $request->request->get('ids', []);
+        }
+        if (!is_array($rawIds)) {
+            $rawIds = [$rawIds];
+        }
+
+        $ids = array_values(array_unique(array_map(
+            static fn ($v) => (int) $v,
+            array_filter($rawIds, static fn ($v) => is_scalar($v) && (int) $v > 0)
+        )));
+
+        if (empty($ids)) {
+            return new JsonResponse([
+                'ok' => false,
+                'message' => 'Aucun projet selectionne.',
+            ], 400);
+        }
+
+        $conn = $this->em->getConnection();
+        $inParts = [];
+        $params = [
+            'type1' => 'exp_experiences',
+            'type2' => 'exp_evenementiel',
+        ];
+        foreach ($ids as $i => $id) {
+            $param = 'id' . $i;
+            $inParts[] = ':' . $param;
+            $params[$param] = $id;
+        }
+
+        $eligibleSql = sprintf(
+            "SELECT ID FROM wp_posts WHERE ID IN (%s) AND (post_type = :type1 OR post_type = :type2)",
+            implode(', ', $inParts)
+        );
+        $eligibleRows = $conn->executeQuery($eligibleSql, $params)->fetchAllAssociative();
+        $eligibleIds = array_map(static fn ($row) => (int) $row['ID'], $eligibleRows);
+
+        if (empty($eligibleIds)) {
+            return new JsonResponse([
+                'ok' => false,
+                'message' => 'Aucun projet eligible a supprimer.',
+            ], 400);
+        }
+
+        $deletedIds = [];
+        $failedIds = [];
+        foreach ($eligibleIds as $id) {
+            try {
+                $this->service_manager->deletePosts($id);
+                $deletedIds[] = $id;
+            } catch (\Throwable $e) {
+                $failedIds[] = $id;
+            }
+        }
+
+        $skippedIds = array_values(array_diff($ids, $eligibleIds));
+
+        return new JsonResponse([
+            'ok' => count($deletedIds) > 0,
+            'requested_count' => count($ids),
+            'eligible_count' => count($eligibleIds),
+            'deleted_count' => count($deletedIds),
+            'deleted_ids' => $deletedIds,
+            'failed_ids' => $failedIds,
+            'skipped_ids' => $skippedIds,
+            'message' => count($deletedIds) > 0
+                ? 'Suppression de masse terminee.'
+                : 'Aucun projet supprime.',
         ]);
     }
 }

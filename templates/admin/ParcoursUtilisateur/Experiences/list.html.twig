@@ -25,7 +25,18 @@
             font-size: 13px;
             color: #666;
             border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
         }
+        .bulk-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .bulk-count { color: #495057; }
         .sortable-link {
             color: #2f466b;
             text-decoration: none;
@@ -247,8 +258,15 @@
                             </div>
 
                             <div class="bo-table-meta">
-                                {{ pagination.total }} projet{{ pagination.total > 1 ? 's' : '' }} - page {{ pagination.page }} / {{ pagination.total_pages }}
+                                <span>{{ pagination.total }} projet{{ pagination.total > 1 ? 's' : '' }} - page {{ pagination.page }} / {{ pagination.total_pages }}</span>
+                                <div class="bulk-actions">
+                                    <span class="bulk-count js-bulk-count">0 selectionne</span>
+                                    <button type="button" class="btn btn-danger btn-sm js-bulk-delete-btn" disabled>Supprimer la selection</button>
+                                </div>
                             </div>
+                            <div id="bulk-delete-config"
+                                 data-url="{{ path('admin_parcours_experiences_bulk_delete') }}"
+                                 data-token="{{ csrf_token('bulk_delete_experiences') }}"></div>
 
                             <div class="table-stats order-table ov-h">
                                 <table class="table">
@@ -260,6 +278,9 @@
                                         {% set qEmail = query|merge({'sort_by': 'email', 'sort_dir': filters.sort_by == 'email' and filters.sort_dir == 'asc' ? 'desc' : 'asc', 'page': 1, '_locale': lang}) %}
                                         {% set qStatus = query|merge({'sort_by': 'status', 'sort_dir': filters.sort_by == 'status' and filters.sort_dir == 'asc' ? 'desc' : 'asc', 'page': 1, '_locale': lang}) %}
                                         {% set qDate = query|merge({'sort_by': 'date', 'sort_dir': filters.sort_by == 'date' and filters.sort_dir == 'asc' ? 'desc' : 'asc', 'page': 1, '_locale': lang}) %}
+                                        <th style="width: 36px;">
+                                            <input type="checkbox" class="js-select-all-rows" title="Tout selectionner">
+                                        </th>
                                         <th><a class="sortable-link" href="{{ path('admin', qId) }}">ID</a></th>
                                         <th><a class="sortable-link" href="{{ path('admin', qType) }}">Type</a></th>
                                         <th><a class="sortable-link" href="{{ path('admin', qVille) }}">Ville</a></th>
@@ -272,6 +293,7 @@
                                     <tbody>
                                     {% for m in experiences %}
                                         <tr style="background-color: #F7F7F7;font-weight: bold;">
+                                            <td><input type="checkbox" class="js-row-select" value="{{ m.id }}" aria-label="Selectionner le projet {{ m.id }}"></td>
                                             <td>{{ m.id }}</td>
                                             <td>{{ m.exp_type_experience }}</td>
                                             <td>{{ m.exp_ville_display }}</td>
@@ -305,7 +327,7 @@
                                         </tr>
                                     {% else %}
                                         <tr>
-                                            <td colspan="7" class="text-center text-muted">Aucun projet trouve avec ces filtres.</td>
+                                            <td colspan="8" class="text-center text-muted">Aucun projet trouve avec ces filtres.</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -540,6 +562,92 @@
                     $emailInput.trigger('focus');
                 }
             });
+        })();
+
+        (function () {
+            const $rows = $('.js-row-select');
+            const $selectAll = $('.js-select-all-rows');
+            const $bulkBtn = $('.js-bulk-delete-btn');
+            const $bulkCount = $('.js-bulk-count');
+            const $bulkCfg = $('#bulk-delete-config');
+            const bulkUrl = $bulkCfg.data('url');
+            const bulkToken = $bulkCfg.data('token');
+
+            function getSelectedIds() {
+                return $rows.filter(':checked').map(function () {
+                    return parseInt($(this).val(), 10);
+                }).get().filter(function (v) { return !Number.isNaN(v) && v > 0; });
+            }
+
+            function updateBulkUi() {
+                const count = getSelectedIds().length;
+                $bulkBtn.prop('disabled', count === 0);
+                $bulkCount.text(count + ' selectionne' + (count > 1 ? 's' : ''));
+                const totalRows = $rows.length;
+                $selectAll.prop('checked', totalRows > 0 && count === totalRows);
+            }
+
+            $selectAll.on('change', function () {
+                $rows.prop('checked', $(this).is(':checked'));
+                updateBulkUi();
+            });
+
+            $rows.on('change', function () {
+                updateBulkUi();
+            });
+
+            $bulkBtn.on('click', function () {
+                const selectedIds = getSelectedIds();
+                if (!selectedIds.length) {
+                    return;
+                }
+
+                swal({
+                    title: 'Suppression de masse',
+                    text: 'Confirmez-vous la suppression de ' + selectedIds.length + ' projet(s) ?',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonClass: 'btn-danger',
+                    confirmButtonText: 'Supprimer',
+                    cancelButtonText: 'Annuler',
+                    closeOnConfirm: false,
+                    closeOnCancel: true,
+                    showLoaderOnConfirm: true
+                }, function (isConfirm) {
+                    if (!isConfirm) {
+                        return;
+                    }
+
+                    $.ajax({
+                        url: bulkUrl,
+                        type: 'POST',
+                        dataType: 'json',
+                        traditional: true,
+                        data: {
+                            ids: selectedIds,
+                            _token: bulkToken
+                        },
+                        success: function (response) {
+                            if (response && response.deleted_count > 0) {
+                                swal('Suppression terminee', response.deleted_count + ' projet(s) supprime(s).', 'success');
+                                window.location.reload();
+                            } else {
+                                const msg = response && response.message ? response.message : 'Aucun projet supprime.';
+                                swal('Information', msg, 'info');
+                            }
+                        },
+                        error: function (xhr) {
+                            let msg = 'Erreur lors de la suppression.';
+                            if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            }
+                            swal('Erreur', msg, 'error');
+                        }
+                    });
+                });
+            });
+
+            updateBulkUi();
         })();
 
         $(document).on('click', '.delete', function (e) {
