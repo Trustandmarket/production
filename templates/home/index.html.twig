@@ -439,7 +439,9 @@
 
 		<section class="hp-section">
 			<div class="hp-block hp-services-wrap">
-				<h2 class="hp-title">Explorez nos services</h2>
+				<div class="hp-how-heading">
+					<h2>Explorez nos services</h2>
+				</div>
 				<div id="news-slider" class="owl-carousel">
 					<div class="post-slide">
 						<div class="box-prestation box-photograph overlay lazy carroussel_image" data-src="{% if bloc1 %}{{bloc1.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-photo.jpg')}}{% endif %}">
@@ -492,7 +494,9 @@
 
 		<section class="hp-section">
 			<div class="hp-block">
-				<h2 class="hp-title">Pour les artistes et les pros</h2>
+				<div class="hp-how-heading">
+					<h2>Pour les artistes et les pros</h2>
+				</div>
 				<div class="hp-audience">
 					<div class="hp-block hp-audience-card">
 						<h4>{{ encart1[0]|default('Pour les Artistes') }}</h4>
