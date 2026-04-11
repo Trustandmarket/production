@@ -918,7 +918,7 @@
             if ($("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0) {
                 $('.action_next').addClass('active');
                 $('.action_next').removeClass('disabled');
-                actualStep = $(this).parent().parent().attr('attr-step');
+                actualStep = $(this).closest('.steps').attr('attr-step');
             } else {
                 $('.action_next').removeClass('active');
                 $('.action_next').addClass('disabled');
