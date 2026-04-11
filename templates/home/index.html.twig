@@ -484,7 +484,7 @@
 
 {% block body %}
 	{% import _self as home_macros %}
-	{% set heroImage = bloc12 ? bloc12.optionValue|split('|||')[1] : asset('assets/img/prestations/cover.jpg') %}
+	{% set heroImage = bloc10 ? bloc10.optionValue : asset('assets/img/prestations/cover.jpg') %}
 	{% set heroLink = home_macros.prestation_link(bloc12, prestations, 'photographe') %}
 	{% set encart1 = encart_homepage_1 is defined and encart_homepage_1 ? encart_homepage_1.optionValue|split('|||') : [] %}
 	{% set encart2 = encart_homepage_2 is defined and encart_homepage_2 ? encart_homepage_2.optionValue|split('|||') : [] %}
