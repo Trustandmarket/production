@@ -64,7 +64,7 @@ class ExperiencesController extends AbstractController
             'pixel_facebook' => false,
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'music_universes' => $musicUniverses,
-            'google_maps_api_key' => $_SERVER['GOOGLE_MAPS_API_KEY'] ?? '',
+            'google_maps_api_key' => $this->getGoogleMapsApiKey(),
         ]);
     }
 
@@ -512,8 +512,28 @@ SQL;
             'pixel_facebook' => false,
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'music_universes' => $musicUniverses,
-            'google_maps_api_key' => $_SERVER['GOOGLE_MAPS_API_KEY'] ?? '',
+            'google_maps_api_key' => $this->getGoogleMapsApiKey(),
         ]);
+    }
+
+    private function getGoogleMapsApiKey(): string
+    {
+        $fromEnv = $_ENV['GOOGLE_MAPS_API_KEY'] ?? null;
+        if (is_string($fromEnv) && trim($fromEnv) !== '') {
+            return trim($fromEnv);
+        }
+
+        $fromServer = $_SERVER['GOOGLE_MAPS_API_KEY'] ?? null;
+        if (is_string($fromServer) && trim($fromServer) !== '') {
+            return trim($fromServer);
+        }
+
+        $fromGetEnv = getenv('GOOGLE_MAPS_API_KEY');
+        if (is_string($fromGetEnv) && trim($fromGetEnv) !== '') {
+            return trim($fromGetEnv);
+        }
+
+        return '';
     }
 
     /**
