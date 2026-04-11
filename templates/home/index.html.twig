@@ -124,13 +124,31 @@
 		}
 
 		.home-premium .hp-hero-kicker {
+			position: relative;
+			display: inline-block;
 			font-size: 12px;
-			letter-spacing: .18em;
+			letter-spacing: .24em;
 			text-transform: uppercase;
 			color: #b18249;
+			background: linear-gradient(90deg, #f1c086 0%, #f17c30 55%, #b76a2f 100%);
+			-webkit-background-clip: text;
+			background-clip: text;
+			-webkit-text-fill-color: transparent;
 			font-family: "Palanquin Dark", sans-serif;
 			font-weight: 700;
-			margin-bottom: 10px;
+			margin-bottom: 16px;
+			text-shadow: 0 0 1px rgba(241, 124, 48, 0.25);
+		}
+
+		.home-premium .hp-hero-kicker::after {
+			content: "";
+			position: absolute;
+			left: 0;
+			bottom: -7px;
+			width: 62%;
+			height: 2px;
+			border-radius: 10px;
+			background: linear-gradient(90deg, rgba(241, 124, 48, 0.95) 0%, rgba(241, 124, 48, 0.2) 100%);
 		}
 
 		.home-premium .hp-hero h1 {
