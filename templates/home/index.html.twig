@@ -260,6 +260,17 @@
 			line-height: 1;
 		}
 
+		.home-premium .hp-how-icon-svg {
+			width: 34px;
+			height: 24px;
+			display: inline-block;
+		}
+
+		.home-premium .hp-how-icon-svg rect,
+		.home-premium .hp-how-icon-svg line {
+			stroke: #f17c30;
+		}
+
 		.home-premium .hp-how-card strong {
 			display: block;
 			font-family: "Palanquin Dark", sans-serif;
@@ -506,7 +517,13 @@
 					<div class="hp-how-card">
 						<div class="hp-how-top">
 							<span class="hp-how-step">2.</span>
-							<i class="fa fa-keyboard-o hp-how-icon" aria-hidden="true"></i>
+							<svg class="hp-how-icon-svg" viewBox="0 0 64 40" aria-hidden="true" role="img">
+								<rect x="1.5" y="1.5" width="61" height="37" rx="2.5" fill="none" stroke-width="3"/>
+								<line x1="13" y1="2" x2="13" y2="38" stroke-width="2.5"/>
+								<line x1="25" y1="2" x2="25" y2="38" stroke-width="2.5"/>
+								<line x1="37" y1="2" x2="37" y2="38" stroke-width="2.5"/>
+								<line x1="49" y1="2" x2="49" y2="38" stroke-width="2.5"/>
+							</svg>
 						</div>
 						<p>Publiez vos services</p>
 					</div>
