@@ -33,6 +33,73 @@
         }
         .sortable-link:hover { text-decoration: underline; }
         .table td, .table th { vertical-align: middle; }
+        .type-filter-dropdown { position: relative; }
+        .type-filter-toggle {
+            width: 100%;
+            min-height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            background: #fff;
+            text-align: left;
+            padding: .375rem .75rem;
+            color: #495057;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .type-filter-toggle .type-filter-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .type-filter-toggle .type-filter-caret {
+            font-size: 11px;
+            color: #7a7f86;
+            flex: 0 0 auto;
+        }
+        .type-filter-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            z-index: 1200;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,.12);
+            max-height: 230px;
+            overflow-y: auto;
+            padding: 8px 10px;
+        }
+        .type-filter-menu.open { display: block; }
+        .type-filter-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #edf0f3;
+        }
+        .type-filter-actions button {
+            background: none;
+            border: 0;
+            padding: 0;
+            color: #2f466b;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .type-filter-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #2f2f2f;
+        }
+        .type-filter-option:last-child { margin-bottom: 0; }
     </style>
     <div class="content">
         <div class="animated fadeIn">
@@ -72,11 +139,34 @@
                                         </select>
                                     </div>
                                     <div class="col-md-2 mb-2">
-                                        <select class="form-control" name="type[]" multiple size="3">
-                                            {% for t in type_options %}
-                                                <option value="{{ t }}" {{ t in filters.type ? 'selected' : '' }}>{{ t }}</option>
-                                            {% endfor %}
-                                        </select>
+                                        <div class="type-filter-dropdown">
+                                            <button type="button" class="type-filter-toggle js-type-filter-toggle">
+                                                <span class="type-filter-label js-type-filter-label">
+                                                    {% if filters.type is defined and filters.type|length > 0 %}
+                                                        {{ filters.type|join(', ') }}
+                                                    {% else %}
+                                                        Type projet
+                                                    {% endif %}
+                                                </span>
+                                                <span class="type-filter-caret">&#9662;</span>
+                                            </button>
+                                            <div class="type-filter-menu js-type-filter-menu">
+                                                <div class="type-filter-actions">
+                                                    <button type="button" class="js-type-select-all">Tout cocher</button>
+                                                    <button type="button" class="js-type-clear-all">Tout vider</button>
+                                                </div>
+                                                {% if type_options|length > 0 %}
+                                                    {% for t in type_options %}
+                                                        <label class="type-filter-option">
+                                                            <input type="checkbox" name="type[]" value="{{ t }}" {{ t in filters.type ? 'checked' : '' }}>
+                                                            <span>{{ t }}</span>
+                                                        </label>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <div class="text-muted" style="font-size: 13px;">Aucun type disponible</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col-md-2 mb-2">
                                         <input class="form-control" type="text" name="email" value="{{ filters.email }}" placeholder="Email client">
@@ -257,6 +347,66 @@
     <script src="{{ asset('toastr/toastr.min.js') }}"></script>
     <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
     <script type="text/javascript">
+        (function () {
+            const $dropdown = $('.type-filter-dropdown');
+            const $toggle = $('.js-type-filter-toggle');
+            const $menu = $('.js-type-filter-menu');
+            const $label = $('.js-type-filter-label');
+            const $checkboxes = $menu.find('input[name="type[]"]');
+            const $selectAll = $('.js-type-select-all');
+            const $clearAll = $('.js-type-clear-all');
+
+            function updateTypeLabel() {
+                const selected = $checkboxes.filter(':checked').map(function () {
+                    return $(this).val();
+                }).get();
+                if (!selected.length) {
+                    $label.text('Type projet');
+                    return;
+                }
+                if (selected.length <= 2) {
+                    $label.text(selected.join(', '));
+                    return;
+                }
+                $label.text(selected.length + ' types selectionnes');
+            }
+
+            $toggle.on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $menu.toggleClass('open');
+            });
+
+            $(document).on('click', function (e) {
+                if ($(e.target).closest('.type-filter-dropdown').length === 0) {
+                    $menu.removeClass('open');
+                }
+            });
+
+            $menu.on('change', 'input[name="type[]"]', function () {
+                updateTypeLabel();
+            });
+
+            $selectAll.on('click', function (e) {
+                e.preventDefault();
+                $checkboxes.prop('checked', true).trigger('change');
+            });
+
+            $clearAll.on('click', function (e) {
+                e.preventDefault();
+                $checkboxes.prop('checked', false).trigger('change');
+            });
+
+            $dropdown.on('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    $menu.removeClass('open');
+                    $toggle.trigger('focus');
+                }
+            });
+
+            updateTypeLabel();
+        })();
+
         $(document).on('click', '.delete', function (e) {
             e.preventDefault();
             var t = $(this);
