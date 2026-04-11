@@ -129,15 +129,14 @@
 			font-size: 12px;
 			letter-spacing: .24em;
 			text-transform: uppercase;
-			color: #b18249;
-			background: linear-gradient(90deg, #f1c086 0%, #f17c30 55%, #b76a2f 100%);
-			-webkit-background-clip: text;
-			background-clip: text;
-			-webkit-text-fill-color: transparent;
+			color: #262626;
 			font-family: "Palanquin Dark", sans-serif;
 			font-weight: 700;
 			margin-bottom: 16px;
-			text-shadow: 0 0 1px rgba(241, 124, 48, 0.25);
+		}
+
+		.home-premium .hp-hero-kicker .hp-hero-kicker-accent {
+			color: #f17c30;
 		}
 
 		.home-premium .hp-hero-kicker::after {
@@ -493,7 +492,7 @@
 		<section class="hp-section">
 			<div class="hp-block hp-hero">
 				<div>
-					<p class="hp-hero-kicker">TRUST &amp; MARKET</p>
+					<p class="hp-hero-kicker">TRUST <span class="hp-hero-kicker-accent">&amp;</span> MARKET</p>
 					<h1>{{ slogan_homepage and slogan_homepage.getOptionValue ? slogan_homepage.getOptionValue|striptags|raw : "La plateforme des talents musicaux et des artistes ambitieux." }}</h1>
 					<p>Une expérience premium pour connecter artistes, studios et professionnels qualifiés autour de vos projets musicaux.</p>
 					<div class="hp-hero-cta">
