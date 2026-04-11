@@ -195,6 +195,90 @@
             color: #8a9097;
             font-size: 13px;
         }
+        .exp-preview-modal .modal-dialog {
+            max-width: 920px;
+            width: calc(100% - 24px);
+            margin: 18px auto;
+        }
+        .exp-preview-modal .modal-content {
+            border-radius: 12px;
+            overflow: hidden;
+            max-height: calc(100vh - 36px);
+            display: flex;
+            flex-direction: column;
+        }
+        .exp-preview-modal .modal-header {
+            border-bottom: 1px solid #eceff3;
+            background: #fff;
+            flex: 0 0 auto;
+        }
+        .exp-preview-modal .modal-body {
+            overflow-y: auto;
+            padding: 16px;
+            background: #fafbfc;
+            flex: 1 1 auto;
+        }
+        .exp-preview-modal .modal-footer {
+            border-top: 1px solid #eceff3;
+            background: #fff;
+            flex: 0 0 auto;
+        }
+        .exp-preview-card {
+            background: #fff;
+            border: 1px solid #e8ebf0;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .exp-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 14px;
+        }
+        .exp-preview-item strong {
+            display: block;
+            color: #2f466b;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            margin-bottom: 3px;
+        }
+        .exp-preview-item span {
+            color: #1e2a35;
+            font-size: 14px;
+            word-break: break-word;
+        }
+        .exp-preview-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .exp-preview-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            background: #f2f6fb;
+            border: 1px solid #dde7f2;
+            color: #2f466b;
+        }
+        .exp-preview-text {
+            margin: 0;
+            white-space: pre-wrap;
+            font-size: 14px;
+            color: #1e2a35;
+        }
+        .exp-preview-empty {
+            color: #8a9097;
+            font-size: 13px;
+            margin: 0;
+        }
+        @media (max-width: 768px) {
+            .exp-preview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
     <div class="content">
         <div class="animated fadeIn">
@@ -400,56 +484,59 @@
         </div>
     </div>
 
-    <div class="modal fade alert-dismissible in" id="apercuModal">
+    <div class="modal fade exp-preview-modal" id="apercuModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Experience <span class="apercuTitre"></span></h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Projet: <span class="apercuTitre"></span></h5>
+                    <button type="button" class="close fermerModalApercu" data-dismiss="modal" aria-label="Fermer">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                    <div class="recap_choix">
-                        <div class="inline_choix musique_choose">
-                            <h4>Ville:&nbsp;</h4>
-                            <p style="font-weight: 300;" class="villeValue">Paris 15eme</p>
-                        </div>
-                        <div class="inline_choix musique_choose">
-                            <h4>Style musical:&nbsp;</h4>
-                            <p style="font-weight: 300;" class="universValue">Paris 15eme</p>
-                        </div>
-                        <div class="inline_choix divertissement_choose">
-                            <h4>Votre evenement:&nbsp;</h4>
-                            <p style="font-weight: 300;" class="nomEvtValue">Paris 15eme</p>
-                        </div>
-                        <div class="inline_choix divertissement_choose">
-                            <h4>Le lieu:&nbsp;</h4>
-                            <p style="font-weight: 300;" class="lieuValue">Pop / Folk</p>
-                        </div>
-                        <div class="inline_choix divertissement_choose">
-                            <h4>Nombre de participants:&nbsp;</h4>
-                            <p style="font-weight: 300;" class="participantValue">Pop / Folk</p>
-                        </div>
-                        <div style="margin-top: 2rem;">
-                            <h4>Liste de vos besoins:</h4>
-                            <div class="besoinValue" style="margin-top: 1.7rem;">
-                                <p style="font-weight: 300;margin-bottom: 1rem;">Pop / Folk</p>
+                    <div class="exp-preview-card">
+                        <div class="exp-preview-grid">
+                            <div class="exp-preview-item">
+                                <strong>Type de projet</strong>
+                                <span class="previewTypeValue"></span>
+                            </div>
+                            <div class="exp-preview-item">
+                                <strong>Ville recherchee</strong>
+                                <span class="villeValue"></span>
+                            </div>
+                            <div class="exp-preview-item">
+                                <strong>Univers musical</strong>
+                                <span class="universValue"></span>
+                            </div>
+                            <div class="exp-preview-item previewEvtWrap" style="display:none;">
+                                <strong>Evenement</strong>
+                                <span class="nomEvtValue"></span>
+                            </div>
+                            <div class="exp-preview-item previewLieuWrap" style="display:none;">
+                                <strong>Lieu</strong>
+                                <span class="lieuValue"></span>
+                            </div>
+                            <div class="exp-preview-item previewParticipantsWrap" style="display:none;">
+                                <strong>Participants</strong>
+                                <span class="participantValue"></span>
                             </div>
                         </div>
-                        <div style="margin-top: 3rem;">
-                            <h4>Les options retenues:</h4>
-                            <div class="optionValue" style="margin-top: 1.7rem;">
-                                <p style="font-weight: 300;margin-bottom: 1rem;">Pop / Folk</p>
-                            </div>
-                        </div>
-                        <div style="margin-top: 3rem;">
-                            <h4>Vos precisions pour une offre sur mesure:</h4>
-                            <textarea class="precisionValue field_precisions_2 form-control" name="precisions_2"
-                                      id="precisions_2" cols="30" rows="5"
-                                      placeholder="Donnez-nous des details pour nous permettre de personnaliser votre offre."></textarea>
-                        </div>
+                    </div>
+                    <div class="exp-preview-card">
+                        <h5>Choisissez vos besoins</h5>
+                        <div class="besoinValue exp-preview-chips"></div>
+                    </div>
+                    <div class="exp-preview-card">
+                        <h5>Ajoutez vos options</h5>
+                        <div class="optionValue exp-preview-chips"></div>
+                    </div>
+                    <div class="exp-preview-card">
+                        <h5>Precisions</h5>
+                        <p class="precisionValue exp-preview-text"></p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-round btn-secondary close fermerModalApercu p-2" data-dismiss="modal">Masquer</button>
+                    <button type="button" class="btn btn-secondary fermerModalApercu" data-dismiss="modal">Fermer</button>
                 </div>
             </div>
         </div>
@@ -743,6 +830,40 @@
             return false;
         });
 
+        function sanitizeText(value) {
+            if (value === null || value === undefined) {
+                return '';
+            }
+            return String(value).trim();
+        }
+
+        function setPreviewValue(selector, value, emptyLabel) {
+            const text = sanitizeText(value);
+            $(selector).text(text !== '' ? text : (emptyLabel || '-'));
+        }
+
+        function renderPreviewChips(selector, items) {
+            const $target = $(selector);
+            $target.empty();
+            if (!Array.isArray(items) || items.length === 0) {
+                $target.append('<p class="exp-preview-empty">Aucun element.</p>');
+                return;
+            }
+
+            items.forEach(function (item) {
+                const value = sanitizeText(item && item.metaValue ? item.metaValue : item);
+                if (value === '') {
+                    return;
+                }
+                $target.append('<span class="exp-preview-chip"></span>');
+                $target.find('.exp-preview-chip').last().text(value);
+            });
+
+            if ($target.children().length === 0) {
+                $target.append('<p class="exp-preview-empty">Aucun element.</p>');
+            }
+        }
+
         $('.apercuExp').on('click', function (e) {
             e.preventDefault();
             var id = $(this).attr('attr-id');
@@ -750,48 +871,51 @@
                 url: "/{{ app.request.locale }}/admin/parcours_utilisateur/experiences/details/" + id,
                 type: 'GET',
                 success: function (data) {
-                    data = JSON.parse(data);
-                    $("#apercuModal").fadeTo("slow", 1, function () {
-                        if (data.exp_type_experience == "Musique") {
-                            $('.apercuTitre').text(data.exp_type_experience + " - " + data.exp_ville + " - " + data.exp_univers);
-                            $('.villeValue').text(data.exp_ville);
-                            $('.universValue').text(data.exp_univers);
-                            $('.musique_choose').fadeIn();
-                            $('.divertissement_choose').fadeOut();
-                        } else {
-                            $('.apercuTitre').text(data.exp_type_experience + " - " + data.exp_nom_evt + " - " + data.exp_lieu_evt);
-                            $('.nomEvtValue').text(data.exp_nom_evt);
-                            $('.lieuValue').text(data.exp_lieu_evt);
-                            $('.participantValue').text(+data.exp_participants_evt);
-                            $('.musique_choose').fadeOut();
-                            $('.divertissement_choose').fadeIn();
-                        }
+                    if (typeof data === 'string') {
+                        data = JSON.parse(data);
+                    }
 
-                        $('.besoinValue').empty();
-                        if (data.exp_besoins && data.exp_besoins.length > 0) {
-                            data.exp_besoins.forEach((element) => {
-                                $('.besoinValue').append('<p style="font-weight: 300;margin-bottom: 1rem;">' + element.metaValue + '</p>');
-                            })
-                        }
+                    const typeExperience = sanitizeText(data.exp_type_experience);
+                    const ville = sanitizeText(data.exp_ville);
+                    const univers = sanitizeText(data.exp_univers);
+                    const nomEvt = sanitizeText(data.exp_nom_evt);
+                    const lieuEvt = sanitizeText(data.exp_lieu_evt);
+                    const participants = sanitizeText(data.exp_participants_evt);
+                    const precisions = sanitizeText(data.exp_precisions);
 
-                        $('.optionValue').empty();
-                        if (data.exp_options && data.exp_options.length > 0) {
-                            data.exp_options.forEach((element) => {
-                                $('.optionValue').append('<p style="font-weight: 300;margin-bottom: 1rem;">' + element.metaValue + '</p>');
-                            })
-                        }
+                    const titleParts = [typeExperience, ville, univers].filter(function (v) { return v !== ''; });
+                    $('.apercuTitre').text(titleParts.length ? titleParts.join(' - ') : ('#' + id));
 
-                        $('.precisionValue').val(data.exp_precisions);
-                    });
+                    setPreviewValue('.previewTypeValue', typeExperience, '-');
+                    setPreviewValue('.villeValue', ville || lieuEvt, '-');
+                    setPreviewValue('.universValue', univers, '-');
+                    setPreviewValue('.nomEvtValue', nomEvt, '-');
+                    setPreviewValue('.lieuValue', lieuEvt, '-');
+                    setPreviewValue('.participantValue', participants, '-');
+                    setPreviewValue('.precisionValue', precisions, 'Aucune precision.');
+
+                    $('.previewEvtWrap').toggle(nomEvt !== '');
+                    $('.previewLieuWrap').toggle(lieuEvt !== '');
+                    $('.previewParticipantsWrap').toggle(participants !== '');
+
+                    renderPreviewChips('.besoinValue', data.exp_besoins || []);
+                    renderPreviewChips('.optionValue', data.exp_options || []);
+
+                    $('#apercuModal').modal('show');
+                },
+                error: function () {
+                    swal('Erreur', "Impossible de charger l'aperçu du projet.", 'error');
                 }
             });
         });
 
         $(".fermerModalApercu").click(function () {
-            $("#apercuModal").fadeTo("slow", 0, function () {
-                $("#apercuModal").css("display", "none");
-                $(".modal-backdrop").css("display", "none");
-            });
+            $('#apercuModal').modal('hide');
+        });
+
+        $('#apercuModal').on('hidden.bs.modal', function () {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
         });
     </script>
 {% endblock %}
