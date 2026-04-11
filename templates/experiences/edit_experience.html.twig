@@ -826,7 +826,7 @@
                 const search = (term || '').toLowerCase().trim();
                 const matches = options.filter(function (label) {
                     return search === '' || label.toLowerCase().indexOf(search) !== -1;
-                }).slice(0, 12);
+                });
 
                 if (matches.length === 0) {
                     closeSuggestions();
