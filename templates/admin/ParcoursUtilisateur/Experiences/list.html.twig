@@ -864,15 +864,51 @@
             }
         }
 
-        $('.apercuExp').on('click', function (e) {
+        function showPreviewModal() {
+            const $modal = $('#apercuModal');
+            try {
+                if (typeof $modal.modal === 'function') {
+                    $modal.modal('show');
+                } else {
+                    throw new Error('modal plugin unavailable');
+                }
+            } catch (e) {
+                if ($('.modal-backdrop').length === 0) {
+                    $('body').append('<div class="modal-backdrop fade in show"></div>');
+                }
+                $('body').addClass('modal-open');
+                $modal.addClass('in show').css('display', 'block').attr('aria-hidden', 'false');
+            }
+        }
+
+        function hidePreviewModal() {
+            const $modal = $('#apercuModal');
+            try {
+                if (typeof $modal.modal === 'function') {
+                    $modal.modal('hide');
+                }
+            } catch (e) {
+                // no-op
+            }
+            $modal.removeClass('in show').css('display', 'none').attr('aria-hidden', 'true');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+        }
+
+        $(document).on('click', '.apercuExp', function (e) {
             e.preventDefault();
             var id = $(this).attr('attr-id');
             $.ajax({
                 url: "/{{ app.request.locale }}/admin/parcours_utilisateur/experiences/details/" + id,
                 type: 'GET',
                 success: function (data) {
-                    if (typeof data === 'string') {
-                        data = JSON.parse(data);
+                    try {
+                        if (typeof data === 'string') {
+                            data = JSON.parse(data);
+                        }
+                    } catch (e) {
+                        swal('Erreur', "Format de donnees invalide pour l'aperçu.", 'error');
+                        return;
                     }
 
                     const typeExperience = sanitizeText(data.exp_type_experience);
@@ -901,7 +937,7 @@
                     renderPreviewChips('.besoinValue', data.exp_besoins || []);
                     renderPreviewChips('.optionValue', data.exp_options || []);
 
-                    $('#apercuModal').modal('show');
+                    showPreviewModal();
                 },
                 error: function () {
                     swal('Erreur', "Impossible de charger l'aperçu du projet.", 'error');
@@ -909,13 +945,13 @@
             });
         });
 
-        $(".fermerModalApercu").click(function () {
-            $('#apercuModal').modal('hide');
+        $(".fermerModalApercu").click(function (e) {
+            e.preventDefault();
+            hidePreviewModal();
         });
 
         $('#apercuModal').on('hidden.bs.modal', function () {
-            $('body').removeClass('modal-open');
-            $('.modal-backdrop').remove();
+            hidePreviewModal();
         });
     </script>
 {% endblock %}
