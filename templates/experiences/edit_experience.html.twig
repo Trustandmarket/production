@@ -815,6 +815,7 @@
             const inputEl = $input.get(0);
             const autocomplete = new google.maps.places.Autocomplete(inputEl, {
                 types: ['(cities)'],
+                componentRestrictions: { country: 'fr' },
                 fields: ['address_components', 'name', 'formatted_address']
             });
 
