@@ -44,6 +44,45 @@
         }
         .sortable-link:hover { text-decoration: underline; }
         .table td, .table th { vertical-align: middle; }
+        .row-actions { position: relative; display: inline-block; }
+        .row-actions-toggle {
+            border: 1px solid #d7dce2;
+            background: #fff;
+            color: #2f466b;
+            min-width: 34px;
+            height: 30px;
+            border-radius: 6px;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .row-actions-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            min-width: 150px;
+            z-index: 1200;
+            background: #fff;
+            border: 1px solid #d7dce2;
+            border-radius: 8px;
+            box-shadow: 0 10px 24px rgba(0,0,0,.14);
+            padding: 6px;
+        }
+        .row-actions-menu.open { display: block; }
+        .row-actions-item {
+            display: block;
+            width: 100%;
+            padding: 7px 9px;
+            color: #2f2f2f;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .row-actions-item:hover {
+            background: #f4f7fb;
+            text-decoration: none;
+        }
         .type-filter-dropdown { position: relative; }
         .type-filter-toggle {
             width: 100%;
@@ -284,10 +323,11 @@
                                         <th><a class="sortable-link" href="{{ path('admin', qId) }}">ID</a></th>
                                         <th><a class="sortable-link" href="{{ path('admin', qType) }}">Type</a></th>
                                         <th><a class="sortable-link" href="{{ path('admin', qVille) }}">Ville</a></th>
+                                        <th>Univers musical</th>
                                         <th><a class="sortable-link" href="{{ path('admin', qEmail) }}">Email</a></th>
                                         <th><a class="sortable-link" href="{{ path('admin', qStatus) }}">Statut</a></th>
                                         <th><a class="sortable-link" href="{{ path('admin', qDate) }}">Date</a></th>
-                                        <th>Actions</th>
+                                        <th style="width: 56px;">...</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -297,6 +337,7 @@
                                             <td>{{ m.id }}</td>
                                             <td>{{ m.exp_type_experience }}</td>
                                             <td>{{ m.exp_ville_display }}</td>
+                                            <td>{{ m.exp_univers }}</td>
                                             <td>{{ m.user }}</td>
                                             <td>
                                                 {% if m.status|lower == 'draft' %}
@@ -309,25 +350,20 @@
                                             </td>
                                             <td>{{ m.created_at }}</td>
                                             <td>
-                                                <a class="badge badge-pending post-details my-1 apercuExp"
-                                                   attr-id="{{ m.id }}" href="" title="Details du post">
-                                                    <i class="fa fa-eye "></i>
-                                                </a>
-                                                {% set url = ea_url().setController('App\\Controller\\Admin\\ParcoursUtilisateur\\Experiences\\WpPostsCrudController').setAction('edit').setEntityId(m.id) %}
-                                                <a class="badge badge-pending update my-1" href="{{ url }}"
-                                                   title="Modifier le post">
-                                                    <i class="fa fa-edit "></i>
-                                                </a>
-                                                <a class="red delete my-1"
-                                                   href="{{ path('post_delete_get', {id : m.id}) }}"
-                                                   title="Supprimer l'experience">
-                                                    <i class="fa fa-trash"></i>
-                                                </a>
+                                                <div class="row-actions">
+                                                    <button type="button" class="row-actions-toggle js-row-actions-toggle">...</button>
+                                                    <div class="row-actions-menu js-row-actions-menu">
+                                                        <a class="row-actions-item apercuExp" attr-id="{{ m.id }}" href="" title="Details du post">Apercu</a>
+                                                        {% set url = ea_url().setController('App\\Controller\\Admin\\ParcoursUtilisateur\\Experiences\\WpPostsCrudController').setAction('edit').setEntityId(m.id) %}
+                                                        <a class="row-actions-item update" href="{{ url }}" title="Modifier le post">Modifier</a>
+                                                        <a class="row-actions-item red delete" href="{{ path('post_delete_get', {id : m.id}) }}" title="Supprimer l'experience">Supprimer</a>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                     {% else %}
                                         <tr>
-                                            <td colspan="8" class="text-center text-muted">Aucun projet trouve avec ces filtres.</td>
+                                            <td colspan="9" class="text-center text-muted">Aucun projet trouve avec ces filtres.</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -650,6 +686,22 @@
             });
 
             updateBulkUi();
+        })();
+
+        (function () {
+            const $toggles = $('.js-row-actions-toggle');
+
+            $toggles.on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const $menu = $(this).siblings('.js-row-actions-menu');
+                $('.js-row-actions-menu').not($menu).removeClass('open');
+                $menu.toggleClass('open');
+            });
+
+            $(document).on('click', function () {
+                $('.js-row-actions-menu').removeClass('open');
+            });
         })();
 
         $(document).on('click', '.delete', function (e) {
