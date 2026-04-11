@@ -474,6 +474,42 @@
             box-shadow: 0 0 0 4px rgba(241, 124, 48, 0.10);
         }
 
+        .universe-autocomplete {
+            position: relative;
+        }
+
+        .universe-suggestions {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            z-index: 1200;
+            max-height: 230px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid rgba(17, 17, 17, 0.12);
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(17, 17, 17, 0.12);
+            display: none;
+        }
+
+        .universe-suggestion-item {
+            width: 100%;
+            padding: 10px 12px;
+            text-align: left;
+            border: 0;
+            background: #fff;
+            color: #202020;
+            font-family: "Palanquin", sans-serif;
+            cursor: pointer;
+        }
+
+        .universe-suggestion-item:hover,
+        .universe-suggestion-item:focus {
+            background: #fff6ef;
+            outline: none;
+        }
+
         .experience_choice_grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -805,17 +841,19 @@
                         </div>
                         <div class="form-group list_field musique_choose">
                             <label for=""><h2>Votre univers musical* ?</h2></label>
-                            <input type="text"
-                                   class="form-control input_rounded field_univers"
-                                   name="univers"
-                                   list="music-universe-options"
-                                   autocomplete="off"
-                                   placeholder="Saisissez un univers musical">
-                            <datalist id="music-universe-options">
-                                {% for universe in music_universes|default([]) %}
-                                    <option value="{{ universe.label }}"></option>
-                                {% endfor %}
-                            </datalist>
+                            <div class="universe-autocomplete">
+                                <input type="text"
+                                       class="form-control input_rounded field_univers"
+                                       name="univers"
+                                       autocomplete="off"
+                                       placeholder="Saisissez un univers musical">
+                                <datalist id="music-universe-options">
+                                    {% for universe in music_universes|default([]) %}
+                                        <option value="{{ universe.label }}"></option>
+                                    {% endfor %}
+                                </datalist>
+                                <div class="universe-suggestions"></div>
+                            </div>
                         </div>
                         <div class="form-group list_field" style="margin-top: 2rem;">
                             <label for=""><h2>Choisissez vos besoins*</h2></label>
@@ -979,6 +1017,64 @@
         var typeExperience = "Production musicale";
         var checkboxValues = [];
         var optionsValues = [];
+
+        function initUniverseAutocomplete() {
+            const $input = $('.field_univers');
+            const $datalist = $('#music-universe-options');
+            const $box = $('.universe-suggestions');
+
+            if (!$input.length || !$datalist.length || !$box.length) {
+                return;
+            }
+
+            const options = $datalist.find('option').map(function () {
+                return ($(this).attr('value') || '').trim();
+            }).get().filter(function (value, index, arr) {
+                return value !== '' && arr.indexOf(value) === index;
+            });
+
+            function closeSuggestions() {
+                $box.hide().empty();
+            }
+
+            function renderSuggestions(term) {
+                const search = (term || '').toLowerCase().trim();
+                const matches = options.filter(function (label) {
+                    return search === '' || label.toLowerCase().indexOf(search) !== -1;
+                }).slice(0, 12);
+
+                if (matches.length === 0) {
+                    closeSuggestions();
+                    return;
+                }
+
+                const html = matches.map(function (label) {
+                    return '<button type="button" class="universe-suggestion-item" data-value="' + $('<div>').text(label).html() + '">' + $('<div>').text(label).html() + '</button>';
+                }).join('');
+
+                $box.html(html).show();
+            }
+
+            $input.on('focus input', function () {
+                renderSuggestions($(this).val());
+            });
+
+            $box.on('mousedown', '.universe-suggestion-item', function (e) {
+                e.preventDefault();
+                const value = $(this).data('value');
+                $input.val(value).trigger('input').trigger('keyup');
+                closeSuggestions();
+            });
+
+            $(document).on('click', function (e) {
+                if ($(e.target).closest('.universe-autocomplete').length === 0) {
+                    closeSuggestions();
+                }
+            });
+        }
+
+        initUniverseAutocomplete();
+
         function canProceedFromMusicDetails() {
             return $("input[name='ville']").val() != "" && $("input[name='univers']").val() != "" && checkedCheck > 0;
         }
