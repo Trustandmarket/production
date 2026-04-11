@@ -895,9 +895,27 @@
             $('.modal-backdrop').remove();
         }
 
+        $(function () {
+            const $modal = $('#apercuModal');
+            if ($modal.length && !$modal.parent().is('body')) {
+                $modal.appendTo('body');
+            }
+        });
+
         $(document).on('click', '.apercuExp', function (e) {
             e.preventDefault();
             var id = $(this).attr('attr-id');
+            $('.apercuTitre').text('Chargement...');
+            setPreviewValue('.previewTypeValue', '', '-');
+            setPreviewValue('.villeValue', '', '-');
+            setPreviewValue('.universValue', '', '-');
+            setPreviewValue('.nomEvtValue', '', '-');
+            setPreviewValue('.lieuValue', '', '-');
+            setPreviewValue('.participantValue', '', '-');
+            setPreviewValue('.precisionValue', 'Chargement...', '-');
+            renderPreviewChips('.besoinValue', []);
+            renderPreviewChips('.optionValue', []);
+            showPreviewModal();
             $.ajax({
                 url: "/{{ app.request.locale }}/admin/parcours_utilisateur/experiences/details/" + id,
                 type: 'GET',
@@ -936,8 +954,6 @@
 
                     renderPreviewChips('.besoinValue', data.exp_besoins || []);
                     renderPreviewChips('.optionValue', data.exp_options || []);
-
-                    showPreviewModal();
                 },
                 error: function () {
                     swal('Erreur', "Impossible de charger l'aperçu du projet.", 'error');
