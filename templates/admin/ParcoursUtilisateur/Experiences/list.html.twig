@@ -623,6 +623,9 @@
                         type: 'POST',
                         dataType: 'json',
                         traditional: true,
+                        headers: {
+                            'X-CSRF-TOKEN': bulkToken
+                        },
                         data: {
                             ids: selectedIds,
                             _token: bulkToken

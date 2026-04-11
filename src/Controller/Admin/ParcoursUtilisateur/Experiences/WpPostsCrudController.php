@@ -212,13 +212,14 @@ SQL;
      */
     public function bulkDelete(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
         $token = (string) $request->request->get('_token', '');
+        if ($token === '') {
+            $token = (string) $request->headers->get('X-CSRF-TOKEN', '');
+        }
         if (!$this->isCsrfTokenValid('bulk_delete_experiences', $token)) {
             return new JsonResponse([
                 'ok' => false,
-                'message' => 'Token CSRF invalide.',
+                'message' => 'Token CSRF invalide ou expire.',
             ], 403);
         }
 
