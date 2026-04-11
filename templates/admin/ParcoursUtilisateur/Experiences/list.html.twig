@@ -195,6 +195,21 @@
             color: #8a9097;
             font-size: 13px;
         }
+        .exp-preview-modal {
+            display: none;
+        }
+        .exp-preview-modal.force-open {
+            display: block !important;
+            position: fixed !important;
+            inset: 0 !important;
+            z-index: 20000 !important;
+            overflow-y: auto !important;
+            background: rgba(10, 15, 22, 0.52);
+            padding: 12px;
+        }
+        body.exp-preview-lock {
+            overflow: hidden !important;
+        }
         .exp-preview-modal .modal-dialog {
             max-width: 920px;
             width: calc(100% - 24px);
@@ -866,32 +881,14 @@
 
         function showPreviewModal() {
             const $modal = $('#apercuModal');
-            try {
-                if (typeof $modal.modal === 'function') {
-                    $modal.modal('show');
-                } else {
-                    throw new Error('modal plugin unavailable');
-                }
-            } catch (e) {
-                if ($('.modal-backdrop').length === 0) {
-                    $('body').append('<div class="modal-backdrop fade in show"></div>');
-                }
-                $('body').addClass('modal-open');
-                $modal.addClass('in show').css('display', 'block').attr('aria-hidden', 'false');
-            }
+            $('body').addClass('exp-preview-lock');
+            $modal.addClass('force-open in show').css('display', 'block').attr('aria-hidden', 'false');
         }
 
         function hidePreviewModal() {
             const $modal = $('#apercuModal');
-            try {
-                if (typeof $modal.modal === 'function') {
-                    $modal.modal('hide');
-                }
-            } catch (e) {
-                // no-op
-            }
-            $modal.removeClass('in show').css('display', 'none').attr('aria-hidden', 'true');
-            $('body').removeClass('modal-open');
+            $modal.removeClass('force-open in show').css('display', 'none').attr('aria-hidden', 'true');
+            $('body').removeClass('exp-preview-lock modal-open');
             $('.modal-backdrop').remove();
         }
 
@@ -964,6 +961,12 @@
         $(".fermerModalApercu").click(function (e) {
             e.preventDefault();
             hidePreviewModal();
+        });
+
+        $(document).on('click', '#apercuModal', function (e) {
+            if ($(e.target).is('#apercuModal')) {
+                hidePreviewModal();
+            }
         });
 
         $('#apercuModal').on('hidden.bs.modal', function () {
