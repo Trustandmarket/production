@@ -223,12 +223,9 @@ SQL;
             ], 403);
         }
 
-        $rawIds = $request->request->all('ids');
+        $rawIds = $request->request->get('ids', []);
         if (!is_array($rawIds)) {
-            $rawIds = $request->request->get('ids', []);
-        }
-        if (!is_array($rawIds)) {
-            $rawIds = [$rawIds];
+            $rawIds = preg_split('/[,\s;]+/', (string) $rawIds) ?: [];
         }
 
         $ids = array_values(array_unique(array_map(
