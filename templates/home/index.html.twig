@@ -84,6 +84,205 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.css">
 	<link href="{{ absolute_url(asset('assets/css/home.min.css')) }}" rel="stylesheet">
+	<style>
+		.homeLayout header .navbar,
+		.homeLayout header .navbar.fixed-top {
+			background: #0a0a0a !important;
+		}
+
+		.homeLayout header .minify-menu > li:first-child > a[href*="type_prestation=studio-musique"] {
+			display: none !important;
+		}
+
+		.home-premium {
+			background: linear-gradient(180deg, #f7f5f1 0%, #f3f1ec 100%);
+			padding-top: 92px;
+			color: #171717;
+		}
+
+		.home-premium .hp-section {
+			max-width: 1180px;
+			margin: 0 auto;
+			padding: 28px 20px;
+		}
+
+		.home-premium .hp-block {
+			background: rgba(255, 255, 255, 0.9);
+			border: 1px solid rgba(0, 0, 0, 0.08);
+			border-radius: 22px;
+			box-shadow: 0 16px 32px rgba(0, 0, 0, 0.06);
+			padding: 24px;
+		}
+
+		.home-premium .hp-hero {
+			display: grid;
+			grid-template-columns: 1.05fr .95fr;
+			gap: 20px;
+			align-items: stretch;
+		}
+
+		.home-premium .hp-hero-kicker {
+			font-size: 12px;
+			letter-spacing: .18em;
+			text-transform: uppercase;
+			color: #b18249;
+			font-family: "Palanquin Dark", sans-serif;
+			margin-bottom: 10px;
+		}
+
+		.home-premium .hp-hero h1 {
+			font-size: 3rem;
+			line-height: 1.05;
+			margin-bottom: 14px;
+			color: #131313;
+		}
+
+		.home-premium .hp-hero p {
+			font-size: 1.02rem;
+			line-height: 1.75;
+			color: #4d4d4d;
+			margin-bottom: 16px;
+		}
+
+		.home-premium .hp-hero-cta {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+
+		.home-premium .hp-btn {
+			border-radius: 10px;
+			padding: 11px 18px;
+			font-family: "Palanquin Dark", sans-serif;
+			font-size: .96rem;
+			text-decoration: none;
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.home-premium .hp-btn-primary {
+			background: #b18249;
+			border: 1px solid #b18249;
+			color: #fff;
+		}
+
+		.home-premium .hp-btn-secondary {
+			background: #fff;
+			border: 1px solid rgba(0, 0, 0, 0.18);
+			color: #1b1b1b;
+		}
+
+		.home-premium .hp-hero-media {
+			border-radius: 20px;
+			min-height: 420px;
+			background-size: cover;
+			background-position: center;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.home-premium .hp-hero-media::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(135deg, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.1) 100%);
+		}
+
+		.home-premium .hp-title {
+			font-size: 2rem;
+			margin: 0 0 16px 0;
+			text-align: center;
+			color: #161616;
+		}
+
+		.home-premium .hp-how-grid {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 12px;
+		}
+
+		.home-premium .hp-how-card {
+			background: #fff;
+			border: 1px solid rgba(0, 0, 0, 0.08);
+			border-radius: 14px;
+			padding: 16px;
+			text-align: center;
+		}
+
+		.home-premium .hp-how-card strong {
+			display: block;
+			font-family: "Palanquin Dark", sans-serif;
+			font-size: 1rem;
+			margin-bottom: 6px;
+		}
+
+		.home-premium .hp-how-card p {
+			margin: 0;
+			color: #575757;
+			font-size: .95rem;
+		}
+
+		.home-premium .hp-services-wrap {
+			padding: 0;
+			background: transparent;
+			border: 0;
+			box-shadow: none;
+		}
+
+		.home-premium .hp-services-wrap #news-slider .post-slide {
+			padding: 4px;
+		}
+
+		.home-premium .hp-audience {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 14px;
+		}
+
+		.home-premium .hp-audience-card h4 {
+			font-size: 1.35rem;
+			margin: 0 0 10px 0;
+		}
+
+		.home-premium .hp-audience-card p {
+			margin: 0;
+			color: #4d4d4d;
+			line-height: 1.7;
+		}
+
+		.home-premium .hp-cta-final {
+			text-align: center;
+		}
+
+		.home-premium .hp-cta-final h2 {
+			font-size: 2.2rem;
+			margin-bottom: 16px;
+		}
+
+		@media (max-width: 991px) {
+			.home-premium {
+				padding-top: 84px;
+			}
+
+			.home-premium .hp-hero {
+				grid-template-columns: 1fr;
+			}
+
+			.home-premium .hp-hero-media {
+				min-height: 260px;
+			}
+
+			.home-premium .hp-how-grid,
+			.home-premium .hp-audience {
+				grid-template-columns: 1fr;
+			}
+
+			.home-premium .hp-hero h1 {
+				font-size: 2.2rem;
+			}
+		}
+	</style>
 {% endblock %}
 
 {% block header %}
@@ -91,127 +290,144 @@
 {% endblock %}
 
 {% block navigation %}
-	{{parent()}}
 {% endblock %}
+
+{% macro prestation_link(bloc, prestations, fallback) %}
+	{% set link = path('annonces_listeAnnonces', {type_prestation: fallback, services_proposes: '', code_postal_ville: ''}) %}
+	{% if bloc %}
+		{% set parts = bloc.optionValue|split('|||') %}
+		{% for item in prestations %}
+			{% if item.termTaxonomyId == parts[0] %}
+				{% set link = path('annonces_listeAnnonces', {type_prestation: item.slug, services_proposes: '', code_postal_ville: ''}) %}
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+	{{- link -}}
+{% endmacro %}
 
 
 {% block body %}
-	<main class="text-center">
-		<div class="container" style="max-width: 60rem;display: none;">
-			<div class="row"></div>
-		</div>
-		<div class="container" style="max-width: 60rem;padding: 1rem;">
-			<div class="row">
-				<div class="col-md-12 toi">
-					<div class="com-preview">
-						<div class="com-preview-media-container">
-							<a class="com-preview-media__image" href="{% if bloc12 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc12.optionValue|split('|||')[0] %} {{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'photographe',services_proposes: '',code_postal_ville: ''})}}{% endif %}"
-							   style="background-image:url({% if bloc12 %}{{bloc12.optionValue|split('|||')[1]}}{% else %}https://unsplash.it/800/600?image=696{% endif %});box-shadow: inset 0 0 0 2000px rgba(6, 48, 66, 0.35);"></a>
-							<h3 class="com-preview-media__text">
-								{{'general.decouvrez_musique'|trans}}
-							</h3>
-						</div>
+	{% import _self as home_macros %}
+	{% set heroImage = bloc12 ? bloc12.optionValue|split('|||')[1] : asset('assets/img/prestations/cover.jpg') %}
+	{% set heroLink = home_macros.prestation_link(bloc12, prestations, 'photographe') %}
+	{% set encart1 = encart_homepage_1 is defined and encart_homepage_1 ? encart_homepage_1.optionValue|split('|||') : [] %}
+	{% set encart2 = encart_homepage_2 is defined and encart_homepage_2 ? encart_homepage_2.optionValue|split('|||') : [] %}
+	<main class="home-premium">
+		<section class="hp-section">
+			<div class="hp-block hp-hero">
+				<div>
+					<p class="hp-hero-kicker">Trust &amp; Market</p>
+					<h1>{{ slogan_homepage and slogan_homepage.getOptionValue ? slogan_homepage.getOptionValue|striptags : "La plateforme des talents musicaux et des artistes ambitieux." }}</h1>
+					<p>Une expérience premium pour connecter artistes, studios et professionnels qualifiés autour de vos projets musicaux.</p>
+					<div class="hp-hero-cta">
+						<a class="hp-btn hp-btn-primary" href="{{ path('annonces_listeAnnonces', {type_prestation: '', services_proposes: '', code_postal_ville: ''}) }}">
+							<i class="fa fa-search"></i>
+							Trouver un service
+						</a>
+						<a class="hp-btn hp-btn-secondary" href="{{ path('app_register') }}">
+							Créer mon profil gratuitement
+						</a>
 					</div>
 				</div>
+				<a class="hp-hero-media" href="{{ heroLink }}" style="background-image:url('{{ heroImage }}')"></a>
+			</div>
+		</section>
 
-				<h3 style="margin-top: 2rem;">{{'general.decouvrez_les_services'|trans}}</h3>
-				<div class="col-md-12" style="padding: 0;">
-					<div id="news-slider" class="owl-carousel">
-						<div class="post-slide">
-							<a class="hover-orange" href="#">
-								<div class="box-prestation box-photograph overlay lazy carroussel_image" data-src="{% if bloc1 %}{{bloc1.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-photo.jpg')}}{% endif %}">
-									<a href="{% if bloc1 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc1.optionValue|split('|||')[0] %} {{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'photographe',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.photographe'|trans}}</a>
-								</div>
-							</a>
-						</div>
-						<div class="post-slide">
-							<a class="hover-orange" href="#">
-								<div class="box-prestation box-musicien overlay lazy carroussel_image" data-src="{% if bloc2 %}{{bloc2.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-musicien.jpg')}}{% endif %}">
-									<a href="{% if bloc2 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc2.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'musiciens',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.musicien'|trans}}</a>
-								</div>
-							</a>
-						</div>
-						<div class="post-slide">
-							<a class="hover-orange" href="#">
-								<div class="box-prestation box-prod-musicale overlay lazy carroussel_image" data-src="{% if bloc3 %}{{bloc3.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-production-musicale.jpg')}}{% endif %}">
-									<a href="{% if bloc3 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc3.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'studio-denregistrement',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.studio-enregistrement'|trans}}</a>
-								</div>
-							</a>
-						</div>
-						<div class="post-slide">
-							<a class="hover-orange" href="#">
-								<div class="box-prestation box-grp-d-musiq overlay lazy carroussel_image" data-src="{% if bloc4 %}{{bloc4.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-group-music.jpg')}}{% endif %}">
-									<a href="{% if bloc4 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc4.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'groupes-de-musique',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.groupe-de-musique'|trans}}</a>
-								</div>
-							</a>
-						</div>
-						<div class="post-slide">
-							<div class="box-prestation box-chorale overlay lazy carroussel_image" data-src="{% if bloc5 %}{{bloc5.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-chorale.jpg')}}{% endif %}">
-								<a href="{% if bloc5 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc5.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces',{type_prestation:'chorale-gospel',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.chorale'|trans}}</a>
-							</div>
-						</div>
-						<div class="post-slide">
-							<a class="hover-orange" href="#">
-								<div class="box-prestation box-stud-photo overlay lazy carroussel_image" data-src="{% if bloc6 %}{{bloc6.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-stud-photo.jpg')}}{% endif %}">
-									<a href="{% if bloc6 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc6.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'studio-photo',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.studio-photo'|trans}}</a>
-								</div>
-							</a>
-						</div>
-						<div class="post-slide">
-							<a class="hover-orange" href="#">
-								<div class="box-prestation box-realisation-vid overlay lazy carroussel_image" data-src="{% if bloc7 %}{{bloc7.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-realisation-vid.jpg')}}{% endif %}">
-									<a href="{% if bloc7 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc7.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'realisation-video',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.realisation-video'|trans}}</a>
-								</div>
-							</a>
-						</div>
-						<div class="post-slide">
-							<a class="hover-orange" href="#">
-								<div class="box-prestation box-evenementiels overlay lazy carroussel_image" data-src="{% if bloc8 %}{{bloc8.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-evenementiels.jpg')}}{% endif %}">
-									<a href="{% if bloc8 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc8.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'evenementiels',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.evenementiel'|trans}}</a>
-								</div>
-							</a>
-						</div>
-						<div class="post-slide">
-							<a class="hover-orange" href="#">
-								<div class="box-prestation box-stud-vid overlay lazy carroussel_image" data-src="{% if bloc9 %}{{bloc9.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-studio-video.jpg')}}{% endif %}">
-									<a href="{% if bloc9 %}{% for item in prestations %} {% if item.termTaxonomyId == bloc9.optionValue|split('|||')[0] %}{{path('annonces_listeAnnonces', {type_prestation: item.slug,services_proposes: '',code_postal_ville: ''})}}{% endif %} {% endfor %}{% else %}{{path('annonces_listeAnnonces', {type_prestation: 'studio-video',services_proposes: '',code_postal_ville: ''})}}{% endif %}" class="prestation-link lazyload">{{'home.bouton.studio-video'|trans}}</a>
-								</div>
-							</a>
-						</div>
+		<section class="hp-section">
+			<div class="hp-block">
+				<h2 class="hp-title">Comment ça marche ?</h2>
+				<div class="hp-how-grid">
+					<div class="hp-how-card">
+						<strong>1. Décrivez votre projet</strong>
+						<p>Type de prestation, ville et budget indicatif.</p>
 					</div>
-				</div>
-
-				<h3>{{'general.decouvrez_les_produits'|trans}}</h3>
-				<div class="col-md-12 toi">
-					<div class="com-preview">
-						<div class="com-preview-media-container">
-							<a class="com-preview-media__image" href="{{path('annonces_listeAnnonces', {type_prestation: 'produits',services_proposes: '',code_postal_ville: ''})}}" style="background-image:url({% if bloc11 %}{{bloc11.optionValue}}{% else %}https://unsplash.it/800/600?image=696{% endif %});box-shadow: inset 0 0 0 2000px rgba(6, 48, 66, 0.35);"></a>
-							<h3 class="com-preview-media__text">
-								{{'general.produits_offres'|trans}}
-							</h3>
-						</div>
+					<div class="hp-how-card">
+						<strong>2. On transmet aux studios</strong>
+						<p>Les professionnels adaptés à votre besoin sont notifiés.</p>
 					</div>
-				</div>
-
-				<h3 class="mt-4">{{'general.derniers_articles'|trans}}</h3>
-				<div class="cartearticles row">
-					{% for article in blog %}
-						<div class="col-md-4">
-							<a href="{{absolute_url(path('blog_details_postBlog', {slug: article.post_name}))}}" style="text-decoration: none;">
-								<div class="card">
-									<div class="img-cover">
-										<img src="{{ article.imagePost }}" class="lazy" alt="article-cover">
-									</div>
-									<div class="desc">
-										<h4 style="text-overflow: ellipsis;font-size: 1.25rem;">{{ article.post_title }}</h4>
-									</div>
-								</div>
-							</a>
-						</div>
-					{% endfor %}
+					<div class="hp-how-card">
+						<strong>3. Vous choisissez</strong>
+						<p>Comparez les profils et sélectionnez le bon studio.</p>
+					</div>
 				</div>
 			</div>
-		</div>
+		</section>
+
+		<section class="hp-section">
+			<div class="hp-block hp-services-wrap">
+				<h2 class="hp-title">Explorez nos services</h2>
+				<div id="news-slider" class="owl-carousel">
+					<div class="post-slide">
+						<div class="box-prestation box-photograph overlay lazy carroussel_image" data-src="{% if bloc1 %}{{bloc1.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-photo.jpg')}}{% endif %}">
+							<a href="{{ home_macros.prestation_link(bloc1, prestations, 'photographe') }}" class="prestation-link lazyload">{{'home.bouton.photographe'|trans}}</a>
+						</div>
+					</div>
+					<div class="post-slide">
+						<div class="box-prestation box-musicien overlay lazy carroussel_image" data-src="{% if bloc2 %}{{bloc2.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-musicien.jpg')}}{% endif %}">
+							<a href="{{ home_macros.prestation_link(bloc2, prestations, 'musiciens') }}" class="prestation-link lazyload">{{'home.bouton.musicien'|trans}}</a>
+						</div>
+					</div>
+					<div class="post-slide">
+						<div class="box-prestation box-prod-musicale overlay lazy carroussel_image" data-src="{% if bloc3 %}{{bloc3.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-production-musicale.jpg')}}{% endif %}">
+							<a href="{{ home_macros.prestation_link(bloc3, prestations, 'studio-denregistrement') }}" class="prestation-link lazyload">{{'home.bouton.studio-enregistrement'|trans}}</a>
+						</div>
+					</div>
+					<div class="post-slide">
+						<div class="box-prestation box-grp-d-musiq overlay lazy carroussel_image" data-src="{% if bloc4 %}{{bloc4.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-group-music.jpg')}}{% endif %}">
+							<a href="{{ home_macros.prestation_link(bloc4, prestations, 'groupes-de-musique') }}" class="prestation-link lazyload">{{'home.bouton.groupe-de-musique'|trans}}</a>
+						</div>
+					</div>
+					<div class="post-slide">
+						<div class="box-prestation box-chorale overlay lazy carroussel_image" data-src="{% if bloc5 %}{{bloc5.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-chorale.jpg')}}{% endif %}">
+							<a href="{{ home_macros.prestation_link(bloc5, prestations, 'chorale-gospel') }}" class="prestation-link lazyload">{{'home.bouton.chorale'|trans}}</a>
+						</div>
+					</div>
+					<div class="post-slide">
+						<div class="box-prestation box-stud-photo overlay lazy carroussel_image" data-src="{% if bloc6 %}{{bloc6.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-stud-photo.jpg')}}{% endif %}">
+							<a href="{{ home_macros.prestation_link(bloc6, prestations, 'studio-photo') }}" class="prestation-link lazyload">{{'home.bouton.studio-photo'|trans}}</a>
+						</div>
+					</div>
+					<div class="post-slide">
+						<div class="box-prestation box-realisation-vid overlay lazy carroussel_image" data-src="{% if bloc7 %}{{bloc7.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-realisation-vid.jpg')}}{% endif %}">
+							<a href="{{ home_macros.prestation_link(bloc7, prestations, 'realisation-video') }}" class="prestation-link lazyload">{{'home.bouton.realisation-video'|trans}}</a>
+						</div>
+					</div>
+					<div class="post-slide">
+						<div class="box-prestation box-evenementiels overlay lazy carroussel_image" data-src="{% if bloc8 %}{{bloc8.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-evenementiels.jpg')}}{% endif %}">
+							<a href="{{ home_macros.prestation_link(bloc8, prestations, 'evenementiels') }}" class="prestation-link lazyload">{{'home.bouton.evenementiel'|trans}}</a>
+						</div>
+					</div>
+					<div class="post-slide">
+						<div class="box-prestation box-stud-vid overlay lazy carroussel_image" data-src="{% if bloc9 %}{{bloc9.optionValue|split('|||')[1]}}{% else %}{{asset('assets/img/prestations/home-prestations-studio-video.jpg')}}{% endif %}">
+							<a href="{{ home_macros.prestation_link(bloc9, prestations, 'studio-video') }}" class="prestation-link lazyload">{{'home.bouton.studio-video'|trans}}</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="hp-section">
+			<div class="hp-block">
+				<h2 class="hp-title">Pour les artistes et les pros</h2>
+				<div class="hp-audience">
+					<div class="hp-block hp-audience-card">
+						<h4>{{ encart1[0]|default('Pour les Artistes') }}</h4>
+						<p>{{ encart1[1]|default('Trouvez des talents qualifiés, gagnez du temps et avancez plus vite sur vos projets.') }}</p>
+					</div>
+					<div class="hp-block hp-audience-card">
+						<h4>{{ encart2[0]|default('Pour les Professionnels') }}</h4>
+						<p>{{ encart2[1]|default('Développez votre visibilité, recevez des demandes qualifiées et augmentez vos revenus.') }}</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="hp-section">
+			<div class="hp-block hp-cta-final">
+				<h2>Rejoignez les meilleurs musiciens et pros dès aujourd’hui</h2>
+				<a class="hp-btn hp-btn-primary" href="{{ path('app_register') }}">Créer mon profil gratuitement</a>
+			</div>
+		</section>
 	</main>
 
 	<div class="siteorigin-widget-tinymce textwidget">
