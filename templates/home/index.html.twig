@@ -476,7 +476,7 @@
 			<div class="hp-block hp-hero">
 				<div>
 					<p class="hp-hero-kicker">TRUST &amp; MARKET</p>
-					<h1>{{ slogan_homepage and slogan_homepage.getOptionValue ? slogan_homepage.getOptionValue|striptags : "La plateforme des talents musicaux et des artistes ambitieux." }}</h1>
+					<h1>{{ slogan_homepage and slogan_homepage.getOptionValue ? slogan_homepage.getOptionValue|striptags|raw : "La plateforme des talents musicaux et des artistes ambitieux." }}</h1>
 					<p>Une expérience premium pour connecter artistes, studios et professionnels qualifiés autour de vos projets musicaux.</p>
 					<div class="hp-hero-cta">
 						<a class="hp-btn hp-btn-primary" href="{{ path('annonces_listeAnnonces', {type_prestation: '', services_proposes: '', code_postal_ville: ''}) }}">
