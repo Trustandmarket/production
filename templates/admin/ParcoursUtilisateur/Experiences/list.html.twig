@@ -100,6 +100,51 @@
             color: #2f2f2f;
         }
         .type-filter-option:last-child { margin-bottom: 0; }
+        .email-filter-dropdown { position: relative; }
+        .email-filter-input {
+            width: 100%;
+            min-height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            background: #fff;
+            padding: .375rem .75rem;
+            color: #495057;
+        }
+        .email-filter-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            z-index: 1200;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,.12);
+            max-height: 230px;
+            overflow-y: auto;
+            padding: 6px;
+        }
+        .email-filter-menu.open { display: block; }
+        .email-filter-option {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            text-align: left;
+            padding: 6px 8px;
+            border-radius: 4px;
+            color: #2f2f2f;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .email-filter-option:hover {
+            background: #f4f7fb;
+        }
+        .email-filter-empty {
+            padding: 6px 8px;
+            color: #8a9097;
+            font-size: 13px;
+        }
     </style>
     <div class="content">
         <div class="animated fadeIn">
@@ -169,7 +214,23 @@
                                         </div>
                                     </div>
                                     <div class="col-md-2 mb-2">
-                                        <input class="form-control" type="text" name="email" value="{{ filters.email }}" placeholder="Email client">
+                                        <div class="email-filter-dropdown">
+                                            <input class="email-filter-input js-email-filter-input"
+                                                   type="text"
+                                                   name="email"
+                                                   value="{{ filters.email }}"
+                                                   placeholder="Email client"
+                                                   autocomplete="off">
+                                            <div class="email-filter-menu js-email-filter-menu">
+                                                {% if email_options|length > 0 %}
+                                                    {% for e in email_options %}
+                                                        <button type="button" class="email-filter-option js-email-option" data-value="{{ e }}">{{ e }}</button>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <div class="email-filter-empty">Aucun email disponible</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col-md-1 mb-2">
                                         <select class="form-control" name="per_page">
@@ -405,6 +466,80 @@
             });
 
             updateTypeLabel();
+        })();
+
+        (function () {
+            const $emailWrap = $('.email-filter-dropdown');
+            const $emailInput = $('.js-email-filter-input');
+            const $emailMenu = $('.js-email-filter-menu');
+            const $emailOptions = $('.js-email-option');
+
+            function openEmailMenu() {
+                $emailMenu.addClass('open');
+            }
+
+            function closeEmailMenu() {
+                $emailMenu.removeClass('open');
+            }
+
+            function normalize(v) {
+                return String(v || '').toLowerCase().trim();
+            }
+
+            function filterEmailOptions() {
+                const query = normalize($emailInput.val());
+                let visibleCount = 0;
+                $emailOptions.each(function () {
+                    const $opt = $(this);
+                    const value = normalize($opt.data('value'));
+                    const isVisible = query === '' || value.indexOf(query) !== -1;
+                    $opt.toggle(isVisible);
+                    if (isVisible) {
+                        visibleCount++;
+                    }
+                });
+
+                let $empty = $emailMenu.find('.email-filter-empty.dynamic-empty');
+                if (visibleCount === 0) {
+                    if ($empty.length === 0) {
+                        $empty = $('<div class="email-filter-empty dynamic-empty">Aucun resultat</div>');
+                        $emailMenu.append($empty);
+                    }
+                } else {
+                    $empty.remove();
+                }
+            }
+
+            $emailInput.on('focus click', function (e) {
+                e.stopPropagation();
+                openEmailMenu();
+                filterEmailOptions();
+            });
+
+            $emailInput.on('input', function () {
+                openEmailMenu();
+                filterEmailOptions();
+            });
+
+            $emailMenu.on('click', '.js-email-option', function (e) {
+                e.preventDefault();
+                const value = $(this).data('value');
+                $emailInput.val(value);
+                closeEmailMenu();
+            });
+
+            $(document).on('click', function (e) {
+                if ($(e.target).closest('.email-filter-dropdown').length === 0) {
+                    closeEmailMenu();
+                }
+            });
+
+            $emailWrap.on('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closeEmailMenu();
+                    $emailInput.trigger('focus');
+                }
+            });
         })();
 
         $(document).on('click', '.delete', function (e) {

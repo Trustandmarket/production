@@ -152,6 +152,24 @@ SQL;
         )), static fn ($v) => $v !== ''));
         sort($typeOptions, SORT_NATURAL | SORT_FLAG_CASE);
 
+        $emailOptionsSql = <<<SQL
+SELECT DISTINCT wu.email_canonical AS email
+FROM wp_posts wp
+INNER JOIN wp_users wu ON wu.ID = wp.post_author
+WHERE (wp.post_type = :type1 OR wp.post_type = :type2)
+  AND wu.email_canonical IS NOT NULL
+  AND wu.email_canonical <> ''
+ORDER BY wu.email_canonical ASC
+SQL;
+        $emailRows = $conn->executeQuery($emailOptionsSql, [
+            'type1' => 'exp_experiences',
+            'type2' => 'exp_evenementiel',
+        ])->fetchAllAssociative();
+        $emailOptions = array_values(array_filter(array_unique(array_map(
+            static fn ($row) => trim((string) ($row['email'] ?? '')),
+            $emailRows
+        )), static fn ($v) => $v !== ''));
+
         $totalPages = max(1, (int) ceil($total / $perPage));
 
         return $this->render('admin/ParcoursUtilisateur/Experiences/list.html.twig', [
@@ -167,6 +185,7 @@ SQL;
                 'per_page' => $perPage,
             ],
             'type_options' => $typeOptions,
+            'email_options' => $emailOptions,
             'pagination' => [
                 'page' => $page,
                 'per_page' => $perPage,
