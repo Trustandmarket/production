@@ -38,7 +38,12 @@ class WpPostsCrudController extends AbstractCrudController
         $offset = ($page - 1) * $perPage;
 
         $status = trim((string) $request->query->get('status', ''));
-        $type = trim((string) $request->query->get('type', ''));
+        $allQuery = $request->query->all();
+        $typeFilters = $allQuery['type'] ?? [];
+        if (!is_array($typeFilters)) {
+            $typeFilters = [$typeFilters];
+        }
+        $typeFilters = array_values(array_filter(array_map(static fn ($v) => trim((string) $v), $typeFilters), static fn ($v) => $v !== ''));
         $email = trim((string) $request->query->get('email', ''));
         $search = trim((string) $request->query->get('q', ''));
 
@@ -88,9 +93,14 @@ SQL;
             $params['status'] = $status;
         }
 
-        if ($type !== '') {
-            $filterSql .= ' AND e.exp_type_experience LIKE :typeFilter';
-            $params['typeFilter'] = '%' . $type . '%';
+        if (!empty($typeFilters)) {
+            $typeParts = [];
+            foreach ($typeFilters as $i => $typeFilter) {
+                $paramName = 'typeFilter' . $i;
+                $typeParts[] = 'e.exp_type_experience = :' . $paramName;
+                $params[$paramName] = $typeFilter;
+            }
+            $filterSql .= ' AND (' . implode(' OR ', $typeParts) . ')';
         }
 
         if ($email !== '') {
@@ -121,6 +131,27 @@ SQL;
             ]
         )->fetchAllAssociative();
 
+        $typeOptionsSql = <<<SQL
+SELECT DISTINCT
+    (SELECT pm.meta_value
+     FROM wp_postmeta pm
+     WHERE pm.post_id = wp.ID
+       AND pm.meta_key = 'exp_type_experience'
+     ORDER BY pm.meta_id DESC
+     LIMIT 1) AS exp_type_experience
+FROM wp_posts wp
+WHERE (wp.post_type = :type1 OR wp.post_type = :type2)
+SQL;
+        $typeRows = $conn->executeQuery($typeOptionsSql, [
+            'type1' => 'exp_experiences',
+            'type2' => 'exp_evenementiel',
+        ])->fetchAllAssociative();
+        $typeOptions = array_values(array_filter(array_unique(array_map(
+            static fn ($row) => trim((string) ($row['exp_type_experience'] ?? '')),
+            $typeRows
+        )), static fn ($v) => $v !== ''));
+        sort($typeOptions, SORT_NATURAL | SORT_FLAG_CASE);
+
         $totalPages = max(1, (int) ceil($total / $perPage));
 
         return $this->render('admin/ParcoursUtilisateur/Experiences/list.html.twig', [
@@ -128,13 +159,14 @@ SQL;
             'lang' => $request->getLocale(),
             'filters' => [
                 'status' => $status,
-                'type' => $type,
+                'type' => $typeFilters,
                 'email' => $email,
                 'q' => $search,
                 'sort_by' => $sortBy,
                 'sort_dir' => $sortDir,
                 'per_page' => $perPage,
             ],
+            'type_options' => $typeOptions,
             'pagination' => [
                 'page' => $page,
                 'per_page' => $perPage,
@@ -153,4 +185,3 @@ SQL;
         ]);
     }
 }
-

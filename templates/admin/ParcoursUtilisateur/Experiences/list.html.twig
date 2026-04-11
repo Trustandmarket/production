@@ -51,7 +51,13 @@
                                 <form method="get" action="{{ path('admin', baseQuery) }}" class="row">
                                     {% for key, val in query %}
                                         {% if key not in ['q', 'status', 'type', 'email', 'page', 'sort_by', 'sort_dir', 'per_page'] %}
-                                            <input type="hidden" name="{{ key }}" value="{{ val }}">
+                                            {% if val is iterable %}
+                                                {% for subVal in val %}
+                                                    <input type="hidden" name="{{ key }}[]" value="{{ subVal }}">
+                                                {% endfor %}
+                                            {% else %}
+                                                <input type="hidden" name="{{ key }}" value="{{ val }}">
+                                            {% endif %}
                                         {% endif %}
                                     {% endfor %}
                                     <div class="col-md-3 mb-2">
@@ -66,7 +72,11 @@
                                         </select>
                                     </div>
                                     <div class="col-md-2 mb-2">
-                                        <input class="form-control" type="text" name="type" value="{{ filters.type }}" placeholder="Type projet">
+                                        <select class="form-control" name="type[]" multiple size="3">
+                                            {% for t in type_options %}
+                                                <option value="{{ t }}" {{ t in filters.type ? 'selected' : '' }}>{{ t }}</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                     <div class="col-md-2 mb-2">
                                         <input class="form-control" type="text" name="email" value="{{ filters.email }}" placeholder="Email client">
@@ -80,7 +90,7 @@
                                     </div>
                                     <div class="col-md-2 mb-2">
                                         <button class="btn btn-primary" type="submit">Filtrer</button>
-                                        <a class="btn btn-light" href="{{ path('admin', baseQuery|merge({'q': null, 'status': null, 'type': null, 'email': null, 'page': 1})) }}">Reset</a>
+                                        <a class="btn btn-light" href="{{ path('admin', baseQuery|merge({'q': null, 'status': null, 'type': [], 'email': null, 'page': 1})) }}">Reset</a>
                                     </div>
                                 </form>
                             </div>
@@ -338,4 +348,3 @@
         });
     </script>
 {% endblock %}
-
