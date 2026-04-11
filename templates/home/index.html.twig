@@ -199,28 +199,78 @@
 		.home-premium .hp-how-grid {
 			display: grid;
 			grid-template-columns: repeat(3, minmax(0, 1fr));
-			gap: 12px;
+			gap: 14px;
+		}
+
+		.home-premium .hp-how-heading {
+			display: flex;
+			align-items: center;
+			gap: 18px;
+			margin: 4px 0 22px;
+		}
+
+		.home-premium .hp-how-heading::before,
+		.home-premium .hp-how-heading::after {
+			content: "";
+			height: 1px;
+			flex: 1;
+			background: #d9d0c4;
+		}
+
+		.home-premium .hp-how-heading h2 {
+			margin: 0;
+			color: #141414;
+			font-size: 2.8rem;
+			font-family: Georgia, "Times New Roman", serif;
+			font-weight: 500;
+			letter-spacing: .01em;
 		}
 
 		.home-premium .hp-how-card {
 			background: #fff;
-			border: 1px solid rgba(0, 0, 0, 0.08);
-			border-radius: 14px;
-			padding: 16px;
+			border: 1px solid #ece6dd;
+			border-radius: 10px;
+			padding: 22px 20px;
 			text-align: center;
+			box-shadow: 0 10px 22px rgba(14, 14, 14, 0.06);
+		}
+
+		.home-premium .hp-how-top {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+			margin-bottom: 10px;
+		}
+
+		.home-premium .hp-how-step {
+			font-family: "Palanquin Dark", sans-serif;
+			color: #b18249;
+			font-size: 2rem;
+			line-height: 1;
+		}
+
+		.home-premium .hp-how-icon {
+			color: #b18249;
+			font-size: 2rem;
+			line-height: 1;
 		}
 
 		.home-premium .hp-how-card strong {
 			display: block;
 			font-family: "Palanquin Dark", sans-serif;
-			font-size: 1rem;
-			margin-bottom: 6px;
+			font-size: 1.7rem;
+			margin-bottom: 0;
+			color: #202020;
+			font-weight: 600;
 		}
 
 		.home-premium .hp-how-card p {
 			margin: 0;
-			color: #575757;
-			font-size: .95rem;
+			color: #2a2a2a;
+			font-size: 1.12rem;
+			line-height: 1.4;
+			font-weight: 400;
 		}
 
 		.home-premium .hp-services-wrap {
@@ -276,6 +326,19 @@
 			.home-premium .hp-how-grid,
 			.home-premium .hp-audience {
 				grid-template-columns: 1fr;
+			}
+
+			.home-premium .hp-how-heading {
+				gap: 10px;
+				margin-bottom: 14px;
+			}
+
+			.home-premium .hp-how-heading h2 {
+				font-size: 1.95rem;
+			}
+
+			.home-premium .hp-how-card {
+				padding: 18px 14px;
 			}
 
 			.home-premium .hp-hero h1 {
@@ -335,19 +398,30 @@
 
 		<section class="hp-section">
 			<div class="hp-block">
-				<h2 class="hp-title">Comment ça marche ?</h2>
+				<div class="hp-how-heading">
+					<h2>Comment ça marche ?</h2>
+				</div>
 				<div class="hp-how-grid">
 					<div class="hp-how-card">
-						<strong>1. Décrivez votre projet</strong>
-						<p>Type de prestation, ville et budget indicatif.</p>
+						<div class="hp-how-top">
+							<span class="hp-how-step">1.</span>
+							<i class="fa fa-user hp-how-icon" aria-hidden="true"></i>
+						</div>
+						<p>Créez votre profil gratuit</p>
 					</div>
 					<div class="hp-how-card">
-						<strong>2. On transmet aux studios</strong>
-						<p>Les professionnels adaptés à votre besoin sont notifiés.</p>
+						<div class="hp-how-top">
+							<span class="hp-how-step">2.</span>
+							<i class="fa fa-keyboard-o hp-how-icon" aria-hidden="true"></i>
+						</div>
+						<p>Publiez vos services</p>
 					</div>
 					<div class="hp-how-card">
-						<strong>3. Vous choisissez</strong>
-						<p>Comparez les profils et sélectionnez le bon studio.</p>
+						<div class="hp-how-top">
+							<span class="hp-how-step">3.</span>
+							<i class="fa fa-envelope-o hp-how-icon" aria-hidden="true"></i>
+						</div>
+						<p>Recevez des demandes d’artistes</p>
 					</div>
 				</div>
 			</div>
