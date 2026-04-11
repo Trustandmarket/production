@@ -64,6 +64,7 @@ class ExperiencesController extends AbstractController
             'pixel_facebook' => false,
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'music_universes' => $musicUniverses,
+            'google_maps_api_key' => $_SERVER['GOOGLE_MAPS_API_KEY'] ?? '',
         ]);
     }
 
@@ -511,6 +512,7 @@ SQL;
             'pixel_facebook' => false,
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'music_universes' => $musicUniverses,
+            'google_maps_api_key' => $_SERVER['GOOGLE_MAPS_API_KEY'] ?? '',
         ]);
     }
 

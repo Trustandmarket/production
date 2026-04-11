@@ -620,7 +620,7 @@
                         <div class="form-group list_field musique_choose">
                             <label for=""><h2>Dans quelle ville recherchez-vous* ?</h2></label>
                             <input type="text" class="form-control input_rounded field_ville" name="ville"
-                                   value="{{ experience.exp_ville }}">
+                                   value="{{ experience.exp_ville }}" autocomplete="off">
                         </div>
                         <div class="form-group list_field musique_choose">
                             <label for=""><h2>Votre univers musical* ?</h2></label>
@@ -796,12 +796,53 @@
             src="https://raw.githubusercontent.com/jquery/jquery-ui/master/ui/i18n/datepicker-fr.js">
     </script>#}
     <script src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js" ></script>
+    {% if google_maps_api_key is defined and google_maps_api_key is not empty %}
+        <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key|url_encode }}&libraries=places"></script>
+    {% endif %}
     <script>
         var actualStep = 1;
         var checkedCheck = 0;
         var typeExperience = "Production musicale";
         var checkboxValues = [];
         var optionsValues = [];
+
+        function initCityAutocomplete() {
+            const $input = $('.field_ville');
+            if (!$input.length || !window.google || !window.google.maps || !window.google.maps.places) {
+                return;
+            }
+
+            const inputEl = $input.get(0);
+            const autocomplete = new google.maps.places.Autocomplete(inputEl, {
+                types: ['(cities)'],
+                fields: ['address_components', 'name', 'formatted_address']
+            });
+
+            function extractCityName(place) {
+                if (!place) {
+                    return '';
+                }
+                if (place.address_components && place.address_components.length) {
+                    for (let i = 0; i < place.address_components.length; i++) {
+                        const component = place.address_components[i];
+                        const types = component.types || [];
+                        if (types.indexOf('locality') !== -1 || types.indexOf('postal_town') !== -1) {
+                            return component.long_name || '';
+                        }
+                    }
+                }
+                return place.name || place.formatted_address || '';
+            }
+
+            autocomplete.addListener('place_changed', function () {
+                const place = autocomplete.getPlace();
+                const cityName = extractCityName(place);
+                if (cityName) {
+                    $input.val(cityName);
+                }
+                $input.trigger('input').trigger('keyup').trigger('change');
+            });
+        }
 
         function initUniverseAutocomplete() {
             const $input = $('.field_univers');
@@ -858,6 +899,7 @@
             });
         }
 
+        initCityAutocomplete();
         initUniverseAutocomplete();
 
         function removeDuplicates(array) {
