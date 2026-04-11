@@ -1,6 +1,6 @@
 {% extends '@!EasyAdmin/layout.html.twig' %}
 {% block page_title %}
-    Parcours utilisateur - Expériences
+    Parcours utilisateur - Experiences
 {% endblock %}
 
 {% block main %}
@@ -8,17 +8,31 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
           integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    {#<link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.css') }}">
-     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin/assets/css/more.css') }}"> #}
     <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/assets/sweetalert/sweetalert.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/assets/css/loading-btn.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/assets/css/loading.css') }}">
     <style>
-        #main-menu {
-            font-size: 14px;
+        #main-menu { font-size: 14px; }
+        .bo-filters {
+            padding: 14px 16px;
+            background: #fafafa;
+            border-bottom: 1px solid #ececec;
         }
+        .bo-filters .form-control { min-height: 38px; }
+        .bo-table-meta {
+            padding: 10px 16px;
+            font-size: 13px;
+            color: #666;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .sortable-link {
+            color: #2f466b;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .sortable-link:hover { text-decoration: underline; }
+        .table td, .table th { vertical-align: middle; }
     </style>
     <div class="content">
         <div class="animated fadeIn">
@@ -27,22 +41,70 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="box-title">Parcours utilisateur - Expériences{# <a class="badge badge-complete right1" href="{{path('marketing_experiences_create_get')}}" title="Ajouter une opération">
-									<i class="fa fa-plus"></i>
-								</a> #}
-                            </h4>
+                            <h4 class="box-title">Parcours utilisateur - Experiences</h4>
                         </div>
                         <div class="card-body--">
+                            {% set query = app.request.query.all %}
+                            {% set baseQuery = query|merge({'_locale': lang}) %}
+
+                            <div class="bo-filters">
+                                <form method="get" action="{{ path('admin', baseQuery) }}" class="row">
+                                    {% for key, val in query %}
+                                        {% if key not in ['q', 'status', 'type', 'email', 'page', 'sort_by', 'sort_dir', 'per_page'] %}
+                                            <input type="hidden" name="{{ key }}" value="{{ val }}">
+                                        {% endif %}
+                                    {% endfor %}
+                                    <div class="col-md-3 mb-2">
+                                        <input class="form-control" type="text" name="q" value="{{ filters.q }}" placeholder="Recherche globale (id, email, ville, univers)">
+                                    </div>
+                                    <div class="col-md-2 mb-2">
+                                        <select class="form-control" name="status">
+                                            <option value="">Tous statuts</option>
+                                            <option value="draft" {{ filters.status == 'draft' ? 'selected' : '' }}>Brouillon</option>
+                                            <option value="publish" {{ filters.status == 'publish' ? 'selected' : '' }}>Publie</option>
+                                            <option value="pending" {{ filters.status == 'pending' ? 'selected' : '' }}>En moderation</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 mb-2">
+                                        <input class="form-control" type="text" name="type" value="{{ filters.type }}" placeholder="Type projet">
+                                    </div>
+                                    <div class="col-md-2 mb-2">
+                                        <input class="form-control" type="text" name="email" value="{{ filters.email }}" placeholder="Email client">
+                                    </div>
+                                    <div class="col-md-1 mb-2">
+                                        <select class="form-control" name="per_page">
+                                            {% for size in [10, 25, 50, 100] %}
+                                                <option value="{{ size }}" {{ filters.per_page == size ? 'selected' : '' }}>{{ size }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 mb-2">
+                                        <button class="btn btn-primary" type="submit">Filtrer</button>
+                                        <a class="btn btn-light" href="{{ path('admin', baseQuery|merge({'q': null, 'status': null, 'type': null, 'email': null, 'page': 1})) }}">Reset</a>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="bo-table-meta">
+                                {{ pagination.total }} projet{{ pagination.total > 1 ? 's' : '' }} - page {{ pagination.page }} / {{ pagination.total_pages }}
+                            </div>
+
                             <div class="table-stats order-table ov-h">
-                                <table class="table ">
+                                <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Type</th>
-                                        <th>Ville</th>
-                                        <th>Email</th>
-                                        <th>Statut</th>
-                                        <th>Date</th>
+                                        {% set qId = query|merge({'sort_by': 'id', 'sort_dir': filters.sort_by == 'id' and filters.sort_dir == 'asc' ? 'desc' : 'asc', 'page': 1, '_locale': lang}) %}
+                                        {% set qType = query|merge({'sort_by': 'type', 'sort_dir': filters.sort_by == 'type' and filters.sort_dir == 'asc' ? 'desc' : 'asc', 'page': 1, '_locale': lang}) %}
+                                        {% set qVille = query|merge({'sort_by': 'ville', 'sort_dir': filters.sort_by == 'ville' and filters.sort_dir == 'asc' ? 'desc' : 'asc', 'page': 1, '_locale': lang}) %}
+                                        {% set qEmail = query|merge({'sort_by': 'email', 'sort_dir': filters.sort_by == 'email' and filters.sort_dir == 'asc' ? 'desc' : 'asc', 'page': 1, '_locale': lang}) %}
+                                        {% set qStatus = query|merge({'sort_by': 'status', 'sort_dir': filters.sort_by == 'status' and filters.sort_dir == 'asc' ? 'desc' : 'asc', 'page': 1, '_locale': lang}) %}
+                                        {% set qDate = query|merge({'sort_by': 'date', 'sort_dir': filters.sort_by == 'date' and filters.sort_dir == 'asc' ? 'desc' : 'asc', 'page': 1, '_locale': lang}) %}
+                                        <th><a class="sortable-link" href="{{ path('admin', qId) }}">ID</a></th>
+                                        <th><a class="sortable-link" href="{{ path('admin', qType) }}">Type</a></th>
+                                        <th><a class="sortable-link" href="{{ path('admin', qVille) }}">Ville</a></th>
+                                        <th><a class="sortable-link" href="{{ path('admin', qEmail) }}">Email</a></th>
+                                        <th><a class="sortable-link" href="{{ path('admin', qStatus) }}">Statut</a></th>
+                                        <th><a class="sortable-link" href="{{ path('admin', qDate) }}">Date</a></th>
                                         <th>Actions</th>
                                     </tr>
                                     </thead>
@@ -51,17 +113,17 @@
                                         <tr style="background-color: #F7F7F7;font-weight: bold;">
                                             <td>{{ m.id }}</td>
                                             <td>{{ m.exp_type_experience }}</td>
-                                            <td>{% if m.exp_type_experience|lower == 'musique' %}
-                                                    {{ m.exp_ville }}
-                                                {% else %}
-                                                    {{ m.exp_lieu_evt }}
-                                                {% endif %}</td>
+                                            <td>{{ m.exp_ville_display }}</td>
                                             <td>{{ m.user }}</td>
-                                            <td>{% if m.status|lower == 'draft' %}
+                                            <td>
+                                                {% if m.status|lower == 'draft' %}
                                                     <button class="btn btn-round btn-warning">En Brouillon</button>
+                                                {% elseif m.status|lower == 'pending' %}
+                                                    <button class="btn btn-round btn-info">En moderation</button>
                                                 {% else %}
-                                                    <button class="btn btn-round btn-success">Terminée</button>
-                                                {% endif %}</td>
+                                                    <button class="btn btn-round btn-success">Publiee</button>
+                                                {% endif %}
+                                            </td>
                                             <td>{{ m.created_at }}</td>
                                             <td>
                                                 <a class="badge badge-pending post-details my-1 apercuExp"
@@ -75,41 +137,69 @@
                                                 </a>
                                                 <a class="red delete my-1"
                                                    href="{{ path('post_delete_get', {id : m.id}) }}"
-                                                   title="Supprimer l'experience'">
+                                                   title="Supprimer l'experience">
                                                     <i class="fa fa-trash"></i>
                                                 </a>
                                             </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted">Aucun projet trouve avec ces filtres.</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
+
+                            {% if pagination.total_pages > 1 %}
+                                <div class="p-3">
+                                    <nav>
+                                        <ul class="pagination mb-0">
+                                            {% set prevPage = pagination.page - 1 %}
+                                            {% set nextPage = pagination.page + 1 %}
+                                            <li class="page-item {{ pagination.page <= 1 ? 'disabled' : '' }}">
+                                                <a class="page-link" href="{{ path('admin', query|merge({'page': prevPage, '_locale': lang})) }}">Precedent</a>
+                                            </li>
+                                            {% for p in 1..pagination.total_pages %}
+                                                {% if p == 1 or p == pagination.total_pages or (p >= pagination.page - 2 and p <= pagination.page + 2) %}
+                                                    <li class="page-item {{ p == pagination.page ? 'active' : '' }}">
+                                                        <a class="page-link" href="{{ path('admin', query|merge({'page': p, '_locale': lang})) }}">{{ p }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <li class="page-item {{ pagination.page >= pagination.total_pages ? 'disabled' : '' }}">
+                                                <a class="page-link" href="{{ path('admin', query|merge({'page': nextPage, '_locale': lang})) }}">Suivant</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Modal -->
+
     <div class="modal fade alert-dismissible in" id="apercuModal">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Expérience <span class="apercuTitre"></span></h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Experience <span class="apercuTitre"></span></h5>
                 </div>
                 <div class="modal-body">
                     <div class="recap_choix">
                         <div class="inline_choix musique_choose">
                             <h4>Ville:&nbsp;</h4>
-                            <p style="font-weight: 300;" class="villeValue">Paris 15ème</p>
+                            <p style="font-weight: 300;" class="villeValue">Paris 15eme</p>
                         </div>
                         <div class="inline_choix musique_choose">
                             <h4>Style musical:&nbsp;</h4>
-                            <p style="font-weight: 300;" class="universValue">Paris 15ème</p>
+                            <p style="font-weight: 300;" class="universValue">Paris 15eme</p>
                         </div>
                         <div class="inline_choix divertissement_choose">
-                            <h4>Votre évènement:&nbsp;</h4>
-                            <p style="font-weight: 300;" class="nomEvtValue">Paris 15ème</p>
+                            <h4>Votre evenement:&nbsp;</h4>
+                            <p style="font-weight: 300;" class="nomEvtValue">Paris 15eme</p>
                         </div>
                         <div class="inline_choix divertissement_choose">
                             <h4>Le lieu:&nbsp;</h4>
@@ -132,23 +222,21 @@
                             </div>
                         </div>
                         <div style="margin-top: 3rem;">
-                            <h4>Vos précisions pour une offre sur mesure:</h4>
+                            <h4>Vos precisions pour une offre sur mesure:</h4>
                             <textarea class="precisionValue field_precisions_2 form-control" name="precisions_2"
-                                      id="precisions_2" class="form-control" cols="30" rows="5"
-                                      placeholder="Donnez-nous des détails pour nous permettre de personnaliser votre offre : nombre de musiciens, la durée de 'enregistrement studio, nombre de titres pour le mixage..."></textarea>
+                                      id="precisions_2" cols="30" rows="5"
+                                      placeholder="Donnez-nous des details pour nous permettre de personnaliser votre offre."></textarea>
                         </div>
                     </div>
                 </div>
-
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-round btn-secondary close fermerModalApercu p-2"
-                            data-dismiss="modal">Masquer
-                    </button>
+                    <button type="button" class="btn btn-round btn-secondary close fermerModalApercu p-2" data-dismiss="modal">Masquer</button>
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
+
 {% block body_javascript %}
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"
             integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
@@ -159,14 +247,13 @@
     <script src="{{ asset('toastr/toastr.min.js') }}"></script>
     <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
     <script type="text/javascript">
-
         $(document).on('click', '.delete', function (e) {
             e.preventDefault();
             var t = $(this);
             var urlPath = $(this).attr('href');
             swal({
                 title: "Suppression de l'experience",
-                text: "Attention l'expérience sera Supprimée et n'apparaitra plus sur votre site",
+                text: "Attention l'experience sera supprimee et n'apparaitra plus sur votre site",
                 type: "info",
                 showCancelButton: true,
                 confirmButtonClass: "btn-danger",
@@ -181,16 +268,14 @@
                         url: urlPath,
                         type: 'GET',
                         success: function (reponse) {
-                            //console.log(reponse);
                             if (reponse == 1) {
-                                swal("Suppression terminée", "", "success");
+                                swal("Suppression terminee", "", "success");
                                 t.parents('tr').hide();
                             } else {
                                 swal("Erreur de suppression", "", "error");
                             }
-
                         },
-                        error: function (reponse) {
+                        error: function () {
                             swal("Erreur de suppression", "", "error");
                         }
                     });
@@ -201,31 +286,28 @@
             return false;
         });
 
-
         $('.apercuExp').on('click', function (e) {
             e.preventDefault();
             var id = $(this).attr('attr-id');
-            //$(this).append('<span class="spinner-grow"></span>');
             $.ajax({
                 url: "/{{ app.request.locale }}/admin/parcours_utilisateur/experiences/details/" + id,
                 type: 'GET',
                 success: function (data) {
-                    data = JSON.parse(data)
-                    console.log(data);
+                    data = JSON.parse(data);
                     $("#apercuModal").fadeTo("slow", 1, function () {
                         if (data.exp_type_experience == "Musique") {
-                            $('.apercuTitre').text(data.exp_type_experience + " - " + data.exp_ville + " - " + data.exp_univers)
-                            $('.villeValue').text(data.exp_ville)
-                            $('.universValue').text(data.exp_univers)
-                            $('.musique_choose').fadeIn()
-                            $('.divertissement_choose').fadeOut()
+                            $('.apercuTitre').text(data.exp_type_experience + " - " + data.exp_ville + " - " + data.exp_univers);
+                            $('.villeValue').text(data.exp_ville);
+                            $('.universValue').text(data.exp_univers);
+                            $('.musique_choose').fadeIn();
+                            $('.divertissement_choose').fadeOut();
                         } else {
-                            $('.apercuTitre').text(data.exp_type_experience + " - " + data.exp_nom_evt + " - " + data.exp_lieu_evt)
-                            $('.nomEvtValue').text(data.exp_nom_evt)
-                            $('.lieuValue').text(data.exp_lieu_evt)
-                            $('.participantValue').text(+data.exp_participants_evt)
-                            $('.musique_choose').fadeOut()
-                            $('.divertissement_choose').fadeIn()
+                            $('.apercuTitre').text(data.exp_type_experience + " - " + data.exp_nom_evt + " - " + data.exp_lieu_evt);
+                            $('.nomEvtValue').text(data.exp_nom_evt);
+                            $('.lieuValue').text(data.exp_lieu_evt);
+                            $('.participantValue').text(+data.exp_participants_evt);
+                            $('.musique_choose').fadeOut();
+                            $('.divertissement_choose').fadeIn();
                         }
 
                         $('.besoinValue').empty();
@@ -242,14 +324,11 @@
                             })
                         }
 
-                        $('.precisionValue').val(data.exp_precisions)
+                        $('.precisionValue').val(data.exp_precisions);
                     });
-                },
-                error: function (error) {
-                    $('.spinner-grow').remove();
                 }
             });
-        })
+        });
 
         $(".fermerModalApercu").click(function () {
             $("#apercuModal").fadeTo("slow", 0, function () {
@@ -257,24 +336,6 @@
                 $(".modal-backdrop").css("display", "none");
             });
         });
-
-        toastr.options = {
-            "closeButton": true,
-            "debug": false,
-            "newestOnTop": false,
-            "progressBar": true,
-            "positionClass": "toast-top-center",
-            "preventDuplicates": false,
-            "onclick": null,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "12000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        }
     </script>
-
 {% endblock %}
+
