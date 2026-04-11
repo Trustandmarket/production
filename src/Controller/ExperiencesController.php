@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\MusicUniverse;
 use App\Entity\WpPosts;
 use App\Service\ServiceManager;
 use App\Service\ToolsMeta;
@@ -53,11 +54,16 @@ class ExperiencesController extends AbstractController
     public function creerExperience(Request $request)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $musicUniverses = $this->entityManager->getRepository(MusicUniverse::class)->findBy(
+            ['isActive' => true],
+            ['position' => 'ASC', 'label' => 'ASC']
+        );
         return $this->render('experiences/creer_experience.html.twig', [
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
             'pixel_facebook' => false,
-            'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0)
+            'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
+            'music_universes' => $musicUniverses,
         ]);
     }
 
@@ -493,13 +499,18 @@ SQL;
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $experience = $this->service_manager->getOneUserExperiencesProcess($request->get('id'));
+        $musicUniverses = $this->entityManager->getRepository(MusicUniverse::class)->findBy(
+            ['isActive' => true],
+            ['position' => 'ASC', 'label' => 'ASC']
+        );
         /* dd($experience); */
         return $this->render('experiences/edit_experience.html.twig', [
             'experience' => $experience,
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
             'pixel_facebook' => false,
-            'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0)
+            'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
+            'music_universes' => $musicUniverses,
         ]);
     }
 

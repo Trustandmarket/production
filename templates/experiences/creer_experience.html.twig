@@ -805,7 +805,17 @@
                         </div>
                         <div class="form-group list_field musique_choose">
                             <label for=""><h2>Votre univers musical* ?</h2></label>
-                            <input type="text" class="form-control input_rounded field_univers" name="univers">
+                            <input type="text"
+                                   class="form-control input_rounded field_univers"
+                                   name="univers"
+                                   list="music-universe-options"
+                                   autocomplete="off"
+                                   placeholder="Saisissez un univers musical">
+                            <datalist id="music-universe-options">
+                                {% for universe in music_universes|default([]) %}
+                                    <option value="{{ universe.label }}"></option>
+                                {% endfor %}
+                            </datalist>
                         </div>
                         <div class="form-group list_field" style="margin-top: 2rem;">
                             <label for=""><h2>Choisissez vos besoins*</h2></label>
