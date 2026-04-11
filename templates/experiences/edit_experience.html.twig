@@ -812,6 +812,18 @@
                 return;
             }
 
+            function ensureCityInputEditable() {
+                $input.prop('disabled', false)
+                    .prop('readonly', false)
+                    .removeAttr('disabled')
+                    .removeAttr('readonly')
+                    .css('pointer-events', 'auto');
+            }
+
+            window.ensureCityInputEditable = ensureCityInputEditable;
+            ensureCityInputEditable();
+            $input.on('focus click keydown input', ensureCityInputEditable);
+
             const inputEl = $input.get(0);
             const autocomplete = new google.maps.places.Autocomplete(inputEl, {
                 types: ['(cities)'],
@@ -841,6 +853,7 @@
                 if (cityName) {
                     $input.val(cityName);
                 }
+                ensureCityInputEditable();
                 $input.trigger('input').trigger('keyup').trigger('change');
             });
         }
@@ -1023,6 +1036,9 @@
                 if (actualStep > 3) {
                     $("html, body").animate({scrollTop: 0}, "slow");
                 } else if (actualStep == 3) {
+                    if (typeof window.ensureCityInputEditable === 'function') {
+                        setTimeout(window.ensureCityInputEditable, 0);
+                    }
                     $('.experience_create_content h1').text(typeExperience == undefined ? "Projet : {{ experience.exp_type_experience }}" : "Projet : " + typeExperience)
                     checkedCheck = 0;
                     $('.besoins .radio_custom').each(function () {
@@ -1057,6 +1073,9 @@
                 $("html, body").animate({scrollTop: 0}, "slow");
             }
             $('.step' + actualStep).css('display', '')
+            if (actualStep == 3 && typeof window.ensureCityInputEditable === 'function') {
+                setTimeout(window.ensureCityInputEditable, 0);
+            }
             $('.experience_create_content h1').text($('.step' + actualStep).attr('attr-title'))
             updateStepper(actualStep);
             $('.action_next').addClass('active');
