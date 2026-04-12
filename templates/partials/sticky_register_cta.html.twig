@@ -58,6 +58,11 @@
 		}
 
 		@media (max-width: 768px) {
+			{% if hide_mobile|default(false) %}
+			.tm-sticky-register-cta {
+				display: none !important;
+			}
+			{% else %}
 			body {
 				padding-bottom: 84px;
 			}
@@ -91,6 +96,7 @@
 				font-size: 0.95rem;
 				padding: 10px 14px;
 			}
+			{% endif %}
 		}
 	</style>
 

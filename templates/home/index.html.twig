@@ -682,7 +682,7 @@
 
 		{# <a href="#" id="video-popup-opener"></a> #}
 	</div>
-	{% include 'partials/sticky_register_cta.html.twig' %}
+	{% include 'partials/sticky_register_cta.html.twig' with { hide_mobile: true } %}
 	{{parent()}}
 {% endblock %}
 
