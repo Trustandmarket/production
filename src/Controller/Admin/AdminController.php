@@ -1524,7 +1524,7 @@ class AdminController extends AbstractController
 
         if ($uploadedFile && $this->getUser()) {
             $uploadedImage = (string) $this->sm->upload1(
-                $uploadedFile,
+                [$uploadedFile],
                 $this->getParameter('product_directory'),
                 $this->getUser()->getId()
             );
