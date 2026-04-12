@@ -564,10 +564,12 @@
                                 <!-- Card -->
                                 <div class="card">
                                     <!-- Card image -->
+                                    {% set bloc11RawImage = bloc11 ? bloc11.optionValue : '' %}
+                                    {% set bloc11PreviewImage = bloc11RawImage ? ((bloc11RawImage|slice(0,4) == 'http' or bloc11RawImage|slice(0,1) == '/') ? bloc11RawImage : '/' ~ bloc11RawImage) : asset('assets/img/prestations/cover.jpg') %}
                                     <div class="view overlay">
                                         <img class="card-img-top lazy"
-                                             data-src="{% if bloc11 %}{{ bloc11.optionValue }}{% else %}
-          {{ asset('assets/img/prestations/cover.jpg') }}{% endif %}" alt="" height="200">
+                                             src="{{ bloc11PreviewImage }}"
+                                             data-src="{{ bloc11PreviewImage }}" alt="" height="200">
                                         <a href="#!">
                                             <div class="mask rgba-white-slight"></div>
                                         </a>
@@ -604,9 +606,13 @@
                                 <!-- Card -->
                                 <div class="card">
                                     <!-- Card image -->
+                                    {% set bloc12Parts = bloc12 ? bloc12.optionValue|split('|||') : [] %}
+                                    {% set bloc12RawImage = bloc12 ? (bloc12Parts|length > 1 and bloc12Parts[1] is not empty ? bloc12Parts[1] : bloc12.optionValue) : '' %}
+                                    {% set bloc12PreviewImage = bloc12RawImage ? ((bloc12RawImage|slice(0,4) == 'http' or bloc12RawImage|slice(0,1) == '/') ? bloc12RawImage : '/' ~ bloc12RawImage) : asset('assets/img/prestations/cover.jpg') %}
                                     <div class="view overlay">
                                         <img class="card-img-top lazy"
-                                             data-src="{% if bloc12 %}{{ bloc12.optionValue }}{% else %}{{ asset('assets/img/prestations/cover.jpg') }}{% endif %}"
+                                             src="{{ bloc12PreviewImage }}"
+                                             data-src="{{ bloc12PreviewImage }}"
                                              alt="" height="200">
                                         <a href="#!">
                                             <div class="mask rgba-white-slight"></div>
@@ -780,9 +786,13 @@
                                 </div>
                                 <div class="col-md-4 mb-12 clearfix">
                                     <div class="card">
+                                        {% set card1Parts = home_profile_card_1 ? home_profile_card_1.optionValue|split('|||') : [] %}
+                                        {% set card1RawImage = home_profile_card_1 ? (card1Parts|length > 1 and card1Parts[1] is not empty ? card1Parts[1] : '') : '' %}
+                                        {% set card1PreviewImage = card1RawImage ? ((card1RawImage|slice(0,4) == 'http' or card1RawImage|slice(0,1) == '/') ? card1RawImage : '/' ~ card1RawImage) : asset('assets/img/prestations/home-prestations-musicien.jpg') %}
                                         <div class="view overlay">
                                             <img class="card-img-top lazy"
-                                                 data-src="{% if home_profile_card_1 %}{{ home_profile_card_1.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-musicien.jpg') }}{% endif %}"
+                                                 src="{{ card1PreviewImage }}"
+                                                 data-src="{{ card1PreviewImage }}"
                                                  alt="" height="200">
                                         </div>
                                         <div class="card-body">
@@ -813,9 +823,13 @@
 
                                 <div class="col-md-4 mb-12 clearfix">
                                     <div class="card">
+                                        {% set card2Parts = home_profile_card_2 ? home_profile_card_2.optionValue|split('|||') : [] %}
+                                        {% set card2RawImage = home_profile_card_2 ? (card2Parts|length > 1 and card2Parts[1] is not empty ? card2Parts[1] : '') : '' %}
+                                        {% set card2PreviewImage = card2RawImage ? ((card2RawImage|slice(0,4) == 'http' or card2RawImage|slice(0,1) == '/') ? card2RawImage : '/' ~ card2RawImage) : asset('assets/img/prestations/home-prestations-photo.jpg') %}
                                         <div class="view overlay">
                                             <img class="card-img-top lazy"
-                                                 data-src="{% if home_profile_card_2 %}{{ home_profile_card_2.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-photo.jpg') }}{% endif %}"
+                                                 src="{{ card2PreviewImage }}"
+                                                 data-src="{{ card2PreviewImage }}"
                                                  alt="" height="200">
                                         </div>
                                         <div class="card-body">
@@ -846,9 +860,13 @@
 
                                 <div class="col-md-4 mb-12 clearfix">
                                     <div class="card">
+                                        {% set card3Parts = home_profile_card_3 ? home_profile_card_3.optionValue|split('|||') : [] %}
+                                        {% set card3RawImage = home_profile_card_3 ? (card3Parts|length > 1 and card3Parts[1] is not empty ? card3Parts[1] : '') : '' %}
+                                        {% set card3PreviewImage = card3RawImage ? ((card3RawImage|slice(0,4) == 'http' or card3RawImage|slice(0,1) == '/') ? card3RawImage : '/' ~ card3RawImage) : asset('assets/img/prestations/home-prestations-production-musicale.jpg') %}
                                         <div class="view overlay">
                                             <img class="card-img-top lazy"
-                                                 data-src="{% if home_profile_card_3 %}{{ home_profile_card_3.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-production-musicale.jpg') }}{% endif %}"
+                                                 src="{{ card3PreviewImage }}"
+                                                 data-src="{{ card3PreviewImage }}"
                                                  alt="" height="200">
                                         </div>
                                         <div class="card-body">
