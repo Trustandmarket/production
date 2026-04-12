@@ -2,7 +2,7 @@
 	<style>
 		.tm-sticky-register-cta {
 			position: fixed;
-			top: 96px;
+			top: {{ desktop_top|default('96px') }};
 			right: 18px;
 			z-index: 1040;
 			pointer-events: none;
