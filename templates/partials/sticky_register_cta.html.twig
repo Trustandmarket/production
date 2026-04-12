@@ -108,13 +108,20 @@
 			var cta = document.getElementById('tm-sticky-register-cta');
 			if (!cta) return;
 
+			var getFooterElement = function () {
+				return document.querySelector('.new-footer') ||
+					document.querySelector('footer') ||
+					document.querySelector('.footer') ||
+					document.querySelector('.inline-footer');
+			};
+
 			var updateMobileOffset = function () {
 				if (window.innerWidth > 768) {
 					cta.style.removeProperty('--tm-cta-bottom');
 					return;
 				}
 
-				var footer = document.querySelector('.footer') || document.querySelector('footer');
+				var footer = getFooterElement();
 				if (!footer) {
 					cta.style.setProperty('--tm-cta-bottom', '0px');
 					return;
@@ -127,6 +134,7 @@
 
 			window.addEventListener('scroll', updateMobileOffset, { passive: true });
 			window.addEventListener('resize', updateMobileOffset);
+			window.addEventListener('load', updateMobileOffset);
 			updateMobileOffset();
 		})();
 	</script>
