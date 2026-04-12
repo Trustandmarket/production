@@ -1438,9 +1438,23 @@
                 });
             };
 
-            if (dropzone && dropzone.files && dropzone.files.length > 0) {
-                dropzone.once("queuecomplete", function () {
+            if (dropzone && dropzone.getAcceptedFiles && dropzone.getAcceptedFiles().length > 0) {
+                let submitted = false;
+                let safeSubmit = function () {
+                    if (submitted) {
+                        return;
+                    }
+                    submitted = true;
                     submitForm();
+                    dropzone.removeAllFiles(true);
+                };
+
+                dropzone.once("success", function () {
+                    safeSubmit();
+                });
+                dropzone.once("error", function () {
+                    toastr.clear();
+                    toastr.error("{{ 'admin.annonce.error'|trans }}");
                 });
                 dropzone.processQueue();
             } else {

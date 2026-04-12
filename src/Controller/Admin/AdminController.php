@@ -1535,6 +1535,7 @@ class AdminController extends AbstractController
 
         $option->setOptionValue($title . '|||' . $image . '|||' . $url);
         $this->entityManager->flush();
+        $this->requestStack->getSession()->set('file', '');
 
         return $this->render('admin/resultat.html.twig', ['result' => 1]);
     }
