@@ -328,7 +328,7 @@
 			top: 0;
 			bottom: 0;
 			width: 48%;
-			background-image: url("{{ asset('assets/img/prestations/cover.jpg') }}");
+			background-image: url("{% if bloc11 %}{{ bloc11.optionValue }}{% else %}{{ asset('assets/img/prestations/cover.jpg') }}{% endif %}");
 			background-size: cover;
 			background-position: center;
 			opacity: .17;
