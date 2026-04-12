@@ -66,8 +66,9 @@
 				top: auto;
 				right: 0;
 				left: 0;
-				bottom: 0;
+				bottom: var(--tm-cta-bottom, 0px);
 				padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+				transition: bottom 0.2s ease;
 			}
 
 			.tm-sticky-register-cta__shell {
@@ -93,7 +94,7 @@
 		}
 	</style>
 
-	<div class="tm-sticky-register-cta" aria-label="Créer un profil gratuit">
+	<div id="tm-sticky-register-cta" class="tm-sticky-register-cta" aria-label="Créer un profil gratuit">
 		<div class="tm-sticky-register-cta__shell">
 			<span class="tm-sticky-register-cta__label">Prêt à commencer ?</span>
 			<a class="tm-sticky-register-cta__button" href="{{ path('app_register') }}">
@@ -101,4 +102,32 @@
 			</a>
 		</div>
 	</div>
+
+	<script>
+		(function () {
+			var cta = document.getElementById('tm-sticky-register-cta');
+			if (!cta) return;
+
+			var updateMobileOffset = function () {
+				if (window.innerWidth > 768) {
+					cta.style.removeProperty('--tm-cta-bottom');
+					return;
+				}
+
+				var footer = document.querySelector('.footer') || document.querySelector('footer');
+				if (!footer) {
+					cta.style.setProperty('--tm-cta-bottom', '0px');
+					return;
+				}
+
+				var footerTop = footer.getBoundingClientRect().top;
+				var overlap = Math.max(0, window.innerHeight - footerTop);
+				cta.style.setProperty('--tm-cta-bottom', overlap + 'px');
+			};
+
+			window.addEventListener('scroll', updateMobileOffset, { passive: true });
+			window.addEventListener('resize', updateMobileOffset);
+			updateMobileOffset();
+		})();
+	</script>
 {% endif %}
