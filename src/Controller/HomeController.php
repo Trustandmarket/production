@@ -88,6 +88,9 @@ class HomeController extends AbstractController
             'slogan_homepage' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('slogan_homepage'),
             'encart_homepage_1' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('encart_homepage_1'),
             'encart_homepage_2' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('encart_homepage_2'),
+            'home_profile_card_1' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home_profile_card_1'),
+            'home_profile_card_2' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home_profile_card_2'),
+            'home_profile_card_3' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home_profile_card_3'),
             'actualite' => $actualite,
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0)
         ]);

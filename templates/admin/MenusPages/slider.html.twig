@@ -773,6 +773,111 @@
                                 </div>
                             </div>
 
+                            <div class="row col-md-12 mt-4">
+                                <div class="col-md-12 mb-3">
+                                    <h4>Bloc profils homepage (3 cartes)</h4>
+                                    <p>Configurez titre, image et lien pour chaque profil.</p>
+                                </div>
+                                <div class="col-md-4 mb-12 clearfix">
+                                    <div class="card">
+                                        <div class="view overlay">
+                                            <img class="card-img-top lazy"
+                                                 data-src="{% if home_profile_card_1 %}{{ home_profile_card_1.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-musicien.jpg') }}{% endif %}"
+                                                 alt="" height="200">
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="card-title">Profil 1</h4>
+                                            <form action="{{ path('home_profile_card') }}" method="post" class="home_profile_card" id="home_profile_card_1_form">
+                                                <input hidden name="option_name" value="home_profile_card_1"/>
+                                                <input hidden name="card_image_existing" value="{% if home_profile_card_1 %}{{ home_profile_card_1.optionValue|split('|||')[1] }}{% endif %}">
+                                                <div class="form-group">
+                                                    <input class="form-control" required type="text" name="card_title"
+                                                           value="{% if home_profile_card_1 %}{{ home_profile_card_1.optionValue|split('|||')[0] }}{% else %}Nom du professionnel{% endif %}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input class="form-control" required type="text" name="card_url"
+                                                           value="{% if home_profile_card_1 %}{{ home_profile_card_1.optionValue|split('|||')[2] }}{% else %}{{ url('app_register') }}{% endif %}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="dropzone" id="dropzone_profile_card_1" style="width:100%"></div>
+                                                </div>
+                                                <div class="form-actions form-group">
+                                                    <button type="submit" class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                        Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-12 clearfix">
+                                    <div class="card">
+                                        <div class="view overlay">
+                                            <img class="card-img-top lazy"
+                                                 data-src="{% if home_profile_card_2 %}{{ home_profile_card_2.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-photo.jpg') }}{% endif %}"
+                                                 alt="" height="200">
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="card-title">Profil 2</h4>
+                                            <form action="{{ path('home_profile_card') }}" method="post" class="home_profile_card" id="home_profile_card_2_form">
+                                                <input hidden name="option_name" value="home_profile_card_2"/>
+                                                <input hidden name="card_image_existing" value="{% if home_profile_card_2 %}{{ home_profile_card_2.optionValue|split('|||')[1] }}{% endif %}">
+                                                <div class="form-group">
+                                                    <input class="form-control" required type="text" name="card_title"
+                                                           value="{% if home_profile_card_2 %}{{ home_profile_card_2.optionValue|split('|||')[0] }}{% else %}Nom du professionnel{% endif %}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input class="form-control" required type="text" name="card_url"
+                                                           value="{% if home_profile_card_2 %}{{ home_profile_card_2.optionValue|split('|||')[2] }}{% else %}{{ url('app_register') }}{% endif %}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="dropzone" id="dropzone_profile_card_2" style="width:100%"></div>
+                                                </div>
+                                                <div class="form-actions form-group">
+                                                    <button type="submit" class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                        Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-12 clearfix">
+                                    <div class="card">
+                                        <div class="view overlay">
+                                            <img class="card-img-top lazy"
+                                                 data-src="{% if home_profile_card_3 %}{{ home_profile_card_3.optionValue|split('|||')[1] }}{% else %}{{ asset('assets/img/prestations/home-prestations-production-musicale.jpg') }}{% endif %}"
+                                                 alt="" height="200">
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="card-title">Profil 3</h4>
+                                            <form action="{{ path('home_profile_card') }}" method="post" class="home_profile_card" id="home_profile_card_3_form">
+                                                <input hidden name="option_name" value="home_profile_card_3"/>
+                                                <input hidden name="card_image_existing" value="{% if home_profile_card_3 %}{{ home_profile_card_3.optionValue|split('|||')[1] }}{% endif %}">
+                                                <div class="form-group">
+                                                    <input class="form-control" required type="text" name="card_title"
+                                                           value="{% if home_profile_card_3 %}{{ home_profile_card_3.optionValue|split('|||')[0] }}{% else %}Nom du professionnel{% endif %}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input class="form-control" required type="text" name="card_url"
+                                                           value="{% if home_profile_card_3 %}{{ home_profile_card_3.optionValue|split('|||')[2] }}{% else %}{{ url('app_register') }}{% endif %}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="dropzone" id="dropzone_profile_card_3" style="width:100%"></div>
+                                                </div>
+                                                <div class="form-actions form-group">
+                                                    <button type="submit" class="btn btn-success btn-sm btn-lg ld-over-inverse ">
+                                                        Enregistrer<i class="ld ld-ring ld-spin"></i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -1064,6 +1169,54 @@
                 }
             });
 
+        let profileCardDropzone1 = new Dropzone("#dropzone_profile_card_1",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file",
+                maxFilesize: 1,
+                uploadMultiple: true,
+                parallelUploads: 1,
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb"
+            });
+
+        let profileCardDropzone2 = new Dropzone("#dropzone_profile_card_2",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file",
+                maxFilesize: 1,
+                uploadMultiple: true,
+                parallelUploads: 1,
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb"
+            });
+
+        let profileCardDropzone3 = new Dropzone("#dropzone_profile_card_3",
+            {
+                url: "{{ path('upload') }}",
+                paramName: "file",
+                maxFilesize: 1,
+                uploadMultiple: true,
+                parallelUploads: 1,
+                maxFiles: 1,
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+                acceptedFiles: "image/*",
+                dictDefaultMessage: "Image",
+                dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb"
+            });
+
 
         $('.slogan_homepage').on('submit', function (e) {
             // On emp�che le navigateur de soumettre le formulaire
@@ -1240,6 +1393,58 @@
             } else {
                 toastr.clear();
                 toastr.info('Choisissez l\'image du bloc 1');
+            }
+            return false;
+        });
+
+        $('.home_profile_card').on('submit', function (e) {
+            e.preventDefault();
+            toastr.info('Envoie des données en cours...');
+
+            let $form = $(this);
+            let formdata = (window.FormData) ? new FormData($form[0]) : null;
+            let data = (formdata !== null) ? formdata : $form.serialize();
+            let dropzone = null;
+
+            if ($form.attr('id') === 'home_profile_card_1_form') {
+                dropzone = profileCardDropzone1;
+            } else if ($form.attr('id') === 'home_profile_card_2_form') {
+                dropzone = profileCardDropzone2;
+            } else if ($form.attr('id') === 'home_profile_card_3_form') {
+                dropzone = profileCardDropzone3;
+            }
+
+            let submitForm = function () {
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (response) {
+                        if (response != 0) {
+                            toastr.clear();
+                            toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                            window.location = '';
+                        } else {
+                            toastr.clear();
+                            toastr.error("{{ 'admin.annonce.error'|trans }}");
+                        }
+                    },
+                    error: function () {
+                        toastr.clear();
+                        toastr.error("{{ 'admin.annonce.error'|trans }}");
+                    }
+                });
+            };
+
+            if (dropzone && dropzone.files && dropzone.files.length > 0) {
+                dropzone.once("queuecomplete", function () {
+                    submitForm();
+                });
+                dropzone.processQueue();
+            } else {
+                submitForm();
             }
             return false;
         });

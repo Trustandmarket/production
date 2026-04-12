@@ -1331,6 +1331,9 @@ class AdminController extends AbstractController
                 ->findOneByOptionName('slogan_homepage'),
             'encart_homepage_1' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('encart_homepage_1'),
             'encart_homepage_2' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('encart_homepage_2'),
+            'home_profile_card_1' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home_profile_card_1'),
+            'home_profile_card_2' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home_profile_card_2'),
+            'home_profile_card_3' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home_profile_card_3'),
         ]);
     }
 
@@ -1499,6 +1502,41 @@ class AdminController extends AbstractController
         return $this->render('admin/resultat.html.twig', [
             'result' => $id,
         ]);
+    }
+
+    /**
+     * @Route("/admin/home_profile_card", name="home_profile_card")
+     * @param Request $request
+     * @return Response
+     */
+    public function homeProfileCard(Request $request)
+    {
+        $optionName = (string) $request->get('option_name');
+        if ($optionName === '') {
+            return $this->render('admin/resultat.html.twig', ['result' => 0]);
+        }
+
+        $title = trim((string) $request->get('card_title'));
+        $url = trim((string) $request->get('card_url'));
+        $existingImage = trim((string) $request->get('card_image_existing'));
+        $uploadedImage = trim((string) $this->requestStack->getSession()->get('file'));
+        $image = $uploadedImage !== '' ? $uploadedImage : $existingImage;
+
+        $option = $this->entityManager
+            ->getRepository(WpOptions::class)
+            ->findOneByOptionName($optionName);
+
+        if (!$option) {
+            $option = new WpOptions();
+            $option->setOptionName($optionName);
+            $option->setAutoLoad('no');
+            $this->entityManager->persist($option);
+        }
+
+        $option->setOptionValue($title . '|||' . $image . '|||' . $url);
+        $this->entityManager->flush();
+
+        return $this->render('admin/resultat.html.twig', ['result' => 1]);
     }
 
     /**
