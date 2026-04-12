@@ -328,7 +328,7 @@
 			top: 0;
 			bottom: 0;
 			width: 48%;
-			background-image: url("{% if bloc11 %}{{ bloc11.optionValue }}{% else %}{{ asset('assets/img/prestations/cover.jpg') }}{% endif %}");
+			background-image: var(--hp-audience-image);
 			background-size: cover;
 			background-position: center;
 			opacity: .17;
@@ -488,6 +488,9 @@
 	{% set heroLink = home_macros.prestation_link(bloc12, prestations, 'photographe') %}
 	{% set encart1 = encart_homepage_1 is defined and encart_homepage_1 ? encart_homepage_1.optionValue|split('|||') : [] %}
 	{% set encart2 = encart_homepage_2 is defined and encart_homepage_2 ? encart_homepage_2.optionValue|split('|||') : [] %}
+	{% set audienceArtistImage = bloc11 ? bloc11.optionValue : asset('assets/img/prestations/cover.jpg') %}
+	{% set bloc12Parts = bloc12 ? bloc12.optionValue|split('|||') : [] %}
+	{% set audienceProImage = bloc12 ? (bloc12Parts|length > 1 ? bloc12Parts[1] : bloc12.optionValue) : asset('assets/img/prestations/cover.jpg') %}
 	<main class="home-premium">
 		<section class="hp-section">
 			<div class="hp-block hp-hero">
@@ -601,7 +604,7 @@
 					<h2>Pour les artistes et les pros</h2>
 				</div>
 				<div class="hp-audience">
-					<div class="hp-block hp-audience-card">
+					<div class="hp-block hp-audience-card hp-audience-artists" style="--hp-audience-image: url('{{ audienceArtistImage }}');">
 						<div class="hp-audience-head">
 							<i class="fa fa-microphone" aria-hidden="true"></i>
 							<h4>Pour les <span>Artistes</span></h4>
@@ -621,7 +624,7 @@
 							</li>
 						</ul>
 					</div>
-					<div class="hp-block hp-audience-card">
+					<div class="hp-block hp-audience-card hp-audience-pros" style="--hp-audience-image: url('{{ audienceProImage }}');">
 						<div class="hp-audience-head">
 							<i class="fa fa-headphones" aria-hidden="true"></i>
 							<h4>Pour les Professionnels</h4>
