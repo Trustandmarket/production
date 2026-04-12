@@ -1520,6 +1520,16 @@ class AdminController extends AbstractController
         $url = trim((string) $request->get('card_url'));
         $existingImage = trim((string) $request->get('card_image_existing'));
         $uploadedImage = trim((string) $this->requestStack->getSession()->get('file'));
+        $uploadedFile = $request->files->get('card_image_file');
+
+        if ($uploadedFile && $this->getUser()) {
+            $uploadedImage = (string) $this->sm->upload1(
+                $uploadedFile,
+                $this->getParameter('product_directory'),
+                $this->getUser()->getId()
+            );
+        }
+
         $image = $uploadedImage !== '' ? $uploadedImage : $existingImage;
 
         $option = $this->entityManager

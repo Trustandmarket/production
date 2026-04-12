@@ -1182,7 +1182,8 @@
                 acceptedFiles: "image/*",
                 dictDefaultMessage: "Image",
                 dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
-                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb"
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                autoProcessQueue: false
             });
 
         let profileCardDropzone2 = new Dropzone("#dropzone_profile_card_2",
@@ -1198,7 +1199,8 @@
                 acceptedFiles: "image/*",
                 dictDefaultMessage: "Image",
                 dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
-                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb"
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                autoProcessQueue: false
             });
 
         let profileCardDropzone3 = new Dropzone("#dropzone_profile_card_3",
@@ -1214,7 +1216,8 @@
                 acceptedFiles: "image/*",
                 dictDefaultMessage: "Image",
                 dictRemoveFile: "{{ 'admin.annonce.supprimer'|trans }}",
-                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb"
+                dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
+                autoProcessQueue: false
             });
 
 
@@ -1403,7 +1406,6 @@
 
             let $form = $(this);
             let formdata = (window.FormData) ? new FormData($form[0]) : null;
-            let data = (formdata !== null) ? formdata : $form.serialize();
             let dropzone = null;
 
             if ($form.attr('id') === 'home_profile_card_1_form') {
@@ -1414,52 +1416,31 @@
                 dropzone = profileCardDropzone3;
             }
 
-            let submitForm = function () {
-                $.ajax({
-                    url: $form.attr('action'),
-                    type: $form.attr('method'),
-                    contentType: false,
-                    processData: false,
-                    data: data,
-                    success: function (response) {
-                        if (response != 0) {
-                            toastr.clear();
-                            toastr.success("{{ 'systeme.requetes.succes'|trans }}");
-                            window.location = '';
-                        } else {
-                            toastr.clear();
-                            toastr.error("{{ 'admin.annonce.error'|trans }}");
-                        }
-                    },
-                    error: function () {
+            if (formdata && dropzone && dropzone.getAcceptedFiles && dropzone.getAcceptedFiles().length > 0) {
+                formdata.append('card_image_file', dropzone.getAcceptedFiles()[0]);
+            }
+
+            $.ajax({
+                url: $form.attr('action'),
+                type: $form.attr('method'),
+                contentType: false,
+                processData: false,
+                data: formdata !== null ? formdata : $form.serialize(),
+                success: function (response) {
+                    if (response != 0) {
+                        toastr.clear();
+                        toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                        window.location = '';
+                    } else {
                         toastr.clear();
                         toastr.error("{{ 'admin.annonce.error'|trans }}");
                     }
-                });
-            };
-
-            if (dropzone && dropzone.getAcceptedFiles && dropzone.getAcceptedFiles().length > 0) {
-                let submitted = false;
-                let safeSubmit = function () {
-                    if (submitted) {
-                        return;
-                    }
-                    submitted = true;
-                    submitForm();
-                    dropzone.removeAllFiles(true);
-                };
-
-                dropzone.once("success", function () {
-                    safeSubmit();
-                });
-                dropzone.once("error", function () {
+                },
+                error: function () {
                     toastr.clear();
                     toastr.error("{{ 'admin.annonce.error'|trans }}");
-                });
-                dropzone.processQueue();
-            } else {
-                submitForm();
-            }
+                }
+            });
             return false;
         });
 
