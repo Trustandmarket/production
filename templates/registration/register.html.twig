@@ -41,6 +41,11 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
+        .tm-register-form {
+            width: 100%;
+            margin: 0 auto;
+        }
+
         body {
             background:
                 radial-gradient(circle at top left, rgba(241, 124, 48, 0.09), transparent 18%),
@@ -59,6 +64,7 @@
 
         .tm-register-shell {
             min-height: 100vh;
+            width: 100%;
             padding: 52px 18px 18px;
             display: flex;
             align-items: center;
