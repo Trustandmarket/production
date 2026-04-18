@@ -78,86 +78,8 @@
             display: block;
         }
 
-        .tm-register-aside,
         .tm-register-panel {
             border-radius: 8px;
-        }
-
-        .tm-register-aside {
-            margin-bottom: 12px;
-            padding: clamp(.82rem, 1.7vh, 1.05rem) clamp(.95rem, 1.8vw, 1.2rem);
-            border-radius: 20px;
-            background:
-                radial-gradient(circle at top left, rgba(241, 124, 48, 0.16), transparent 24%),
-                linear-gradient(135deg, #fff9f4 0%, #ffffff 48%, #f5f7fa 100%);
-            border: 1px solid rgba(241, 124, 48, 0.16);
-            box-shadow: 0 24px 60px rgba(16, 16, 16, 0.10);
-        }
-
-        .tm-register-kicker {
-            display: inline-block;
-            margin: 0 0 .12rem 0;
-            font-size: clamp(.62rem, 1.1vh, .72rem);
-            text-transform: uppercase;
-            letter-spacing: .2em;
-            color: #f17c30;
-            font-family: "Palanquin Dark", sans-serif;
-            font-weight: 700;
-        }
-
-        .tm-register-kicker span {
-            color: #f17c30;
-        }
-
-        .tm-register-aside h1 {
-            font-family: "Palanquin Dark", sans-serif;
-            font-size: clamp(1.25rem, 3.1vh, 1.82rem);
-            line-height: 1.02;
-            margin: 0 0 .18rem;
-            color: #121212;
-        }
-
-        .tm-register-aside p {
-            margin: 0;
-            max-width: 700px;
-            color: #474747;
-            font-size: clamp(.72rem, 1.35vh, .84rem);
-            line-height: 1.34;
-            font-family: "Palanquin", sans-serif;
-        }
-
-        .tm-register-points {
-            margin-top: clamp(.35rem, .9vh, .55rem);
-            display: flex;
-            flex-wrap: wrap;
-            gap: clamp(.28rem, .7vh, .45rem);
-            max-width: none;
-        }
-
-        .tm-register-point {
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            padding: clamp(.28rem, .7vh, .42rem) clamp(.52rem, 1vw, .7rem);
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.86);
-            border: 1px solid rgba(17, 17, 17, 0.08);
-            box-shadow: 0 8px 20px rgba(17, 17, 17, 0.05);
-            color: #1f1f1f;
-            font-family: "Palanquin", sans-serif;
-            font-size: clamp(.66rem, 1.2vh, .76rem);
-        }
-
-        .tm-register-point strong {
-            margin: 0;
-            font-weight: 600;
-        }
-
-        .tm-register-point i {
-            color: #f17c30;
-        }
-
-        .tm-register-panel {
             padding: clamp(.78rem, 1.6vh, 1rem);
             border-radius: 20px;
             background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
@@ -669,29 +591,6 @@
 
     <main class="tm-register-shell">
         <div class="tm-register-wrap">
-            <aside class="tm-register-aside">
-                <div>
-                    <p class="tm-register-kicker">TRUST <span>&amp;</span> MARKET</p>
-                    <h1>Créez votre profil et lancez votre parcours.</h1>
-                    <p>Un accès simple, lisible et premium pour rejoindre la plateforme, présenter votre activité et activer votre compte ensuite par email.</p>
-                </div>
-
-                <div class="tm-register-points">
-                    <div class="tm-register-point">
-                        <i class="fa fa-check-circle"></i>
-                        <strong>Parcours plus fluide</strong>
-                    </div>
-                    <div class="tm-register-point">
-                        <i class="fa fa-list-ol"></i>
-                        <strong>2 étapes lisibles</strong>
-                    </div>
-                    <div class="tm-register-point">
-                        <i class="fa fa-envelope"></i>
-                        <strong>Activation email conservée</strong>
-                    </div>
-                </div>
-            </aside>
-
             <section class="tm-register-panel">
                 <div class="tm-register-topbar">
                     <a href="{{ path('home') }}" class="tm-register-brand">
