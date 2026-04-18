@@ -154,7 +154,7 @@
             font-family: "Palanquin Dark", sans-serif;
             line-height: 1.1;
             text-transform: uppercase;
-            margin-top: 10px;
+            margin-top: 18px;
             text-align: left;
             white-space: nowrap;
         }
@@ -194,6 +194,8 @@
         .tm-step-pill {
             display: flex;
             flex-direction: column;
+            align-items: center;
+            text-align: center;
             gap: .25rem;
             color: #858585;
             transition: color .2s ease;
@@ -248,7 +250,7 @@
         .tm-step-panel {
             width: 100%;
             max-width: 760px;
-            margin: 0 auto;
+            margin: clamp(14px, 1.8vh, 22px) auto 0;
         }
 
         .tm-step-title {
@@ -297,6 +299,10 @@
 
         .tm-password-row + .tm-register-consents {
             margin-top: clamp(10px, 1.4vh, 16px);
+        }
+
+        .tm-register-consents + .tm-field-block {
+            margin-top: clamp(12px, 1.6vh, 20px);
         }
 
         .tm-field-grid + .tm-field-grid,
@@ -469,7 +475,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
@@ -519,6 +525,7 @@
         }
 
         .tm-register-footer {
+            display: none;
             margin-top: 10px;
             text-align: center;
             color: #666;
@@ -792,7 +799,6 @@
 
                     <div class="tm-step-actions">
                         <button class="btn tm-btn-primary" type="submit">CRÉER MON COMPTE</button>
-                        <p class="tm-step-note">L’activation du compte se fera ensuite par email.</p>
                         <p class="tm-login-note">Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
                     </div>
                 </div>
