@@ -541,6 +541,10 @@ class AdminController extends AbstractController
     {
         $r = 0;
         if ($request->get('id') > 0 && $request->get('description') != '') {
+            $image = trim((string) $this->requestStack->getSession()->get('file'));
+            if ($image === '') {
+                $image = $request->get('current_guid');
+            }
             $r = $this->sm->updatePage(
                 $request->get('id'),
                 $request->get('id_menu'),
@@ -548,7 +552,7 @@ class AdminController extends AbstractController
                 $request->get('statut'),
                 $request->getLocale(),
                 $request->get('title'),
-                $this->requestStack->getSession()->get('file')
+                $image
             );
             if ($request->get('meta_desc')) {
                 $meta_desc = $this->sm->readPostMeta(
@@ -572,6 +576,7 @@ class AdminController extends AbstractController
                     );
                 }
             }
+            $this->requestStack->getSession()->set('file', '');
         }
 
         return $this->render('admin/resultat.html.twig', [

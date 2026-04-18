@@ -7429,12 +7429,13 @@ class ServiceManager
             $query = $this->entityManager
                 ->createQuery(
                     'UPDATE App\Entity\WpPosts p
-             SET p.postContent=:pc, p.postStatus=:st,p.guid=:img
+             SET p.postContent=:pc, p.postStatus=:st, p.postTitle=:title, p.guid=:img
              WHERE p.id=:id'
                 )
                 ->setParameter('id', $id)
                 ->setParameter('img', $image)
                 ->setParameter('st', $status)
+                ->setParameter('title', $title_en)
                 ->setParameter('pc', $val);
         }
 

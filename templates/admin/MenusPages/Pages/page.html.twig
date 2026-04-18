@@ -124,6 +124,7 @@
 
                             <input type="hidden" name="id" value="{{ page.id }}">
                             <input type="hidden" name="id_menu" value="{{ menu.id }}">
+                            <input type="hidden" name="current_guid" value="{{ page.guid }}">
                             <input type="hidden" name="t" value="des">
 
                             <div class="form-actions form-group">
@@ -175,40 +176,43 @@
             e.preventDefault();
             toastr.info('Envoie des données en cours...');
             var $form = $(this);
+            tinymce.triggerSave();
             var formdata = (window.FormData) ? new FormData($form[0]) : null;
-            var temp = tinymce.activeEditor.getContent();
             var data = (formdata !== null) ? formdata : $form.serialize();
 
-            if (myDropzone.files != "") {
-                myDropzone.processQueue();
-                myDropzone.on("queuecomplete", function (file, response) {
-                    $.ajax({
-                        url: $form.attr('action'),
-                        type: $form.attr('method'),
-                        contentType: false,
-                        processData: false,
-                        data: data,
-                        success: function (reponse) {
-                            if (reponse != 0) {
-                                toastr.clear();
-                                toastr.success("{{ 'systeme.requetes.succes'|trans }}");
-                                window.location = '';
-                            } else if (reponse == 0) {
-                                $('#send').removeClass('running');
-                                toastr.clear();
-                                toastr.error("{{ 'admin.annonce.error'|trans }}");
-                            }
-                        },
-                        error: function (reponse) {
+            var submitForm = function () {
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (reponse) {
+                        if (reponse != 0) {
+                            toastr.clear();
+                            toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                            window.location = '';
+                        } else if (reponse == 0) {
                             $('#send').removeClass('running');
                             toastr.clear();
                             toastr.error("{{ 'admin.annonce.error'|trans }}");
                         }
-                    });
+                    },
+                    error: function (reponse) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'admin.annonce.error'|trans }}");
+                    }
                 });
+            };
+
+            if (myDropzone.getQueuedFiles().length > 0) {
+                myDropzone.once("queuecomplete", function () {
+                    submitForm();
+                });
+                myDropzone.processQueue();
             } else {
-                toastr.clear();
-                toastr.info('Choisissez l\'image du bloc 1');
+                submitForm();
             }
             return false;
         });
