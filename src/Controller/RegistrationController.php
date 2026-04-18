@@ -57,10 +57,7 @@ class RegistrationController extends AbstractController
         $selectedActivity = $request->get('activite');
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (in_array($selectedRole, ['ROLE_AUTO_ENTREPRENEUR', 'ROLE_SOCIETE'], true) && empty(trim((string) $selectedActivity))) {
-                $this->addFlash('register_activity_error', 'Veuillez sélectionner votre activité principale.');
-            } else {
-                $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_REGISTER');
+            $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_REGISTER');
                 if ($recaptcha['response']) {
                     $firstName = trim((string) ($registrationData['first_name'] ?? ''));
                     $lastName = trim((string) ($registrationData['last_name'] ?? ''));
@@ -238,12 +235,10 @@ class RegistrationController extends AbstractController
                 // Close cURL session
                 curl_close($ch);
 
-                    return $this->redirectToRoute('app_registration_confirmation_email');
-                } else {
-                    $this->addFlash('register_recaptcha_error', '');
-                }
+                return $this->redirectToRoute('app_registration_confirmation_email');
+            } else {
+                $this->addFlash('register_recaptcha_error', '');
             }
-
         }
 
         return $this->render('registration/register.html.twig', [
@@ -319,7 +314,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * Données supplémentaires, Compte mangopay et email admin
+     * DonnÃƒÆ’Ã‚Â©es supplÃƒÆ’Ã‚Â©mentaires, Compte mangopay et email admin
      * @param EntityManagerInterface $entityManager
      * @param MailerInterface $mailer
      * @param User $user
@@ -438,14 +433,14 @@ class RegistrationController extends AbstractController
         $accountToken = $this->payment->createStripeAccountToken($userType, $data);
         if (empty($accountToken['id'])) return null;
 
-        // 🔹 Create Stripe Account from Token
+        // ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â¹ Create Stripe Account from Token
         $stripeAccount = $this->payment->createStripeUserFromToken($accountToken['id']);
         if (empty($stripeAccount['id'])) return null;
 
         $this->service_manager->updateUserMeta($userId, 'mp_user_id_sandbox', $stripeAccount['id']);
         $this->payment->updateStripeUser($stripeAccount['id'], $userType, $data);
 
-        // 🔹 Create Stripe Person if required
+        // ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‚Â¹ Create Stripe Person if required
         if($userType != 'ROLE_ABONNE'){
             $stripePersonToken = $this->payment->createStripePersonToken($data);
             if (!empty($stripePersonToken['id'])) {

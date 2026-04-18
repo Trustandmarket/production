@@ -25,8 +25,8 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('email_canonical', EmailType::class, ['required' => true])
-            ->add('first_name', null, ['required' => true, 'mapped' => false,])
-            ->add('last_name', null, ['required' => true, 'mapped' => false,])
+            ->add('first_name', null, ['required' => false, 'mapped' => false,])
+            ->add('last_name', null, ['required' => false, 'mapped' => false,])
             ->add(
                 'dateNaissance',
                 null,

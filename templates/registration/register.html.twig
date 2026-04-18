@@ -90,10 +90,10 @@
         }
 
         .tm-register-topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: start;
+            gap: .75rem;
             margin-bottom: clamp(.22rem, .7vh, .45rem);
         }
 
@@ -155,7 +155,7 @@
             line-height: 1.1;
             text-transform: uppercase;
             margin-top: 10px;
-            text-align: center;
+            text-align: left;
             white-space: nowrap;
         }
 
@@ -167,6 +167,18 @@
             margin: 0;
         }
 
+        .tm-register-heading {
+            align-self: center;
+            justify-self: center;
+            margin: 0;
+            color: #121212;
+            font-size: clamp(.95rem, 1.7vh, 1.18rem);
+            font-family: "Palanquin Dark", sans-serif;
+            line-height: 1.1;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
         .tm-register-steps {
             margin-bottom: clamp(.45rem, 1vh, .8rem);
             padding: clamp(.42rem, 1vh, .7rem) clamp(.52rem, 1vw, .8rem);
@@ -175,7 +187,7 @@
             border: 1px solid rgba(17, 17, 17, 0.08);
             box-shadow: 0 16px 36px rgba(17, 17, 17, 0.06);
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: clamp(.3rem, .8vh, .55rem);
         }
 
@@ -189,6 +201,10 @@
 
         .tm-step-pill.is-active {
             color: #151515;
+        }
+
+        .tm-step-pill.is-upcoming {
+            color: #8d8d8d;
         }
 
         .tm-step-pill-index {
@@ -209,6 +225,11 @@
             background: linear-gradient(90deg, #f17c30 0%, #ffb787 100%);
         }
 
+        .tm-step-pill.is-upcoming .tm-step-pill-index {
+            background: rgba(17, 17, 17, 0.08);
+            color: #fff;
+        }
+
         .tm-step-pill strong {
             display: block;
             font-size: clamp(.58rem, .95vh, .66rem);
@@ -225,14 +246,9 @@
         }
 
         .tm-step-panel {
-            display: none;
             width: 100%;
             max-width: 760px;
             margin: 0 auto;
-        }
-
-        .tm-step-panel.is-active {
-            display: block;
         }
 
         .tm-step-title {
@@ -450,8 +466,9 @@
 
         .tm-step-actions {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             gap: 8px;
             flex-wrap: wrap;
         }
@@ -483,6 +500,18 @@
             color: #7a7a7a;
             font-size: clamp(.62rem, .9vh, .72rem);
             line-height: 1.25;
+            text-align: center;
+        }
+
+        .tm-login-note {
+            color: #6f6f6f;
+            font-size: clamp(.68rem, 1vh, .8rem);
+            text-align: center;
+        }
+
+        .tm-login-note a {
+            color: #262626;
+            text-decoration: underline;
         }
 
         .tm-hidden-field {
@@ -597,6 +626,11 @@
                 display: grid;
             }
 
+            .tm-register-heading {
+                justify-self: start;
+                text-align: left;
+            }
+
             .tm-register-steps {
                 grid-template-columns: 1fr;
             }
@@ -613,18 +647,10 @@
 {% endblock %}
 
 {% block body %}
-    {% set hasStepTwoErrors = registrationForm.first_name.vars.errors|length > 0
-        or registrationForm.last_name.vars.errors|length > 0
-        or app.session.flashbag.peek('register_activity_error')|length > 0
-        or app.session.flashbag.peek('register_recaptcha_error')|length > 0
-        or app.request.get('residence')
-        or selected_activity %}
-
     {{ form_start(registrationForm, {
         'attr': {
             'id': 'registration-form',
             'class': 'tm-register-form',
-            'data-initial-step': hasStepTwoErrors ? '2' : '1',
             'onsubmit': 'return gtagSendEvent(this);'
         }
     }) }}
@@ -636,9 +662,9 @@
                     <a href="{{ path('home') }}" class="tm-register-brand">
                         <span class="tm-register-brand-copy">
                             <strong>TRUST <span class="tm-brand-accent">&amp;</span> MARKET</strong>
-                            <span class="tm-brand-subtitle">CRÉER MON PROFIL</span>
                         </span>
                     </a>
+                    <h1 class="tm-register-heading">CRÉER MON PROFIL</h1>
                 </div>
 
                 {% for message in app.session.flashbag.get('register_recaptcha_error') %}
@@ -649,21 +675,26 @@
                 {% endfor %}
 
                 <div class="tm-register-steps">
-                    <div class="tm-step-pill is-active" data-step-pill="1">
+                    <div class="tm-step-pill is-active">
                         <span class="tm-step-pill-index">1</span>
-                        <strong>Accès au compte</strong>
+                        <strong>Créer mon compte</strong>
                         <span>Email, mot de passe et type de profil.</span>
                     </div>
-                    <div class="tm-step-pill" data-step-pill="2">
+                    <div class="tm-step-pill is-upcoming">
                         <span class="tm-step-pill-index">2</span>
+                        <strong>Confirmez votre adresse email</strong>
+                        <span>Validation du compte par email.</span>
+                    </div>
+                    <div class="tm-step-pill is-upcoming">
+                        <span class="tm-step-pill-index">3</span>
                         <strong>Informations de profil</strong>
-                        <span>Identité, résidence et activité si profil pro.</span>
+                        <span>Complétez ensuite votre profil.</span>
                     </div>
                 </div>
 
-                <div class="tm-step-panel is-active" data-step-panel="1">
+                <div class="tm-step-panel">
                     <h2 class="tm-step-title">Commençons par l’essentiel.</h2>
-                    <p class="tm-step-lead">Choisissez votre type de profil, définissez vos accès et passez à l’étape suivante.</p>
+                    <p class="tm-step-lead">Choisissez votre type de profil, définissez vos accès et créez votre compte.</p>
 
                     <div class="tm-field-grid">
                         <div class="tm-field-block">
@@ -708,6 +739,13 @@
                         </label>
                     </div>
 
+                    <div class="tm-hidden-field">
+                        <input type="hidden" name="activite" value="profile_to_complete">
+                        {{ form_widget(registrationForm.first_name, {'attr': {'tabindex': '-1'}}) }}
+                        {{ form_widget(registrationForm.last_name, {'attr': {'tabindex': '-1'}}) }}
+                        {{ form_widget(registrationForm.dateNaissance, {'attr': {'tabindex': '-1', 'autocomplete': 'off'}}) }}
+                    </div>
+
                     <div class="tm-password-row">
                         <label class="tm-password-label" for="{{ registrationForm.plainPassword.first.vars.id }}">{{ 'inscription.passe'|trans }}</label>
                         <label class="tm-password-label" for="{{ registrationForm.plainPassword.second.vars.id }}">{{ 'inscription.confirmation'|trans }}</label>
@@ -748,79 +786,14 @@
                         </label>
                     </div>
 
-                    <div class="tm-step-actions">
-                        <p class="tm-step-note">L’activation du compte se fera ensuite par email.</p>
-                        <button type="button" class="btn tm-btn-primary" id="tm-step-next">Continuer</button>
-                    </div>
-                </div>
-
-                <div class="tm-step-panel" data-step-panel="2">
-                    <h2 class="tm-step-title">Parlez-nous de vous.</h2>
-                    <p class="tm-step-lead">Cette étape s’adapte à votre profil. Pour un compte pro, nous demandons aussi votre activité principale.</p>
-
-                    <div class="tm-field-grid">
-                        <div class="tm-field-block">
-                            <label for="{{ registrationForm.last_name.vars.id }}">Prénom</label>
-                            {{ form_widget(registrationForm.last_name, {
-                                'attr': {
-                                    'class': 'form-control',
-                                    'placeholder': 'Votre prénom',
-                                    'autocomplete': 'given-name'
-                                }
-                            }) }}
-                            {{ form_errors(registrationForm.last_name) }}
-                        </div>
-                        <div class="tm-field-block">
-                            <label for="{{ registrationForm.first_name.vars.id }}">Nom</label>
-                            {{ form_widget(registrationForm.first_name, {
-                                'attr': {
-                                    'class': 'form-control',
-                                    'placeholder': 'Votre nom',
-                                    'autocomplete': 'family-name'
-                                }
-                            }) }}
-                            {{ form_errors(registrationForm.first_name) }}
-                        </div>
-                    </div>
-
-                    <div class="tm-field-grid">
-                        <div class="tm-field-block">
-                            <label for="residence">Pays de résidence</label>
-                            <select id="residence" name="residence" class="form-control" required>
-                                <option value="" {% if app.request.get('residence') is empty %}selected{% endif %}>Sélectionnez votre pays de résidence</option>
-                                {% include 'Tools/CountryRegister.html.twig' %}
-                            </select>
-                        </div>
-                        <div class="tm-field-block" id="activity-wrapper">
-                            <label for="inputActivite">Activité principale</label>
-                            <select id="inputActivite" name="activite" class="form-control">
-                                <option value="">{{ 'profil-utilisateur.formulaire-profil.activite'|trans }}</option>
-                                {% for item in activities %}
-                                    <option value="{{ item.termId }}" {% if selected_activity is not empty and item.termId == selected_activity %}selected{% endif %}>
-                                        {% if app.request.locale == 'en' %}{{ item.content }}{% else %}{{ item.name }}{% endif %}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="tm-hidden-field">
-                        {{ form_widget(registrationForm.dateNaissance, {
-                            'attr': {
-                                'class': 'form-control',
-                                'tabindex': '-1',
-                                'autocomplete': 'off'
-                            }
-                        }) }}
-                    </div>
-
                     <div class="tm-field-block">
                         <div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O" data-action="TRUST_REGISTER"></div>
                     </div>
 
                     <div class="tm-step-actions">
-                        <button type="button" class="btn tm-btn-secondary" id="tm-step-prev">Retour</button>
-                        <button class="btn tm-btn-primary" type="submit">{{ 'inscription.titre'|trans }}</button>
+                        <button class="btn tm-btn-primary" type="submit">CRÉER MON COMPTE</button>
+                        <p class="tm-step-note">L’activation du compte se fera ensuite par email.</p>
+                        <p class="tm-login-note">Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
                     </div>
                 </div>
 
@@ -841,23 +814,7 @@
 
     <script>
         $(document).ready(function () {
-            const $form = $('#registration-form');
-            const $stepPanels = $('[data-step-panel]');
-            const $stepPills = $('[data-step-pill]');
-            const $nextButton = $('#tm-step-next');
-            const $prevButton = $('#tm-step-prev');
             const $roleCards = $('[data-role-card]');
-            const $activityWrapper = $('#activity-wrapper');
-            const $activityField = $('#inputActivite');
-            const $residence = $('#residence');
-            const initialStep = Number($form.data('initial-step') || 1);
-
-            function setStep(step) {
-                $stepPanels.removeClass('is-active');
-                $stepPills.removeClass('is-active');
-                $('[data-step-panel="' + step + '"]').addClass('is-active');
-                $('[data-step-pill="' + step + '"]').addClass('is-active');
-            }
 
             function getSelectedRole() {
                 return $('input[name="role_user"]:checked').val() || '';
@@ -872,79 +829,15 @@
                 });
             }
 
-            function toggleActivityField() {
-                const role = getSelectedRole();
-                const shouldShow = role === 'ROLE_AUTO_ENTREPRENEUR' || role === 'ROLE_SOCIETE';
-
-                $activityWrapper.toggle(shouldShow);
-                $activityField.prop('required', shouldShow);
-
-                if (!shouldShow) {
-                    $activityField.val('');
-                }
-            }
-
-            function validateStepOne() {
-                const fields = [
-                    document.getElementById('{{ registrationForm.email_canonical.vars.id }}'),
-                    document.getElementById('{{ registrationForm.plainPassword.first.vars.id }}'),
-                    document.getElementById('{{ registrationForm.plainPassword.second.vars.id }}'),
-                    document.getElementById('agreeTerms')
-                ];
-
-                const selectedRole = getSelectedRole();
-                const invalidField = fields.find(function (field) {
-                    return field && !field.checkValidity();
-                });
-
-                if (invalidField) {
-                    invalidField.reportValidity();
-                    return false;
-                }
-
-                if (!selectedRole) {
-                    const firstRole = document.querySelector('input[name="role_user"]');
-                    if (firstRole) {
-                        firstRole.reportValidity();
-                    }
-                    return false;
-                }
-
-                return true;
-            }
-
             $roleCards.on('click', function () {
                 $(this).find('input').prop('checked', true).trigger('change');
             });
 
             $('input[name="role_user"]').on('change', function () {
                 toggleRoleCards();
-                toggleActivityField();
             });
-
-            $nextButton.on('click', function () {
-                if (validateStepOne()) {
-                    setStep(2);
-                    setTimeout(function () {
-                        const firstVisibleInput = $('[data-step-panel="2"]').find('input:visible, select:visible').first();
-                        if (firstVisibleInput.length) {
-                            firstVisibleInput.trigger('focus');
-                        }
-                    }, 50);
-                }
-            });
-
-            $prevButton.on('click', function () {
-                setStep(1);
-            });
-
-            if ($residence.val()) {
-                $form.attr('data-initial-step', '2');
-            }
 
             toggleRoleCards();
-            toggleActivityField();
-            setStep(initialStep === 2 ? 2 : 1);
         });
 
         window.addEventListener('load', function () {
