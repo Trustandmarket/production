@@ -133,13 +133,13 @@
     </div>
 
     <div class="form-label-group">
-        {{ form_widget(registrationForm.dateNaissance , {'attr':{'class':'form-control input-custom','style':'background-color: transparent;','type':'text', 'id':'dateNaissance','name':'dateNaissance','required':'required', 'autocomplete':'off','readonly':'readonly'}}) }}
+        {{ form_widget(registrationForm.dateNaissance , {'attr':{'class':'form-control input-custom','style':'background-color: transparent;','type':'text', 'id':'dateNaissance','name':'dateNaissance', 'autocomplete':'off','readonly':'readonly'}}) }}
         {{ form_errors(registrationForm.dateNaissance) }}
     </div>
 
     <div class="form-label-group">
-        <select id="nationalite" name="nationalite" class="form-control input-custom" required>
-            <option value="" selected>Nationalite...</option>
+        <select id="nationalite" name="nationalite" class="form-control input-custom">
+            <option value="" {% if app.request.get('nationalite') is empty %}selected{% endif %}>Nationalite...</option>
             {% include 'Tools/CountryNat.html.twig' %}
         </select>
     </div>

@@ -30,9 +30,7 @@ class RegistrationFormType extends AbstractType
             ->add(
                 'dateNaissance',
                 null,
-                ['required' => true, 'constraints' => [
-                new NotBlank(['message' => 'Entrez une date de naissance',])
-            ]]
+                ['required' => false]
             )
             ->add('plainPassword', RepeatedType::class, [
                 // instead of being set onto the object directly,

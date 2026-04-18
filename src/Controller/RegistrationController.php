@@ -52,6 +52,7 @@ class RegistrationController extends AbstractController
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
+        $registrationData = (array) $request->get('registration_form', []);
         $selectedRole = $request->get('role_user');
         $selectedActivity = $request->get('activite');
 
@@ -61,6 +62,12 @@ class RegistrationController extends AbstractController
             } else {
                 $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_REGISTER');
                 if ($recaptcha['response']) {
+                    $firstName = trim((string) ($registrationData['first_name'] ?? ''));
+                    $lastName = trim((string) ($registrationData['last_name'] ?? ''));
+                    $dateNaissance = trim((string) ($registrationData['dateNaissance'] ?? ''));
+                    $nationalite = trim((string) $request->get('nationalite', ''));
+                    $residence = trim((string) $request->get('residence', ''));
+
                     $user->setPassword(
                         $userPasswordHasher->hashPassword(
                             $user,
@@ -70,11 +77,11 @@ class RegistrationController extends AbstractController
                     $rolesArray = [$request->get('role_user')];
                     $user->setUserEmail($user->getEmailCanonical());
                     $user->setUsernameCanonical($user->getEmailCanonical());
-                    $user->setUserActivationKey($request->get('registration_form')['_token']);
-                    $user->setUserNicename($request->get('registration_form')['first_name']);
-                    $user->setDisplayName($request->get('registration_form')['first_name'] . ' ' . $request->get('registration_form')['last_name']);
-                    $user->setUserActivationKey($request->get('registration_form')['_token']);
-                    $user->setDateNaissance($request->get('registration_form')['dateNaissance']);
+                    $user->setUserActivationKey($registrationData['_token'] ?? '');
+                    $user->setUserNicename($firstName);
+                    $user->setDisplayName(trim($firstName . ' ' . $lastName));
+                    $user->setUserActivationKey($registrationData['_token'] ?? '');
+                    $user->setDateNaissance($dateNaissance !== '' ? $dateNaissance : null);
                     $user->setRoles($rolesArray);
 
                     $entityManager->persist($user);
@@ -85,17 +92,17 @@ class RegistrationController extends AbstractController
                     $meta = new WpUsermeta();
                     $meta->setUserId($user->getId());
                     $meta->setMetaKey('first_name');
-                    $meta->setMetaValue($request->get('registration_form')['first_name']);
+                    $meta->setMetaValue($firstName);
                     $entityManager->persist($meta);
                     $entityManager->flush();
 
-                $this->service_manager->updateUserMeta($user->getId(), 'nom_commercial', $request->get('registration_form')['first_name']);
+                $this->service_manager->updateUserMeta($user->getId(), 'nom_commercial', $firstName);
 
                 //Pour le Last_name
                 $meta = new WpUsermeta();
                 $meta->setUserId($user->getId());
                 $meta->setMetaKey('last_name');
-                $meta->setMetaValue($request->get('registration_form')['last_name']);
+                $meta->setMetaValue($lastName);
                 $entityManager->persist($meta);
                 $entityManager->flush();
 
@@ -103,7 +110,7 @@ class RegistrationController extends AbstractController
                 $meta = new WpUsermeta();
                 $meta->setUserId($user->getId());
                 $meta->setMetaKey('nationalityCountry');
-                $meta->setMetaValue($request->get('nationalite'));
+                $meta->setMetaValue($nationalite);
                 $entityManager->persist($meta);
                 $entityManager->flush();
 
@@ -111,7 +118,7 @@ class RegistrationController extends AbstractController
                 $meta = new WpUsermeta();
                 $meta->setUserId($user->getId());
                 $meta->setMetaKey('residenceCountry');
-                $meta->setMetaValue($request->get('residence'));
+                $meta->setMetaValue($residence);
                 $entityManager->persist($meta);
                 $entityManager->flush();
 
