@@ -101,15 +101,24 @@
             display: inline-block;
             text-decoration: none;
             color: #262626;
+            width: max-content;
+            max-width: none;
         }
 
         .tm-register-brand-copy {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: max-content;
+            max-width: none;
+            min-width: 0;
         }
 
         .tm-register-brand-copy strong {
             position: relative;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: .18em;
             font-family: "Palanquin Dark", sans-serif;
             font-size: clamp(.82rem, 1.35vh, 1rem);
             line-height: 1.2;
@@ -120,6 +129,11 @@
             text-align: left;
             font-weight: 700;
             margin-bottom: 12px;
+            width: max-content;
+            max-width: none;
+            flex-wrap: nowrap;
+            word-break: normal;
+            overflow-wrap: normal;
         }
 
         .tm-register-brand-copy strong::after {
@@ -133,7 +147,7 @@
             background: linear-gradient(90deg, rgba(241, 124, 48, 0.95) 0%, rgba(241, 124, 48, 0.2) 100%);
         }
 
-        .tm-register-brand-copy span {
+        .tm-register-brand-copy > .tm-brand-subtitle {
             display: block;
             color: #121212;
             font-size: clamp(.82rem, 1.45vh, 1rem);
@@ -142,10 +156,15 @@
             text-transform: uppercase;
             margin-top: 2px;
             text-align: left;
+            white-space: nowrap;
         }
 
         .tm-register-brand-copy .tm-brand-accent {
             color: #f17c30;
+            display: inline;
+            font-size: inherit;
+            line-height: inherit;
+            margin: 0;
         }
 
         .tm-register-steps {
@@ -617,7 +636,7 @@
                     <a href="{{ path('home') }}" class="tm-register-brand">
                         <span class="tm-register-brand-copy">
                             <strong>TRUST <span class="tm-brand-accent">&amp;</span> MARKET</strong>
-                            <span>CRÉER MON PROFIL</span>
+                            <span class="tm-brand-subtitle">CRÉER MON PROFIL</span>
                         </span>
                     </a>
                 </div>
