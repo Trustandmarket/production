@@ -67,20 +67,20 @@
         .tm-register-shell {
             min-height: auto;
             width: 100%;
-            padding: 120px 18px 72px;
+            padding: 24px 18px 72px;
             display: block;
         }
 
         .tm-register-wrap {
             width: 100%;
             max-width: 860px;
-            margin: 0 auto;
+            margin: 120px auto 0;
             display: block;
         }
 
         .tm-register-panel {
             border-radius: 8px;
-            padding: 44px clamp(.78rem, 1.6vh, 1rem) clamp(.78rem, 1.6vh, 1rem);
+            padding: clamp(.78rem, 1.6vh, 1rem);
             border-radius: 20px;
             background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
             border: 1px solid rgba(17, 17, 17, 0.08);
@@ -551,7 +551,7 @@
 
         @media (min-width: 992px) and (max-height: 900px) {
             .tm-register-shell {
-                padding-top: 120px;
+                padding-top: 24px;
                 padding-bottom: 72px;
             }
 
@@ -560,7 +560,7 @@
             }
 
             .tm-register-panel {
-                padding: 44px .9rem .9rem;
+                padding: .9rem;
             }
 
             .tm-register-steps {
@@ -588,7 +588,7 @@
 
         @media (min-width: 992px) and (max-height: 780px) {
             .tm-register-shell {
-                padding-top: 120px;
+                padding-top: 24px;
                 padding-bottom: 72px;
             }
 
@@ -601,7 +601,11 @@
 
         @media (max-width: 767px) {
             .tm-register-shell {
-                padding: 88px 14px 48px;
+                padding: 18px 14px 48px;
+            }
+
+            .tm-register-wrap {
+                margin-top: 88px;
             }
 
             .tm-register-panel,
