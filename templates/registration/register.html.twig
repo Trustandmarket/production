@@ -297,23 +297,24 @@
             gap: clamp(6px, .8vh, 10px);
         }
 
-        .tm-field-grid-password {
+        .tm-password-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            column-gap: clamp(6px, .8vh, 10px);
+            row-gap: clamp(3px, .5vh, 5px);
             align-items: start;
         }
 
-        .tm-field-grid-password .tm-field-block {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+        .tm-password-row .tm-password-label {
+            margin: 0;
+            color: #2f2f2f;
+            font-size: clamp(.68rem, 1.1vh, .82rem);
+            font-weight: 600;
+            line-height: 1.1;
         }
 
-        .tm-field-grid-password .tm-field-block label {
-            height: 20px;
-            min-height: 20px;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: flex-end;
-            line-height: 1;
+        .tm-password-row .tm-password-field {
+            min-width: 0;
         }
 
         .tm-field-grid + .tm-field-grid,
@@ -768,9 +769,11 @@
                         </label>
                     </div>
 
-                    <div class="tm-field-grid tm-field-grid-password">
-                        <div class="tm-field-block">
-                            <label for="{{ registrationForm.plainPassword.first.vars.id }}">{{ 'inscription.passe'|trans }}</label>
+                    <div class="tm-password-row">
+                        <label class="tm-password-label" for="{{ registrationForm.plainPassword.first.vars.id }}">{{ 'inscription.passe'|trans }}</label>
+                        <label class="tm-password-label" for="{{ registrationForm.plainPassword.second.vars.id }}">{{ 'inscription.confirmation'|trans }}</label>
+
+                        <div class="tm-password-field">
                             {{ form_widget(registrationForm.plainPassword.first, {
                                 'attr': {
                                     'class': 'form-control',
@@ -780,8 +783,7 @@
                             }) }}
                             {{ form_errors(registrationForm.plainPassword.first) }}
                         </div>
-                        <div class="tm-field-block">
-                            <label for="{{ registrationForm.plainPassword.second.vars.id }}">{{ 'inscription.confirmation'|trans }}</label>
+                        <div class="tm-password-field">
                             {{ form_widget(registrationForm.plainPassword.second, {
                                 'attr': {
                                     'class': 'form-control',
