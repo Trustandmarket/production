@@ -258,6 +258,9 @@
 
         .tm-step-panel {
             display: none;
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto;
         }
 
         .tm-step-panel.is-active {
@@ -700,22 +703,22 @@
                         <label class="tm-role-card {% if selected_role == 'ROLE_ABONNE' %}is-selected{% endif %}" data-role-card>
                             <input type="radio" name="role_user" value="ROLE_ABONNE" {% if selected_role == 'ROLE_ABONNE' %}checked{% endif %} required>
                             <span class="tm-role-card-body">
-                                <strong>Artiste / Créateur</strong>
-                                <span>Je cherche un studio, un musicien ou un prestataire pour mon projet.</span>
+                                <strong>Abonné</strong>
+                                <span>Pour découvrir les profils, initier un projet et entrer en relation.</span>
                             </span>
                         </label>
                         <label class="tm-role-card {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}is-selected{% endif %}" data-role-card>
                             <input type="radio" name="role_user" value="ROLE_AUTO_ENTREPRENEUR" {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}checked{% endif %} required>
                             <span class="tm-role-card-body">
-                                <strong>Professionnel indépendant</strong>
-                                <span>Je propose mes services en auto-entrepreneur ou en freelance.</span>
+                                <strong>Professionnel auto-entrepreneur</strong>
+                                <span>Pour proposer vos services en indépendant avec une entrée simple.</span>
                             </span>
                         </label>
                         <label class="tm-role-card {% if selected_role == 'ROLE_SOCIETE' %}is-selected{% endif %}" data-role-card>
                             <input type="radio" name="role_user" value="ROLE_SOCIETE" {% if selected_role == 'ROLE_SOCIETE' %}checked{% endif %} required>
                             <span class="tm-role-card-body">
-                                <strong>Structure / Société</strong>
-                                <span>Mon activité est portée par une société, un studio ou une agence.</span>
+                                <strong>Professionnel société</strong>
+                                <span>Pour une structure, une agence ou une activité portée par une société.</span>
                             </span>
                         </label>
                     </div>
