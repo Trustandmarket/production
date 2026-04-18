@@ -610,9 +610,6 @@
                             <span>CRÉER MON PROFIL</span>
                         </span>
                     </a>
-                    <a class="special-below-link" href="{{ path('app_login') }}">
-                        <span class="special-link">{{ 'inscription.connecte'|trans }}</span>&nbsp;&rarr;
-                    </a>
                 </div>
 
                 {% for message in app.session.flashbag.get('register_recaptcha_error') %}
