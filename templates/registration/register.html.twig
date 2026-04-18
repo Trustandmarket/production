@@ -90,8 +90,15 @@
         }
 
         .tm-register-topbar {
-            display: block;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: start;
+            gap: 1rem;
             margin-bottom: clamp(.22rem, .7vh, .45rem);
+        }
+
+        .tm-register-topbar-main {
+            min-width: 0;
         }
 
         .tm-register-brand {
@@ -161,6 +168,19 @@
             font-weight: 700;
             text-transform: uppercase;
             text-align: center;
+        }
+
+        .tm-register-logo-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
+
+        .tm-register-logo-link img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
         }
 
         .tm-register-subheading {
@@ -653,13 +673,18 @@
         <div class="tm-register-wrap">
             <section class="tm-register-panel">
                 <div class="tm-register-topbar">
-                    <div class="tm-register-brand">
-                        <span class="tm-register-brand-copy">
-                            <strong>TRUST <span class="tm-brand-accent">&amp;</span> MARKET</strong>
-                        </span>
+                    <div class="tm-register-topbar-main">
+                        <div class="tm-register-brand">
+                            <span class="tm-register-brand-copy">
+                                <strong>TRUST <span class="tm-brand-accent">&amp;</span> MARKET</strong>
+                            </span>
+                        </div>
+                        <h1 class="tm-register-heading">CRÉER MON PROFIL</h1>
+                        <p class="tm-register-subheading">Gratuit, sans engagement.</p>
                     </div>
-                    <h1 class="tm-register-heading">CRÉER MON PROFIL</h1>
-                    <p class="tm-register-subheading">Gratuit, sans engagement.</p>
+                    <a href="{{ path('home') }}" class="tm-register-logo-link" aria-label="Accueil Trust &amp; Market">
+                        <img src="{{ prerender(asset('assets/img/logo_tm.svg')) }}" alt="Trust &amp; Market">
+                    </a>
                 </div>
 
                 {% for message in app.session.flashbag.get('register_recaptcha_error') %}
