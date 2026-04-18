@@ -43,7 +43,11 @@
     <style>
         .tm-register-form {
             width: 100%;
+            min-height: 100vh;
             margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         body {
@@ -524,6 +528,11 @@
         }
 
         @media (max-width: 991px) {
+            .tm-register-form {
+                min-height: auto;
+                display: block;
+            }
+
             .tm-register-shell {
                 display: block;
             }
