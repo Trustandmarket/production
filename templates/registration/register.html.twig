@@ -90,10 +90,7 @@
         }
 
         .tm-register-topbar {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: start;
-            gap: .75rem;
+            display: block;
             margin-bottom: clamp(.22rem, .7vh, .45rem);
         }
 
@@ -146,18 +143,6 @@
             background: linear-gradient(90deg, rgba(241, 124, 48, 0.95) 0%, rgba(241, 124, 48, 0.2) 100%);
         }
 
-        .tm-register-brand-copy > .tm-brand-subtitle {
-            display: block;
-            color: #121212;
-            font-size: clamp(.82rem, 1.45vh, 1rem);
-            font-family: "Palanquin Dark", sans-serif;
-            line-height: 1.1;
-            text-transform: uppercase;
-            margin-top: 34px;
-            text-align: left;
-            white-space: nowrap;
-        }
-
         .tm-register-brand-copy .tm-brand-accent {
             color: #f17c30;
             display: inline;
@@ -167,9 +152,8 @@
         }
 
         .tm-register-heading {
-            align-self: center;
-            justify-self: center;
-            margin: 0;
+            display: block;
+            margin: 34px 0 0 0;
             color: #121212;
             font-size: clamp(.95rem, 1.7vh, 1.18rem);
             font-family: "Palanquin Dark", sans-serif;
