@@ -7,40 +7,31 @@
     <link rel="canonical" href="{{ absolute_url(path('app_register')) }}">
     <link rel="shortlink" href="{{ absolute_url(path('app_register')) }}">
 
-    {# OG CONTENT #}
     <meta property="og:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'creer-un-compte'}) }}">
-    <meta property="og:description"
-          content="{{ include('Seo/Meta/description.html.twig', {code: 'creer-un-compte'}) }}">
+    <meta property="og:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'creer-un-compte'}) }}">
     <meta property="og:image" content="{{ include('Seo/Meta/security_image.html.twig', {code: 'register_image'}) }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ absolute_url(path('app_register')) }}">
-    {# END OG CONTENT #}
 
-    {# Twitter CARD #}
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@trustandmarket">
     <meta name="twitter:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'creer-un-compte'}) }}">
-    <meta name="twitter:description"
-          content="{{ include('Seo/Meta/description.html.twig', {code: 'creer-un-compte'}) }}">
+    <meta name="twitter:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'creer-un-compte'}) }}">
     <meta name="twitter:image" content="{{ include('Seo/Meta/security_image.html.twig', {code: 'register_image'}) }}">
     <meta name="twitter:image:alt" content="{{ include('Seo/Meta/title.html.twig', {code: 'register'}) }}">
-    {# END Twitter Card #}
 
-    {# JSON LD #}
     <script type="application/ld+json">
-	{
-		"@context": "http://schema.org",
-		"@type": "WebPage",
-		"name": "{{ include('Seo/Meta/title.html.twig', {code: 'creer-un-compte'}) }}",
-		"description": "{{ include('Seo/Meta/description.html.twig', {code: 'creer-un-compte'}) }}",
-		"publisher": {
-			"@type": "RegisterPage",
-			"name": "Trust&Market"
-   		 }
-	}
-
+    {
+        "@context": "http://schema.org",
+        "@type": "WebPage",
+        "name": "{{ include('Seo/Meta/title.html.twig', {code: 'creer-un-compte'}) }}",
+        "description": "{{ include('Seo/Meta/description.html.twig', {code: 'creer-un-compte'}) }}",
+        "publisher": {
+            "@type": "RegisterPage",
+            "name": "Trust&Market"
+        }
+    }
     </script>
-    {# END JSON LD #}
 
     <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
 {% endblock %}
@@ -49,15 +40,17 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('assets/css/gijgo-css/gijgo.min.css') }}">
-    <meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'register'}) }}">
     <style>
         body {
-        {% if include('Seo/Meta/security_image.html.twig', {code: 'register_image'}) != "\n" %} background: url({{ include('Seo/Meta/security_image.html.twig', {code: 'register_image'}) }}) no-repeat center center fixed;
-        {% else %} background: url({{ absolute_url(asset('assets/img/john-raptis.png'))}}) no-repeat center center fixed;
-        {% endif %} -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
+        {% if include('Seo/Meta/security_image.html.twig', {code: 'register_image'}) != "\n" %}
+            background:
+                linear-gradient(135deg, rgba(17, 17, 17, 0.78) 0%, rgba(17, 17, 17, 0.58) 44%, rgba(17, 17, 17, 0.38) 100%),
+                url({{ include('Seo/Meta/security_image.html.twig', {code: 'register_image'}) }}) no-repeat center center fixed;
+        {% else %}
+            background:
+                linear-gradient(135deg, rgba(17, 17, 17, 0.78) 0%, rgba(17, 17, 17, 0.58) 44%, rgba(17, 17, 17, 0.38) 100%),
+                url({{ absolute_url(asset('assets/img/john-raptis.png')) }}) no-repeat center center fixed;
+        {% endif %}
             background-size: cover;
         }
 
@@ -71,179 +64,801 @@
             opacity: 0;
         }
 
-        #activity-wrapper.d-none {
+        .tm-register-shell {
+            min-height: 100vh;
+            padding: 110px 20px 48px;
+        }
+
+        .tm-register-wrap {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .tm-register-aside,
+        .tm-register-panel {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .tm-register-aside {
+            min-height: 700px;
+            padding: 36px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background:
+                linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.48) 100%),
+                url({{ include('Seo/Meta/security_image.html.twig', {code: 'register_image'}) != "\n" ? include('Seo/Meta/security_image.html.twig', {code: 'register_image'}) : absolute_url(asset('assets/img/john-raptis.png')) }}) center center / cover no-repeat;
+            box-shadow: 0 22px 60px rgba(0, 0, 0, 0.24);
+        }
+
+        .tm-register-kicker {
+            display: inline-block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .22em;
+            color: rgba(255, 255, 255, 0.82);
+            margin-bottom: 18px;
+            font-family: "Palanquin Dark", sans-serif;
+        }
+
+        .tm-register-kicker span {
+            color: #f17c30;
+        }
+
+        .tm-register-aside h1 {
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: 3rem;
+            line-height: 1.03;
+            margin: 0 0 18px;
+            color: #fff;
+        }
+
+        .tm-register-aside p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.84);
+            line-height: 1.8;
+            font-size: 1rem;
+            max-width: 430px;
+        }
+
+        .tm-register-points {
+            display: grid;
+            gap: 12px;
+            max-width: 420px;
+        }
+
+        .tm-register-point {
+            padding: 14px 16px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(6px);
+        }
+
+        .tm-register-point strong {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .tm-register-panel {
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 22px 60px rgba(0, 0, 0, 0.18);
+            padding: 28px;
+        }
+
+        .tm-register-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .tm-register-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: #262626;
+        }
+
+        .tm-register-brand img {
+            width: 52px;
+            height: 52px;
+        }
+
+        .tm-register-brand-copy strong {
+            display: block;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: 1rem;
+            line-height: 1.2;
+        }
+
+        .tm-register-brand-copy span {
+            display: block;
+            color: #707070;
+            font-size: .92rem;
+        }
+
+        .tm-register-steps {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .tm-step-pill {
+            flex: 1;
+            min-width: 0;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #e6ded7;
+            background: #fff;
+        }
+
+        .tm-step-pill.is-active {
+            border-color: rgba(241, 124, 48, 0.55);
+            background: rgba(241, 124, 48, 0.08);
+        }
+
+        .tm-step-pill-index {
+            display: inline-flex;
+            width: 26px;
+            height: 26px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: #262626;
+            color: #fff;
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .tm-step-pill.is-active .tm-step-pill-index {
+            background: #f17c30;
+        }
+
+        .tm-step-pill strong {
+            display: block;
+            color: #262626;
+            font-size: .96rem;
+        }
+
+        .tm-step-pill span {
+            display: block;
+            color: #767676;
+            font-size: .85rem;
+            line-height: 1.45;
+            margin-top: 4px;
+        }
+
+        .tm-step-panel {
             display: none;
+        }
+
+        .tm-step-panel.is-active {
+            display: block;
+        }
+
+        .tm-step-title {
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: 2rem;
+            line-height: 1.08;
+            color: #262626;
+            margin: 0 0 8px;
+        }
+
+        .tm-step-lead {
+            color: #606060;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .tm-field-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .tm-field-grid + .tm-field-grid,
+        .tm-field-grid + .tm-role-grid,
+        .tm-role-grid + .tm-field-grid,
+        .tm-role-grid + .tm-register-consents,
+        .tm-register-consents + .tm-step-actions,
+        .tm-field-block + .tm-field-block,
+        .tm-field-grid + .tm-field-block,
+        .tm-field-block + .tm-step-actions {
+            margin-top: 16px;
+        }
+
+        .tm-field,
+        .tm-field-block {
+            width: 100%;
+        }
+
+        .tm-field label,
+        .tm-field-block label,
+        .tm-choice-label {
+            display: block;
+            margin: 0 0 8px;
+            color: #2f2f2f;
+            font-size: .92rem;
+            font-weight: 600;
+        }
+
+        .tm-register-panel .form-control {
+            min-height: 54px;
+            border-radius: 8px;
+            border: 1px solid #ddd6d0;
+            background: #fff;
+            color: #262626;
+            box-shadow: none;
+            padding: 14px 16px;
+        }
+
+        .tm-register-panel .form-control:focus {
+            border-color: rgba(241, 124, 48, 0.7);
+            box-shadow: 0 0 0 3px rgba(241, 124, 48, 0.12);
+        }
+
+        .tm-field .invalid-feedback,
+        .tm-field-block .invalid-feedback,
+        .tm-register-panel .invalid-feedback,
+        .tm-register-panel .form-error-message {
+            display: block;
+            color: #c13d3d;
+            font-size: .84rem;
+            margin-top: 7px;
+        }
+
+        .tm-role-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .tm-role-card {
+            position: relative;
+            min-height: 162px;
+            border-radius: 8px;
+            border: 1px solid #e6ded7;
+            background: #fff;
+            padding: 18px 16px 16px;
+            cursor: pointer;
+            transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+        }
+
+        .tm-role-card:hover {
+            transform: translateY(-1px);
+            border-color: rgba(241, 124, 48, 0.55);
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+        }
+
+        .tm-role-card.is-selected {
+            border-color: #f17c30;
+            background: linear-gradient(180deg, rgba(241, 124, 48, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+
+        .tm-role-card input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .tm-role-card strong {
+            display: block;
+            font-size: 1rem;
+            color: #262626;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            font-family: "Palanquin Dark", sans-serif;
+        }
+
+        .tm-role-card span {
+            display: block;
+            color: #6b6b6b;
+            line-height: 1.6;
+            font-size: .92rem;
+        }
+
+        .tm-register-consents {
+            padding: 16px 18px;
+            border-radius: 8px;
+            background: #f7f4f1;
+            border: 1px solid #ece4dc;
+        }
+
+        .tm-consent {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: #494949;
+            line-height: 1.6;
+        }
+
+        .tm-consent + .tm-consent {
+            margin-top: 10px;
+        }
+
+        .tm-consent input {
+            margin-top: 4px;
+        }
+
+        .tm-consent a {
+            color: #262626;
+            text-decoration: underline;
+        }
+
+        .tm-step-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tm-btn-secondary,
+        .tm-btn-primary {
+            border-radius: 8px;
+            min-height: 50px;
+            padding: 12px 20px;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: .95rem;
+        }
+
+        .tm-btn-secondary {
+            border: 1px solid #d7d0ca;
+            background: #fff;
+            color: #262626;
+        }
+
+        .tm-btn-primary,
+        .tm-btn-primary:hover,
+        .tm-btn-primary:focus {
+            background: #f17c30;
+            border-color: #f17c30;
+            color: #fff;
+        }
+
+        .tm-step-note {
+            color: #7a7a7a;
+            font-size: .88rem;
+            line-height: 1.55;
+        }
+
+        .tm-hidden-field {
+            display: none;
+        }
+
+        .tm-register-footer {
+            margin-top: 22px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        .tm-register-footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .tm-register-footer .special-link {
+            color: #fff;
+        }
+
+        .tm-register-alert {
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 991px) {
+            .tm-register-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .tm-register-aside {
+                min-height: auto;
+                gap: 30px;
+            }
+
+            .tm-register-aside h1 {
+                font-size: 2.3rem;
+            }
+
+            .tm-role-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .tm-register-shell {
+                padding: 86px 14px 34px;
+            }
+
+            .tm-register-panel,
+            .tm-register-aside {
+                padding: 22px 18px;
+            }
+
+            .tm-register-topbar,
+            .tm-step-actions,
+            .tm-register-steps,
+            .tm-field-grid {
+                grid-template-columns: 1fr;
+                display: grid;
+            }
+
+            .tm-register-topbar {
+                gap: 14px;
+            }
+
+            .tm-step-title {
+                font-size: 1.7rem;
+            }
         }
     </style>
 {% endblock %}
 
 {% block body %}
-    {{ form_start(registrationForm, { 'attr': {'class': 'form-signin', 'id': 'registration-form', 'onsubmit': 'return gtagSendEvent(this);'}}) }}
+    {% set hasStepTwoErrors = registrationForm.first_name.vars.errors|length > 0
+        or registrationForm.last_name.vars.errors|length > 0
+        or app.session.flashbag.peek('register_activity_error')|length > 0
+        or app.session.flashbag.peek('register_recaptcha_error')|length > 0
+        or app.request.get('residence')
+        or selected_activity %}
 
-    <div class="text-center mb-4">
-        <a href='/'>
-            <img class="mb-4" src="{{ prerender(asset('assets/img/logo_tm.svg')) }}" alt="logo" width="72" height="72">
-        </a>
-        <h1 class="h3 mb-3 font-weight-normal white-t">{{ "inscription.titre"|trans }}</h1>
-    </div>
+    {{ form_start(registrationForm, {
+        'attr': {
+            'id': 'registration-form',
+            'class': 'tm-register-form',
+            'data-initial-step': hasStepTwoErrors ? '2' : '1',
+            'onsubmit': 'return gtagSendEvent(this);'
+        }
+    }) }}
 
-    {% for message in app.session.flashbag.get('register_recaptcha_error') %}
-        <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
-    {% for message in app.session.flashbag.get('register_activity_error') %}
-        <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
-    <div class="form-label-group">
-        {{ form_widget(registrationForm.first_name , {'attr':{'class':'form-control input-custom','type':'text', 'id':'inputPrenom','name':'first_name','required':'required', 'autofocus':'autofocus'}}) }}
-        {{ form_label(registrationForm.first_name, 'inscription.nom'|trans) }}
-        {{ form_errors(registrationForm.first_name) }}
-    </div>
+    <main class="tm-register-shell">
+        <div class="tm-register-wrap">
+            <aside class="tm-register-aside">
+                <div>
+                    <p class="tm-register-kicker">TRUST <span>&amp;</span> MARKET</p>
+                    <h1>Créez votre profil et lancez votre parcours.</h1>
+                    <p>Un accès simple, lisible et premium pour rejoindre la plateforme, présenter votre activité et activer votre compte ensuite par email.</p>
+                </div>
 
-    <div class="form-label-group">
-        {{ form_widget(registrationForm.last_name , {'attr':{'class':'form-control input-custom','type':'text', 'id':'inputNom','name':'last_name','required':'required'}}) }}
-        {{ form_label(registrationForm.last_name, 'inscription.prenom'|trans) }}
-        {{ form_errors(registrationForm.last_name) }}
-    </div>
+                <div class="tm-register-points">
+                    <div class="tm-register-point">
+                        <strong>Une création de compte plus fluide</strong>
+                        <span>Vous choisissez d’abord votre profil, puis nous ne demandons que les informations utiles.</span>
+                    </div>
+                    <div class="tm-register-point">
+                        <strong>Une progression claire</strong>
+                        <span>L’étape 1 ouvre l’accès. L’étape 2 prépare votre espace sans surcharge inutile.</span>
+                    </div>
+                    <div class="tm-register-point">
+                        <strong>Activation conservée</strong>
+                        <span>L’email de validation reste en place pour sécuriser le compte sans alourdir l’entrée.</span>
+                    </div>
+                </div>
+            </aside>
 
-    <div class="form-label-group">
-        {{ form_widget(registrationForm.email_canonical , {'attr':{'class':'form-control input-custom', 'placeholder':'general.email'|trans, 'value':''}}) }}
-        {{ form_label(registrationForm.email_canonical, 'general.email'|trans) }}
+            <section class="tm-register-panel">
+                <div class="tm-register-topbar">
+                    <a href="{{ path('home') }}" class="tm-register-brand">
+                        <img src="{{ prerender(asset('assets/img/logo_tm.svg')) }}" alt="Trust &amp; Market">
+                        <span class="tm-register-brand-copy">
+                            <strong>Créer un compte</strong>
+                            <span>Votre profil en 2 étapes</span>
+                        </span>
+                    </a>
+                    <a class="special-below-link" href="{{ path('app_login') }}">
+                        <span class="special-link">{{ 'inscription.connecte'|trans }}</span>&nbsp;&rarr;
+                    </a>
+                </div>
 
-        {{ form_errors(registrationForm.email_canonical) }}
-    </div>
+                {% for message in app.session.flashbag.get('register_recaptcha_error') %}
+                    <div class="alert alert-danger tm-register-alert">{{ message ?: 'Veuillez valider le contrôle de sécurité.' }}</div>
+                {% endfor %}
+                {% for message in app.session.flashbag.get('register_activity_error') %}
+                    <div class="alert alert-danger tm-register-alert">{{ message }}</div>
+                {% endfor %}
 
-    <div class="form-label-group">
-        <select id="inputUtilisateur" name="role_user" class="form-control input-custom" required>
-            <option value="" {% if selected_role is empty %}selected{% endif %}>{{ 'inscription.categorie-utilisateur'|trans }}</option>
-            <option value="ROLE_ABONNE" {% if selected_role == 'ROLE_ABONNE' %}selected{% endif %}>{{ 'inscription.abonne'|trans }}</option>
-            <option value="ROLE_AUTO_ENTREPRENEUR" {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}selected{% endif %}>{{ 'inscription.auto-entrepreneur'|trans }}</option>
-            <option value="ROLE_SOCIETE" {% if selected_role == 'ROLE_SOCIETE' %}selected{% endif %}>{{ 'inscription.societe'|trans }}</option>
-        </select>
-    </div>
+                <div class="tm-register-steps">
+                    <div class="tm-step-pill is-active" data-step-pill="1">
+                        <span class="tm-step-pill-index">1</span>
+                        <strong>Accès au compte</strong>
+                        <span>Email, mot de passe et type de profil.</span>
+                    </div>
+                    <div class="tm-step-pill" data-step-pill="2">
+                        <span class="tm-step-pill-index">2</span>
+                        <strong>Informations de profil</strong>
+                        <span>Identité, résidence et activité si profil pro.</span>
+                    </div>
+                </div>
 
-    <div class="form-label-group {% if selected_role not in ['ROLE_AUTO_ENTREPRENEUR', 'ROLE_SOCIETE'] %}d-none{% endif %}" id="activity-wrapper">
-        <select id="inputActivite" name="activite" class="form-control input-custom" {% if selected_role in ['ROLE_AUTO_ENTREPRENEUR', 'ROLE_SOCIETE'] %}required{% endif %}>
-            <option value="">{{ 'profil-utilisateur.formulaire-profil.activite'|trans }}</option>
-            {% for item in activities %}
-                <option value="{{ item.termId }}" {% if selected_activity is not empty and item.termId == selected_activity %}selected{% endif %}>
-                    {% if app.request.locale == 'en' %}{{ item.content }}{% else %}{{ item.name }}{% endif %}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
+                <div class="tm-step-panel is-active" data-step-panel="1">
+                    <h2 class="tm-step-title">Commençons par l’essentiel.</h2>
+                    <p class="tm-step-lead">Choisissez votre type de profil, définissez vos accès et passez à l’étape suivante.</p>
 
-    <div class="form-label-group">
-        {{ form_widget(registrationForm.dateNaissance , {'attr':{'class':'form-control input-custom','style':'background-color: transparent;','type':'text', 'id':'dateNaissance','name':'dateNaissance', 'autocomplete':'off','readonly':'readonly'}}) }}
-        {{ form_errors(registrationForm.dateNaissance) }}
-    </div>
+                    <div class="tm-field-grid">
+                        <div class="tm-field-block">
+                            <label for="{{ registrationForm.email_canonical.vars.id }}">{{ 'general.email'|trans }}</label>
+                            {{ form_widget(registrationForm.email_canonical, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'vous@exemple.com',
+                                    'autocomplete': 'email',
+                                    'autofocus': 'autofocus'
+                                }
+                            }) }}
+                            {{ form_errors(registrationForm.email_canonical) }}
+                        </div>
+                    </div>
 
-    <div class="form-label-group">
-        <select id="nationalite" name="nationalite" class="form-control input-custom">
-            <option value="" {% if app.request.get('nationalite') is empty %}selected{% endif %}>Nationalite...</option>
-            {% include 'Tools/CountryNat.html.twig' %}
-        </select>
-    </div>
+                    <div class="tm-role-grid">
+                        <label class="tm-role-card {% if selected_role == 'ROLE_ABONNE' %}is-selected{% endif %}" data-role-card>
+                            <input type="radio" name="role_user" value="ROLE_ABONNE" {% if selected_role == 'ROLE_ABONNE' %}checked{% endif %} required>
+                            <strong>Abonné</strong>
+                            <span>Pour découvrir les profils, initier un projet et entrer en relation.</span>
+                        </label>
+                        <label class="tm-role-card {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}is-selected{% endif %}" data-role-card>
+                            <input type="radio" name="role_user" value="ROLE_AUTO_ENTREPRENEUR" {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}checked{% endif %} required>
+                            <strong>Professionnel / auto-entrepreneur</strong>
+                            <span>Pour proposer vos services en indépendant avec une entrée simple.</span>
+                        </label>
+                        <label class="tm-role-card {% if selected_role == 'ROLE_SOCIETE' %}is-selected{% endif %}" data-role-card>
+                            <input type="radio" name="role_user" value="ROLE_SOCIETE" {% if selected_role == 'ROLE_SOCIETE' %}checked{% endif %} required>
+                            <strong>Professionnel / Société</strong>
+                            <span>Pour une structure, une agence ou une activité portée par une société.</span>
+                        </label>
+                    </div>
 
-    <div class="form-label-group">
-        <select id="residence" name="residence" class="form-control input-custom" required>
-            <option value="" selected>Pays de residence...</option>
-            {% include 'Tools/CountryRegister.html.twig' %}</select>
-    </div>
+                    <div class="tm-field-grid">
+                        <div class="tm-field-block">
+                            <label for="{{ registrationForm.plainPassword.first.vars.id }}">{{ 'inscription.passe'|trans }}</label>
+                            {{ form_widget(registrationForm.plainPassword.first, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': '6 caractères minimum',
+                                    'autocomplete': 'new-password'
+                                }
+                            }) }}
+                            {{ form_errors(registrationForm.plainPassword.first) }}
+                        </div>
+                        <div class="tm-field-block">
+                            <label for="{{ registrationForm.plainPassword.second.vars.id }}">{{ 'inscription.confirmation'|trans }}</label>
+                            {{ form_widget(registrationForm.plainPassword.second, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'Confirmez votre mot de passe',
+                                    'autocomplete': 'new-password'
+                                }
+                            }) }}
+                            {{ form_errors(registrationForm.plainPassword.second) }}
+                        </div>
+                    </div>
 
-    <div class="form-label-group">
-        {{ form_widget(registrationForm.plainPassword.first , {'attr':{'class':'form-control input-custom', 'placeholder':'inscription.passe'|trans,'type':'password','id':'inputPassword','value':''}}) }}
-        {{ form_label(registrationForm.plainPassword.first, 'inscription.passe'|trans) }}
-        {{ form_errors(registrationForm.plainPassword.first) }}
-    </div>
+                    <div class="tm-register-consents">
+                        <label class="tm-consent">
+                            <input type="checkbox" required name="agreeTerms" id="agreeTerms">
+                            <span>
+                                {{ 'inscription.condition-utilisation'|trans }}
+                                <a target="_blank" href="{{ path('page_navigation', {idPage: 'nos-conditions', id: 'conditions-generales-dutilisation'}) }}">{{ 'inscription.accepter-condition'|trans }}</a>
+                            </span>
+                        </label>
+                        <label class="tm-consent">
+                            <input type="checkbox" name="_email_newsletter">
+                            <span>{{ 'inscription.newsletter'|trans }}</span>
+                        </label>
+                    </div>
 
-    <div class="form-label-group">
-        {{ form_widget(registrationForm.plainPassword.second , {'attr':{'class':'form-control input-custom', 'placeholder':'inscription.confirmation'|trans,'type':'password','id':'inputPassword2','value':''}}) }}
-        {{ form_label(registrationForm.plainPassword.second, 'inscription.confirmation'|trans) }}
-        {{ form_errors(registrationForm.plainPassword.second) }}
-    </div>
+                    <div class="tm-step-actions">
+                        <p class="tm-step-note">L’activation du compte se fera ensuite par email.</p>
+                        <button type="button" class="btn tm-btn-primary" id="tm-step-next">Continuer</button>
+                    </div>
+                </div>
 
-    <div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O" data-action="TRUST_REGISTER"></div>
-    <br/>
+                <div class="tm-step-panel" data-step-panel="2">
+                    <h2 class="tm-step-title">Parlez-nous de vous.</h2>
+                    <p class="tm-step-lead">Cette étape s’adapte à votre profil. Pour un compte pro, nous demandons aussi votre activité principale.</p>
 
-    <div class="checkbox mb-3 cgu">
-        <label>
-            <input type="checkbox" required name="agreeTerms"
-                   id="agreeTerms">&nbsp;{{ 'inscription.condition-utilisation'|trans }}
-            <a class="special-below-link" style="text-decoration: underline" target="_blank"
-               href="{{path('page_navigation',{idPage:'nos-conditions',id:'conditions-generales-dutilisation'})}}">{{ 'inscription.accepter-condition'|trans }}</a>
-        </label>
-        <label>
-            <input type="checkbox" name="_email_newsletter">{{ 'inscription.newsletter'|trans }}
-    </div>
+                    <div class="tm-field-grid">
+                        <div class="tm-field-block">
+                            <label for="{{ registrationForm.last_name.vars.id }}">Prénom</label>
+                            {{ form_widget(registrationForm.last_name, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'Votre prénom',
+                                    'autocomplete': 'given-name'
+                                }
+                            }) }}
+                            {{ form_errors(registrationForm.last_name) }}
+                        </div>
+                        <div class="tm-field-block">
+                            <label for="{{ registrationForm.first_name.vars.id }}">Nom</label>
+                            {{ form_widget(registrationForm.first_name, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'Votre nom',
+                                    'autocomplete': 'family-name'
+                                }
+                            }) }}
+                            {{ form_errors(registrationForm.first_name) }}
+                        </div>
+                    </div>
 
-    <div class="text-center">
-        <button class="btn btn-lg btn-primary btn-md registration-button" type="submit">{{ 'inscription.titre'|trans }}
-        </button>
-    </div>
+                    <div class="tm-field-grid">
+                        <div class="tm-field-block">
+                            <label for="residence">Pays de résidence</label>
+                            <select id="residence" name="residence" class="form-control" required>
+                                <option value="" {% if app.request.get('residence') is empty %}selected{% endif %}>Sélectionnez votre pays de résidence</option>
+                                {% include 'Tools/CountryRegister.html.twig' %}
+                            </select>
+                        </div>
+                        <div class="tm-field-block" id="activity-wrapper">
+                            <label for="inputActivite">Activité principale</label>
+                            <select id="inputActivite" name="activite" class="form-control">
+                                <option value="">{{ 'profil-utilisateur.formulaire-profil.activite'|trans }}</option>
+                                {% for item in activities %}
+                                    <option value="{{ item.termId }}" {% if selected_activity is not empty and item.termId == selected_activity %}selected{% endif %}>
+                                        {% if app.request.locale == 'en' %}{{ item.content }}{% else %}{{ item.name }}{% endif %}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
 
-    <p class="mt-3 mb-3 text-muted text-center">
-        <a href="{{ path('home') }}" class="special-below-link">&larr;&nbsp;<span
-                    class="special-link">{{ 'general.accueil'|trans }}</span>
-        </a>&nbsp;|&nbsp;<a class="special-below-link" href="{{ path('app_login') }}">
-            <span class="special-link">{{ 'inscription.connecte'|trans }}</span>&nbsp;&rarr;</a>
-        <br><a href="/fr/register" class="special-below-link"><img src="/assets/img/fr.svg" alt="Langue francaise" height='12'>Fr</a>
-        <!-- |<a href="/fr/register" class="special-below-link"><img src="/assets/img/gb.svg" alt="Langue Anglaise" height='12'>En</a> -->
-    </p>
+                    <div class="tm-hidden-field">
+                        {{ form_widget(registrationForm.dateNaissance, {
+                            'attr': {
+                                'class': 'form-control',
+                                'tabindex': '-1',
+                                'autocomplete': 'off'
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="tm-field-block">
+                        <div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O" data-action="TRUST_REGISTER"></div>
+                    </div>
+
+                    <div class="tm-step-actions">
+                        <button type="button" class="btn tm-btn-secondary" id="tm-step-prev">Retour</button>
+                        <button class="btn tm-btn-primary" type="submit">{{ 'inscription.titre'|trans }}</button>
+                    </div>
+                </div>
+
+                <div class="tm-register-footer">
+                    <a href="{{ path('home') }}" class="special-below-link">&larr;&nbsp;<span class="special-link">{{ 'general.accueil'|trans }}</span></a>
+                    &nbsp;|&nbsp;
+                    <a href="/fr/register" class="special-below-link"><img src="/assets/img/fr.svg" alt="Langue francaise" height="12">Fr</a>
+                </div>
+            </section>
+        </div>
+    </main>
 
     {{ form_end(registrationForm) }}
-
 {% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
-    <!-- jQuery plugin for spartan image picker -->
 
     <script>
         $(document).ready(function () {
-            $("#registration_form_dateNaissance").datepicker({
-                uiLibrary: 'bootstrap4',
-                size: 'large',
-                showRightIcon: false,
-                iconsLibrary: 'fontawesome',
-                editable: true,
-                format: 'mm/dd/yyyy'
-            });
-            $("div[role='wrapper']").append("<label for='registration_form_dateNaissance'>Date de naissance</label>");
+            const $form = $('#registration-form');
+            const $stepPanels = $('[data-step-panel]');
+            const $stepPills = $('[data-step-pill]');
+            const $nextButton = $('#tm-step-next');
+            const $prevButton = $('#tm-step-prev');
+            const $roleCards = $('[data-role-card]');
+            const $activityWrapper = $('#activity-wrapper');
+            const $activityField = $('#inputActivite');
+            const $residence = $('#residence');
+            const initialStep = Number($form.data('initial-step') || 1);
 
-            function validateDateNaisance(val) {
-                let re = /^\d{2}\/\d{2}\/\d{4}$/;
-                return re.test(val);
+            function setStep(step) {
+                $stepPanels.removeClass('is-active');
+                $stepPills.removeClass('is-active');
+                $('[data-step-panel="' + step + '"]').addClass('is-active');
+                $('[data-step-pill="' + step + '"]').addClass('is-active');
+            }
+
+            function getSelectedRole() {
+                return $('input[name="role_user"]:checked').val() || '';
+            }
+
+            function toggleRoleCards() {
+                const selectedRole = getSelectedRole();
+                $roleCards.each(function () {
+                    const $card = $(this);
+                    const isSelected = $card.find('input').val() === selectedRole;
+                    $card.toggleClass('is-selected', isSelected);
+                });
             }
 
             function toggleActivityField() {
-                const role = $('#inputUtilisateur').val();
+                const role = getSelectedRole();
                 const shouldShow = role === 'ROLE_AUTO_ENTREPRENEUR' || role === 'ROLE_SOCIETE';
-                const $wrapper = $('#activity-wrapper');
-                const $field = $('#inputActivite');
 
-                $wrapper.toggleClass('d-none', !shouldShow);
-                $field.prop('required', shouldShow);
+                $activityWrapper.toggle(shouldShow);
+                $activityField.prop('required', shouldShow);
 
                 if (!shouldShow) {
-                    $field.val('');
+                    $activityField.val('');
                 }
             }
 
-            $('#inputUtilisateur').on('change', toggleActivityField);
-            toggleActivityField();
+            function validateStepOne() {
+                const fields = [
+                    document.getElementById('{{ registrationForm.email_canonical.vars.id }}'),
+                    document.getElementById('{{ registrationForm.plainPassword.first.vars.id }}'),
+                    document.getElementById('{{ registrationForm.plainPassword.second.vars.id }}'),
+                    document.getElementById('agreeTerms')
+                ];
 
+                const selectedRole = getSelectedRole();
+                const invalidField = fields.find(function (field) {
+                    return field && !field.checkValidity();
+                });
+
+                if (invalidField) {
+                    invalidField.reportValidity();
+                    return false;
+                }
+
+                if (!selectedRole) {
+                    const firstRole = document.querySelector('input[name="role_user"]');
+                    if (firstRole) {
+                        firstRole.reportValidity();
+                    }
+                    return false;
+                }
+
+                return true;
+            }
+
+            $roleCards.on('click', function () {
+                $(this).find('input').prop('checked', true).trigger('change');
+            });
+
+            $('input[name="role_user"]').on('change', function () {
+                toggleRoleCards();
+                toggleActivityField();
+            });
+
+            $nextButton.on('click', function () {
+                if (validateStepOne()) {
+                    setStep(2);
+                    setTimeout(function () {
+                        const firstVisibleInput = $('[data-step-panel="2"]').find('input:visible, select:visible').first();
+                        if (firstVisibleInput.length) {
+                            firstVisibleInput.trigger('focus');
+                        }
+                    }, 50);
+                }
+            });
+
+            $prevButton.on('click', function () {
+                setStep(1);
+            });
+
+            if ($residence.val()) {
+                $form.attr('data-initial-step', '2');
+            }
+
+            toggleRoleCards();
+            toggleActivityField();
+            setStep(initialStep === 2 ? 2 : 1);
         });
 
-        {# function validateEmail(email) {
-            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(email);
-        } #}
-
-        window.addEventListener('load', () => {
-            const $recaptcha = document.querySelector('#g-recaptcha-response');
-            if ($recaptcha) {
-                $recaptcha.setAttribute('required', 'required');
+        window.addEventListener('load', function () {
+            const recaptchaField = document.querySelector('#g-recaptcha-response');
+            if (recaptchaField) {
+                recaptchaField.setAttribute('required', 'required');
             }
-        })
+        });
     </script>
-
 {% endblock %}
