@@ -154,12 +154,21 @@
         .tm-register-heading {
             display: block;
             margin: 18px 0 0 0;
-            color: #121212;
+            color: #262626;
             font-size: 1.2rem;
             font-family: "Palanquin Dark", sans-serif;
             line-height: 1.1;
             font-weight: 700;
             text-transform: uppercase;
+            text-align: center;
+        }
+
+        .tm-register-subheading {
+            margin: 6px 0 0 0;
+            color: #6f6f6f;
+            font-size: .9rem;
+            font-family: "Palanquin", sans-serif;
+            line-height: 1.35;
             text-align: center;
         }
 
@@ -656,6 +665,7 @@
                         </span>
                     </div>
                     <h1 class="tm-register-heading">CRÉER MON PROFIL</h1>
+                    <p class="tm-register-subheading">Gratuit, sans engagement.</p>
                 </div>
 
                 {% for message in app.session.flashbag.get('register_recaptcha_error') %}
