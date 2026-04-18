@@ -89,7 +89,7 @@
 
         .tm-register-aside {
             margin-bottom: 12px;
-            padding: 1.05rem 1.2rem;
+            padding: clamp(.82rem, 1.7vh, 1.05rem) clamp(.95rem, 1.8vw, 1.2rem);
             border-radius: 20px;
             background:
                 radial-gradient(circle at top left, rgba(241, 124, 48, 0.16), transparent 24%),
@@ -100,8 +100,8 @@
 
         .tm-register-kicker {
             display: inline-block;
-            margin: 0 0 .15rem 0;
-            font-size: .72rem;
+            margin: 0 0 .12rem 0;
+            font-size: clamp(.62rem, 1.1vh, .72rem);
             text-transform: uppercase;
             letter-spacing: .2em;
             color: #f17c30;
@@ -115,7 +115,7 @@
 
         .tm-register-aside h1 {
             font-family: "Palanquin Dark", sans-serif;
-            font-size: 1.82rem;
+            font-size: clamp(1.25rem, 3.1vh, 1.82rem);
             line-height: 1.02;
             margin: 0 0 .18rem;
             color: #121212;
@@ -125,16 +125,16 @@
             margin: 0;
             max-width: 700px;
             color: #474747;
-            font-size: .84rem;
-            line-height: 1.42;
+            font-size: clamp(.72rem, 1.35vh, .84rem);
+            line-height: 1.34;
             font-family: "Palanquin", sans-serif;
         }
 
         .tm-register-points {
-            margin-top: .55rem;
+            margin-top: clamp(.35rem, .9vh, .55rem);
             display: flex;
             flex-wrap: wrap;
-            gap: .45rem;
+            gap: clamp(.28rem, .7vh, .45rem);
             max-width: none;
         }
 
@@ -142,14 +142,14 @@
             display: inline-flex;
             align-items: center;
             gap: .4rem;
-            padding: .42rem .7rem;
+            padding: clamp(.28rem, .7vh, .42rem) clamp(.52rem, 1vw, .7rem);
             border-radius: 999px;
             background: rgba(255, 255, 255, 0.86);
             border: 1px solid rgba(17, 17, 17, 0.08);
             box-shadow: 0 8px 20px rgba(17, 17, 17, 0.05);
             color: #1f1f1f;
             font-family: "Palanquin", sans-serif;
-            font-size: .76rem;
+            font-size: clamp(.66rem, 1.2vh, .76rem);
         }
 
         .tm-register-point strong {
@@ -162,7 +162,7 @@
         }
 
         .tm-register-panel {
-            padding: 1rem;
+            padding: clamp(.78rem, 1.6vh, 1rem);
             border-radius: 20px;
             background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
             border: 1px solid rgba(17, 17, 17, 0.08);
@@ -176,7 +176,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
-            margin-bottom: .45rem;
+            margin-bottom: clamp(.22rem, .7vh, .45rem);
         }
 
         .tm-register-brand {
@@ -188,14 +188,14 @@
         }
 
         .tm-register-brand img {
-            width: 38px;
-            height: 38px;
+            width: clamp(28px, 4vh, 38px);
+            height: clamp(28px, 4vh, 38px);
         }
 
         .tm-register-brand-copy strong {
             display: block;
             font-family: "Palanquin Dark", sans-serif;
-            font-size: .76rem;
+            font-size: clamp(.64rem, 1.1vh, .76rem);
             line-height: 1.2;
             letter-spacing: .16em;
             text-transform: uppercase;
@@ -205,20 +205,20 @@
         .tm-register-brand-copy span {
             display: block;
             color: #1e1e1e;
-            font-size: .76rem;
+            font-size: clamp(.64rem, 1.1vh, .76rem);
             font-family: "Palanquin Dark", sans-serif;
         }
 
         .tm-register-steps {
-            margin-bottom: .8rem;
-            padding: .7rem .8rem;
+            margin-bottom: clamp(.45rem, 1vh, .8rem);
+            padding: clamp(.42rem, 1vh, .7rem) clamp(.52rem, 1vw, .8rem);
             border-radius: 20px;
             background: rgba(255, 255, 255, 0.9);
             border: 1px solid rgba(17, 17, 17, 0.08);
             box-shadow: 0 16px 36px rgba(17, 17, 17, 0.06);
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: .55rem;
+            gap: clamp(.3rem, .8vh, .55rem);
         }
 
         .tm-step-pill {
@@ -235,14 +235,14 @@
 
         .tm-step-pill-index {
             display: inline-flex;
-            width: 24px;
-            height: 24px;
+            width: clamp(18px, 2.4vh, 24px);
+            height: clamp(18px, 2.4vh, 24px);
             align-items: center;
             justify-content: center;
             border-radius: 999px;
             background: rgba(17, 17, 17, 0.08);
             color: #fff;
-            font-size: .68rem;
+            font-size: clamp(.58rem, .95vh, .68rem);
             font-weight: 600;
             margin-bottom: 2px;
         }
@@ -253,7 +253,7 @@
 
         .tm-step-pill strong {
             display: block;
-            font-size: .66rem;
+            font-size: clamp(.58rem, .95vh, .66rem);
             font-family: "Palanquin Dark", sans-serif;
             letter-spacing: .1em;
             text-transform: uppercase;
@@ -261,8 +261,8 @@
 
         .tm-step-pill span {
             display: block;
-            font-size: .72rem;
-            line-height: 1.25;
+            font-size: clamp(.62rem, 1.05vh, .72rem);
+            line-height: 1.2;
             font-family: "Palanquin", sans-serif;
         }
 
@@ -280,7 +280,7 @@
         .tm-step-title {
             margin: 0;
             color: #121212;
-            font-size: 1.28rem;
+            font-size: clamp(1rem, 2.1vh, 1.28rem);
             line-height: 1.08;
             font-family: "Palanquin Dark", sans-serif;
         }
@@ -291,14 +291,14 @@
             color: #555;
             font-family: "Palanquin", sans-serif;
             line-height: 1.35;
-            margin-bottom: 10px;
-            font-size: .82rem;
+            margin-bottom: clamp(6px, .8vh, 10px);
+            font-size: clamp(.68rem, 1.2vh, .82rem);
         }
 
         .tm-field-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 10px;
+            gap: clamp(6px, .8vh, 10px);
         }
 
         .tm-field-grid + .tm-field-grid,
@@ -309,7 +309,7 @@
         .tm-field-block + .tm-field-block,
         .tm-field-grid + .tm-field-block,
         .tm-field-block + .tm-step-actions {
-            margin-top: 10px;
+            margin-top: clamp(6px, .8vh, 10px);
         }
 
         .tm-field,
@@ -321,21 +321,21 @@
         .tm-field-block label,
         .tm-choice-label {
             display: block;
-            margin: 0 0 5px;
+            margin: 0 0 clamp(3px, .5vh, 5px);
             color: #2f2f2f;
-            font-size: .82rem;
+            font-size: clamp(.68rem, 1.1vh, .82rem);
             font-weight: 600;
         }
 
         .tm-register-panel .form-control {
-            min-height: 42px;
+            min-height: clamp(34px, 4.4vh, 42px);
             border-radius: 16px;
             border: 1px solid rgba(17, 17, 17, 0.12);
             background: #fff;
             color: #262626;
             box-shadow: none;
-            padding: 9px 12px;
-            font-size: .82rem;
+            padding: clamp(6px, .9vh, 9px) clamp(9px, 1vw, 12px);
+            font-size: clamp(.68rem, 1.15vh, .82rem);
         }
 
         .tm-register-panel .form-control:focus {
@@ -356,7 +356,7 @@
         .tm-role-list {
             display: grid;
             grid-template-columns: 1fr;
-            gap: .55rem;
+            gap: clamp(.35rem, .8vh, .55rem);
         }
 
         .tm-role-card {
@@ -366,7 +366,7 @@
             gap: .75rem;
             border: 1px solid rgba(17, 17, 17, 0.16);
             border-radius: 16px;
-            padding: .8rem .95rem;
+            padding: clamp(.5rem, 1vh, .8rem) clamp(.62rem, 1.1vw, .95rem);
             background: #fff;
             box-shadow: none;
             cursor: pointer;
@@ -387,8 +387,8 @@
             appearance: none;
             -webkit-appearance: none;
             flex: 0 0 auto;
-            width: 18px;
-            height: 18px;
+            width: clamp(14px, 1.8vh, 18px);
+            height: clamp(14px, 1.8vh, 18px);
             margin: .18rem 0 0 0;
             border-radius: 50%;
             border: 1.5px solid rgba(17, 17, 17, 0.5);
@@ -421,7 +421,7 @@
 
         .tm-role-card strong {
             display: block;
-            font-size: .78rem;
+            font-size: clamp(.68rem, 1.05vh, .78rem);
             color: #121212;
             margin-bottom: .25rem;
             line-height: 1.22;
@@ -432,12 +432,12 @@
             display: block;
             color: #505050;
             line-height: 1.28;
-            font-size: .72rem;
+            font-size: clamp(.62rem, 1vh, .72rem);
             font-family: "Palanquin", sans-serif;
         }
 
         .tm-register-consents {
-            padding: .78rem .9rem;
+            padding: clamp(.5rem, .9vh, .78rem) clamp(.62rem, 1vw, .9rem);
             border-radius: 20px;
             background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
             border: 1px solid rgba(17, 17, 17, 0.08);
@@ -450,7 +450,7 @@
             gap: 8px;
             color: #494949;
             line-height: 1.45;
-            font-size: .76rem;
+            font-size: clamp(.64rem, 1vh, .76rem);
         }
 
         .tm-consent + .tm-consent {
@@ -477,10 +477,10 @@
         .tm-btn-secondary,
         .tm-btn-primary {
             border-radius: 14px;
-            min-height: 38px;
-            padding: 7px 14px;
+            min-height: clamp(32px, 4vh, 38px);
+            padding: clamp(5px, .7vh, 7px) clamp(10px, 1vw, 14px);
             font-family: "Palanquin Dark", sans-serif;
-            font-size: .78rem;
+            font-size: clamp(.66rem, .95vh, .78rem);
         }
 
         .tm-btn-secondary {
@@ -499,7 +499,7 @@
 
         .tm-step-note {
             color: #7a7a7a;
-            font-size: .72rem;
+            font-size: clamp(.62rem, .9vh, .72rem);
             line-height: 1.25;
         }
 
@@ -511,7 +511,7 @@
             margin-top: 10px;
             text-align: center;
             color: #666;
-            font-size: .76rem;
+            font-size: clamp(.62rem, .9vh, .76rem);
         }
 
         .tm-register-footer a {
@@ -580,6 +580,22 @@
 
             .tm-role-card span {
                 font-size: .68rem;
+            }
+        }
+
+        @media (min-width: 992px) and (max-height: 780px) {
+            .tm-register-form {
+                align-items: flex-start;
+            }
+
+            .tm-register-shell {
+                padding-top: 10px;
+                padding-bottom: 8px;
+            }
+
+            .tm-register-wrap,
+            .tm-register-panel {
+                max-width: 820px;
             }
         }
 
