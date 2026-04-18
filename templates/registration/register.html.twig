@@ -43,11 +43,9 @@
     <style>
         .tm-register-form {
             width: 100%;
-            min-height: 100vh;
+            min-height: auto;
             margin: 0 auto;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
+            display: block;
         }
 
         body {
@@ -69,16 +67,14 @@
         .tm-register-shell {
             min-height: auto;
             width: 100%;
-            padding: 28px 18px 18px;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
+            padding: 24px 18px 18px;
+            display: block;
         }
 
         .tm-register-wrap {
             width: 100%;
             max-width: 860px;
-            margin: 0 auto;
+            margin: 24px auto 0;
             display: block;
         }
 
@@ -528,15 +524,6 @@
         }
 
         @media (max-width: 991px) {
-            .tm-register-form {
-                min-height: auto;
-                display: block;
-            }
-
-            .tm-register-shell {
-                display: block;
-            }
-
             .tm-register-aside {
                 padding: 1.5rem;
                 border-radius: 24px;
@@ -548,8 +535,12 @@
 
         @media (min-width: 992px) and (max-height: 900px) {
             .tm-register-shell {
-                padding-top: 42px;
+                padding-top: 16px;
                 padding-bottom: 10px;
+            }
+
+            .tm-register-wrap {
+                margin-top: 16px;
             }
 
             .tm-register-aside {
@@ -584,10 +575,6 @@
         }
 
         @media (min-width: 992px) and (max-height: 780px) {
-            .tm-register-form {
-                align-items: flex-start;
-            }
-
             .tm-register-shell {
                 padding-top: 10px;
                 padding-bottom: 8px;
@@ -597,11 +584,19 @@
             .tm-register-panel {
                 max-width: 820px;
             }
+
+            .tm-register-wrap {
+                margin-top: 10px;
+            }
         }
 
         @media (max-width: 767px) {
             .tm-register-shell {
                 padding: 18px 14px 24px;
+            }
+
+            .tm-register-wrap {
+                margin-top: 12px;
             }
 
             .tm-register-panel,
