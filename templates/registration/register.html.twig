@@ -297,6 +297,19 @@
             gap: clamp(6px, .8vh, 10px);
         }
 
+        .tm-field-grid-password {
+            align-items: start;
+        }
+
+        .tm-field-grid-password .tm-field-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tm-field-grid-password .tm-field-block label {
+            min-height: 2.2em;
+        }
+
         .tm-field-grid + .tm-field-grid,
         .tm-field-grid + .tm-role-grid,
         .tm-role-grid + .tm-field-grid,
@@ -749,7 +762,7 @@
                         </label>
                     </div>
 
-                    <div class="tm-field-grid">
+                    <div class="tm-field-grid tm-field-grid-password">
                         <div class="tm-field-block">
                             <label for="{{ registrationForm.plainPassword.first.vars.id }}">{{ 'inscription.passe'|trans }}</label>
                             {{ form_widget(registrationForm.plainPassword.first, {
