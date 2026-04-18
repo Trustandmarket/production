@@ -98,36 +98,39 @@
         }
 
         .tm-register-brand {
-            display: inline-flex;
-            align-items: center;
-            gap: 14px;
+            display: inline-block;
             text-decoration: none;
             color: #262626;
-            min-width: max-content;
-        }
-
-        .tm-register-brand img {
-            width: clamp(28px, 4vh, 38px);
-            height: clamp(28px, 4vh, 38px);
         }
 
         .tm-register-brand-copy {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            min-width: max-content;
+            display: block;
         }
 
         .tm-register-brand-copy strong {
-            display: block;
+            position: relative;
+            display: inline-block;
             font-family: "Palanquin Dark", sans-serif;
-            font-size: clamp(.64rem, 1.1vh, .76rem);
+            font-size: clamp(.82rem, 1.35vh, 1rem);
             line-height: 1.2;
-            letter-spacing: .22em;
+            letter-spacing: .24em;
             text-transform: uppercase;
             color: #262626;
             white-space: nowrap;
             text-align: left;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .tm-register-brand-copy strong::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -7px;
+            width: 62%;
+            height: 2px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, rgba(241, 124, 48, 0.95) 0%, rgba(241, 124, 48, 0.2) 100%);
         }
 
         .tm-register-brand-copy span {
@@ -612,7 +615,6 @@
             <section class="tm-register-panel">
                 <div class="tm-register-topbar">
                     <a href="{{ path('home') }}" class="tm-register-brand">
-                        <img src="{{ prerender(asset('assets/img/logo_tm.svg')) }}" alt="Trust &amp; Market">
                         <span class="tm-register-brand-copy">
                             <strong>TRUST <span class="tm-brand-accent">&amp;</span> MARKET</strong>
                             <span>CRÉER MON PROFIL</span>
