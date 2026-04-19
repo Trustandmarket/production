@@ -267,6 +267,11 @@
             font-family: "Palanquin Dark", sans-serif;
         }
 
+        .tm-complete-required {
+            color: #f17c30;
+            font-size: .9em;
+        }
+
         .tm-complete-input,
         .tm-complete-select {
             width: 100%;
@@ -501,19 +506,19 @@
                         <input type="hidden" name="_token" value="{{ csrf_token('complete_profile') }}">
 
                         <div class="tm-complete-field">
-                            <label for="complete_first_name">Prénom</label>
-                            <input id="complete_first_name" class="tm-complete-input" type="text" name="first_name" placeholder="Votre prénom" value="{{ form_data.first_name|default('')|e('html_attr') }}" autocomplete="given-name">
+                            <label for="complete_first_name">Prénom <span class="tm-complete-required">*</span></label>
+                            <input id="complete_first_name" class="tm-complete-input" type="text" name="first_name" placeholder="Votre prénom" value="{{ form_data.first_name|default('')|e('html_attr') }}" autocomplete="given-name" required>
                         </div>
 
                         <div class="tm-complete-field">
-                            <label for="complete_last_name">Nom</label>
-                            <input id="complete_last_name" class="tm-complete-input" type="text" name="last_name" placeholder="Votre nom" value="{{ form_data.last_name|default('')|e('html_attr') }}" autocomplete="family-name">
+                            <label for="complete_last_name">Nom <span class="tm-complete-required">*</span></label>
+                            <input id="complete_last_name" class="tm-complete-input" type="text" name="last_name" placeholder="Votre nom" value="{{ form_data.last_name|default('')|e('html_attr') }}" autocomplete="family-name" required>
                         </div>
 
                         <div class="tm-complete-field">
-                            <label for="complete_residence">Pays de résidence</label>
+                            <label for="complete_residence">Pays de résidence <span class="tm-complete-required">*</span></label>
                             <div class="tm-complete-select-wrap">
-                                <select id="complete_residence" class="tm-complete-select" name="residence" data-selected-value="{{ form_data.residence|default('')|e('html_attr') }}" autocomplete="country-name">
+                                <select id="complete_residence" class="tm-complete-select" name="residence" data-selected-value="{{ form_data.residence|default('')|e('html_attr') }}" autocomplete="country-name" required>
                                     <option value="">Sélectionnez votre pays de résidence</option>
                                     {% include 'countryRegister.html.twig' %}
                                 </select>
@@ -522,9 +527,9 @@
 
                         {% if role_card.is_professional %}
                             <div class="tm-complete-field">
-                                <label for="complete_activity">Activité principale</label>
+                                <label for="complete_activity">Activité principale <span class="tm-complete-required">*</span></label>
                                 <div class="tm-complete-select-wrap">
-                                    <select id="complete_activity" class="tm-complete-select" name="activite" data-selected-value="{{ form_data.activite|default('')|e('html_attr') }}">
+                                    <select id="complete_activity" class="tm-complete-select" name="activite" data-selected-value="{{ form_data.activite|default('')|e('html_attr') }}" required>
                                         <option value="">Sélectionnez votre activité principale</option>
                                         {% for item in activities %}
                                             <option value="{{ item.termId }}">
@@ -537,7 +542,7 @@
                         {% endif %}
 
                         <div class="tm-complete-actions">
-                            <button id="tm-complete-submit" class="tm-complete-btn tm-complete-btn-primary" type="submit" disabled>ENREGISTRER MON PROFIL</button>
+                            <button id="tm-complete-submit" class="tm-complete-btn tm-complete-btn-primary" type="submit">ENREGISTRER MON PROFIL</button>
                             <a href="{{ path('home') }}" class="tm-complete-btn tm-complete-btn-secondary">Plus tard</a>
                         </div>
                     </form>
@@ -562,29 +567,6 @@
                     select.value = selectedValue;
                 }
             });
-
-            var form = document.querySelector('.tm-complete-form');
-            var submitButton = document.getElementById('tm-complete-submit');
-
-            if (!form || !submitButton) {
-                return;
-            }
-
-            var fields = form.querySelectorAll('input[type="text"], select');
-            var toggleSubmitState = function () {
-                var hasAnyValue = Array.prototype.some.call(fields, function (field) {
-                    return field.value !== null && field.value.trim() !== '';
-                });
-
-                submitButton.disabled = !hasAnyValue;
-            };
-
-            fields.forEach(function (field) {
-                field.addEventListener('input', toggleSubmitState);
-                field.addEventListener('change', toggleSubmitState);
-            });
-
-            toggleSubmitState();
         });
     </script>
 {% endblock %}
