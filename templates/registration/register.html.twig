@@ -50,8 +50,9 @@
 
         body {
             background:
-                radial-gradient(circle at top left, rgba(241, 124, 48, 0.09), transparent 18%),
-                linear-gradient(180deg, #f8f4ef 0%, #f8f6f3 32%, #f4f6f8 100%);
+                radial-gradient(circle at top left, rgba(241, 124, 48, 0.20), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(16, 16, 16, 0.06), transparent 28%),
+                linear-gradient(135deg, #fff9f4 0%, #ffffff 46%, #f6f7f9 100%);
         }
 
         #g-recaptcha-response {
@@ -80,11 +81,14 @@
 
         .tm-register-panel {
             position: relative;
-            padding: clamp(1rem, 2.1vh, 1.3rem) clamp(1rem, 2vw, 1.4rem) clamp(1.15rem, 2.4vh, 1.6rem);
-            border-radius: 20px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.985) 0%, rgba(255,255,255,0.94) 100%);
-            border: 1px solid rgba(17, 17, 17, 0.08);
-            box-shadow: 0 24px 52px rgba(17, 17, 17, 0.08);
+            padding: clamp(1.2rem, 2.3vh, 1.55rem) clamp(1.15rem, 2.2vw, 1.6rem) clamp(1.3rem, 2.6vh, 1.8rem);
+            border-radius: 32px;
+            background:
+                radial-gradient(circle at top left, rgba(241, 124, 48, 0.14), transparent 22%),
+                radial-gradient(circle at bottom right, rgba(16, 16, 16, 0.04), transparent 26%),
+                linear-gradient(135deg, #fff9f4 0%, #ffffff 46%, #f6f7f9 100%);
+            border: 1px solid rgba(241, 124, 48, 0.18);
+            box-shadow: 0 24px 60px rgba(26, 26, 26, 0.10);
             max-width: 920px;
             margin: 0 auto;
             overflow: hidden;
@@ -92,7 +96,7 @@
 
         .tm-register-topbar {
             position: relative;
-            margin-bottom: clamp(.9rem, 1.8vh, 1.2rem);
+            margin-bottom: clamp(1.1rem, 2vh, 1.45rem);
             padding-right: 64px;
         }
 
@@ -193,23 +197,24 @@
 
         .tm-register-subheading {
             margin: 6px 0 0 0;
-            color: #6a6a6a;
+            color: #4c4c4c;
             font-size: clamp(.95rem, 1.35vh, 1.05rem);
             font-family: "Palanquin", sans-serif;
-            line-height: 1.35;
+            line-height: 1.5;
             text-align: center;
         }
 
         .tm-register-steps {
             margin-bottom: clamp(1rem, 1.8vh, 1.35rem);
-            padding: clamp(.7rem, 1.2vh, .95rem) clamp(.8rem, 1.5vw, 1.05rem);
-            border-radius: 20px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(252, 248, 244, 0.9) 100%);
-            border: 1px solid rgba(17, 17, 17, 0.08);
-            box-shadow: 0 16px 32px rgba(17, 17, 17, 0.05);
+            padding: clamp(.95rem, 1.45vh, 1.15rem) clamp(1rem, 1.7vw, 1.2rem);
+            border-radius: 26px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 100%);
+            border: 1px solid rgba(18, 18, 18, 0.07);
+            box-shadow: 0 16px 36px rgba(17, 17, 17, 0.07);
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: clamp(.55rem, 1vh, .8rem);
+            backdrop-filter: blur(6px);
         }
 
         .tm-step-pill {
@@ -229,7 +234,7 @@
         }
 
         .tm-step-pill.is-upcoming {
-            color: #8d8d8d;
+            color: #7f7f7f;
         }
 
         .tm-step-pill-index {
@@ -239,7 +244,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 999px;
-            background: rgba(17, 17, 17, 0.08);
+            background: rgba(17, 17, 17, 0.10);
             color: #fff;
             font-size: clamp(.58rem, .95vh, .68rem);
             font-weight: 600;
@@ -259,7 +264,7 @@
             display: block;
             font-size: clamp(.76rem, 1.1vh, .86rem);
             font-family: "Palanquin Dark", sans-serif;
-            letter-spacing: .1em;
+            letter-spacing: .16em;
             text-transform: uppercase;
         }
 
@@ -393,10 +398,10 @@
         .tm-register-panel .form-control {
             min-height: clamp(34px, 4.4vh, 42px);
             border-radius: 16px;
-            border: 1px solid rgba(17, 17, 17, 0.12);
+            border: 1px solid rgba(18, 18, 18, 0.10);
             background: #fff;
             color: #262626;
-            box-shadow: none;
+            box-shadow: 0 6px 16px rgba(17, 17, 17, 0.03);
             padding: clamp(6px, .9vh, 9px) clamp(9px, 1vw, 12px);
             font-size: clamp(.95rem, 1.3vh, 1.02rem);
         }
@@ -427,25 +432,26 @@
             display: flex;
             align-items: flex-start;
             gap: .85rem;
-            border: 1px solid rgba(17, 17, 17, 0.14);
-            border-radius: 16px;
-            padding: clamp(.65rem, 1.15vh, .95rem) clamp(.78rem, 1.25vw, 1.05rem);
+            border: 1px solid rgba(18, 18, 18, 0.07);
+            border-radius: 22px;
+            padding: clamp(.75rem, 1.25vh, 1.05rem) clamp(.9rem, 1.35vw, 1.15rem);
             background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.94) 100%);
-            box-shadow: 0 10px 24px rgba(17, 17, 17, 0.035);
+            box-shadow: 0 16px 36px rgba(17, 17, 17, 0.07);
             cursor: pointer;
             transition: border-color .2s ease, box-shadow .2s ease, background .2s ease, transform .2s ease;
+            backdrop-filter: blur(6px);
         }
 
         .tm-role-card:hover {
-            border-color: rgba(17, 17, 17, 0.24);
-            box-shadow: 0 14px 28px rgba(17, 17, 17, 0.05);
-            transform: translateY(-1px);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 44px rgba(17, 17, 17, 0.10);
+            border-color: rgba(241, 124, 48, 0.20);
         }
 
         .tm-role-card.is-selected {
-            border-color: #1d8aa8;
-            box-shadow: inset 0 0 0 1px #1d8aa8, 0 16px 30px rgba(29, 138, 168, 0.08);
-            background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(245,250,252,0.96) 100%);
+            border-color: rgba(241, 124, 48, 0.34);
+            box-shadow: inset 0 0 0 1px rgba(241, 124, 48, 0.30), 0 18px 38px rgba(241, 124, 48, 0.10);
+            background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,249,244,0.96) 100%);
         }
 
         .tm-role-card input[type="radio"] {
@@ -467,13 +473,13 @@
             position: absolute;
             inset: 3px;
             border-radius: 50%;
-            background: #1d8aa8;
+            background: #f17c30;
             transform: scale(0);
             transition: transform .18s ease;
         }
 
         .tm-role-card.is-selected input[type="radio"] {
-            border-color: #1d8aa8;
+            border-color: #f17c30;
         }
 
         .tm-role-card.is-selected input[type="radio"]::after {
@@ -503,10 +509,10 @@
 
         .tm-register-consents {
             padding: clamp(.6rem, 1vh, .88rem) clamp(.72rem, 1.1vw, .98rem);
-            border-radius: 20px;
+            border-radius: 22px;
             background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
-            border: 1px solid rgba(17, 17, 17, 0.08);
-            box-shadow: 0 14px 30px rgba(17, 17, 17, 0.05);
+            border: 1px solid rgba(18, 18, 18, 0.07);
+            box-shadow: 0 12px 28px rgba(17, 17, 17, 0.06);
         }
 
         .tm-consent {
