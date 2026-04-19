@@ -509,8 +509,12 @@ class UserCrudController extends AbstractCrudController
            return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
         }
         
-        $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user);
-        $this->addFlash('success', "Activation email sent successfully.");
+        $emailSendResult = $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user);
+        if ($emailSendResult['ok']) {
+            $this->addFlash('success', "Activation email sent successfully.");
+        } else {
+            $this->addFlash('danger', "Activation email failed: " . $emailSendResult['error']);
+        }
         return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
     }
 

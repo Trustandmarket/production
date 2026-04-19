@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\{Abonnement, OffreInterne, User};
+use App\Service\BrevoMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,17 +19,19 @@ class EmailVerifier
     private $mailer;
     private $entityManager;
     private $params;
+    private $brevoMailer;
 
     public function __construct(ParameterBagInterface $params, VerifyEmailHelperInterface $helper,
-     MailerInterface $mailer, EntityManagerInterface $manager)
+     MailerInterface $mailer, EntityManagerInterface $manager, BrevoMailer $brevoMailer)
     {
         $this->verifyEmailHelper = $helper;
         $this->mailer = $mailer;
         $this->entityManager = $manager;
         $this->params = $params;
+        $this->brevoMailer = $brevoMailer;
     }
 
-    public function sendEmailConfirmation(string $verifyEmailRouteName, User $user): void
+    public function sendEmailConfirmation(string $verifyEmailRouteName, User $user): array
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
             $verifyEmailRouteName,
@@ -55,24 +58,7 @@ class EmailVerifier
             ]
         ];
 
-        // Initialize cURL
-        $ch = curl_init();
-
-        // Set the cURL options
-        curl_setopt($ch, CURLOPT_URL, 'https://api.brevo.com/v3/smtp/email');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'accept: application/json',
-            'api-key: ' . $_SERVER['SENDBLUE_API_KEY'], // Replace with your actual API key
-            'content-type: application/json'
-        ]);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-        // Execute the request
-        $response = curl_exec($ch);
-        // Close cURL session
-        curl_close($ch);
+        return $this->brevoMailer->sendTemplate($data);
     }
 
     /**

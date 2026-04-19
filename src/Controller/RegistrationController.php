@@ -198,7 +198,7 @@ class RegistrationController extends AbstractController
                     $entityManager->flush();
                 }
                 // End updates meta data
-                $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user);
+                $emailSendResult = $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user);
                 // authenticate the user and use onAuthenticationSuccess on the authenticator
                 //$userAuthenticator->authenticateUser($user, $authenticator, $request);
                 //Send email to admin
@@ -236,6 +236,11 @@ class RegistrationController extends AbstractController
                 curl_close($ch);
 
                 $request->getSession()->set('registration_pending_email', (string) $user->getEmailCanonical());
+                $request->getSession()->set('registration_pending_role', (string) $selectedRole);
+
+                if (!$emailSendResult['ok']) {
+                    $this->addFlash('register_email_error', $emailSendResult['error']);
+                }
 
                 return $this->redirectToRoute('app_registration_confirmation_email');
             } else {
@@ -313,9 +318,28 @@ class RegistrationController extends AbstractController
     public function appRegistrationConfirmationEmail(Request $request): Response
     {
         $pendingEmail = $request->getSession()->get('registration_pending_email');
+        $pendingRole = $request->getSession()->get('registration_pending_role');
+
+        $roleCard = [
+            'title' => 'Abonné',
+            'description' => 'Accès exclusifs à des services créatifs',
+        ];
+
+        if ($pendingRole === 'ROLE_AUTO_ENTREPRENEUR') {
+            $roleCard = [
+                'title' => 'Professionnel auto-entrepreneur',
+                'description' => 'Freelancer, Micro-entreprise',
+            ];
+        } elseif ($pendingRole === 'ROLE_SOCIETE') {
+            $roleCard = [
+                'title' => 'Professionnel société',
+                'description' => 'Entreprise, Société',
+            ];
+        }
 
         return $this->render('registration/check_email.html.twig', [
             'pending_email' => $pendingEmail,
+            'role_card' => $roleCard,
         ]);
     }
 
