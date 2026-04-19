@@ -235,6 +235,8 @@ class RegistrationController extends AbstractController
                 // Close cURL session
                 curl_close($ch);
 
+                $request->getSession()->set('registration_pending_email', (string) $user->getEmailCanonical());
+
                 return $this->redirectToRoute('app_registration_confirmation_email');
             } else {
                 $this->addFlash('register_recaptcha_error', '');
@@ -308,9 +310,13 @@ class RegistrationController extends AbstractController
     /**
      * @Route("/registration/confirmation_email", name="app_registration_confirmation_email")
      */
-    public function appRegistrationConfirmationEmail(): Response
+    public function appRegistrationConfirmationEmail(Request $request): Response
     {
-        return $this->render('registration/check_email.html.twig');
+        $pendingEmail = $request->getSession()->get('registration_pending_email');
+
+        return $this->render('registration/check_email.html.twig', [
+            'pending_email' => $pendingEmail,
+        ]);
     }
 
     /**
