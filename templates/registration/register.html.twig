@@ -311,6 +311,9 @@
             column-gap: clamp(6px, .8vh, 10px);
             row-gap: clamp(3px, .5vh, 5px);
             align-items: start;
+            grid-template-areas:
+                "label1 label2"
+                "field1 field2";
         }
 
         .tm-password-row .tm-password-label {
@@ -322,8 +325,24 @@
             font-family: "Palanquin Dark", sans-serif;
         }
 
+        .tm-password-row .tm-password-label:nth-of-type(1) {
+            grid-area: label1;
+        }
+
+        .tm-password-row .tm-password-label:nth-of-type(2) {
+            grid-area: label2;
+        }
+
         .tm-password-row .tm-password-field {
             min-width: 0;
+        }
+
+        .tm-password-row .tm-password-field:nth-of-type(1) {
+            grid-area: field1;
+        }
+
+        .tm-password-row .tm-password-field:nth-of-type(2) {
+            grid-area: field2;
         }
 
         .tm-password-input-wrap {
@@ -677,24 +696,32 @@
 
         }
 
-        @media (max-width: 767px) {
+        @media (max-width: 991px) {
             .tm-register-shell {
-                padding: 132px 14px 56px;
+                padding: 48px 14px 56px;
             }
 
             .tm-register-wrap {
                 margin-top: 0;
+                max-width: 100%;
             }
 
             .tm-register-panel {
-                padding: 22px 18px;
+                padding: 20px 16px 24px;
+                border-radius: 24px;
             }
 
-            .tm-register-topbar,
-            .tm-step-actions,
-            .tm-field-grid {
-                grid-template-columns: 1fr;
-                display: grid;
+            .tm-register-topbar {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+                padding-right: 0;
+            }
+
+            .tm-register-topbar-main {
+                width: 100%;
+                align-items: center;
             }
 
             .tm-register-heading {
@@ -703,15 +730,15 @@
 
             .tm-register-steps {
                 grid-template-columns: 1fr;
+                gap: 12px;
             }
 
-            .tm-register-topbar {
-                gap: 14px;
-                padding-right: 0;
+            .tm-step-pill {
+                min-height: auto;
             }
 
-            .tm-step-title {
-                font-size: 1.28rem;
+            .tm-field-grid {
+                grid-template-columns: 1fr;
             }
 
             .tm-register-brand {
@@ -726,6 +753,22 @@
 
             .tm-password-row {
                 grid-template-columns: 1fr;
+                grid-template-areas:
+                    "label1"
+                    "field1"
+                    "label2"
+                    "field2";
+                row-gap: 8px;
+            }
+
+            .tm-step-actions {
+                margin-top: 32px;
+            }
+
+            .tm-btn-primary,
+            .tm-btn-secondary {
+                width: 100%;
+                max-width: 320px;
             }
         }
     </style>
