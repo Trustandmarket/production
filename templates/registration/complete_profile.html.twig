@@ -466,7 +466,16 @@
                         {% if role_card.is_professional %}
                             <div class="tm-complete-field">
                                 <label for="complete_activity">Activité principale</label>
-                                <input id="complete_activity" class="tm-complete-input" type="text" name="activite" placeholder="Décrivez votre activité principale">
+                                <div class="tm-complete-select-wrap">
+                                    <select id="complete_activity" class="tm-complete-select" name="activite">
+                                        <option value="">Sélectionnez votre activité principale</option>
+                                        {% for item in activities %}
+                                            <option value="{{ item.termId }}">
+                                                {% if app.request.locale == 'en' %}{{ item.content }}{% else %}{{ item.name }}{% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
                         {% endif %}
 

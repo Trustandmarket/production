@@ -378,6 +378,7 @@ class RegistrationController extends AbstractController
 
         return $this->render('registration/complete_profile.html.twig', [
             'role_card' => $roleCard,
+            'activities' => $this->service_manager->postCategorie1('product_activity'),
         ]);
     }
 
