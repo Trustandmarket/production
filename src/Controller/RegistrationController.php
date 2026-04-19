@@ -64,6 +64,12 @@ class RegistrationController extends AbstractController
                     $dateNaissance = trim((string) ($registrationData['dateNaissance'] ?? ''));
                     $nationalite = trim((string) $request->get('nationalite', ''));
                     $residence = trim((string) $request->get('residence', ''));
+                    $emailCanonical = (string) $user->getEmailCanonical();
+                    $displayName = trim($firstName . ' ' . $lastName);
+                    if ($displayName === '') {
+                        $displayName = $emailCanonical;
+                    }
+                    $userNicename = $firstName !== '' ? $firstName : $emailCanonical;
 
                     $user->setPassword(
                         $userPasswordHasher->hashPassword(
@@ -75,8 +81,8 @@ class RegistrationController extends AbstractController
                     $user->setUserEmail($user->getEmailCanonical());
                     $user->setUsernameCanonical($user->getEmailCanonical());
                     $user->setUserActivationKey($registrationData['_token'] ?? '');
-                    $user->setUserNicename($firstName);
-                    $user->setDisplayName(trim($firstName . ' ' . $lastName));
+                    $user->setUserNicename($userNicename);
+                    $user->setDisplayName($displayName);
                     $user->setUserActivationKey($registrationData['_token'] ?? '');
                     $user->setDateNaissance($dateNaissance !== '' ? $dateNaissance : null);
                     $user->setRoles($rolesArray);
