@@ -469,6 +469,9 @@
                                 :
                                 <span>{{ birth_place|country_name }}</span>
                             </p>
+                            <p class="user-info-text">Pays de résidence :
+                                <span>{{ residence|country_name }}</span>
+                            </p>
                         </div>
                         <div class="col-md-4">
                             <p class="user-info-text">{{ 'profil-utilisateur.formulaire-profil.adresse-email'|trans }}:
@@ -687,6 +690,15 @@
                                     <select id="birth_place" name="birth_place" required
                                             class="browser-default custom-select">
                                         <option value="{{ birth_place }}">{% if birth_place != '' %}{{ birth_place|country_name }}{% else %}{{ 'general.lieu-de-naissance'|trans }} *{% endif %}
+                                        </option>
+                                        {% include 'Tools/CountryNat.html.twig' %}
+                                    </select>
+                                </div>
+                                <div class="md-form">
+                                    <span class="mimic-label">Pays de résidence</span>
+                                    <select id="residence" name="residence" required
+                                            class="browser-default custom-select">
+                                        <option value="{{ residence }}">{% if residence != '' %}{{ residence|country_name }}{% else %}Pays de résidence *{% endif %}
                                         </option>
                                         {% include 'Tools/CountryNat.html.twig' %}
                                     </select>
@@ -1345,6 +1357,17 @@
                 } else {
                     $("#birth_place").removeClass("is-valid");
                     $("#birth_place").addClass("is-invalid");
+                }
+            });
+
+            $("#residence").change(function () {
+                let residence = $("#residence").val();
+                if (isNaN(residence)) {
+                    $("#residence").removeClass("is-invalid");
+                    $("#residence").addClass("is-valid");
+                } else {
+                    $("#residence").removeClass("is-valid");
+                    $("#residence").addClass("is-invalid");
                 }
             });
 

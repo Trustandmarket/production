@@ -344,6 +344,8 @@ class ProfileController extends AbstractController
         $this->service_manager->updateUserMeta($userId, 'sexe', trim($request->get('sexe')));
         //Birth Place
         $this->service_manager->updateUserMeta($userId, 'nationalityCountry', trim($request->get('birth_place')));
+        //Residence Place
+        $this->service_manager->updateUserMeta($userId, 'residenceCountry', trim($request->get('residence')));
         //Telephone
         $this->service_manager->updateUserMeta($userId, 'telephone', trim($request->get('telephone')));
         //Raison Sociale
