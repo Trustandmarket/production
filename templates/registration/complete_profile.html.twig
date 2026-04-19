@@ -250,9 +250,42 @@
             box-shadow: 0 6px 16px rgba(17, 17, 17, 0.03);
         }
 
+        .tm-complete-input:focus,
+        .tm-complete-select:focus {
+            outline: none;
+            border-color: rgba(241, 124, 48, 0.55);
+            box-shadow: 0 0 0 3px rgba(241, 124, 48, 0.10);
+        }
+
+        .tm-complete-select-wrap {
+            position: relative;
+        }
+
         .tm-complete-select {
             appearance: none;
             -webkit-appearance: none;
+            padding-right: 3.25rem;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,249,244,0.92) 100%);
+            cursor: pointer;
+        }
+
+        .tm-complete-select-wrap::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: 1.1rem;
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid #b49a78;
+            border-bottom: 2px solid #b49a78;
+            transform: translateY(-60%) rotate(45deg);
+            pointer-events: none;
+        }
+
+        .tm-complete-select option {
+            color: #212529;
+            background: #ffffff;
         }
 
         .tm-complete-actions {
@@ -422,10 +455,12 @@
 
                         <div class="tm-complete-field">
                             <label for="complete_residence">Pays de résidence</label>
-                            <select id="complete_residence" class="tm-complete-select" name="residence">
-                                <option value="">Sélectionnez votre pays de résidence</option>
-                                {% include 'countryRegister.html.twig' %}
-                            </select>
+                            <div class="tm-complete-select-wrap">
+                                <select id="complete_residence" class="tm-complete-select" name="residence">
+                                    <option value="">Sélectionnez votre pays de résidence</option>
+                                    {% include 'countryRegister.html.twig' %}
+                                </select>
+                            </div>
                         </div>
 
                         {% if role_card.is_professional %}
