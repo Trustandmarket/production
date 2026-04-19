@@ -403,29 +403,33 @@ class RegistrationController extends AbstractController
                 }
 
                 if (empty($errors)) {
-                    $displayName = trim($formData['first_name'] . ' ' . $formData['last_name']);
-                    if ($displayName === '') {
-                        $displayName = (string) $user->getEmailCanonical();
+                    try {
+                        $displayName = trim($formData['first_name'] . ' ' . $formData['last_name']);
+                        if ($displayName === '') {
+                            $displayName = (string) $user->getEmailCanonical();
+                        }
+
+                        $user->setDisplayName($displayName);
+                        $user->setUserNicename($formData['first_name'] !== '' ? $formData['first_name'] : (string) $user->getEmailCanonical());
+                        $entityManager->flush();
+
+                        $this->service_manager->updateUserMeta($user->getId(), 'first_name', $formData['first_name']);
+                        $this->service_manager->updateUserMeta($user->getId(), 'last_name', $formData['last_name']);
+                        $this->service_manager->updateUserMeta($user->getId(), 'billing_first_name', $formData['first_name']);
+                        $this->service_manager->updateUserMeta($user->getId(), 'billing_last_name', $formData['last_name']);
+                        $this->service_manager->updateUserMeta($user->getId(), 'residenceCountry', $formData['residence']);
+                        $this->service_manager->updateUserMeta(
+                            $user->getId(),
+                            'activite_principale',
+                            $roleCard['is_professional'] ? $formData['activite'] : ''
+                        );
+
+                        $this->addFlash('info', 'Votre profil a bien été enregistré. Vous pouvez maintenant vous connecter.');
+
+                        return $this->redirectToRoute('app_login');
+                    } catch (\Throwable $exception) {
+                        $this->addFlash('complete_profile_error', 'Un erreur technique est survenue. Veuillez essayer ultérieurement depuis votre profil.');
                     }
-
-                    $user->setDisplayName($displayName);
-                    $user->setUserNicename($formData['first_name'] !== '' ? $formData['first_name'] : (string) $user->getEmailCanonical());
-                    $entityManager->flush();
-
-                    $this->service_manager->updateUserMeta($user->getId(), 'first_name', $formData['first_name']);
-                    $this->service_manager->updateUserMeta($user->getId(), 'last_name', $formData['last_name']);
-                    $this->service_manager->updateUserMeta($user->getId(), 'billing_first_name', $formData['first_name']);
-                    $this->service_manager->updateUserMeta($user->getId(), 'billing_last_name', $formData['last_name']);
-                    $this->service_manager->updateUserMeta($user->getId(), 'residenceCountry', $formData['residence']);
-                    $this->service_manager->updateUserMeta(
-                        $user->getId(),
-                        'activite_principale',
-                        $roleCard['is_professional'] ? $formData['activite'] : ''
-                    );
-
-                    $this->addFlash('complete_profile_success', 'Les informations de votre profil ont bien été enregistrées.');
-
-                    return $this->redirectToRoute('app_registration_complete_profile');
                 }
 
                 foreach ($errors as $error) {

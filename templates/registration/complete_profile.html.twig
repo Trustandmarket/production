@@ -349,6 +349,15 @@
             box-shadow: 0 10px 22px rgba(17, 17, 17, 0.10);
         }
 
+        .tm-complete-btn-primary[disabled] {
+            background: #b8b8b8;
+            border-color: #b8b8b8;
+            color: rgba(255, 255, 255, 0.88);
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: .9;
+        }
+
         .tm-complete-btn-secondary {
             background: transparent;
             color: #212529;
@@ -528,7 +537,7 @@
                         {% endif %}
 
                         <div class="tm-complete-actions">
-                            <button class="tm-complete-btn tm-complete-btn-primary" type="submit">ENREGISTRER MON PROFIL</button>
+                            <button id="tm-complete-submit" class="tm-complete-btn tm-complete-btn-primary" type="submit" disabled>ENREGISTRER MON PROFIL</button>
                             <a href="{{ path('home') }}" class="tm-complete-btn tm-complete-btn-secondary">Plus tard</a>
                         </div>
                     </form>
@@ -553,6 +562,29 @@
                     select.value = selectedValue;
                 }
             });
+
+            var form = document.querySelector('.tm-complete-form');
+            var submitButton = document.getElementById('tm-complete-submit');
+
+            if (!form || !submitButton) {
+                return;
+            }
+
+            var fields = form.querySelectorAll('input[type="text"], select');
+            var toggleSubmitState = function () {
+                var hasAnyValue = Array.prototype.some.call(fields, function (field) {
+                    return field.value !== null && field.value.trim() !== '';
+                });
+
+                submitButton.disabled = !hasAnyValue;
+            };
+
+            fields.forEach(function (field) {
+                field.addEventListener('input', toggleSubmitState);
+                field.addEventListener('change', toggleSubmitState);
+            });
+
+            toggleSubmitState();
         });
     </script>
 {% endblock %}
