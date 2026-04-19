@@ -546,9 +546,10 @@
         }
 
         .tm-register-footer {
-            display: none;
-            margin-top: 10px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-top: 18px;
             color: #666;
             font-size: clamp(.62rem, .9vh, .76rem);
         }
@@ -558,8 +559,9 @@
             text-decoration: none;
         }
 
-        .tm-register-footer .special-link {
+        .tm-register-footer a {
             color: #262626;
+            text-decoration: none;
         }
 
         .tm-register-alert {
@@ -825,9 +827,7 @@
                 </div>
 
                 <div class="tm-register-footer">
-                    <a href="{{ path('home') }}" class="special-below-link">&larr;&nbsp;<span class="special-link">{{ 'general.accueil'|trans }}</span></a>
-                    &nbsp;|&nbsp;
-                    <a href="/fr/register" class="special-below-link"><img src="/assets/img/fr.svg" alt="Langue francaise" height="12">Fr</a>
+                    <a href="{{ path('home') }}" class="special-below-link">&larr;&nbsp;<span>{{ 'general.accueil'|trans }}</span></a>
                 </div>
             </section>
         </div>
