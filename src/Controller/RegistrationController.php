@@ -354,9 +354,119 @@ class RegistrationController extends AbstractController
     /**
      * @Route("/registration/completer_profil", name="app_registration_complete_profile")
      */
-    public function appRegistrationCompleteProfile(Request $request): Response
+    public function appRegistrationCompleteProfile(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $pendingRole = $request->getSession()->get('registration_pending_role');
+        $user = $this->resolveRegistrationUser($request, $entityManager);
+
+        if (!$user instanceof User) {
+            $this->addFlash('complete_profile_error', 'Votre session d\'inscription a expiré. Merci de vous reconnecter ou de recréer votre compte.');
+
+            return $this->redirectToRoute('app_login');
+        }
+
+        $pendingRole = (string) $request->getSession()->get('registration_pending_role', '');
+        $roleCard = $this->buildRegistrationRoleCard($pendingRole, $user);
+        $formData = [
+            'first_name' => trim((string) $this->service_manager->getUserStringDataValue($user->getId(), 'first_name')),
+            'last_name' => trim((string) $this->service_manager->getUserStringDataValue($user->getId(), 'last_name')),
+            'residence' => trim((string) $this->service_manager->getUserStringDataValue($user->getId(), 'residenceCountry')),
+            'activite' => trim((string) $this->service_manager->getUserStringDataValue($user->getId(), 'activite_principale')),
+        ];
+
+        if ($request->isMethod('POST')) {
+            $formData = [
+                'first_name' => trim((string) $request->request->get('first_name', '')),
+                'last_name' => trim((string) $request->request->get('last_name', '')),
+                'residence' => trim((string) $request->request->get('residence', '')),
+                'activite' => trim((string) $request->request->get('activite', '')),
+            ];
+
+            if (!$this->isCsrfTokenValid('complete_profile', (string) $request->request->get('_token'))) {
+                $this->addFlash('complete_profile_error', 'La session a expiré. Merci de recharger la page.');
+            } else {
+                $errors = [];
+
+                if ($formData['first_name'] === '') {
+                    $errors[] = 'Le prénom est requis.';
+                }
+
+                if ($formData['last_name'] === '') {
+                    $errors[] = 'Le nom est requis.';
+                }
+
+                if ($formData['residence'] === '') {
+                    $errors[] = 'Le pays de résidence est requis.';
+                }
+
+                if ($roleCard['is_professional'] && $formData['activite'] === '') {
+                    $errors[] = 'L\'activité principale est requise.';
+                }
+
+                if (empty($errors)) {
+                    $displayName = trim($formData['first_name'] . ' ' . $formData['last_name']);
+                    if ($displayName === '') {
+                        $displayName = (string) $user->getEmailCanonical();
+                    }
+
+                    $user->setDisplayName($displayName);
+                    $user->setUserNicename($formData['first_name'] !== '' ? $formData['first_name'] : (string) $user->getEmailCanonical());
+                    $entityManager->flush();
+
+                    $this->service_manager->updateUserMeta($user->getId(), 'first_name', $formData['first_name']);
+                    $this->service_manager->updateUserMeta($user->getId(), 'last_name', $formData['last_name']);
+                    $this->service_manager->updateUserMeta($user->getId(), 'billing_first_name', $formData['first_name']);
+                    $this->service_manager->updateUserMeta($user->getId(), 'billing_last_name', $formData['last_name']);
+                    $this->service_manager->updateUserMeta($user->getId(), 'residenceCountry', $formData['residence']);
+                    $this->service_manager->updateUserMeta(
+                        $user->getId(),
+                        'activite_principale',
+                        $roleCard['is_professional'] ? $formData['activite'] : ''
+                    );
+
+                    $this->addFlash('complete_profile_success', 'Les informations de votre profil ont bien été enregistrées.');
+
+                    return $this->redirectToRoute('app_registration_complete_profile');
+                }
+
+                foreach ($errors as $error) {
+                    $this->addFlash('complete_profile_error', $error);
+                }
+            }
+        }
+
+        return $this->render('registration/complete_profile.html.twig', [
+            'role_card' => $roleCard,
+            'activities' => $this->service_manager->postCategorie1('product_activity'),
+            'form_data' => $formData,
+        ]);
+    }
+
+    private function resolveRegistrationUser(Request $request, EntityManagerInterface $entityManager): ?User
+    {
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof User) {
+            return $currentUser;
+        }
+
+        $pendingEmail = trim((string) $request->getSession()->get('registration_pending_email', ''));
+        if ($pendingEmail === '') {
+            return null;
+        }
+
+        return $entityManager->getRepository(User::class)->findOneBy(['email_canonical' => $pendingEmail]);
+    }
+
+    private function buildRegistrationRoleCard(string $pendingRole = '', ?User $user = null): array
+    {
+        if ($pendingRole === '' && $user instanceof User) {
+            if (in_array('ROLE_AUTO_ENTREPRENEUR', $user->getRoles(), true)) {
+                $pendingRole = 'ROLE_AUTO_ENTREPRENEUR';
+            } elseif (in_array('ROLE_SOCIETE', $user->getRoles(), true)) {
+                $pendingRole = 'ROLE_SOCIETE';
+            } else {
+                $pendingRole = 'ROLE_ABONNE';
+            }
+        }
 
         $roleCard = [
             'title' => 'Abonné',
@@ -378,10 +488,7 @@ class RegistrationController extends AbstractController
             ];
         }
 
-        return $this->render('registration/complete_profile.html.twig', [
-            'role_card' => $roleCard,
-            'activities' => $this->service_manager->postCategorie1('product_activity'),
-        ]);
+        return $roleCard;
     }
 
     /**
