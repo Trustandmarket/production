@@ -84,6 +84,8 @@ class RegistrationController extends AbstractController
                     $user->setUserNicename($userNicename);
                     $user->setDisplayName($displayName);
                     $user->setUserActivationKey($registrationData['_token'] ?? '');
+                    $user->setEnabled(1);
+                    $user->setIsVerified(false);
                     $user->setDateNaissance($dateNaissance !== '' ? $dateNaissance : null);
                     $user->setRoles($rolesArray);
 

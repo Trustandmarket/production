@@ -16,10 +16,7 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
-        if (!$user->isVerified()) {
-            // the message passed to this exception is meant to be displayed to the user
-            throw new CustomUserMessageAccountStatusException('Ce compte n\'est pas vérifié.');
-        } elseif ($user->getEnabled() == 0) {
+        if ($user->getEnabled() == 0) {
             throw new CustomUserMessageAccountStatusException('Ce compte est désactivé, veuillez contacter l\'administrateur.');
         }
     }

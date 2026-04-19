@@ -1,4 +1,4 @@
-{% extends 'profileTemplate.html.twig' %}
+﻿{% extends 'profileTemplate.html.twig' %}
 
 {% block head %}
     {{ parent() }}
@@ -81,6 +81,14 @@
             border-color: #ff7e10;
             margin-bottom: 2rem;
             min-height: 172px;
+        }
+
+        .tm-dashboard-card-disabled {
+            opacity: 0.56;
+        }
+
+        .tm-dashboard-card-disabled .card-block {
+            cursor: not-allowed;
         }
 
         .menu_item {
@@ -170,13 +178,14 @@
 {% block navigation %}{% endblock %}
 
 {% block body %}
+    {% set profile_verified = app.user and app.user.isVerified %}
 
     <div class="flex-fill container">
         <main class="">
             <div class="container py-4">
                 <h1 class="custom-title">Compte</h1>
                 <p class="custome-text mt-2">Bonjour <strong>{{ user_name }}</strong>, bienvenue dans votre profil
-                    <strong>{% if  'ROLE_SOCIETE' in app.user.roles or 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles %}professionnel{% else %}abonné{% endif %}</strong>
+                    <strong>{% if  'ROLE_SOCIETE' in app.user.roles or 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles %}professionnel{% else %}abonnÃ©{% endif %}</strong>
                 </p>
                 <div class="row menu_item">
                     <div class="col-12 col-md-4 col-sm-6 col-lg-4">
@@ -190,20 +199,22 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-4 col-sm-6 col-lg-4">
-                        <div class="card px-2 py-4">
+                        <div class="card px-2 py-4{% if not profile_verified %} tm-dashboard-card-disabled{% endif %}">
                             <a class="card-block stretched-link text-decoration-none"
-                               href="{{ path('profile_annonces' ) }}">
+                               href="{% if profile_verified %}{{ path('profile_annonces' ) }}{% else %}#{% endif %}"
+                               {% if not profile_verified %}title="Email de connexion non vérifié." aria-disabled="true" onclick="return false;"{% endif %}>
                                 <h4 class="card-title">Annonces</h4>
-                                <p class="card-text mt-2">Retrouvez ici vos prestations réservées et/ou celles que
+                                <p class="card-text mt-2">Retrouvez ici vos prestations rÃ©servÃ©es et/ou celles que
                                     vous proposez.</p>
                             </a>
                         </div>
                     </div>
                     <div class="col-12 col-md-4 col-sm-6 col-lg-4">
-                        <div class="card px-2 py-4">
+                        <div class="card px-2 py-4{% if not profile_verified %} tm-dashboard-card-disabled{% endif %}">
                             <a class="card-block stretched-link text-decoration-none"
-                               href="{% if'ROLE_ABONNE' in app.user.roles %}{{ path('profile_fournisseursAbonne') }}{% else %}
-                {{ path('profile_fournisseurs') }}{% endif %}">
+                               href="{% if profile_verified %}{% if'ROLE_ABONNE' in app.user.roles %}{{ path('profile_fournisseursAbonne') }}{% else %}
+                {{ path('profile_fournisseurs') }}{% endif %}{% else %}#{% endif %}"
+                               {% if not profile_verified %}title="Email de connexion non vérifié." aria-disabled="true" onclick="return false;"{% endif %}>
                                 <h4 class="card-title">Fournisseur de services</h4>
                                 <p class="card-text mt-2">Vous etes ou devenez professionnel et renseignez vos
                                     informations professionnelles.</p>
@@ -211,12 +222,13 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-4 col-sm-6 col-lg-4">
-                        <div class="card px-2 py-4">
+                        <div class="card px-2 py-4{% if not profile_verified %} tm-dashboard-card-disabled{% endif %}">
                             <a class="card-block stretched-link text-decoration-none"
-                               href="{{ path('profile_parameters' ) }}">
-                                <h3 class="card-title">Paramètres</h3>
-                                <p class="card-text mt-2">Notifications, historiques de transactions... Paramétrez
-                                    ici votre profil en toute simplicité.</p>
+                               href="{% if profile_verified %}{{ path('profile_parameters' ) }}{% else %}#{% endif %}"
+                               {% if not profile_verified %}title="Email de connexion non vérifié." aria-disabled="true" onclick="return false;"{% endif %}>
+                                <h3 class="card-title">ParamÃ¨tres</h3>
+                                <p class="card-text mt-2">Notifications, historiques de transactions... ParamÃ©trez
+                                    ici votre profil en toute simplicitÃ©.</p>
                             </a>
                         </div>
                     </div>
@@ -224,8 +236,8 @@
                         <div class="card px-2 py-4">
                             <a class="card-block stretched-link text-decoration-none"
                                href="{{ path('experiences_liste_experience' ) }}">
-                                <h4 class="card-title">Mes expériences</h4>
-                                <p class="card-text mt-2">Retrouvez ici vos différentes expériences crées sur Trust
+                                <h4 class="card-title">Mes expÃ©riences</h4>
+                                <p class="card-text mt-2">Retrouvez ici vos diffÃ©rentes expÃ©riences crÃ©es sur Trust
                                     & market.</p>
                             </a>
                         </div>
@@ -242,7 +254,7 @@
                     </div>
                 </div>
                 <div class="center mt-2 small">
-                    <p>Vous souhaitez supprimer votre profil et toutes <br>ses données?</p>
+                    <p>Vous souhaitez supprimer votre profil et toutes <br>ses donnÃ©es?</p>
                     <a style="font-weight: bold" id="deleteProfile" data-toggle="modal" data-target="#deleteTarget"
                        href="">Supprimer mon profil</a>
                 </div>
