@@ -67,38 +67,40 @@
         .tm-register-shell {
             min-height: auto;
             width: 100%;
-            padding: 24px 18px 72px;
+            padding: 24px 18px 88px;
             display: block;
         }
 
         .tm-register-wrap {
             width: 100%;
-            max-width: 860px;
+            max-width: 920px;
             margin: 270px auto 0;
             display: block;
         }
 
         .tm-register-panel {
-            border-radius: 8px;
-            padding: clamp(.78rem, 1.6vh, 1rem);
+            position: relative;
+            padding: clamp(1rem, 2.1vh, 1.3rem) clamp(1rem, 2vw, 1.4rem) clamp(1.15rem, 2.4vh, 1.6rem);
             border-radius: 20px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.985) 0%, rgba(255,255,255,0.94) 100%);
             border: 1px solid rgba(17, 17, 17, 0.08);
-            box-shadow: 0 20px 44px rgba(17, 17, 17, 0.08);
-            max-width: 860px;
+            box-shadow: 0 24px 52px rgba(17, 17, 17, 0.08);
+            max-width: 920px;
             margin: 0 auto;
+            overflow: hidden;
         }
 
         .tm-register-topbar {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            align-items: start;
-            gap: 1rem;
-            margin-bottom: clamp(.22rem, .7vh, .45rem);
+            position: relative;
+            margin-bottom: clamp(.9rem, 1.8vh, 1.2rem);
+            padding-right: 64px;
         }
 
         .tm-register-topbar-main {
             min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .tm-register-brand {
@@ -106,6 +108,8 @@
             color: #262626;
             width: max-content;
             max-width: none;
+            align-self: flex-start;
+            margin-bottom: 1.25rem;
         }
 
         .tm-register-brand-copy {
@@ -131,7 +135,7 @@
             white-space: nowrap;
             text-align: left;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             width: max-content;
             max-width: none;
             flex-wrap: nowrap;
@@ -160,7 +164,7 @@
 
         .tm-register-heading {
             display: block;
-            margin: 18px 0 0 0;
+            margin: 0;
             color: #262626;
             font-size: 1.2rem;
             font-family: "Palanquin Dark", sans-serif;
@@ -168,9 +172,13 @@
             font-weight: 700;
             text-transform: uppercase;
             text-align: center;
+            letter-spacing: .01em;
         }
 
         .tm-register-logo-link {
+            position: absolute;
+            top: 0;
+            right: 0;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -184,8 +192,8 @@
         }
 
         .tm-register-subheading {
-            margin: 6px 0 16px 0;
-            color: #6f6f6f;
+            margin: 6px 0 0 0;
+            color: #6a6a6a;
             font-size: .9rem;
             font-family: "Palanquin", sans-serif;
             line-height: 1.35;
@@ -193,15 +201,15 @@
         }
 
         .tm-register-steps {
-            margin-bottom: clamp(.45rem, 1vh, .8rem);
-            padding: clamp(.42rem, 1vh, .7rem) clamp(.52rem, 1vw, .8rem);
+            margin-bottom: clamp(1rem, 1.8vh, 1.35rem);
+            padding: clamp(.7rem, 1.2vh, .95rem) clamp(.8rem, 1.5vw, 1.05rem);
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.9);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(252, 248, 244, 0.9) 100%);
             border: 1px solid rgba(17, 17, 17, 0.08);
-            box-shadow: 0 16px 36px rgba(17, 17, 17, 0.06);
+            box-shadow: 0 16px 32px rgba(17, 17, 17, 0.05);
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: clamp(.3rem, .8vh, .55rem);
+            gap: clamp(.55rem, 1vh, .8rem);
         }
 
         .tm-step-pill {
@@ -209,7 +217,9 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            gap: .25rem;
+            justify-content: center;
+            min-height: 82px;
+            gap: .3rem;
             color: #858585;
             transition: color .2s ease;
         }
@@ -262,26 +272,26 @@
 
         .tm-step-panel {
             width: 100%;
-            max-width: 760px;
-            margin: clamp(14px, 1.8vh, 22px) auto 0;
+            max-width: 740px;
+            margin: 0 auto;
         }
 
         .tm-step-title {
             margin: 0;
             color: #121212;
-            font-size: clamp(1rem, 2.1vh, 1.28rem);
-            line-height: 1.08;
+            font-size: clamp(1.02rem, 2.2vh, 1.32rem);
+            line-height: 1.1;
             font-family: "Palanquin Dark", sans-serif;
         }
 
         .tm-step-lead {
             display: block;
-            margin-top: .22rem;
-            color: #555;
+            margin-top: .35rem;
+            color: #5b5b5b;
             font-family: "Palanquin", sans-serif;
-            line-height: 1.35;
-            margin-bottom: clamp(6px, .8vh, 10px);
-            font-size: clamp(.68rem, 1.2vh, .82rem);
+            line-height: 1.42;
+            margin-bottom: clamp(14px, 1.6vh, 20px);
+            font-size: clamp(.7rem, 1.2vh, .84rem);
         }
 
         .tm-field-grid {
@@ -385,24 +395,26 @@
             position: relative;
             display: flex;
             align-items: flex-start;
-            gap: .75rem;
-            border: 1px solid rgba(17, 17, 17, 0.16);
+            gap: .85rem;
+            border: 1px solid rgba(17, 17, 17, 0.14);
             border-radius: 16px;
-            padding: clamp(.5rem, 1vh, .8rem) clamp(.62rem, 1.1vw, .95rem);
-            background: #fff;
-            box-shadow: none;
+            padding: clamp(.65rem, 1.15vh, .95rem) clamp(.78rem, 1.25vw, 1.05rem);
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.94) 100%);
+            box-shadow: 0 10px 24px rgba(17, 17, 17, 0.035);
             cursor: pointer;
-            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease, transform .2s ease;
         }
 
         .tm-role-card:hover {
-            border-color: rgba(17, 17, 17, 0.32);
+            border-color: rgba(17, 17, 17, 0.24);
+            box-shadow: 0 14px 28px rgba(17, 17, 17, 0.05);
+            transform: translateY(-1px);
         }
 
         .tm-role-card.is-selected {
             border-color: #1d8aa8;
-            box-shadow: inset 0 0 0 1px #1d8aa8;
-            background: #fff;
+            box-shadow: inset 0 0 0 1px #1d8aa8, 0 16px 30px rgba(29, 138, 168, 0.08);
+            background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(245,250,252,0.96) 100%);
         }
 
         .tm-role-card input[type="radio"] {
@@ -459,11 +471,11 @@
         }
 
         .tm-register-consents {
-            padding: clamp(.5rem, .9vh, .78rem) clamp(.62rem, 1vw, .9rem);
+            padding: clamp(.6rem, 1vh, .88rem) clamp(.72rem, 1.1vw, .98rem);
             border-radius: 20px;
             background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.93) 100%);
             border: 1px solid rgba(17, 17, 17, 0.08);
-            box-shadow: 0 18px 38px rgba(17, 17, 17, 0.06);
+            box-shadow: 0 14px 30px rgba(17, 17, 17, 0.05);
         }
 
         .tm-consent {
@@ -493,19 +505,19 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
-            margin-top: 40px;
+            margin-top: 48px;
         }
 
         .tm-btn-secondary,
         .tm-btn-primary {
             border-radius: 14px;
             min-height: clamp(32px, 4vh, 38px);
-            min-width: 220px;
-            padding: clamp(7px, .9vh, 9px) clamp(28px, 2.5vw, 38px);
+            min-width: 248px;
+            padding: clamp(8px, 1vh, 10px) clamp(34px, 3vw, 48px);
             font-family: "Palanquin Dark", sans-serif;
-            font-size: clamp(.76rem, 1.05vh, .9rem);
+            font-size: clamp(.8rem, 1.08vh, .94rem);
             font-weight: 700;
         }
 
@@ -534,6 +546,7 @@
             color: #6f6f6f;
             font-size: clamp(.68rem, 1vh, .8rem);
             text-align: center;
+            margin: 0;
         }
 
         .tm-login-note a {
@@ -559,34 +572,14 @@
             text-decoration: none;
         }
 
-        .tm-register-footer a {
-            color: #262626;
-            text-decoration: none;
-        }
-
         .tm-register-alert {
             margin-bottom: 18px;
-        }
-
-        @media (max-width: 991px) {
-            .tm-register-aside {
-                padding: 1.5rem;
-                border-radius: 24px;
-            }
-
-            .tm-register-aside h1 {
-                font-size: 2.3rem;
-            }
         }
 
         @media (min-width: 992px) and (max-height: 900px) {
             .tm-register-shell {
                 padding-top: 24px;
                 padding-bottom: 72px;
-            }
-
-            .tm-register-aside {
-                display: none;
             }
 
             .tm-register-panel {
@@ -631,15 +624,14 @@
 
         @media (max-width: 767px) {
             .tm-register-shell {
-                padding: 18px 14px 48px;
+                padding: 18px 14px 56px;
             }
 
             .tm-register-wrap {
                 margin-top: 204px;
             }
 
-            .tm-register-panel,
-            .tm-register-aside {
+            .tm-register-panel {
                 padding: 22px 18px;
             }
 
@@ -651,8 +643,7 @@
             }
 
             .tm-register-heading {
-                justify-self: start;
-                text-align: left;
+                text-align: center;
             }
 
             .tm-register-steps {
@@ -661,10 +652,25 @@
 
             .tm-register-topbar {
                 gap: 14px;
+                padding-right: 0;
             }
 
             .tm-step-title {
-                font-size: 1.7rem;
+                font-size: 1.18rem;
+            }
+
+            .tm-register-brand {
+                align-self: center;
+                margin-bottom: 1rem;
+            }
+
+            .tm-register-logo-link {
+                position: static;
+                margin: 0 auto .5rem;
+            }
+
+            .tm-password-row {
+                grid-template-columns: 1fr;
             }
         }
     </style>
