@@ -145,24 +145,25 @@
         .tm-check-email-panel {
             max-width: 740px;
             margin: 22px auto 0;
-            padding: 1.4rem 1.3rem;
-            border-radius: 26px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 100%);
-            border: 1px solid rgba(18, 18, 18, 0.07);
-            box-shadow: 0 16px 36px rgba(17, 17, 17, 0.07);
-            text-align: center;
+            padding: 1.55rem 1.45rem 1.7rem;
+            border-radius: 28px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.99) 0%, rgba(255,255,255,0.95) 100%);
+            border: 1px solid rgba(18, 18, 18, 0.06);
+            box-shadow: 0 18px 40px rgba(17, 17, 17, 0.06);
+            text-align: left;
         }
 
         .tm-check-email-panel p {
             margin: 0;
             color: #212529;
             font-size: 1rem;
-            line-height: 1.65;
+            line-height: 1.7;
         }
 
         .tm-check-email-message {
             max-width: 620px;
             margin: 0 auto;
+            text-align: left;
         }
 
         .tm-check-email-status {
@@ -171,11 +172,11 @@
             display: flex;
             align-items: center;
             gap: .75rem;
-            padding: .95rem 1rem;
-            border-radius: 18px;
-            background: rgba(255,255,255,0.96);
-            border: 1px solid rgba(18, 18, 18, 0.08);
-            box-shadow: 0 10px 24px rgba(17, 17, 17, 0.05);
+            padding: 1rem 1.05rem;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,249,244,0.94) 100%);
+            border: 1px solid rgba(18, 18, 18, 0.07);
+            box-shadow: 0 12px 26px rgba(17, 17, 17, 0.05);
             text-align: left;
         }
 
@@ -200,7 +201,8 @@
         }
 
         .tm-check-email-profile-title {
-            margin: 1.6rem 0 .9rem 0;
+            margin: 1.75rem auto .9rem;
+            max-width: 620px;
             text-align: left;
             font-size: 1rem;
             line-height: 1.4;
@@ -209,15 +211,17 @@
 
         .tm-check-email-profile-card {
             width: 100%;
+            max-width: 620px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 1rem;
-            padding: 1rem 1.1rem;
-            border-radius: 20px;
+            padding: 1.05rem 1.15rem;
+            border-radius: 22px;
             background: rgba(255,255,255,0.98);
             border: 1px solid rgba(18, 18, 18, 0.08);
-            box-shadow: 0 12px 28px rgba(17, 17, 17, 0.06);
+            box-shadow: 0 14px 30px rgba(17, 17, 17, 0.06);
             text-align: left;
         }
 
@@ -247,32 +251,41 @@
         }
 
         .tm-check-email-actions {
-            margin-top: 1.5rem;
+            margin-top: 1.7rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: .9rem;
+            gap: 1rem;
         }
 
         .tm-check-email-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 248px;
-            min-height: 42px;
-            padding: .62rem 2.2rem;
-            border-radius: 14px;
+            min-width: 320px;
+            min-height: 48px;
+            padding: .8rem 2.4rem;
+            border-radius: 16px;
             border: 1px solid transparent;
             text-decoration: none;
             font-family: "Palanquin Dark", sans-serif;
             font-size: .98rem;
             font-weight: 700;
+            transition: border-color .2s ease, box-shadow .2s ease, color .2s ease, background .2s ease;
         }
 
         .tm-check-email-btn-primary {
             background: #fff;
-            color: #b59b7a;
+            color: #b49a78;
             border-color: rgba(18, 18, 18, 0.10);
+            box-shadow: 0 10px 22px rgba(17, 17, 17, 0.04);
+        }
+
+        .tm-check-email-btn-primary:hover,
+        .tm-check-email-btn-primary:focus {
+            color: #9e8160;
+            border-color: rgba(180, 154, 120, 0.35);
+            box-shadow: 0 14px 28px rgba(17, 17, 17, 0.06);
         }
 
         .tm-check-email-btn-secondary {
@@ -284,6 +297,7 @@
             min-width: 0;
             font-family: "Roboto", sans-serif;
             font-weight: 400;
+            box-shadow: none;
         }
 
         .tm-check-email-link {
@@ -292,6 +306,13 @@
             font-size: 1rem;
             line-height: 1.5;
             opacity: .78;
+        }
+
+        .tm-check-email-link:hover,
+        .tm-check-email-btn-secondary:hover {
+            opacity: 1;
+            color: #212529;
+            text-decoration: none;
         }
 
         .tm-check-email-footer {
@@ -358,7 +379,7 @@
             }
 
             .tm-check-email-panel {
-                padding: 1.2rem 1rem;
+                padding: 1.2rem 1rem 1.35rem;
             }
 
             .tm-check-email-btn {
