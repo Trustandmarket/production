@@ -350,6 +350,38 @@ class RegistrationController extends AbstractController
     }
 
     /**
+     * @Route("/registration/completer_profil", name="app_registration_complete_profile")
+     */
+    public function appRegistrationCompleteProfile(Request $request): Response
+    {
+        $pendingRole = $request->getSession()->get('registration_pending_role');
+
+        $roleCard = [
+            'title' => 'Abonné',
+            'description' => 'Pour découvrir les profils, initier un projet et entrer en relation.',
+            'is_professional' => false,
+        ];
+
+        if ($pendingRole === 'ROLE_AUTO_ENTREPRENEUR') {
+            $roleCard = [
+                'title' => 'Professionnel auto-entrepreneur',
+                'description' => 'Pour proposer vos services en indépendant avec une entrée simple.',
+                'is_professional' => true,
+            ];
+        } elseif ($pendingRole === 'ROLE_SOCIETE') {
+            $roleCard = [
+                'title' => 'Professionnel société',
+                'description' => 'Pour une structure, une agence ou une activité portée par une société.',
+                'is_professional' => true,
+            ];
+        }
+
+        return $this->render('registration/complete_profile.html.twig', [
+            'role_card' => $roleCard,
+        ]);
+    }
+
+    /**
      * DonnÃƒÆ’Ã‚Â©es supplÃƒÆ’Ã‚Â©mentaires, Compte mangopay et email admin
      * @param EntityManagerInterface $entityManager
      * @param MailerInterface $mailer
