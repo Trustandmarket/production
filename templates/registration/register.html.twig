@@ -96,7 +96,7 @@
         .tm-register-topbar {
             position: relative;
             margin-bottom: clamp(1.1rem, 2vh, 1.45rem);
-            padding-right: 64px;
+            padding-left: 64px;
         }
 
         .tm-register-topbar-main {
@@ -104,65 +104,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-
-        .tm-register-brand {
-            display: inline-block;
-            color: #212529;
-            width: max-content;
-            max-width: none;
-            align-self: flex-start;
-            margin-bottom: 1.25rem;
-        }
-
-        .tm-register-brand-copy {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            width: max-content;
-            max-width: none;
-            min-width: 0;
-        }
-
-        .tm-register-brand-copy strong {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: .18em;
-            font-family: "Palanquin Dark", sans-serif;
-            font-size: clamp(.92rem, 1.55vh, 1.08rem);
-            line-height: 1.2;
-            letter-spacing: .24em;
-            text-transform: uppercase;
-            color: #212529;
-            white-space: nowrap;
-            text-align: left;
-            font-weight: 700;
-            margin-bottom: 14px;
-            width: max-content;
-            max-width: none;
-            flex-wrap: nowrap;
-            word-break: normal;
-            overflow-wrap: normal;
-        }
-
-        .tm-register-brand-copy strong::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -7px;
-            width: 62%;
-            height: 2px;
-            border-radius: 10px;
-            background: linear-gradient(90deg, rgba(241, 124, 48, 0.95) 0%, rgba(241, 124, 48, 0.2) 100%);
-        }
-
-        .tm-register-brand-copy .tm-brand-accent {
-            color: #f17c30;
-            display: inline;
-            font-size: inherit;
-            line-height: inherit;
-            margin: 0;
         }
 
         .tm-register-heading {
@@ -181,7 +122,7 @@
         .tm-register-logo-link {
             position: absolute;
             top: 0;
-            right: 0;
+            left: 0;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -716,7 +657,7 @@
                 flex-direction: column;
                 align-items: center;
                 gap: 14px;
-                padding-right: 0;
+                padding-left: 0;
             }
 
             .tm-register-topbar-main {
@@ -739,11 +680,6 @@
 
             .tm-field-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .tm-register-brand {
-                align-self: center;
-                margin-bottom: 1rem;
             }
 
             .tm-register-logo-link {
@@ -788,11 +724,6 @@
             <section class="tm-register-panel">
                 <div class="tm-register-topbar">
                     <div class="tm-register-topbar-main">
-                        <div class="tm-register-brand">
-                            <span class="tm-register-brand-copy">
-                                <strong>TRUST <span class="tm-brand-accent">&amp;</span> MARKET</strong>
-                            </span>
-                        </div>
                         <h1 class="tm-register-heading">CRÉER MON PROFIL</h1>
                         <p class="tm-register-subheading">Gratuit, sans engagement.</p>
                     </div>
