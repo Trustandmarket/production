@@ -320,6 +320,37 @@
             min-width: 0;
         }
 
+        .tm-password-input-wrap {
+            position: relative;
+        }
+
+        .tm-password-input-wrap .form-control {
+            padding-right: 48px;
+        }
+
+        .tm-password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #7a7a7a;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .tm-password-toggle:hover,
+        .tm-password-toggle:focus {
+            color: #262626;
+            outline: none;
+        }
+
         .tm-password-row + .tm-register-consents {
             margin-top: clamp(10px, 1.4vh, 16px);
         }
@@ -783,23 +814,33 @@
                         <label class="tm-password-label" for="{{ registrationForm.plainPassword.second.vars.id }}">{{ 'inscription.confirmation'|trans }}</label>
 
                         <div class="tm-password-field">
-                            {{ form_widget(registrationForm.plainPassword.first, {
-                                'attr': {
-                                    'class': 'form-control',
-                                    'placeholder': '6 caractères minimum',
-                                    'autocomplete': 'new-password'
-                                }
-                            }) }}
+                            <div class="tm-password-input-wrap">
+                                {{ form_widget(registrationForm.plainPassword.first, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': '8 caractères minimum',
+                                        'autocomplete': 'new-password'
+                                    }
+                                }) }}
+                                <button class="tm-password-toggle" type="button" data-password-toggle="{{ registrationForm.plainPassword.first.vars.id }}" aria-label="Afficher le mot de passe">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
                             {{ form_errors(registrationForm.plainPassword.first) }}
                         </div>
                         <div class="tm-password-field">
-                            {{ form_widget(registrationForm.plainPassword.second, {
-                                'attr': {
-                                    'class': 'form-control',
-                                    'placeholder': 'Confirmez votre mot de passe',
-                                    'autocomplete': 'new-password'
-                                }
-                            }) }}
+                            <div class="tm-password-input-wrap">
+                                {{ form_widget(registrationForm.plainPassword.second, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Confirmez votre mot de passe',
+                                        'autocomplete': 'new-password'
+                                    }
+                                }) }}
+                                <button class="tm-password-toggle" type="button" data-password-toggle="{{ registrationForm.plainPassword.second.vars.id }}" aria-label="Afficher le mot de passe">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
                             {{ form_errors(registrationForm.plainPassword.second) }}
                         </div>
                     </div>
@@ -844,6 +885,7 @@
     <script>
         $(document).ready(function () {
             const $roleCards = $('[data-role-card]');
+            const $passwordToggles = $('[data-password-toggle]');
 
             function getSelectedRole() {
                 return $('input[name="role_user"]:checked').val() || '';
@@ -867,6 +909,19 @@
             });
 
             toggleRoleCards();
+
+            $passwordToggles.on('click', function () {
+                const $toggle = $(this);
+                const inputId = $toggle.data('password-toggle');
+                const $input = $('#' + inputId);
+                const $icon = $toggle.find('i');
+                const isPassword = $input.attr('type') === 'password';
+
+                $input.attr('type', isPassword ? 'text' : 'password');
+                $toggle.attr('aria-label', isPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+                $icon.toggleClass('fa-eye', !isPassword);
+                $icon.toggleClass('fa-eye-slash', isPassword);
+            });
         });
 
         window.addEventListener('load', function () {
