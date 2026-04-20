@@ -126,15 +126,6 @@ class EmailVerifier
                 "updateEnabled" => true,
             ];
 
-            error_log('[brevo-email-verifier] contact sync start ' . json_encode([
-                'user_id' => $user->getId(),
-                'email' => $user->getEmailCanonical(),
-                'roles' => $user->getRoles(),
-                'role_selected' => $role,
-                'brevo_list_id' => $brevoListId,
-                'payload' => $data,
-            ], JSON_UNESCAPED_UNICODE));
-
             // Configure the cURL options
             curl_setopt($ch, CURLOPT_URL, "https://api.brevo.com/v3/contacts");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -147,18 +138,6 @@ class EmailVerifier
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
             // Execute the request
             $response = curl_exec($ch);
-            $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $curlError = curl_error($ch);
-
-            error_log('[brevo-email-verifier] contact sync result ' . json_encode([
-                'user_id' => $user->getId(),
-                'email' => $user->getEmailCanonical(),
-                'brevo_list_id' => $brevoListId,
-                'http_code' => $httpCode,
-                'curl_error' => $curlError,
-                'response' => $response,
-            ], JSON_UNESCAPED_UNICODE));
-
             // Close cURL session
             curl_close($ch);
         }
