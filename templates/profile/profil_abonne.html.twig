@@ -43,6 +43,112 @@
             color: black;
         }
 
+        .profile-section-title {
+            white-space: nowrap;
+            line-height: 1.2;
+        }
+
+        .profile-section-title-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-email-status {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            vertical-align: middle;
+            flex: 0 0 auto;
+            cursor: default;
+        }
+
+        .profile-email-status.is-verified {
+            background: #21a455;
+            box-shadow: 0 6px 16px rgba(33, 164, 85, 0.18);
+        }
+
+        .profile-email-status.is-unverified {
+            background: #f17c30;
+            box-shadow: 0 6px 16px rgba(241, 124, 48, 0.20);
+            cursor: pointer;
+        }
+
+        .profile-email-status.is-verified::before {
+            content: "";
+            width: 7px;
+            height: 12px;
+            border-right: 3px solid #ffffff;
+            border-bottom: 3px solid #ffffff;
+            transform: rotate(45deg) translate(-1px, -1px);
+            transform-origin: center;
+        }
+
+        .profile-email-status.is-unverified::before {
+            content: "!";
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1;
+            font-family: Roboto, sans-serif;
+        }
+
+        .profile-email-tooltip {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 210px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #262626;
+            color: #ffffff;
+            font-size: 12px;
+            line-height: 1.45;
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.20);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .18s ease, visibility .18s ease, transform .18s ease;
+            z-index: 20;
+        }
+
+        .profile-email-tooltip::before {
+            content: "";
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: #262626;
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .profile-email-tooltip-text {
+            display: block;
+        }
+
+        .profile-email-tooltip-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: #ffffff;
+            font-weight: 700;
+            text-decoration: underline;
+            pointer-events: auto;
+        }
+
+        .profile-email-status:hover .profile-email-tooltip,
+        .profile-email-status:focus-within .profile-email-tooltip {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
         .image_area {
             position: relative;
         }
@@ -130,6 +236,30 @@
 
         /* Extra small devices (portrait phones, less than 576px) */
         @media (max-width: 575.98px) {
+            .profile-section-title {
+                white-space: normal;
+            }
+
+            .profile-section-title-row {
+                align-items: flex-start;
+            }
+
+            .profile-email-tooltip {
+                left: 0;
+                transform: translateX(0);
+                min-width: 190px;
+            }
+
+            .profile-email-tooltip::before {
+                left: 18px;
+                transform: rotate(45deg);
+            }
+
+            .profile-email-status:hover .profile-email-tooltip,
+            .profile-email-status:focus-within .profile-email-tooltip {
+                transform: translateX(0) translateY(0);
+            }
+
             .preview {
                 overflow: hidden;
                 width: 200px;
@@ -232,6 +362,29 @@
                             </button>
                         </div>
                     {% endfor %}
+                    <div class="row mt-4">
+                        <div class="col-md-4 mb-2">
+                            <div class="profile-section-title-row">
+                                <h2 class="text-left mb-0 profile-section-title">Identit&eacute;, contact et activit&eacute;</h2>
+                                {% if app.user %}
+                                    {% if app.user.isVerified %}
+                                        <span class="profile-email-status is-verified" aria-label="Email de compte vérifié.">
+                                            <span class="profile-email-tooltip">
+                                                <span class="profile-email-tooltip-text">Email de compte vérifié.</span>
+                                            </span>
+                                        </span>
+                                    {% else %}
+                                        <span class="profile-email-status is-unverified" tabindex="0" aria-label="Email non vérifié.">
+                                            <span class="profile-email-tooltip">
+                                                <span class="profile-email-tooltip-text">Email non vérifié.</span>
+                                                <a class="profile-email-tooltip-link" href="{{ path('app_registration_resend_activation_email') }}">Recevoir email d’activation</a>
+                                            </span>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                     <!-- Lecture des infos -->
                     <div id="lectureInfo" class="row">
                         <div class="col-md-4 mb-2">

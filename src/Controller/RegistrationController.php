@@ -352,6 +352,43 @@ class RegistrationController extends AbstractController
     }
 
     /**
+     * @Route("/registration/renvoyer-email-activation", name="app_registration_resend_activation_email")
+     */
+    public function resendActivationEmail(Request $request): RedirectResponse
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        /** @var User|null $user */
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($user->isVerified()) {
+            $this->addFlash('notice', 'Votre email de compte est déjà vérifié.');
+        } else {
+            $emailSendResult = $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user);
+
+            if ($emailSendResult['ok']) {
+                $this->addFlash('notice', 'Un nouvel email d’activation vous a été envoyé.');
+            } else {
+                $this->addFlash('notice', 'L’email d’activation n’a pas pu être envoyé pour le moment.');
+            }
+        }
+
+        $referer = (string) $request->headers->get('referer', '');
+        if ($referer !== '') {
+            return $this->redirect($referer);
+        }
+
+        if (in_array('ROLE_ABONNE', $user->getRoles(), true)) {
+            return $this->redirectToRoute('profile_home_profil');
+        }
+
+        return $this->redirectToRoute('profile_profile');
+    }
+
+    /**
      * @Route("/registration/completer_profil", name="app_registration_complete_profile")
      */
     public function appRegistrationCompleteProfile(Request $request, EntityManagerInterface $entityManager): Response
