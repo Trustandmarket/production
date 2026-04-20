@@ -49,9 +49,11 @@
         }
 
         .profile-section-title-row {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: nowrap;
+            max-width: 100%;
         }
 
         .profile-email-status {
@@ -241,7 +243,9 @@
             }
 
             .profile-section-title-row {
-                align-items: flex-start;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
             }
 
             .profile-email-tooltip {
