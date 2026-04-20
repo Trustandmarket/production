@@ -99,10 +99,13 @@ class EmailVerifier
             $firstName = $displayNameParts[0]; // The first part
             $lastName = isset($displayNameParts[1]) ? $displayNameParts[1] : ''; // The second part, or empty if not present
             $role = 'ROLE_ABONNE';
+            $brevoListId = 13;
             if (in_array('ROLE_SOCIETE', $user->getRoles())) {
                 $role = 'ROLE_SOCIETE';
+                $brevoListId = 7;
             } elseif (in_array('ROLE_AUTO_ENTREPRENEUR', $user->getRoles())) {
                 $role = 'ROLE_AUTO_ENTREPRENEUR';
+                $brevoListId = 7;
             }
             
         if($this->params->get('environnement') == 'prod'){
@@ -117,7 +120,7 @@ class EmailVerifier
                     "NOM" => $lastName, // Assuming user has a getLastName() method
                     "PROFIL_TRUST" => $role,
                 ],
-                "listIds" => [7], // Replace with the actual list ID
+                "listIds" => [$brevoListId],
                 "emailBlacklisted" => false,
                 "smsBlacklisted" => true,
                 "updateEnabled" => true,
