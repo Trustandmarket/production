@@ -214,10 +214,17 @@
         }
 
         .tm-check-email-status-text {
-            font-size: .98rem;
+            font-size: 0;
             line-height: 1.5;
             font-family: "Palanquin Dark", sans-serif;
             font-weight: 700;
+        }
+
+        .tm-check-email-status-text::after {
+            content: "Vous pouvez déjà découvrir votre compte. Validez votre email ultérieurement pour accéder à toutes les fonctionnalités.";
+            display: block;
+            font-size: .98rem;
+            line-height: 1.5;
         }
 
         .tm-check-email-profile-title {
