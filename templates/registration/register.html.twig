@@ -770,20 +770,6 @@
                 </div>
 
                 <div class="tm-step-panel">
-                    <div class="tm-field-grid">
-                        <div class="tm-field-block">
-                            <label for="{{ registrationForm.email_canonical.vars.id }}">{{ 'general.email'|trans }}</label>
-                            {{ form_widget(registrationForm.email_canonical, {
-                                'attr': {
-                                    'class': 'form-control',
-                                    'placeholder': 'vous@exemple.com',
-                                    'autocomplete': 'email'
-                                }
-                            }) }}
-                            {{ form_errors(registrationForm.email_canonical) }}
-                        </div>
-                    </div>
-
                     <div class="tm-field-block">
                         <label>Vous êtes :</label>
                     </div>
@@ -810,6 +796,20 @@
                                 <span>Pour une structure, une agence ou une activité portée par une société.</span>
                             </span>
                         </label>
+                    </div>
+
+                    <div class="tm-field-grid">
+                        <div class="tm-field-block">
+                            <label for="{{ registrationForm.email_canonical.vars.id }}">{{ 'general.email'|trans }}</label>
+                            {{ form_widget(registrationForm.email_canonical, {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'vous@exemple.com',
+                                    'autocomplete': 'email'
+                                }
+                            }) }}
+                            {{ form_errors(registrationForm.email_canonical) }}
+                        </div>
                     </div>
 
                     <div class="tm-hidden-field">
@@ -865,7 +865,7 @@
                         </label>
                         <label class="tm-consent">
                             <input type="checkbox" name="_email_newsletter">
-                            <span>{{ 'inscription.newsletter'|trans }}</span>
+                            <span>Je souhaite recevoir les actualités et offres Trust &amp; Market.</span>
                         </label>
                     </div>
 
