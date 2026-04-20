@@ -14,7 +14,7 @@
             min-height: 100vh;
             padding: 500px 18px 104px;
             background: #f5f5f5;
-            font-family: "Roboto", sans-serif;
+            font-family: "Palanquin", sans-serif;
             color: #212529;
             width: 100%;
             box-sizing: border-box;
@@ -72,11 +72,22 @@
             padding-top: 52px;
         }
 
+        .tm-complete-kicker {
+            margin: 0 0 .35rem 0;
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: #f17c30;
+            font-family: "Palanquin Dark", sans-serif;
+            text-align: center;
+        }
+
         .tm-complete-heading {
             margin: 0;
-            color: #212529;
-            font-size: clamp(1.72rem, 2.8vh, 2rem);
-            line-height: 1.1;
+            color: #101010;
+            font-size: clamp(1.9rem, 3.1vh, 2.15rem);
+            line-height: 1.15;
             font-family: "Palanquin Dark", sans-serif;
             font-weight: 700;
             text-transform: uppercase;
@@ -86,9 +97,10 @@
         .tm-complete-subheading {
             margin: 10px 0 0 0;
             color: #212529;
-            font-size: clamp(.95rem, 1.35vh, 1.05rem);
-            line-height: 1.5;
+            font-size: .98rem;
+            line-height: 1.55;
             text-align: center;
+            font-family: "Palanquin", sans-serif;
         }
 
         .tm-complete-steps {
@@ -148,7 +160,8 @@
         .tm-complete-step span {
             display: block;
             font-size: .86rem;
-            line-height: 1.3;
+            line-height: 1.42;
+            font-family: "Palanquin", sans-serif;
         }
 
         .tm-complete-panel {
@@ -164,6 +177,7 @@
             text-align: left;
             font-size: .98rem;
             line-height: 1.7;
+            font-family: "Palanquin", sans-serif;
         }
 
         .tm-complete-profile-title {
@@ -208,6 +222,7 @@
             line-height: 1.5;
             color: #212529;
             opacity: .82;
+            font-family: "Palanquin", sans-serif;
         }
 
         .tm-complete-profile-arrow {
@@ -282,7 +297,7 @@
             background: #fff;
             color: #212529;
             font-size: .98rem;
-            font-family: "Roboto", sans-serif;
+            font-family: "Palanquin", sans-serif;
             box-shadow: 0 6px 16px rgba(17, 17, 17, 0.03);
         }
 
@@ -348,10 +363,10 @@
         }
 
         .tm-complete-btn-primary {
-            background: #111111;
+            background: linear-gradient(135deg, #f17c30 0%, #ff9f60 100%);
             color: #ffffff;
-            border-color: #111111;
-            box-shadow: 0 10px 22px rgba(17, 17, 17, 0.10);
+            border-color: transparent;
+            box-shadow: 0 12px 26px rgba(241, 124, 48, 0.22);
         }
 
         .tm-complete-btn-primary[disabled] {
@@ -370,7 +385,7 @@
             min-height: auto;
             padding: 0;
             min-width: 0;
-            font-family: "Roboto", sans-serif;
+            font-family: "Palanquin", sans-serif;
             font-weight: 400;
             box-shadow: none;
         }
@@ -452,6 +467,7 @@
                         <img src="{{ prerender(asset('assets/img/logo_new.svg')) }}" alt="Trust &amp; Market">
                     </a>
                     <div class="tm-complete-heading-group">
+                        <p class="tm-complete-kicker">Création de compte</p>
                         <h1 class="tm-complete-heading">COMPLÉTEZ MON PROFIL</h1>
                         <p class="tm-complete-subheading">Quelques informations suffisent pour terminer votre parcours.</p>
                     </div>
