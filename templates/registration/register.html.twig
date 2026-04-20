@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+﻿{% extends 'base.html.twig' %}
 
 {% block head %}
     {{ parent() }}
@@ -736,7 +736,7 @@
             <section class="tm-register-panel">
                 <div class="tm-register-topbar">
                     <div class="tm-register-topbar-main">
-                        <h1 class="tm-register-heading">CRÉER MON PROFIL</h1>
+                        <h1 class="tm-register-heading">CRÃ‰ER MON PROFIL</h1>
                         <p class="tm-register-subheading">Gratuit, sans engagement.</p>
                     </div>
                     <a href="{{ path('home') }}" class="tm-register-logo-link" aria-label="Accueil Trust &amp; Market">
@@ -745,7 +745,7 @@
                 </div>
 
                 {% for message in app.session.flashbag.get('register_recaptcha_error') %}
-                    <div class="alert alert-danger tm-register-alert">{{ message ?: 'Veuillez valider le contrôle de sécurité.' }}</div>
+                    <div class="alert alert-danger tm-register-alert">{{ message ?: 'Veuillez valider le contrÃ´le de sÃ©curitÃ©.' }}</div>
                 {% endfor %}
                 {% for message in app.session.flashbag.get('register_activity_error') %}
                     <div class="alert alert-danger tm-register-alert">{{ message }}</div>
@@ -754,7 +754,7 @@
                 <div class="tm-register-steps">
                     <div class="tm-step-pill is-active">
                         <span class="tm-step-pill-index">1</span>
-                        <strong>Créez</strong>
+                        <strong>CrÃ©ez</strong>
                         <span>Email, mot de passe et type de profil.</span>
                     </div>
                     <div class="tm-step-pill is-upcoming">
@@ -764,36 +764,36 @@
                     </div>
                     <div class="tm-step-pill is-upcoming">
                         <span class="tm-step-pill-index">3</span>
-                        <strong>Complétez</strong>
-                        <span>Complétez ensuite votre profil.</span>
+                        <strong>ComplÃ©tez</strong>
+                        <span>ComplÃ©tez ensuite votre profil.</span>
                     </div>
                 </div>
 
                 <div class="tm-step-panel">
                     <div class="tm-field-block">
-                        <label>Vous êtes :</label>
+                        <label>Vous Ãªtes :</label>
                     </div>
 
                     <div class="tm-role-list">
                         <label class="tm-role-card {% if selected_role == 'ROLE_ABONNE' %}is-selected{% endif %}" data-role-card>
                             <input type="radio" name="role_user" value="ROLE_ABONNE" {% if selected_role == 'ROLE_ABONNE' %}checked{% endif %} required>
                             <span class="tm-role-card-body">
-                                <strong>Abonné</strong>
-                                <span>Pour découvrir les profils, initier un projet et entrer en relation.</span>
+                                <strong>Artiste / Créateur</strong>
+                                <span>Pour dÃ©couvrir les profils, initier un projet et entrer en relation.</span>
                             </span>
                         </label>
                         <label class="tm-role-card {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}is-selected{% endif %}" data-role-card>
                             <input type="radio" name="role_user" value="ROLE_AUTO_ENTREPRENEUR" {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}checked{% endif %} required>
                             <span class="tm-role-card-body">
                                 <strong>Professionnel auto-entrepreneur</strong>
-                                <span>Pour proposer vos services en indépendant avec une entrée simple.</span>
+                                <span>Pour proposer vos services en indÃ©pendant avec une entrÃ©e simple.</span>
                             </span>
                         </label>
                         <label class="tm-role-card {% if selected_role == 'ROLE_SOCIETE' %}is-selected{% endif %}" data-role-card>
                             <input type="radio" name="role_user" value="ROLE_SOCIETE" {% if selected_role == 'ROLE_SOCIETE' %}checked{% endif %} required>
                             <span class="tm-role-card-body">
-                                <strong>Professionnel société</strong>
-                                <span>Pour une structure, une agence ou une activité portée par une société.</span>
+                                <strong>Professionnel sociÃ©tÃ©</strong>
+                                <span>Pour une structure, une agence ou une activitÃ© portÃ©e par une sociÃ©tÃ©.</span>
                             </span>
                         </label>
                     </div>
@@ -828,7 +828,7 @@
                                 {{ form_widget(registrationForm.plainPassword.first, {
                                     'attr': {
                                         'class': 'form-control',
-                                        'placeholder': '8 caractères minimum',
+                                        'placeholder': '8 caractÃ¨res minimum',
                                         'autocomplete': 'new-password'
                                     }
                                 }) }}
@@ -865,7 +865,7 @@
                         </label>
                         <label class="tm-consent">
                             <input type="checkbox" name="_email_newsletter">
-                            <span>Je souhaite recevoir les actualités et offres Trust &amp; Market.</span>
+                            <span>Je souhaite recevoir les actualitÃ©s et offres Trust &amp; Market.</span>
                         </label>
                     </div>
 
@@ -874,8 +874,8 @@
                     </div>
 
                     <div class="tm-step-actions">
-                        <button class="btn tm-btn-primary" type="submit">CRÉER MON COMPTE</button>
-                        <p class="tm-login-note">Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+                        <button class="btn tm-btn-primary" type="submit">CRÃ‰ER MON COMPTE</button>
+                        <p class="tm-login-note">DÃ©jÃ  inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
                     </div>
                 </div>
 
