@@ -707,7 +707,7 @@
                                                                name="encart_option_name"/>
                                                         <div class="form-group">
                                                             <input class="form-control" required
-                                                                   value="{% if encart_homepage_1 is defined and encart_homepage_1 %}{{ encart_homepage_1.optionValue|split('|||')[0] }}{% else %}DÉCOUVREZ NOTRE UNIVERS{% endif %}"
+                                                                   value="{% if encart_homepage_1 is defined and encart_homepage_1 %}{{ encart_homepage_1.optionValue|split('|||')[0] }}{% else %}DÃ‰COUVREZ NOTRE UNIVERS{% endif %}"
                                                                    type="text" name="encart_title"
                                                                    id="encart_1_title"/>
                                                         </div>
@@ -752,7 +752,7 @@
                                                                name="encart_option_name"/>
                                                         <div class="form-group">
                                                             <input class="form-control" required
-                                                                   value="{% if encart_homepage_2 is defined and encart_homepage_2 %}{{ encart_homepage_2.optionValue|split('|||')[0] }}{% else %}DÉCOUVREZ NOTRE UNIVERS{% endif %}"
+                                                                   value="{% if encart_homepage_2 is defined and encart_homepage_2 %}{{ encart_homepage_2.optionValue|split('|||')[0] }}{% else %}DÃ‰COUVREZ NOTRE UNIVERS{% endif %}"
                                                                    type="text" name="encart_title"
                                                                    id="encart_2_title"/>
                                                         </div>
@@ -1244,9 +1244,9 @@
 
 
         $('.slogan_homepage').on('submit', function (e) {
-            // On emp�che le navigateur de soumettre le formulaire
+            // On empï¿½che le navigateur de soumettre le formulaire
             e.preventDefault();
-            toastr.info('Envoie des données en cours...');
+            toastr.info('Envoie des donnÃ©es en cours...');
 
             let temp = tinymce.activeEditor.getContent();
             $('#slogan_homepage_text').val(temp);
@@ -1280,9 +1280,9 @@
         });
 
         $('.encart_homepage_1').on('submit', function (e) {
-            // On emp�che le navigateur de soumettre le formulaire
+            // On empï¿½che le navigateur de soumettre le formulaire
             e.preventDefault();
-            toastr.info('Envoie des données en cours...');
+            toastr.info('Envoie des donnÃ©es en cours...');
 
             let temp = tinymce.get("encart_1_description").getContent();
             $('#encart_1_description').val(temp);
@@ -1317,9 +1317,9 @@
         });
 
         $('.encart_homepage_2').on('submit', function (e) {
-            // On emp�che le navigateur de soumettre le formulaire
+            // On empï¿½che le navigateur de soumettre le formulaire
             e.preventDefault();
-            toastr.info('Envoie des données en cours...');
+            toastr.info('Envoie des donnÃ©es en cours...');
 
             let temp = tinymce.get("encart_2_description").getContent();
             $('#encart_2_description').val(temp);
@@ -1354,14 +1354,40 @@
         });
 
         $('.accueil_images').on('submit', function (e) {
-            // On emp�che le navigateur de soumettre le formulaire
+            // On empï¿½che le navigateur de soumettre le formulaire
             e.preventDefault();
-            toastr.info('Envoie des données en cours...');
+            toastr.info('Envoie des donnÃ©es en cours...');
 
             let $form = $(this);
             let formdata = (window.FormData) ? new FormData($form[0]) : null;
             let data = (formdata !== null) ? formdata : $form.serialize();
             let myDropzone = '';
+            let existingImage = $.trim($form.find('input[name="existing_image"]').val() || '');
+            let submitForm = function () {
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (reponse) {
+                        if (reponse != 0) {
+                            toastr.clear();
+                            toastr.success("{{ 'systeme.requetes.succes'|trans }}");
+                            window.location = '';
+                        } else if (reponse == 0) {
+                            $('#send').removeClass('running');
+                            toastr.clear();
+                            toastr.error("{{ 'admin.annonce.error'|trans }}");
+                        }
+                    },
+                    error: function (reponse) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'admin.annonce.error'|trans }}");
+                    }
+                });
+            };
             if ($form.attr('id') === 'accueil_images1') {
                 myDropzone = myDropzone1;
             } else if ($form.attr('id') === 'accueil_images2') {
@@ -1388,43 +1414,24 @@
                 myDropzone = myDropzone12;
             }
 
-            if (myDropzone.files != "") {
+            let hasNewImage = myDropzone && myDropzone.getAcceptedFiles && myDropzone.getAcceptedFiles().length > 0;
+
+            if (hasNewImage) {
                 myDropzone.processQueue();
-                myDropzone.on("queuecomplete", function (file, response) {
-                    $.ajax({
-                        url: $form.attr('action'),
-                        type: $form.attr('method'),
-                        contentType: false,
-                        processData: false,
-                        data: data,
-                        success: function (reponse) {
-                            if (reponse != 0) {
-                                toastr.clear();
-                                toastr.success("{{ 'systeme.requetes.succes'|trans }}");
-                                window.location = '';
-                            } else if (reponse == 0) {
-                                $('#send').removeClass('running');
-                                toastr.clear();
-                                toastr.error("{{ 'admin.annonce.error'|trans }}");
-                            }
-                        },
-                        error: function (reponse) {
-                            $('#send').removeClass('running');
-                            toastr.clear();
-                            toastr.error("{{ 'admin.annonce.error'|trans }}");
-                        }
-                    });
+                myDropzone.on("queuecomplete", function () {
+                    submitForm();
                 });
+            } else if (existingImage !== '') {
+                submitForm();
             } else {
                 toastr.clear();
                 toastr.info('Choisissez l\'image du bloc 1');
             }
             return false;
         });
-
         $('.home_profile_card').on('submit', function (e) {
             e.preventDefault();
-            toastr.info('Envoie des données en cours...');
+            toastr.info('Envoie des donnÃ©es en cours...');
 
             let $form = $(this);
             let formdata = (window.FormData) ? new FormData($form[0]) : null;
