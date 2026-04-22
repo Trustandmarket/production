@@ -1425,27 +1425,35 @@ class AdminController extends AbstractController
     public function submitImageHome(Request $request)
     {
         $id = 0;
+        $optionName = trim((string) $request->get('option_name'));
+        $existingImage = trim((string) $request->get('existing_image'));
+        $uploadedImage = trim((string) $this->requestStack->getSession()->get('file'));
+        $targetUrl = trim((string) $request->get('target_url'));
+        $image = $uploadedImage !== '' ? $uploadedImage : $existingImage;
         $config = $this->entityManager
             ->getRepository(WpOptions::class)
-            ->findOneByOptionName($request->get('option_name'));
+            ->findOneByOptionName($optionName);
         if ($config) {
             $this->entityManager->remove($config);
             $this->entityManager->flush();
         }
         $config = new WpOptions();
-        $config->setOptionName($request->get('option_name'));
-        if ($request->get('categories')) {
+        $config->setOptionName($optionName);
+        if (in_array($optionName, ['accueil_bloc_11', 'accueil_bloc_12'], true)) {
+            $config->setOptionValue($image . '|||' . $targetUrl);
+        } elseif ($request->get('categories')) {
             $config->setOptionValue(
                 $request->get('categories') .
                 '|||' .
-                $this->requestStack->getSession()->get('file')
+                $uploadedImage
             );
         } else {
-            $config->setOptionValue($this->requestStack->getSession()->get('file'));
+            $config->setOptionValue($uploadedImage);
         }
         $config->setAutoLoad('no');
         $this->entityManager->persist($config);
         $this->entityManager->flush();
+        $this->requestStack->getSession()->set('file', '');
 
         $id = 1;
         return $this->render('admin/resultat.html.twig', [

@@ -564,7 +564,9 @@
                                 <!-- Card -->
                                 <div class="card">
                                     <!-- Card image -->
-                                    {% set bloc11RawImage = bloc11 ? bloc11.optionValue : '' %}
+                                    {% set bloc11Parts = bloc11 ? bloc11.optionValue|split('|||') : [] %}
+                                    {% set bloc11RawImage = bloc11 ? (bloc11Parts|length > 1 ? bloc11Parts[0] : bloc11.optionValue) : '' %}
+                                    {% set bloc11TargetUrl = bloc11 ? (bloc11Parts|length > 1 ? bloc11Parts[1] : '') : '' %}
                                     {% set bloc11PreviewImage = bloc11RawImage ? ((bloc11RawImage|slice(0,4) == 'http' or bloc11RawImage|slice(0,1) == '/') ? bloc11RawImage : '/' ~ bloc11RawImage) : asset('assets/img/prestations/cover.jpg') %}
                                     <div class="view overlay">
                                         <img class="card-img-top lazy"
@@ -583,6 +585,12 @@
                                                 <form action="{{ path('add_image_home') }}" method="post"
                                                       class="accueil_images" id="accueil_images11">
                                                     <input hidden name="option_name" value="accueil_bloc_11"/>
+                                                    <input hidden name="existing_image" value="{{ bloc11RawImage }}">
+                                                    <div class="form-group">
+                                                        <input class="form-control" type="text" name="target_url"
+                                                               value="{{ bloc11TargetUrl }}"
+                                                               placeholder="URL de redirection (optionnelle)"/>
+                                                    </div>
                                                     <div class="form-group ">
                                                         <div class="dropzone" id="dropzone_element_11"
                                                              style="width:100%"></div>
@@ -607,7 +615,9 @@
                                 <div class="card">
                                     <!-- Card image -->
                                     {% set bloc12Parts = bloc12 ? bloc12.optionValue|split('|||') : [] %}
-                                    {% set bloc12RawImage = bloc12 ? (bloc12Parts|length > 1 and bloc12Parts[1] is not empty ? bloc12Parts[1] : bloc12.optionValue) : '' %}
+                                    {% set bloc12IsLegacy = bloc12Parts|length > 1 and bloc12Parts[0] matches '/^\\d+$/' %}
+                                    {% set bloc12RawImage = bloc12 ? (bloc12IsLegacy ? bloc12Parts[1] : (bloc12Parts|length > 1 ? bloc12Parts[0] : bloc12.optionValue)) : '' %}
+                                    {% set bloc12TargetUrl = bloc12 ? (bloc12IsLegacy ? '' : (bloc12Parts|length > 1 ? bloc12Parts[1] : '')) : '' %}
                                     {% set bloc12PreviewImage = bloc12RawImage ? ((bloc12RawImage|slice(0,4) == 'http' or bloc12RawImage|slice(0,1) == '/') ? bloc12RawImage : '/' ~ bloc12RawImage) : asset('assets/img/prestations/cover.jpg') %}
                                     <div class="view overlay">
                                         <img class="card-img-top lazy"
@@ -627,17 +637,11 @@
                                                 <form action="{{ path('add_image_home') }}" method="post"
                                                       class="accueil_images" id="accueil_images12">
                                                     <input hidden name="option_name" value="accueil_bloc_12"/>
+                                                    <input hidden name="existing_image" value="{{ bloc12RawImage }}">
                                                     <div class="form-group">
-                                                        <select name="categories" class="form-control" required>
-                                                            <option value="">Selectionner la categorie a Afficher
-                                                            </option>
-                                                            {% for prestation in categories %}
-                                                                <option {% if bloc12 %}{% if bloc12.optionValue|split('|||')[0] == prestation.termTaxonomyId %}selected{% endif %}
-                                                                        {% endif %}
-                                                                        value="{{ prestation.termTaxonomyId }}">{% if app.request.locale == 'en' and prestation.name != '' %}
-                                                                        {{ prestation.content }}{% else %}{{ prestation.name }}{% endif %}</option>
-                                                            {% endfor %}
-                                                        </select>
+                                                        <input class="form-control" type="text" name="target_url"
+                                                               value="{{ bloc12TargetUrl }}"
+                                                               placeholder="URL de redirection (optionnelle)"/>
                                                     </div>
                                                     <div class="form-group ">
                                                         <div class="dropzone" id="dropzone_element_12"

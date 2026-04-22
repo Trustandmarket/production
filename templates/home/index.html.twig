@@ -359,6 +359,9 @@
 			border: 1px solid #ece6dd;
 			background: #ffffff;
 			box-shadow: 0 10px 22px rgba(14, 14, 14, 0.06);
+			color: inherit;
+			text-decoration: none;
+			display: block;
 		}
 
 		.home-premium .hp-audience-card::after {
@@ -543,12 +546,16 @@
 {% block body %}
 	{% import _self as home_macros %}
 	{% set heroImage = bloc10 ? bloc10.optionValue : asset('assets/img/prestations/cover.jpg') %}
-	{% set heroLink = home_macros.prestation_link(bloc12, prestations, 'photographe') %}
+	{% set bloc12Parts = bloc12 ? bloc12.optionValue|split('|||') : [] %}
+	{% set bloc12IsLegacy = bloc12Parts|length > 1 and bloc12Parts[0] matches '/^\\d+$/' %}
+	{% set heroLink = bloc12IsLegacy ? home_macros.prestation_link(bloc12, prestations, 'photographe') : path('annonces_listeAnnonces', {type_prestation: 'photographe', services_proposes: '', code_postal_ville: ''}) %}
 	{% set encart1 = encart_homepage_1 is defined and encart_homepage_1 ? encart_homepage_1.optionValue|split('|||') : [] %}
 	{% set encart2 = encart_homepage_2 is defined and encart_homepage_2 ? encart_homepage_2.optionValue|split('|||') : [] %}
-	{% set audienceArtistImage = bloc11 ? bloc11.optionValue : asset('assets/img/prestations/cover.jpg') %}
-	{% set bloc12Parts = bloc12 ? bloc12.optionValue|split('|||') : [] %}
-	{% set audienceProImage = bloc12 ? (bloc12Parts|length > 1 ? bloc12Parts[1] : bloc12.optionValue) : asset('assets/img/prestations/cover.jpg') %}
+	{% set bloc11Parts = bloc11 ? bloc11.optionValue|split('|||') : [] %}
+	{% set audienceArtistImage = bloc11 ? (bloc11Parts|length > 1 ? bloc11Parts[0] : bloc11.optionValue) : asset('assets/img/prestations/cover.jpg') %}
+	{% set audienceArtistUrl = bloc11 ? (bloc11Parts|length > 1 ? bloc11Parts[1] : '') : '' %}
+	{% set audienceProImage = bloc12 ? (bloc12IsLegacy ? bloc12Parts[1] : (bloc12Parts|length > 1 ? bloc12Parts[0] : bloc12.optionValue)) : asset('assets/img/prestations/cover.jpg') %}
+	{% set audienceProUrl = bloc12 ? (bloc12IsLegacy ? '' : (bloc12Parts|length > 1 ? bloc12Parts[1] : '')) : '' %}
 	{% set homeProfileCard1 = home_profile_card_1 is defined and home_profile_card_1 ? home_profile_card_1.optionValue|split('|||') : [] %}
 	{% set homeProfileCard2 = home_profile_card_2 is defined and home_profile_card_2 ? home_profile_card_2.optionValue|split('|||') : [] %}
 	{% set homeProfileCard3 = home_profile_card_3 is defined and home_profile_card_3 ? home_profile_card_3.optionValue|split('|||') : [] %}
@@ -687,7 +694,11 @@
 					<h2>Pour les artistes et les pros</h2>
 				</div>
 				<div class="hp-audience">
+					{% if audienceArtistUrl %}
+					<a class="hp-block hp-audience-card hp-audience-artists" href="{{ audienceArtistUrl }}" target="_blank" rel="noopener noreferrer" style="--hp-audience-image: url('{{ audienceArtistImage }}');">
+					{% else %}
 					<div class="hp-block hp-audience-card hp-audience-artists" style="--hp-audience-image: url('{{ audienceArtistImage }}');">
+					{% endif %}
 						<div class="hp-audience-head">
 							<i class="fa fa-microphone" aria-hidden="true"></i>
 							<h4>Artites</h4>
@@ -706,8 +717,16 @@
 								<span>Gagnez du temps</span>
 							</li>
 						</ul>
+					{% if audienceArtistUrl %}
+					</a>
+					{% else %}
 					</div>
+					{% endif %}
+					{% if audienceProUrl %}
+					<a class="hp-block hp-audience-card hp-audience-pros" href="{{ audienceProUrl }}" target="_blank" rel="noopener noreferrer" style="--hp-audience-image: url('{{ audienceProImage }}');">
+					{% else %}
 					<div class="hp-block hp-audience-card hp-audience-pros" style="--hp-audience-image: url('{{ audienceProImage }}');">
+					{% endif %}
 						<div class="hp-audience-head">
 							<i class="fa fa-headphones" aria-hidden="true"></i>
 							<h4>Professionnels</h4>
@@ -726,7 +745,11 @@
 								<span>Sans effort marketing</span>
 							</li>
 						</ul>
+					{% if audienceProUrl %}
+					</a>
+					{% else %}
 					</div>
+					{% endif %}
 				</div>
 			</div>
 		</section>
