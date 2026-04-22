@@ -1650,20 +1650,20 @@ class ProfileAnnouncementController extends AbstractController
             $statut_annonce = '';
             $email_code = '';
             if ($detailsAnnonce->getPostStatus() == 'moderation') {
-                $statut_annonce = 'ModÃ©ration';
-                $setEmailSubject = 'CrÃ©ation d\'annonce sur Trust & Market';
+                $statut_annonce = 'Modération';
+                $setEmailSubject = 'Création d\'annonce sur Trust & Market';
                 $email_code = 27;
             } elseif ($detailsAnnonce->getPostStatus() == 'publish') {
-                $statut_annonce = 'PubliÃ©e';
-                $setEmailSubject = 'Nouvelle annonce publiÃ©e sur Trust & Market';
+                $statut_annonce = 'Publiée';
+                $setEmailSubject = 'Nouvelle annonce publiée sur Trust & Market';
                 $email_code = 28;
             } elseif ($detailsAnnonce->getPostStatus() == 'draft') {
                 $statut_annonce = 'En brouillon';
-                $setEmailSubject = 'CrÃ©ation d\'annonce sur Trust & Market';
+                $setEmailSubject = 'Création d\'annonce sur Trust & Market';
                 $email_code = 27;
             } elseif ($detailsAnnonce->getPostStatus() == 'trash') {
-                $statut_annonce = 'RejetÃ©e';
-                $setEmailSubject = 'Annonce rejetÃ©e sur Trust & Market';
+                $statut_annonce = 'Rejetée';
+                $setEmailSubject = 'Annonce rejetée sur Trust & Market';
                 $email_code = 29;
             }
 
@@ -1940,10 +1940,10 @@ class ProfileAnnouncementController extends AbstractController
         $statut_annonce = '';
         $email_code = '';
         if ($annonce->getPostStatus() == 'moderation') {
-            $statut_annonce = 'ModÃ©ration';
+            $statut_annonce = 'Modération';
             $email_code = 27;
         } elseif ($annonce->getPostStatus() == 'publish') {
-            $statut_annonce = 'PubliÃ©e';
+            $statut_annonce = 'Publiée';
             $email_code = 28;
         } elseif ($annonce->getPostStatus() == 'draft') {
             $statut_annonce = 'En brouillon';
