@@ -718,6 +718,20 @@
 																				{{a.calendrier|last}}
 																				({{a.calendrier|length}}
 																				dates dispo.)</span>
+																			<div class="pt-4">
+																				<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+																					<div class="btn-group mr-2" role="group" aria-label="First group">
+																						<a class="btn btn-bg-primary btn-sm editer" href="{{path('profile_EditDraftAnnounce',{id:a.id, state:'edition'})}}">
+																							<i class="fas fa-edit"></i>
+																						</a>
+																					</div>
+																					<div class="btn-group mr-2" role="group" aria-label="Second group">
+																						<a href="{{path('profile_deleteDraftAnnounce',{id:a.id})}}" class="btn btn-bg-primary btn-sm editer supprimer">
+																							<i class="fas fa-trash-alt"></i>
+																						</a>
+																					</div>
+																				</div>
+																			</div>
 																		</div>
 																	</div>
 																{% endfor %}
@@ -1615,4 +1629,3 @@ toastr.options = {
 {% include("profile/js/annulerCommande.js.twig") %}
 {% include("profile/js/brouillonDevisAnnonce.html.twig") %}
 {% include("profile/js/creerDevisAnnonce.html.twig") %}{% endblock %}
-
