@@ -814,12 +814,22 @@
             z-index: 1;
         }
 
-        .tm-register-visual-brand {
-            color: #f17c30;
-            font-family: "Palanquin Dark", sans-serif;
-            font-size: clamp(.78rem, .85vw, 1rem);
-            font-weight: 700;
-            letter-spacing: .08em;
+        .tm-register-visual-logo {
+            width: clamp(78px, 7.5vw, 124px);
+            min-height: clamp(44px, 4.2vw, 62px);
+            padding: clamp(8px, 1vw, 13px) clamp(12px, 1.4vw, 18px);
+            border-radius: 6px;
+            background: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, .16);
+        }
+
+        .tm-register-visual-logo img {
+            display: block;
+            width: 100%;
+            height: auto;
         }
 
         .tm-register-visual-copy {
@@ -938,20 +948,22 @@
             width: clamp(18px, 1.55vw, 22px);
             height: clamp(18px, 1.55vw, 22px);
             margin-bottom: 0;
-            background: #ddd7d1;
-            color: #111;
+            background: #ff7e10;
+            border: 1px solid #ff7e10;
+            color: #fff;
             font-size: clamp(.66rem, .7vw, .78rem);
         }
 
         .tm-step-pill.is-active .tm-step-pill-index {
-            background: #111;
+            background: #ff7e10;
+            border-color: #ff7e10;
             color: #fff;
         }
 
         .tm-step-pill.is-upcoming .tm-step-pill-index {
-            background: #fff;
-            border: 1px solid #bfb8b1;
-            color: #69625c;
+            background: #ff7e10;
+            border-color: #ff7e10;
+            color: #fff;
         }
 
         .tm-step-pill strong {
@@ -1102,8 +1114,8 @@
 
         .tm-btn-primary:hover,
         .tm-btn-primary:focus {
-            background: #111;
-            border-color: #111;
+            background: #ff7e10;
+            border-color: #ff7e10;
             color: #fff;
         }
 
@@ -1313,9 +1325,11 @@
     <main class="tm-register-shell">
         <div class="tm-register-wrap">
             <section class="tm-register-visual" style="--tm-register-visual-image: url('{{ registerVisualBackground|e('css') }}');" aria-label="Trust &amp; Market">
-                <div class="tm-register-visual-brand">TRUST &amp; MARKET</div>
+                <a href="{{ path('home') }}" class="tm-register-visual-logo" aria-label="Accueil Trust &amp; Market">
+                    <img src="{{ prerender(asset('assets/img/logo_new.svg')) }}" alt="Trust &amp; Market">
+                </a>
                 <div class="tm-register-visual-copy">
-                    <strong>La plateforme des professionnels de la musique.</strong>
+                    <strong>La plateforme de la production musicale.</strong>
                     <span>Studios, musiciens, producteurs : trouvez le bon partenaire pour votre projet.</span>
                 </div>
             </section>
@@ -1462,7 +1476,7 @@
                         </div>
 
                         <div class="tm-step-actions">
-                            <button class="btn tm-btn-primary" type="submit">CR&Eacute;ER MON COMPTE</button>
+                            <button class="btn tm-btn-primary" type="submit">Cr&eacute;er mon compte</button>
                             <p class="tm-login-note">D&eacute;j&agrave; inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
                         </div>
                     </div>
