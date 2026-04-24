@@ -574,6 +574,15 @@
             text-decoration: underline;
         }
 
+        .tm-note-link {
+            color: #212529;
+            text-decoration: underline;
+        }
+
+        .tm-note-link-prefix {
+            text-decoration: none;
+        }
+
         .tm-hidden-field {
             display: none;
         }
@@ -1464,7 +1473,7 @@
 
                         <div class="tm-step-actions">
                             <button class="btn tm-btn-primary" type="button" data-next-register-step>Suivant</button>
-                            <p class="tm-login-note"><a href="{{ path('home') }}">&larr; Accueil</a> <span aria-hidden="true">|</span> <a href="{{ path('app_login') }}">Se connecter</a></p>
+                            <p class="tm-login-note"><a href="{{ path('home') }}" class="tm-note-link"><span class="tm-note-link-prefix">&larr; </span>Accueil</a> <span aria-hidden="true">|</span> <a href="{{ path('app_login') }}">Se connecter</a></p>
                         </div>
                     </div>
 
@@ -1553,9 +1562,6 @@
                         </div>
                     </div>
 
-                    <div class="tm-register-footer">
-                        <a href="{{ path('home') }}" class="special-below-link">&larr;&nbsp;<span>{{ 'general.accueil'|trans }}</span></a>
-                    </div>
                 </div>
             </section>
         </div>
