@@ -1000,52 +1000,53 @@
 
         .tm-role-card {
             gap: clamp(8px, .8vw, 12px);
-            padding: clamp(9px, 1.35vh, 15px) clamp(12px, 1.1vw, 18px);
-            border-color: #d9d3cc;
-            border-radius: 8px;
+            padding: clamp(13px, 1.9vh, 20px) clamp(18px, 1.8vw, 28px);
+            border: 2px solid rgba(255, 126, 16, .28);
+            border-radius: 26px;
             background: #fff;
-            box-shadow: none;
+            box-shadow: 0 10px 28px rgba(255, 126, 16, .06);
             backdrop-filter: none;
             transform: none;
         }
 
         .tm-role-card:hover {
             transform: none;
-            border-color: rgba(241, 124, 48, .48);
-            box-shadow: 0 8px 20px rgba(17, 17, 17, .08);
+            border-color: rgba(255, 126, 16, .56);
+            box-shadow: 0 12px 30px rgba(255, 126, 16, .10);
         }
 
         .tm-role-card.is-selected {
-            border-color: #111;
-            background: #fffaf6;
-            box-shadow: inset 0 0 0 1px #111;
+            border-color: rgba(255, 126, 16, .58);
+            background: linear-gradient(180deg, #fff 0%, #fffaf6 100%);
+            box-shadow: inset 0 0 0 1px rgba(255, 126, 16, .20), 0 12px 30px rgba(255, 126, 16, .10);
         }
 
         .tm-role-card input[type="radio"] {
-            width: 15px;
-            height: 15px;
-            margin-top: 3px;
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            border-color: rgba(255, 126, 16, .62);
         }
 
         .tm-role-card input[type="radio"]::after {
             inset: 3px;
-            background: #111;
+            background: #ff7e10;
         }
 
         .tm-role-card.is-selected input[type="radio"] {
-            border-color: #111;
+            border-color: #ff7e10;
         }
 
         .tm-role-card strong {
-            margin-bottom: 2px;
-            font-size: clamp(.86rem, .92vw, 1rem);
-            line-height: 1.1;
+            margin-bottom: clamp(4px, .7vh, 8px);
+            font-size: clamp(1rem, 1.08vw, 1.18rem);
+            line-height: 1.12;
         }
 
         .tm-role-card span {
             color: #333;
-            font-size: clamp(.74rem, .8vw, .86rem);
-            line-height: 1.22;
+            font-size: clamp(.86rem, .95vw, 1rem);
+            line-height: 1.38;
         }
 
         .tm-field-grid,
@@ -1191,11 +1192,12 @@
             }
 
             .tm-role-card {
-                padding: 8px 11px;
+                padding: 10px 14px;
+                border-radius: 20px;
             }
 
             .tm-role-card span {
-                font-size: .72rem;
+                font-size: .78rem;
             }
 
             .tm-register-panel .form-control {
