@@ -1143,15 +1143,36 @@
 
         .tm-step-actions-row {
             display: grid;
-            grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
-            gap: clamp(8px, 1vw, 12px);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: clamp(12px, 1.3vw, 16px);
             width: 100%;
+            align-items: center;
+            justify-content: center;
         }
 
         .tm-step-actions-row .tm-btn-primary,
         .tm-step-actions-row .tm-btn-secondary {
             min-width: 0;
             width: 100%;
+            min-height: clamp(38px, 5vh, 50px);
+            border-radius: 14px;
+            background: #fff;
+            border: 1px solid #111;
+            color: #111;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: clamp(.82rem, .9vw, .98rem);
+            font-weight: 700;
+            box-shadow: none;
+            padding: clamp(8px, 1vh, 10px) clamp(18px, 2vw, 28px);
+        }
+
+        .tm-step-actions-row .tm-btn-primary:hover,
+        .tm-step-actions-row .tm-btn-primary:focus,
+        .tm-step-actions-row .tm-btn-secondary:hover,
+        .tm-step-actions-row .tm-btn-secondary:focus {
+            background: #ff7e10;
+            border-color: #ff7e10;
+            color: #fff;
         }
 
         .tm-choice-error {
