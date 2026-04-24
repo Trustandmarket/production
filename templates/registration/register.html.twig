@@ -985,6 +985,10 @@
             margin: 0;
         }
 
+        .tm-step-panel[hidden] {
+            display: none;
+        }
+
         .tm-field-block label,
         .tm-choice-label {
             font-size: clamp(.82rem, .9vw, .96rem);
@@ -1122,6 +1126,31 @@
             background: #ff7e10;
             border-color: #ff7e10;
             color: #fff;
+        }
+
+        .tm-step-actions-row {
+            display: grid;
+            grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+            gap: clamp(8px, 1vw, 12px);
+            width: 100%;
+        }
+
+        .tm-step-actions-row .tm-btn-primary,
+        .tm-step-actions-row .tm-btn-secondary {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .tm-choice-error {
+            display: none;
+            margin-top: 10px;
+            color: #b54000;
+            font-size: clamp(.76rem, .82vw, .88rem);
+            line-height: 1.35;
+        }
+
+        .tm-choice-error.is-visible {
+            display: block;
         }
 
         .tm-login-note {
@@ -1289,6 +1318,10 @@
             .tm-step-pill:not(:last-child)::after {
                 width: 18px;
             }
+
+            .tm-step-actions-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 520px) {
@@ -1324,6 +1357,7 @@
         'attr': {
             'id': 'registration-form',
             'class': 'tm-register-form',
+            'data-initial-step': app.request.method == 'POST' ? '2' : '1',
             'onsubmit': 'return gtagSendEvent(this);'
         }
     }) }}
@@ -1360,24 +1394,29 @@
                     {% endfor %}
 
                     <div class="tm-register-steps">
-                        <div class="tm-step-pill is-active">
+                        <div class="tm-step-pill is-active" data-step-indicator="1">
                             <span class="tm-step-pill-index">1</span>
-                            <strong>Cr&eacute;ez</strong>
-                            <span>Email, mot de passe et type de profil.</span>
+                            <strong>Choisir</strong>
+                            <span>Choix du type de profil.</span>
                         </div>
-                        <div class="tm-step-pill is-upcoming">
+                        <div class="tm-step-pill is-upcoming" data-step-indicator="2">
                             <span class="tm-step-pill-index">2</span>
-                            <strong>Confirmez</strong>
+                            <strong>Cr&eacute;er</strong>
+                            <span>Email, mot de passe et validation.</span>
+                        </div>
+                        <div class="tm-step-pill is-upcoming" data-step-indicator="3">
+                            <span class="tm-step-pill-index">3</span>
+                            <strong>Confirmer</strong>
                             <span>Validation du compte par email.</span>
                         </div>
-                        <div class="tm-step-pill is-upcoming">
-                            <span class="tm-step-pill-index">3</span>
-                            <strong>Compl&eacute;tez</strong>
+                        <div class="tm-step-pill is-upcoming" data-step-indicator="4">
+                            <span class="tm-step-pill-index">4</span>
+                            <strong>Compl&eacute;ter</strong>
                             <span>Compl&eacute;tez ensuite votre profil.</span>
                         </div>
                     </div>
 
-                    <div class="tm-step-panel">
+                    <div class="tm-step-panel" data-register-step-panel="1">
                         <div class="tm-field-block">
                             <label>Vous &ecirc;tes :</label>
                         </div>
@@ -1405,6 +1444,16 @@
                                 </span>
                             </label>
                         </div>
+
+                        <p class="tm-choice-error" data-role-error>Choisissez un profil pour continuer.</p>
+
+                        <div class="tm-step-actions">
+                            <button class="btn tm-btn-primary" type="button" data-next-register-step>Suivant</button>
+                            <p class="tm-login-note">D&eacute;j&agrave; inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+                        </div>
+                    </div>
+
+                    <div class="tm-step-panel" data-register-step-panel="2" hidden>
 
                         <div class="tm-field-grid">
                             <div class="tm-field-block">
@@ -1482,7 +1531,10 @@
                         </div>
 
                         <div class="tm-step-actions">
-                            <button class="btn tm-btn-primary" type="submit">Cr&eacute;er mon compte</button>
+                            <div class="tm-step-actions-row">
+                                <button class="btn tm-btn-secondary" type="button" data-prev-register-step>Pr&eacute;c&eacute;dent</button>
+                                <button class="btn tm-btn-primary" type="submit">Cr&eacute;er mon compte</button>
+                            </div>
                             <p class="tm-login-note">D&eacute;j&agrave; inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
                         </div>
                     </div>
@@ -1505,9 +1557,38 @@
         $(document).ready(function () {
             const $roleCards = $('[data-role-card]');
             const $passwordToggles = $('[data-password-toggle]');
+            const $form = $('#registration-form');
+            const $stepPanels = $('[data-register-step-panel]');
+            const $stepIndicators = $('[data-step-indicator]');
+            const $roleError = $('[data-role-error]');
+            const initialStep = parseInt($form.data('initial-step'), 10) || 1;
 
             function getSelectedRole() {
                 return $('input[name="role_user"]:checked').val() || '';
+            }
+
+            function setRegistrationStep(step) {
+                const normalizedStep = step === 2 ? 2 : 1;
+
+                $stepPanels.each(function () {
+                    const $panel = $(this);
+                    $panel.prop('hidden', parseInt($panel.data('register-step-panel'), 10) !== normalizedStep);
+                });
+
+                $stepIndicators.each(function () {
+                    const $indicator = $(this);
+                    const indicatorStep = parseInt($indicator.data('step-indicator'), 10);
+
+                    $indicator.toggleClass('is-passed', indicatorStep < normalizedStep);
+                    $indicator.toggleClass('is-active', indicatorStep === normalizedStep);
+                    $indicator.toggleClass('is-upcoming', indicatorStep > normalizedStep);
+                });
+
+                $('.tm-register-panel').scrollTop(0);
+            }
+
+            function showRoleError(visible) {
+                $roleError.toggleClass('is-visible', visible);
             }
 
             function toggleRoleCards() {
@@ -1524,10 +1605,25 @@
             });
 
             $('input[name="role_user"]').on('change', function () {
+                showRoleError(false);
                 toggleRoleCards();
             });
 
             toggleRoleCards();
+            setRegistrationStep(initialStep);
+
+            $('[data-next-register-step]').on('click', function () {
+                if (!getSelectedRole()) {
+                    showRoleError(true);
+                    return;
+                }
+
+                setRegistrationStep(2);
+            });
+
+            $('[data-prev-register-step]').on('click', function () {
+                setRegistrationStep(1);
+            });
 
             $passwordToggles.on('click', function () {
                 const $toggle = $(this);
