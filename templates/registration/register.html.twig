@@ -982,11 +982,15 @@
 
         .tm-step-panel {
             max-width: none;
-            margin: 0;
+            margin: clamp(14px, 2.6vh, 30px) 0 0;
         }
 
         .tm-step-panel[hidden] {
             display: none;
+        }
+
+        .tm-creation-panel {
+            padding-top: clamp(4px, .8vh, 10px);
         }
 
         .tm-field-block label,
@@ -1060,6 +1064,11 @@
             margin-top: clamp(10px, 1.6vh, 18px);
         }
 
+        .tm-creation-panel .tm-field-grid + .tm-hidden-field + .tm-password-row,
+        .tm-creation-panel .tm-field-grid + .tm-password-row {
+            margin-top: clamp(16px, 2.4vh, 26px);
+        }
+
         .tm-password-row {
             row-gap: clamp(6px, 1vh, 10px);
             grid-template-areas:
@@ -1092,6 +1101,10 @@
             border-radius: 0;
             background: transparent;
             box-shadow: none;
+        }
+
+        .tm-creation-panel .tm-register-consents {
+            margin-top: clamp(16px, 2.3vh, 24px);
         }
 
         .tm-consent {
@@ -1453,7 +1466,7 @@
                         </div>
                     </div>
 
-                    <div class="tm-step-panel" data-register-step-panel="2" hidden>
+                    <div class="tm-step-panel tm-creation-panel" data-register-step-panel="2" hidden>
 
                         <div class="tm-field-grid">
                             <div class="tm-field-block">
