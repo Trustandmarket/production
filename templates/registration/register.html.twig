@@ -814,21 +814,6 @@
             z-index: 1;
         }
 
-        .tm-register-visual-logo {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-        }
-
-        .tm-register-visual-logo img {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
         .tm-register-visual-copy {
             max-width: clamp(320px, 30vw, 540px);
             text-shadow: 0 1px 16px rgba(0, 0, 0, .34);
@@ -1406,9 +1391,6 @@
     <main class="tm-register-shell">
         <div class="tm-register-wrap">
             <section class="tm-register-visual" style="--tm-register-visual-image: url('{{ registerVisualBackground|e('css') }}');" aria-label="Trust &amp; Market">
-                <a href="{{ path('home') }}" class="tm-register-visual-logo" aria-label="Accueil Trust &amp; Market">
-                    <img src="{{ prerender(asset('assets/img/logo_tm.svg')) }}" alt="Trust &amp; Market">
-                </a>
                 <div class="tm-register-visual-copy">
                     <strong>La plateforme de la production musicale.</strong>
                     <span>Studios, musiciens, producteurs : trouvez le bon partenaire pour votre projet.</span>
