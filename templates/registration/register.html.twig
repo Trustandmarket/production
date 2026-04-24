@@ -1143,12 +1143,19 @@
 
         .tm-step-actions-row {
             width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
 
         .tm-step-actions-row .tm-btn-primary,
         .tm-step-actions-row .tm-btn-secondary {
             min-width: 0;
-            width: 100%;
+            width: min(320px, 100%);
+            display: block;
+            margin: 0 auto;
+            flex: 0 1 auto;
             min-height: clamp(38px, 5vh, 50px);
             border-radius: 14px;
             background: #fff;
