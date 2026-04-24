@@ -948,22 +948,29 @@
             width: clamp(18px, 1.55vw, 22px);
             height: clamp(18px, 1.55vw, 22px);
             margin-bottom: 0;
-            background: #ff7e10;
-            border: 1px solid #ff7e10;
-            color: #fff;
+            background: #fff;
+            border: 1px solid #bfb8b1;
+            color: #69625c;
             font-size: clamp(.66rem, .7vw, .78rem);
         }
 
         .tm-step-pill.is-active .tm-step-pill-index {
+            background: #111;
+            border-color: #111;
+            color: #fff;
+        }
+
+        .tm-step-pill.is-passed .tm-step-pill-index,
+        .tm-step-pill.is-completed .tm-step-pill-index {
             background: #ff7e10;
             border-color: #ff7e10;
             color: #fff;
         }
 
         .tm-step-pill.is-upcoming .tm-step-pill-index {
-            background: #ff7e10;
-            border-color: #ff7e10;
-            color: #fff;
+            background: #fff;
+            border-color: #bfb8b1;
+            color: #69625c;
         }
 
         .tm-step-pill strong {
