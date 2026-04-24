@@ -719,10 +719,408 @@
                 max-width: 320px;
             }
         }
+
+        .tm-register-form {
+            min-height: 100vh;
+        }
+
+        body {
+            background: #f2eee9;
+        }
+
+        .tm-register-shell {
+            min-height: 100vh;
+            padding: 24px;
+            align-items: center;
+            background:
+                linear-gradient(120deg, rgba(255,255,255,0.68), rgba(244,238,232,0.9)),
+                #f2eee9;
+        }
+
+        .tm-register-wrap {
+            width: min(1120px, 100%);
+            max-width: 1120px;
+            min-height: min(760px, calc(100vh - 48px));
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            background: #fff;
+            border: 1px solid rgba(18, 18, 18, 0.08);
+            border-radius: 8px;
+            box-shadow: 0 24px 72px rgba(17, 17, 17, 0.14);
+            overflow: hidden;
+        }
+
+        .tm-register-visual {
+            position: relative;
+            min-height: 100%;
+            padding: clamp(28px, 4vw, 46px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #fff;
+            background-image:
+                linear-gradient(180deg, rgba(14, 10, 8, 0.28) 0%, rgba(14, 10, 8, 0.68) 100%),
+                var(--tm-register-visual-image);
+            background-size: cover;
+            background-position: center;
+            isolation: isolate;
+        }
+
+        .tm-register-visual::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 72px 72px;
+            opacity: .18;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .tm-register-visual > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .tm-register-visual-brand {
+            color: #f17c30;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+        }
+
+        .tm-register-visual-copy {
+            max-width: 360px;
+            text-shadow: 0 1px 16px rgba(0, 0, 0, .34);
+        }
+
+        .tm-register-visual-copy strong {
+            display: block;
+            margin-bottom: 10px;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: clamp(1.85rem, 3.2vw, 2.8rem);
+            line-height: .95;
+            font-weight: 700;
+        }
+
+        .tm-register-visual-copy span {
+            display: block;
+            max-width: 300px;
+            color: rgba(255, 255, 255, .82);
+            font-size: .98rem;
+            line-height: 1.35;
+        }
+
+        .tm-register-panel {
+            max-width: none;
+            margin: 0;
+            padding: clamp(30px, 5vw, 58px);
+            border: 0;
+            border-radius: 0;
+            background: #fff;
+            box-shadow: none;
+            overflow-y: auto;
+        }
+
+        .tm-register-topbar {
+            margin-bottom: 18px;
+            min-height: 0;
+        }
+
+        .tm-register-logo-link {
+            display: none;
+        }
+
+        .tm-register-topbar-main {
+            align-items: flex-start;
+            padding-top: 0;
+        }
+
+        .tm-register-heading {
+            font-size: clamp(1.55rem, 2.5vw, 2.1rem);
+            line-height: 1.05;
+            text-align: left;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .tm-register-subheading {
+            margin-top: 4px;
+            color: #424242;
+            font-size: .98rem;
+            line-height: 1.35;
+            text-align: left;
+        }
+
+        .tm-register-steps {
+            margin: 0 0 22px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+            backdrop-filter: none;
+        }
+
+        .tm-step-pill {
+            min-height: 0;
+            flex-direction: row;
+            gap: 6px;
+            color: #888;
+            white-space: nowrap;
+        }
+
+        .tm-step-pill.is-upcoming {
+            color: #777;
+        }
+
+        .tm-step-pill:not(:last-child)::after {
+            content: "";
+            width: clamp(18px, 3.1vw, 34px);
+            height: 1px;
+            margin-left: 4px;
+            background: #cfc8c1;
+        }
+
+        .tm-step-pill-index {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 0;
+            background: #ddd7d1;
+            color: #111;
+            font-size: .72rem;
+        }
+
+        .tm-step-pill.is-active .tm-step-pill-index {
+            background: #111;
+            color: #fff;
+        }
+
+        .tm-step-pill.is-upcoming .tm-step-pill-index {
+            background: #fff;
+            border: 1px solid #bfb8b1;
+            color: #69625c;
+        }
+
+        .tm-step-pill strong {
+            font-size: .82rem;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .tm-step-pill strong + span {
+            display: none;
+        }
+
+        .tm-step-panel {
+            max-width: none;
+            margin: 0;
+        }
+
+        .tm-field-block label,
+        .tm-choice-label {
+            font-size: .92rem;
+            line-height: 1.25;
+        }
+
+        .tm-role-list {
+            gap: 9px;
+        }
+
+        .tm-role-card {
+            gap: 10px;
+            padding: 12px 14px;
+            border-color: #d9d3cc;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: none;
+            backdrop-filter: none;
+            transform: none;
+        }
+
+        .tm-role-card:hover {
+            transform: none;
+            border-color: rgba(241, 124, 48, .48);
+            box-shadow: 0 8px 20px rgba(17, 17, 17, .08);
+        }
+
+        .tm-role-card.is-selected {
+            border-color: #111;
+            background: #fffaf6;
+            box-shadow: inset 0 0 0 1px #111;
+        }
+
+        .tm-role-card input[type="radio"] {
+            width: 15px;
+            height: 15px;
+            margin-top: 3px;
+        }
+
+        .tm-role-card input[type="radio"]::after {
+            inset: 3px;
+            background: #111;
+        }
+
+        .tm-role-card.is-selected input[type="radio"] {
+            border-color: #111;
+        }
+
+        .tm-role-card strong {
+            margin-bottom: 2px;
+            font-size: .95rem;
+            line-height: 1.1;
+        }
+
+        .tm-role-card span {
+            color: #333;
+            font-size: .82rem;
+            line-height: 1.22;
+        }
+
+        .tm-field-grid,
+        .tm-password-row {
+            grid-template-columns: 1fr;
+        }
+
+        .tm-field-grid + .tm-field-block,
+        .tm-hidden-field + .tm-password-row {
+            margin-top: 14px;
+        }
+
+        .tm-password-row {
+            row-gap: 8px;
+            grid-template-areas:
+                "label1"
+                "field1"
+                "label2"
+                "field2";
+        }
+
+        .tm-password-row .tm-password-label {
+            font-size: .92rem;
+        }
+
+        .tm-register-panel .form-control {
+            min-height: 38px;
+            border-radius: 5px;
+            border-color: #cfc8c1;
+            box-shadow: none;
+            font-size: .94rem;
+        }
+
+        .tm-register-panel .form-control:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(241, 124, 48, .14);
+        }
+
+        .tm-register-consents {
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .tm-consent {
+            color: #282828;
+            font-size: .78rem;
+            line-height: 1.32;
+        }
+
+        .tm-recaptcha-block {
+            margin: 12px 0 18px;
+        }
+
+        .tm-step-actions {
+            margin-top: 14px;
+            gap: 8px;
+        }
+
+        .tm-btn-primary {
+            width: 100%;
+            min-width: 0;
+            min-height: 42px;
+            border-radius: 6px;
+            background: #fff;
+            border: 1px solid #111;
+            color: #111;
+            font-size: .92rem;
+            box-shadow: none;
+        }
+
+        .tm-btn-primary:hover,
+        .tm-btn-primary:focus {
+            background: #111;
+            border-color: #111;
+            color: #fff;
+        }
+
+        .tm-login-note {
+            font-size: .82rem;
+        }
+
+        .tm-register-footer {
+            margin-top: 16px;
+            font-size: .84rem;
+        }
+
+        @media (max-width: 991px) {
+            .tm-register-shell {
+                padding: 18px;
+                align-items: flex-start;
+            }
+
+            .tm-register-wrap {
+                grid-template-columns: 1fr;
+                max-width: 560px;
+                min-height: 0;
+                margin: 0 auto;
+            }
+
+            .tm-register-visual {
+                min-height: 290px;
+            }
+
+            .tm-register-panel {
+                padding: 28px 20px 30px;
+            }
+
+            .tm-register-topbar {
+                align-items: flex-start;
+            }
+
+            .tm-register-topbar-main {
+                align-items: flex-start;
+            }
+
+            .tm-register-heading,
+            .tm-register-subheading {
+                text-align: left;
+            }
+
+            .tm-register-steps {
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+
+            .tm-step-pill:not(:last-child)::after {
+                width: 18px;
+            }
+        }
     </style>
 {% endblock %}
 
 {% block body %}
+    {% set registerVisualImage = include('Seo/Meta/security_image.html.twig', {code: 'register_image'})|trim %}
+    {% set registerVisualBackground = registerVisualImage ?: absolute_url(asset('assets/img/john-raptis.png')) %}
+
     {{ form_start(registrationForm, {
         'attr': {
             'id': 'registration-form',
@@ -733,10 +1131,18 @@
 
     <main class="tm-register-shell">
         <div class="tm-register-wrap">
+            <section class="tm-register-visual" style="--tm-register-visual-image: url('{{ registerVisualBackground|e('css') }}');" aria-label="Trust &amp; Market">
+                <div class="tm-register-visual-brand">TRUST &amp; MARKET</div>
+                <div class="tm-register-visual-copy">
+                    <strong>La plateforme des professionnels de la musique.</strong>
+                    <span>Studios, musiciens, producteurs : trouvez le bon partenaire pour votre projet.</span>
+                </div>
+            </section>
+
             <section class="tm-register-panel">
                 <div class="tm-register-topbar">
                     <div class="tm-register-topbar-main">
-                        <h1 class="tm-register-heading">CR&Eacute;ER MON PROFIL</h1>
+                        <h1 class="tm-register-heading">Cr&eacute;ez votre compte</h1>
                         <p class="tm-register-subheading">Gratuit, sans engagement.</p>
                     </div>
                     <a href="{{ path('home') }}" class="tm-register-logo-link" aria-label="Accueil Trust &amp; Market">
@@ -778,22 +1184,22 @@
                         <label class="tm-role-card {% if selected_role == 'ROLE_ABONNE' %}is-selected{% endif %}" data-role-card>
                             <input type="radio" name="role_user" value="ROLE_ABONNE" {% if selected_role == 'ROLE_ABONNE' %}checked{% endif %} required>
                             <span class="tm-role-card-body">
-                                <strong>Artiste / Créateur</strong>
-                                <span>Pour d&eacute;couvrir les profils, initier un projet et entrer en relation.</span>
+                                <strong>Artiste / Cr&eacute;ateur</strong>
+                                <span>Je cherche un studio ou un prestataire pour mon projet.</span>
                             </span>
                         </label>
                         <label class="tm-role-card {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}is-selected{% endif %}" data-role-card>
                             <input type="radio" name="role_user" value="ROLE_AUTO_ENTREPRENEUR" {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}checked{% endif %} required>
                             <span class="tm-role-card-body">
-                                <strong>Professionnel auto-entrepreneur</strong>
-                                <span>Pour proposer vos services en ind&eacute;pendant avec une entr&eacute;e simple.</span>
+                                <strong>Professionnel ind&eacute;pendant</strong>
+                                <span>Je propose mes services en auto-entrepreneur.</span>
                             </span>
                         </label>
                         <label class="tm-role-card {% if selected_role == 'ROLE_SOCIETE' %}is-selected{% endif %}" data-role-card>
                             <input type="radio" name="role_user" value="ROLE_SOCIETE" {% if selected_role == 'ROLE_SOCIETE' %}checked{% endif %} required>
                             <span class="tm-role-card-body">
-                                <strong>Professionnel soci&eacute;t&eacute;</strong>
-                                <span>Pour une structure, une agence ou une activit&eacute; port&eacute;e par une soci&eacute;t&eacute;.</span>
+                                <strong>Structure / Soci&eacute;t&eacute;</strong>
+                                <span>Mon activit&eacute; est port&eacute;e par une soci&eacute;t&eacute; ou une agence.</span>
                             </span>
                         </label>
                     </div>
@@ -804,7 +1210,7 @@
                             {{ form_widget(registrationForm.email_canonical, {
                                 'attr': {
                                     'class': 'form-control',
-                                    'placeholder': 'vous@exemple.com',
+                                    'placeholder': 'Adresse email',
                                     'autocomplete': 'email'
                                 }
                             }) }}
