@@ -722,14 +722,18 @@
 
         .tm-register-form {
             min-height: 100vh;
+            min-height: 100dvh;
         }
 
         body {
             background: #f2eee9;
+            min-height: 100vh;
+            min-height: 100dvh;
         }
 
         .tm-register-shell {
             min-height: 100vh;
+            min-height: 100dvh;
             width: 100%;
             padding: 0;
             align-items: stretch;
@@ -741,9 +745,10 @@
             width: 100%;
             max-width: none;
             min-height: 100vh;
+            min-height: 100dvh;
             margin: 0;
             display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             background: #fff;
             border: 0;
             border-radius: 0;
@@ -754,7 +759,8 @@
         .tm-register-visual {
             position: relative;
             min-height: 100vh;
-            padding: clamp(28px, 4vw, 46px);
+            min-height: 100dvh;
+            padding: clamp(28px, 5vw, 72px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -802,7 +808,7 @@
             display: block;
             margin-bottom: 10px;
             font-family: "Palanquin Dark", sans-serif;
-            font-size: clamp(1.85rem, 3.2vw, 2.8rem);
+            font-size: 2.65rem;
             line-height: .95;
             font-weight: 700;
         }
@@ -818,7 +824,9 @@
         .tm-register-panel {
             max-width: none;
             margin: 0;
-            padding: clamp(30px, 5vw, 58px);
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: clamp(24px, 5vw, 76px);
             border: 0;
             border-radius: 0;
             background: #fff;
@@ -830,8 +838,10 @@
             overflow-y: auto;
         }
 
-        .tm-register-panel > * {
-            width: min(430px, 100%);
+        .tm-register-panel-content {
+            width: clamp(320px, 76%, 460px);
+            max-width: 100%;
+            margin: auto 0;
         }
 
         .tm-register-topbar {
@@ -849,7 +859,7 @@
         }
 
         .tm-register-heading {
-            font-size: clamp(1.55rem, 2.5vw, 2.1rem);
+            font-size: 2rem;
             line-height: 1.05;
             text-align: left;
             text-transform: none;
@@ -1079,6 +1089,57 @@
             font-size: .84rem;
         }
 
+        @media (max-width: 1180px) {
+            .tm-register-panel {
+                padding: clamp(24px, 4vw, 48px);
+            }
+
+            .tm-register-panel-content {
+                width: clamp(320px, 82%, 430px);
+            }
+
+            .tm-register-heading {
+                font-size: 1.75rem;
+            }
+
+            .tm-register-visual-copy strong {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-height: 780px) and (min-width: 992px) {
+            .tm-register-panel {
+                justify-content: flex-start;
+                padding-top: clamp(20px, 4vh, 34px);
+                padding-bottom: clamp(20px, 4vh, 34px);
+            }
+
+            .tm-register-panel-content {
+                width: min(420px, 100%);
+                margin: 0;
+            }
+
+            .tm-register-heading {
+                font-size: 1.55rem;
+            }
+
+            .tm-register-steps {
+                margin-bottom: 14px;
+            }
+
+            .tm-role-card {
+                padding: 10px 12px;
+            }
+
+            .tm-register-panel .form-control {
+                min-height: 36px;
+            }
+
+            .tm-register-visual-copy strong {
+                font-size: 2rem;
+            }
+        }
+
         @media (max-width: 991px) {
             .tm-register-shell {
                 padding: 0;
@@ -1088,17 +1149,27 @@
             .tm-register-wrap {
                 grid-template-columns: 1fr;
                 max-width: none;
-                min-height: 0;
+                min-height: 100vh;
+                min-height: 100dvh;
                 margin: 0;
+                overflow: visible;
             }
 
             .tm-register-visual {
-                min-height: 320px;
+                min-height: clamp(260px, 42vh, 420px);
+                padding: 28px;
             }
 
             .tm-register-panel {
+                min-height: auto;
                 padding: 28px 20px 30px;
                 justify-content: flex-start;
+                overflow: visible;
+            }
+
+            .tm-register-panel-content {
+                width: min(460px, 100%);
+                margin: 0 auto;
             }
 
             .tm-register-topbar {
@@ -1122,6 +1193,29 @@
 
             .tm-step-pill:not(:last-child)::after {
                 width: 18px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .tm-register-visual {
+                min-height: 240px;
+                padding: 22px;
+            }
+
+            .tm-register-visual-copy strong {
+                font-size: 1.8rem;
+            }
+
+            .tm-register-visual-copy span {
+                font-size: .9rem;
+            }
+
+            .tm-register-panel {
+                padding: 24px 16px 28px;
+            }
+
+            .tm-register-heading {
+                font-size: 1.55rem;
             }
         }
     </style>
@@ -1150,153 +1244,155 @@
             </section>
 
             <section class="tm-register-panel">
-                <div class="tm-register-topbar">
-                    <div class="tm-register-topbar-main">
-                        <h1 class="tm-register-heading">Cr&eacute;ez votre compte</h1>
-                        <p class="tm-register-subheading">Gratuit, sans engagement.</p>
-                    </div>
-                    <a href="{{ path('home') }}" class="tm-register-logo-link" aria-label="Accueil Trust &amp; Market">
-                        <img src="{{ prerender(asset('assets/img/logo_new.svg')) }}" alt="Trust &amp; Market">
-                    </a>
-                </div>
-
-                {% for message in app.session.flashbag.get('register_recaptcha_error') %}
-                    <div class="alert alert-danger tm-register-alert">{{ message ?: 'Veuillez valider le contr&ocirc;le de s&eacute;curit&eacute;.' }}</div>
-                {% endfor %}
-                {% for message in app.session.flashbag.get('register_activity_error') %}
-                    <div class="alert alert-danger tm-register-alert">{{ message }}</div>
-                {% endfor %}
-
-                <div class="tm-register-steps">
-                    <div class="tm-step-pill is-active">
-                        <span class="tm-step-pill-index">1</span>
-                        <strong>Cr&eacute;ez</strong>
-                        <span>Email, mot de passe et type de profil.</span>
-                    </div>
-                    <div class="tm-step-pill is-upcoming">
-                        <span class="tm-step-pill-index">2</span>
-                        <strong>Confirmez</strong>
-                        <span>Validation du compte par email.</span>
-                    </div>
-                    <div class="tm-step-pill is-upcoming">
-                        <span class="tm-step-pill-index">3</span>
-                        <strong>Compl&eacute;tez</strong>
-                        <span>Compl&eacute;tez ensuite votre profil.</span>
-                    </div>
-                </div>
-
-                <div class="tm-step-panel">
-                    <div class="tm-field-block">
-                        <label>Vous &ecirc;tes :</label>
+                <div class="tm-register-panel-content">
+                    <div class="tm-register-topbar">
+                        <div class="tm-register-topbar-main">
+                            <h1 class="tm-register-heading">Cr&eacute;ez votre compte</h1>
+                            <p class="tm-register-subheading">Gratuit, sans engagement.</p>
+                        </div>
+                        <a href="{{ path('home') }}" class="tm-register-logo-link" aria-label="Accueil Trust &amp; Market">
+                            <img src="{{ prerender(asset('assets/img/logo_new.svg')) }}" alt="Trust &amp; Market">
+                        </a>
                     </div>
 
-                    <div class="tm-role-list">
-                        <label class="tm-role-card {% if selected_role == 'ROLE_ABONNE' %}is-selected{% endif %}" data-role-card>
-                            <input type="radio" name="role_user" value="ROLE_ABONNE" {% if selected_role == 'ROLE_ABONNE' %}checked{% endif %} required>
-                            <span class="tm-role-card-body">
-                                <strong>Artiste / Cr&eacute;ateur</strong>
-                                <span>Je cherche un studio ou un prestataire pour mon projet.</span>
-                            </span>
-                        </label>
-                        <label class="tm-role-card {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}is-selected{% endif %}" data-role-card>
-                            <input type="radio" name="role_user" value="ROLE_AUTO_ENTREPRENEUR" {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}checked{% endif %} required>
-                            <span class="tm-role-card-body">
-                                <strong>Professionnel ind&eacute;pendant</strong>
-                                <span>Je propose mes services en auto-entrepreneur.</span>
-                            </span>
-                        </label>
-                        <label class="tm-role-card {% if selected_role == 'ROLE_SOCIETE' %}is-selected{% endif %}" data-role-card>
-                            <input type="radio" name="role_user" value="ROLE_SOCIETE" {% if selected_role == 'ROLE_SOCIETE' %}checked{% endif %} required>
-                            <span class="tm-role-card-body">
-                                <strong>Structure / Soci&eacute;t&eacute;</strong>
-                                <span>Mon activit&eacute; est port&eacute;e par une soci&eacute;t&eacute; ou une agence.</span>
-                            </span>
-                        </label>
+                    {% for message in app.session.flashbag.get('register_recaptcha_error') %}
+                        <div class="alert alert-danger tm-register-alert">{{ message ?: 'Veuillez valider le contr&ocirc;le de s&eacute;curit&eacute;.' }}</div>
+                    {% endfor %}
+                    {% for message in app.session.flashbag.get('register_activity_error') %}
+                        <div class="alert alert-danger tm-register-alert">{{ message }}</div>
+                    {% endfor %}
+
+                    <div class="tm-register-steps">
+                        <div class="tm-step-pill is-active">
+                            <span class="tm-step-pill-index">1</span>
+                            <strong>Cr&eacute;ez</strong>
+                            <span>Email, mot de passe et type de profil.</span>
+                        </div>
+                        <div class="tm-step-pill is-upcoming">
+                            <span class="tm-step-pill-index">2</span>
+                            <strong>Confirmez</strong>
+                            <span>Validation du compte par email.</span>
+                        </div>
+                        <div class="tm-step-pill is-upcoming">
+                            <span class="tm-step-pill-index">3</span>
+                            <strong>Compl&eacute;tez</strong>
+                            <span>Compl&eacute;tez ensuite votre profil.</span>
+                        </div>
                     </div>
 
-                    <div class="tm-field-grid">
+                    <div class="tm-step-panel">
                         <div class="tm-field-block">
-                            <label for="{{ registrationForm.email_canonical.vars.id }}">{{ 'general.email'|trans }}</label>
-                            {{ form_widget(registrationForm.email_canonical, {
-                                'attr': {
-                                    'class': 'form-control',
-                                    'placeholder': 'Adresse email',
-                                    'autocomplete': 'email'
-                                }
-                            }) }}
-                            {{ form_errors(registrationForm.email_canonical) }}
+                            <label>Vous &ecirc;tes :</label>
                         </div>
-                    </div>
 
-                    <div class="tm-hidden-field">
-                        <input type="hidden" name="activite" value="profile_to_complete">
-                        {{ form_widget(registrationForm.first_name, {'attr': {'tabindex': '-1'}}) }}
-                        {{ form_widget(registrationForm.last_name, {'attr': {'tabindex': '-1'}}) }}
-                        {{ form_widget(registrationForm.dateNaissance, {'attr': {'tabindex': '-1', 'autocomplete': 'off'}}) }}
-                    </div>
+                        <div class="tm-role-list">
+                            <label class="tm-role-card {% if selected_role == 'ROLE_ABONNE' %}is-selected{% endif %}" data-role-card>
+                                <input type="radio" name="role_user" value="ROLE_ABONNE" {% if selected_role == 'ROLE_ABONNE' %}checked{% endif %} required>
+                                <span class="tm-role-card-body">
+                                    <strong>Artiste / Cr&eacute;ateur</strong>
+                                    <span>Je cherche un studio ou un prestataire pour mon projet.</span>
+                                </span>
+                            </label>
+                            <label class="tm-role-card {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}is-selected{% endif %}" data-role-card>
+                                <input type="radio" name="role_user" value="ROLE_AUTO_ENTREPRENEUR" {% if selected_role == 'ROLE_AUTO_ENTREPRENEUR' %}checked{% endif %} required>
+                                <span class="tm-role-card-body">
+                                    <strong>Professionnel ind&eacute;pendant</strong>
+                                    <span>Je propose mes services en auto-entrepreneur.</span>
+                                </span>
+                            </label>
+                            <label class="tm-role-card {% if selected_role == 'ROLE_SOCIETE' %}is-selected{% endif %}" data-role-card>
+                                <input type="radio" name="role_user" value="ROLE_SOCIETE" {% if selected_role == 'ROLE_SOCIETE' %}checked{% endif %} required>
+                                <span class="tm-role-card-body">
+                                    <strong>Structure / Soci&eacute;t&eacute;</strong>
+                                    <span>Mon activit&eacute; est port&eacute;e par une soci&eacute;t&eacute; ou une agence.</span>
+                                </span>
+                            </label>
+                        </div>
 
-                    <div class="tm-password-row">
-                        <label class="tm-password-label" for="{{ registrationForm.plainPassword.first.vars.id }}">{{ 'inscription.passe'|trans }}</label>
-                        <label class="tm-password-label" for="{{ registrationForm.plainPassword.second.vars.id }}">{{ 'inscription.confirmation'|trans }}</label>
-
-                        <div class="tm-password-field">
-                            <div class="tm-password-input-wrap">
-                                {{ form_widget(registrationForm.plainPassword.first, {
+                        <div class="tm-field-grid">
+                            <div class="tm-field-block">
+                                <label for="{{ registrationForm.email_canonical.vars.id }}">{{ 'general.email'|trans }}</label>
+                                {{ form_widget(registrationForm.email_canonical, {
                                     'attr': {
                                         'class': 'form-control',
-                                        'placeholder': '8 caractères minimum',
-                                        'autocomplete': 'new-password'
+                                        'placeholder': 'Adresse email',
+                                        'autocomplete': 'email'
                                     }
                                 }) }}
-                                <button class="tm-password-toggle" type="button" data-password-toggle="{{ registrationForm.plainPassword.first.vars.id }}" aria-label="Afficher le mot de passe">
-                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                </button>
+                                {{ form_errors(registrationForm.email_canonical) }}
                             </div>
-                            {{ form_errors(registrationForm.plainPassword.first) }}
                         </div>
-                        <div class="tm-password-field">
-                            <div class="tm-password-input-wrap">
-                                {{ form_widget(registrationForm.plainPassword.second, {
-                                    'attr': {
-                                        'class': 'form-control',
-                                        'placeholder': 'Confirmez votre mot de passe',
-                                        'autocomplete': 'new-password'
-                                    }
-                                }) }}
-                                <button class="tm-password-toggle" type="button" data-password-toggle="{{ registrationForm.plainPassword.second.vars.id }}" aria-label="Afficher le mot de passe">
-                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                </button>
+
+                        <div class="tm-hidden-field">
+                            <input type="hidden" name="activite" value="profile_to_complete">
+                            {{ form_widget(registrationForm.first_name, {'attr': {'tabindex': '-1'}}) }}
+                            {{ form_widget(registrationForm.last_name, {'attr': {'tabindex': '-1'}}) }}
+                            {{ form_widget(registrationForm.dateNaissance, {'attr': {'tabindex': '-1', 'autocomplete': 'off'}}) }}
+                        </div>
+
+                        <div class="tm-password-row">
+                            <label class="tm-password-label" for="{{ registrationForm.plainPassword.first.vars.id }}">{{ 'inscription.passe'|trans }}</label>
+                            <label class="tm-password-label" for="{{ registrationForm.plainPassword.second.vars.id }}">{{ 'inscription.confirmation'|trans }}</label>
+
+                            <div class="tm-password-field">
+                                <div class="tm-password-input-wrap">
+                                    {{ form_widget(registrationForm.plainPassword.first, {
+                                        'attr': {
+                                            'class': 'form-control',
+                                            'placeholder': '8 caractères minimum',
+                                            'autocomplete': 'new-password'
+                                        }
+                                    }) }}
+                                    <button class="tm-password-toggle" type="button" data-password-toggle="{{ registrationForm.plainPassword.first.vars.id }}" aria-label="Afficher le mot de passe">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                {{ form_errors(registrationForm.plainPassword.first) }}
                             </div>
-                            {{ form_errors(registrationForm.plainPassword.second) }}
+                            <div class="tm-password-field">
+                                <div class="tm-password-input-wrap">
+                                    {{ form_widget(registrationForm.plainPassword.second, {
+                                        'attr': {
+                                            'class': 'form-control',
+                                            'placeholder': 'Confirmez votre mot de passe',
+                                            'autocomplete': 'new-password'
+                                        }
+                                    }) }}
+                                    <button class="tm-password-toggle" type="button" data-password-toggle="{{ registrationForm.plainPassword.second.vars.id }}" aria-label="Afficher le mot de passe">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                {{ form_errors(registrationForm.plainPassword.second) }}
+                            </div>
+                        </div>
+
+                        <div class="tm-register-consents">
+                            <label class="tm-consent">
+                                <input type="checkbox" required name="agreeTerms" id="agreeTerms">
+                                <span>
+                                    {{ 'inscription.condition-utilisation'|trans }}
+                                    <a target="_blank" href="{{ path('page_navigation', {idPage: 'nos-conditions', id: 'conditions-generales-dutilisation'}) }}">{{ 'inscription.accepter-condition'|trans }}</a>
+                                </span>
+                            </label>
+                            <label class="tm-consent">
+                                <input type="checkbox" name="_email_newsletter">
+                                <span>Je souhaite recevoir les actualit&eacute;s et offres Trust &amp; Market.</span>
+                            </label>
+                        </div>
+
+                        <div class="tm-field-block tm-recaptcha-block">
+                            <div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O" data-action="TRUST_REGISTER"></div>
+                        </div>
+
+                        <div class="tm-step-actions">
+                            <button class="btn tm-btn-primary" type="submit">CR&Eacute;ER MON COMPTE</button>
+                            <p class="tm-login-note">D&eacute;j&agrave; inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
                         </div>
                     </div>
 
-                    <div class="tm-register-consents">
-                        <label class="tm-consent">
-                            <input type="checkbox" required name="agreeTerms" id="agreeTerms">
-                            <span>
-                                {{ 'inscription.condition-utilisation'|trans }}
-                                <a target="_blank" href="{{ path('page_navigation', {idPage: 'nos-conditions', id: 'conditions-generales-dutilisation'}) }}">{{ 'inscription.accepter-condition'|trans }}</a>
-                            </span>
-                        </label>
-                        <label class="tm-consent">
-                            <input type="checkbox" name="_email_newsletter">
-                            <span>Je souhaite recevoir les actualit&eacute;s et offres Trust &amp; Market.</span>
-                        </label>
+                    <div class="tm-register-footer">
+                        <a href="{{ path('home') }}" class="special-below-link">&larr;&nbsp;<span>{{ 'general.accueil'|trans }}</span></a>
                     </div>
-
-                    <div class="tm-field-block tm-recaptcha-block">
-                        <div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O" data-action="TRUST_REGISTER"></div>
-                    </div>
-
-                    <div class="tm-step-actions">
-                        <button class="btn tm-btn-primary" type="submit">CR&Eacute;ER MON COMPTE</button>
-                        <p class="tm-login-note">D&eacute;j&agrave; inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
-                    </div>
-                </div>
-
-                <div class="tm-register-footer">
-                    <a href="{{ path('home') }}" class="special-below-link">&larr;&nbsp;<span>{{ 'general.accueil'|trans }}</span></a>
                 </div>
             </section>
         </div>
