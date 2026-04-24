@@ -760,7 +760,7 @@
             position: relative;
             min-height: 100vh;
             min-height: 100dvh;
-            padding: clamp(28px, 5vw, 72px);
+            padding: clamp(28px, 5vmin, 78px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -794,30 +794,30 @@
         .tm-register-visual-brand {
             color: #f17c30;
             font-family: "Palanquin Dark", sans-serif;
-            font-size: .9rem;
+            font-size: clamp(.78rem, .85vw, 1rem);
             font-weight: 700;
             letter-spacing: .08em;
         }
 
         .tm-register-visual-copy {
-            max-width: 360px;
+            max-width: clamp(320px, 30vw, 540px);
             text-shadow: 0 1px 16px rgba(0, 0, 0, .34);
         }
 
         .tm-register-visual-copy strong {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: clamp(8px, 1.2vh, 16px);
             font-family: "Palanquin Dark", sans-serif;
-            font-size: 2.65rem;
+            font-size: clamp(2rem, 4vw, 4.6rem);
             line-height: .95;
             font-weight: 700;
         }
 
         .tm-register-visual-copy span {
             display: block;
-            max-width: 300px;
+            max-width: clamp(280px, 26vw, 440px);
             color: rgba(255, 255, 255, .82);
-            font-size: .98rem;
+            font-size: clamp(.86rem, 1.05vw, 1.12rem);
             line-height: 1.35;
         }
 
@@ -826,7 +826,7 @@
             margin: 0;
             min-height: 100vh;
             min-height: 100dvh;
-            padding: clamp(24px, 5vw, 76px);
+            padding: clamp(18px, 5.2vh, 82px) clamp(28px, 5vw, 92px);
             border: 0;
             border-radius: 0;
             background: #fff;
@@ -839,13 +839,13 @@
         }
 
         .tm-register-panel-content {
-            width: clamp(320px, 76%, 460px);
+            width: clamp(360px, 31vw, 540px);
             max-width: 100%;
             margin: auto 0;
         }
 
         .tm-register-topbar {
-            margin-bottom: 18px;
+            margin-bottom: clamp(10px, 2.1vh, 24px);
             min-height: 0;
         }
 
@@ -859,7 +859,7 @@
         }
 
         .tm-register-heading {
-            font-size: 2rem;
+            font-size: clamp(1.55rem, 2.25vw, 2.3rem);
             line-height: 1.05;
             text-align: left;
             text-transform: none;
@@ -867,19 +867,19 @@
         }
 
         .tm-register-subheading {
-            margin-top: 4px;
+            margin-top: clamp(3px, .7vh, 8px);
             color: #424242;
-            font-size: .98rem;
+            font-size: clamp(.86rem, 1vw, 1.06rem);
             line-height: 1.35;
             text-align: left;
         }
 
         .tm-register-steps {
-            margin: 0 0 22px;
+            margin: 0 0 clamp(12px, 2.4vh, 28px);
             padding: 0;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: clamp(5px, .7vw, 10px);
             border: 0;
             border-radius: 0;
             background: transparent;
@@ -890,7 +890,7 @@
         .tm-step-pill {
             min-height: 0;
             flex-direction: row;
-            gap: 6px;
+            gap: clamp(4px, .55vw, 8px);
             color: #888;
             white-space: nowrap;
         }
@@ -908,12 +908,12 @@
         }
 
         .tm-step-pill-index {
-            width: 20px;
-            height: 20px;
+            width: clamp(18px, 1.55vw, 22px);
+            height: clamp(18px, 1.55vw, 22px);
             margin-bottom: 0;
             background: #ddd7d1;
             color: #111;
-            font-size: .72rem;
+            font-size: clamp(.66rem, .7vw, .78rem);
         }
 
         .tm-step-pill.is-active .tm-step-pill-index {
@@ -928,7 +928,7 @@
         }
 
         .tm-step-pill strong {
-            font-size: .82rem;
+            font-size: clamp(.74rem, .82vw, .88rem);
             letter-spacing: 0;
             text-transform: none;
         }
@@ -944,17 +944,17 @@
 
         .tm-field-block label,
         .tm-choice-label {
-            font-size: .92rem;
+            font-size: clamp(.82rem, .9vw, .96rem);
             line-height: 1.25;
         }
 
         .tm-role-list {
-            gap: 9px;
+            gap: clamp(7px, 1.05vh, 12px);
         }
 
         .tm-role-card {
-            gap: 10px;
-            padding: 12px 14px;
+            gap: clamp(8px, .8vw, 12px);
+            padding: clamp(9px, 1.35vh, 15px) clamp(12px, 1.1vw, 18px);
             border-color: #d9d3cc;
             border-radius: 8px;
             background: #fff;
@@ -992,13 +992,13 @@
 
         .tm-role-card strong {
             margin-bottom: 2px;
-            font-size: .95rem;
+            font-size: clamp(.86rem, .92vw, 1rem);
             line-height: 1.1;
         }
 
         .tm-role-card span {
             color: #333;
-            font-size: .82rem;
+            font-size: clamp(.74rem, .8vw, .86rem);
             line-height: 1.22;
         }
 
@@ -1009,11 +1009,11 @@
 
         .tm-field-grid + .tm-field-block,
         .tm-hidden-field + .tm-password-row {
-            margin-top: 14px;
+            margin-top: clamp(10px, 1.6vh, 18px);
         }
 
         .tm-password-row {
-            row-gap: 8px;
+            row-gap: clamp(6px, 1vh, 10px);
             grid-template-areas:
                 "label1"
                 "field1"
@@ -1022,15 +1022,15 @@
         }
 
         .tm-password-row .tm-password-label {
-            font-size: .92rem;
+            font-size: clamp(.82rem, .9vw, .96rem);
         }
 
         .tm-register-panel .form-control {
-            min-height: 38px;
+            min-height: clamp(34px, 4.55vh, 46px);
             border-radius: 5px;
             border-color: #cfc8c1;
             box-shadow: none;
-            font-size: .94rem;
+            font-size: clamp(.86rem, .92vw, 1rem);
         }
 
         .tm-register-panel .form-control:focus {
@@ -1048,28 +1048,28 @@
 
         .tm-consent {
             color: #282828;
-            font-size: .78rem;
+            font-size: clamp(.7rem, .74vw, .82rem);
             line-height: 1.32;
         }
 
         .tm-recaptcha-block {
-            margin: 12px 0 18px;
+            margin: clamp(8px, 1.4vh, 16px) 0 clamp(12px, 2vh, 22px);
         }
 
         .tm-step-actions {
-            margin-top: 14px;
-            gap: 8px;
+            margin-top: clamp(10px, 1.8vh, 20px);
+            gap: clamp(6px, 1vh, 10px);
         }
 
         .tm-btn-primary {
             width: 100%;
             min-width: 0;
-            min-height: 42px;
+            min-height: clamp(38px, 5vh, 50px);
             border-radius: 6px;
             background: #fff;
             border: 1px solid #111;
             color: #111;
-            font-size: .92rem;
+            font-size: clamp(.82rem, .9vw, .98rem);
             box-shadow: none;
         }
 
@@ -1081,62 +1081,84 @@
         }
 
         .tm-login-note {
-            font-size: .82rem;
+            font-size: clamp(.74rem, .8vw, .86rem);
         }
 
         .tm-register-footer {
-            margin-top: 16px;
-            font-size: .84rem;
+            margin-top: clamp(10px, 2vh, 20px);
+            font-size: clamp(.74rem, .82vw, .88rem);
         }
 
         @media (max-width: 1180px) {
             .tm-register-panel {
-                padding: clamp(24px, 4vw, 48px);
+                padding: clamp(18px, 4.5vh, 48px) clamp(24px, 4vw, 48px);
             }
 
             .tm-register-panel-content {
-                width: clamp(320px, 82%, 430px);
+                width: clamp(340px, 34vw, 450px);
             }
 
             .tm-register-heading {
-                font-size: 1.75rem;
+                font-size: clamp(1.45rem, 2vw, 1.8rem);
             }
 
             .tm-register-visual-copy strong {
-                font-size: 2.2rem;
+                font-size: clamp(1.9rem, 3.5vw, 2.6rem);
             }
         }
 
-        @media (max-height: 780px) and (min-width: 992px) {
+        @media (max-height: 820px) and (min-width: 992px) {
             .tm-register-panel {
                 justify-content: flex-start;
-                padding-top: clamp(20px, 4vh, 34px);
-                padding-bottom: clamp(20px, 4vh, 34px);
+                padding-top: clamp(14px, 3.2vh, 26px);
+                padding-bottom: clamp(14px, 3.2vh, 26px);
             }
 
             .tm-register-panel-content {
-                width: min(420px, 100%);
+                width: clamp(340px, 29vw, 430px);
                 margin: 0;
             }
 
             .tm-register-heading {
-                font-size: 1.55rem;
+                font-size: clamp(1.34rem, 1.75vw, 1.62rem);
+            }
+
+            .tm-register-subheading {
+                font-size: .82rem;
             }
 
             .tm-register-steps {
-                margin-bottom: 14px;
+                margin-bottom: 10px;
             }
 
             .tm-role-card {
-                padding: 10px 12px;
+                padding: 8px 11px;
+            }
+
+            .tm-role-card span {
+                font-size: .72rem;
             }
 
             .tm-register-panel .form-control {
-                min-height: 36px;
+                min-height: 34px;
             }
 
             .tm-register-visual-copy strong {
-                font-size: 2rem;
+                font-size: clamp(1.8rem, 3.1vw, 2.4rem);
+            }
+
+            .tm-recaptcha-block {
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (min-width: 1800px) and (min-height: 950px) {
+            .tm-register-panel-content {
+                width: clamp(500px, 29vw, 590px);
+            }
+
+            .tm-role-card {
+                border-radius: 10px;
             }
         }
 
