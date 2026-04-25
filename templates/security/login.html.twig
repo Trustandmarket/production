@@ -561,7 +561,7 @@
 
 						<div class="form-label-group">
 							<label for="_username">Adresse e-mail</label>
-							<input name="email_canonical" type="email" id="_username" class="form-control input-custom" placeholder="Adresse e-mail" required autofocus>
+							<input name="email_canonical" type="email" id="_username" class="form-control input-custom" placeholder="vous@domaine.com" required autofocus>
 							<div class="valid-feedback"></div>
 							<div class="invalid-feedback">
 								{{ 'inscription.erreur.email'|trans }}
@@ -570,7 +570,7 @@
 
 						<div class="form-label-group">
 							<label for="inputPassword">Mot de passe</label>
-							<input name="password" type="password" id="inputPassword" class="form-control input-custom" placeholder="Mot de passe" required>
+							<input name="password" type="password" id="inputPassword" class="form-control input-custom" required>
 						</div>
 
 						{% if environnement == 'prod' or environnement == 'dev' %}
