@@ -1,11 +1,10 @@
-
 {% extends 'base.html.twig' %}
 {% block head %}
 {{ parent() }}
 	<meta name="title" content="{{ include('Seo/Meta/title.html.twig', {code: 'login'}) }}">
 	<meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'login'}) }}"/>
 	<link rel="canonical" href="{{ absolute_url(path('app_login')) }}">
-	
+
 	{# OG CONTENT #}
 	<meta property="og:title" content="{{ include('Seo/Meta/title.html.twig', {code: 'login'}) }}">
 	<meta property="og:description" content="{{ include('Seo/Meta/description.html.twig', {code: 'login'}) }}">
@@ -45,113 +44,541 @@
 {% block title %}Trust & Market | {{ include('Seo/Meta/title.html.twig', {code: 'login'}) }} {% endblock %}
 
 {% block stylesheets %}
-	{{parent()}}
+	{{ parent() }}
 	<style>
-    {# /***/ #}
-    	body{ 
-			{% if include('Seo/Meta/security_image.html.twig', {code: 'login_image'}) != "\n" %}background: url({{ include('Seo/Meta/security_image.html.twig', {code: 'login_image'}) }}) no-repeat center center fixed;{% else %}background: url({{ absolute_url(asset('assets/img/john-raptis.png'))}}) no-repeat center center fixed;{% endif %}
-				-webkit-background-size: cover;
-				-moz-background-size: cover;
-				-o-background-size: cover;
-				background-size: cover;
-	  	}
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
 
-	#g-recaptcha-response {
-		display: block !important;
-		position: absolute;
-		margin: -78px 0 0 0 !important;
-		width: 302px !important;
-		height: 55px !important;
-		z-index: -999999;
-		opacity: 0;
-	}
+		body {
+			display: block;
+			background: #f2eee9;
+			background-image: none !important;
+		}
+
+		#g-recaptcha-response {
+			display: block !important;
+			position: absolute;
+			margin: -78px 0 0 0 !important;
+			width: 302px !important;
+			height: 55px !important;
+			z-index: -999999;
+			opacity: 0;
+		}
+
+		.tm-login-shell,
+		.tm-login-wrap,
+		.tm-login-visual,
+		.tm-login-panel,
+		.tm-login-panel-content {
+			box-sizing: border-box;
+		}
+
+		.tm-login-shell {
+			height: 100vh;
+			height: 100dvh;
+			min-height: 100vh;
+			min-height: 100dvh;
+			width: 100%;
+		}
+
+		.tm-login-wrap {
+			width: 100%;
+			height: 100vh;
+			height: 100dvh;
+			min-height: 100vh;
+			min-height: 100dvh;
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			background: #fff;
+			overflow: hidden;
+		}
+
+		.tm-login-visual {
+			position: relative;
+			height: 100vh;
+			height: 100dvh;
+			min-height: 100vh;
+			min-height: 100dvh;
+			padding: clamp(24px, 4.2vmin, 64px);
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			color: #fff;
+			background-image:
+				linear-gradient(180deg, rgba(14, 10, 8, 0.28) 0%, rgba(14, 10, 8, 0.68) 100%),
+				var(--tm-login-visual-image);
+			background-size: cover;
+			background-position: center;
+			isolation: isolate;
+		}
+
+		.tm-login-visual::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background:
+				linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+			background-size: 72px 72px;
+			opacity: .18;
+			pointer-events: none;
+			z-index: 0;
+		}
+
+		.tm-login-visual > * {
+			position: relative;
+			z-index: 1;
+		}
+
+		.tm-login-visual-copy {
+			max-width: clamp(320px, 30vw, 540px);
+			text-shadow: 0 1px 16px rgba(0, 0, 0, .34);
+		}
+
+		.tm-login-visual-copy strong {
+			display: block;
+			margin-bottom: clamp(8px, 1.2vh, 16px);
+			font-family: "Palanquin Dark", sans-serif;
+			font-size: clamp(2rem, 5.2vmin, 3.6rem);
+			line-height: .95;
+			font-weight: 700;
+		}
+
+		.tm-login-visual-copy span {
+			display: block;
+			max-width: clamp(280px, 26vw, 440px);
+			color: rgba(255, 255, 255, .82);
+			font-size: clamp(.86rem, 1.05vw, 1.12rem);
+			line-height: 1.35;
+		}
+
+		.tm-login-panel {
+			max-width: none;
+			margin: 0;
+			height: 100vh;
+			height: 100dvh;
+			min-height: 100vh;
+			min-height: 100dvh;
+			padding: clamp(16px, 4vh, 52px) clamp(28px, 5vw, 92px);
+			border: 0;
+			border-radius: 0;
+			background: #fff;
+			box-shadow: none;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-start;
+			overflow-y: auto;
+			overscroll-behavior: contain;
+			scrollbar-gutter: stable;
+		}
+
+		.tm-login-panel-content {
+			width: clamp(360px, 31vw, 520px);
+			max-width: 100%;
+			margin: auto;
+		}
+
+		.tm-login-form {
+			width: 100%;
+			max-width: none;
+			padding: 0;
+			margin: 0;
+			font-family: "Palanquin", sans-serif;
+			color: #212529;
+		}
+
+		.tm-login-form .alert {
+			margin-bottom: 12px;
+			border-radius: 12px;
+			font-size: .88rem;
+			line-height: 1.35;
+		}
+
+		.tm-login-auth-message {
+			margin: 0 0 12px;
+			color: #212529;
+			font-size: .9rem;
+			line-height: 1.4;
+		}
+
+		.tm-login-auth-message a {
+			color: #212529;
+			text-decoration: underline;
+		}
+
+		.tm-login-header {
+			margin-bottom: clamp(12px, 2vh, 20px);
+			text-align: left;
+		}
+
+		.tm-login-logo-link {
+			display: inline-flex;
+			margin-bottom: clamp(8px, 1.3vh, 12px);
+		}
+
+		.tm-login-logo-link img {
+			width: 48px;
+			height: 48px;
+			object-fit: contain;
+		}
+
+		.tm-login-heading {
+			margin: 0;
+			color: #212529;
+			font-size: clamp(1.55rem, 2.25vw, 2.3rem);
+			line-height: 1.05;
+			font-family: "Palanquin Dark", sans-serif;
+			font-weight: 700;
+			text-transform: none;
+			letter-spacing: 0;
+		}
+
+		.tm-login-subheading {
+			margin-top: clamp(3px, .7vh, 8px);
+			color: #424242;
+			font-size: clamp(.86rem, 1vw, 1.06rem);
+			line-height: 1.35;
+		}
+
+		.tm-login-form .form-label-group {
+			position: relative;
+			margin-bottom: clamp(8px, 1.1vh, 12px);
+		}
+
+		.tm-login-form .form-label-group > input,
+		.tm-login-form .form-label-group > label {
+			height: auto;
+			min-height: clamp(34px, 4.55vh, 46px);
+			padding: clamp(6px, .9vh, 9px) clamp(9px, 1vw, 12px);
+		}
+
+		.tm-login-form .form-label-group > label {
+			color: #6f6861;
+			border: 0;
+			line-height: 1.25;
+			margin: 0;
+		}
+
+		.tm-login-form .form-label-group input:not(:placeholder-shown) ~ label {
+			color: #8b837c;
+		}
+
+		.tm-login-form .input-custom {
+			background: #fff;
+			color: #212529;
+			border: 1px solid #cfc8c1;
+			border-radius: 5px;
+			box-shadow: none;
+		}
+
+		.tm-login-form .input-custom:focus {
+			background: #fff;
+			color: #212529;
+			border-color: #111;
+			box-shadow: 0 0 0 3px rgba(241, 124, 48, .14);
+		}
+
+		.tm-login-form .invalid-feedback,
+		.tm-login-form .valid-feedback {
+			font-size: .74rem;
+			margin-top: 4px;
+		}
+
+		.tm-login-form .invalid-feedback {
+			color: #c13d3d;
+		}
+
+		.tm-login-recaptcha {
+			margin: clamp(8px, 1.4vh, 16px) 0 clamp(10px, 1.6vh, 18px);
+		}
+
+		.tm-login-helpers {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 10px;
+			margin: 0 0 clamp(10px, 1.6vh, 18px);
+			font-size: clamp(.74rem, .8vw, .86rem);
+			color: #212529;
+		}
+
+		.tm-login-helpers label {
+			margin: 0;
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.tm-login-helpers input[type="checkbox"] {
+			margin: 0;
+		}
+
+		.tm-login-form .special-link {
+			color: #212529;
+			text-decoration: underline;
+		}
+
+		.tm-login-form .special-link:hover {
+			color: #ff7e10;
+		}
+
+		.tm-login-form .float-r {
+			float: none;
+		}
+
+		.tm-login-submit-row {
+			margin-top: clamp(6px, 1vh, 10px);
+		}
+
+		.tm-login-form .registration-button {
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+			min-height: clamp(38px, 5vh, 50px);
+			border-radius: 14px;
+			background: #fff;
+			border: 1px solid #111;
+			color: #111;
+			font-family: "Palanquin Dark", sans-serif;
+			font-size: clamp(.82rem, .9vw, .98rem);
+			font-weight: 700;
+			box-shadow: none;
+			padding: clamp(8px, 1vh, 10px) clamp(18px, 2vw, 28px);
+		}
+
+		.tm-login-form .registration-button:hover,
+		.tm-login-form .registration-button:focus {
+			background: #ff7e10;
+			border-color: #ff7e10;
+			color: #fff;
+		}
+
+		.tm-login-links {
+			margin: clamp(10px, 2vh, 18px) 0 0;
+			font-size: clamp(.74rem, .8vw, .86rem);
+			color: #212529;
+			text-align: center;
+		}
+
+		.tm-login-form .special-below-link {
+			color: #212529;
+			text-decoration: none;
+		}
+
+		.tm-login-form .special-below-link:hover {
+			color: #ff7e10;
+			text-decoration: none;
+		}
+
+		.tm-login-note-link {
+			color: #212529;
+			text-decoration: underline;
+		}
+
+		.tm-login-note-prefix {
+			text-decoration: none;
+		}
+
+		.tm-login-lang {
+			margin-top: 8px;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		@media (min-width: 992px) {
+			html,
+			body {
+				overflow: hidden;
+			}
+		}
+
+		@media (max-width: 991px) {
+			html,
+			body,
+			.tm-login-shell,
+			.tm-login-wrap,
+			.tm-login-visual,
+			.tm-login-panel {
+				height: auto;
+			}
+
+			html,
+			body {
+				overflow: auto;
+				margin: 0;
+				padding: 0;
+				overflow-x: hidden;
+			}
+
+			.tm-login-wrap {
+				grid-template-columns: 1fr;
+				max-width: none;
+				min-height: 100vh;
+				min-height: 100dvh;
+				margin: 0;
+				overflow: visible;
+				align-content: flex-start;
+			}
+
+			.tm-login-visual {
+				min-height: clamp(180px, 32vh, 300px);
+				padding: clamp(18px, 5vw, 28px);
+			}
+
+			.tm-login-panel {
+				min-height: auto;
+				padding: clamp(22px, 5vw, 30px) clamp(16px, 4.5vw, 22px) clamp(28px, 6vw, 34px);
+				justify-content: flex-start;
+				overflow: visible;
+				align-items: stretch;
+			}
+
+			.tm-login-panel-content {
+				width: 100%;
+				max-width: 520px;
+				margin: 0 auto;
+			}
+
+			.tm-login-header {
+				text-align: left;
+			}
+		}
+
+		@media (max-width: 520px) {
+			.tm-login-visual {
+				min-height: 180px;
+				padding: 18px 16px;
+			}
+
+			.tm-login-visual-copy strong {
+				font-size: 1.8rem;
+			}
+
+			.tm-login-visual-copy span {
+				font-size: .9rem;
+			}
+
+			.tm-login-panel {
+				padding: 22px 14px 26px;
+			}
+
+			.tm-login-heading {
+				font-size: 1.55rem;
+			}
+
+			.tm-login-helpers {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+		}
+
+		@media (max-width: 380px) {
+			.tm-login-form .g-recaptcha {
+				transform: scale(0.92);
+				transform-origin: left top;
+			}
+		}
 	</style>
 {% endblock %}
 
 {% block body %}
+	{% set loginVisualImage = include('Seo/Meta/security_image.html.twig', {code: 'login_image'})|trim %}
+	{% set loginVisualBackground = loginVisualImage ?: absolute_url(asset('assets/img/john-raptis.png')) %}
 
-	<form class="form-signin" action="{{ path('app_login') }}" method="post">
-		{% for message in app.session.flashbag.get('info') %}
-            <div class="alert alert-success" style="color: white; background-color: #008779;">
-                {{ message }}
-            </div>
-        {% endfor %}
-		{% if error %}
-			<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-		{% endif %}
+	<main class="tm-login-shell">
+		<div class="tm-login-wrap">
+			<section class="tm-login-visual" style="--tm-login-visual-image: url('{{ loginVisualBackground|e('css') }}');" aria-label="Trust &amp; Market">
+				<div class="tm-login-visual-copy">
+					<strong>La plateforme de la production musicale.</strong>
+					<span>Studios, musiciens, producteurs : trouvez le bon partenaire pour votre projet.</span>
+				</div>
+			</section>
 
-		{% if app.user %}
-			<div class="mb-3">
-				<h4 class="mb-3 font-weight-light white-t" style="font-size: 15px;">Vous etes connecté {{ app.user.displayName }}, <a class="special-link" href="{{ path('app_logout') }}">Déconnexion</a></h4>
-			</div>
-		{% endif %}
-		
-		<div class="text-center mb-4">
-			<a href='/'>
-				<img class="mb-4" src="{{prerender(asset('assets/img/logo_tm.svg'))}}" alt="logo" width="72" height="72">
-			</a>
-			<h1 class="h3 mb-3 font-weight-normal white-t">{{'connexion.titre'|trans}}</h1>
+			<section class="tm-login-panel">
+				<div class="tm-login-panel-content">
+					<form class="form-signin tm-login-form" action="{{ path('app_login') }}" method="post">
+						{% for message in app.session.flashbag.get('info') %}
+							<div class="alert alert-success" style="color: white; background-color: #008779;">
+								{{ message }}
+							</div>
+						{% endfor %}
+
+						{% if error %}
+							<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+						{% endif %}
+
+						{% if app.user %}
+							<p class="tm-login-auth-message">
+								Vous &ecirc;tes connect&eacute; {{ app.user.displayName }}, <a class="special-link" href="{{ path('app_logout') }}">D&eacute;connexion</a>
+							</p>
+						{% endif %}
+
+						<div class="tm-login-header">
+							<a href="{{ path('home') }}" class="tm-login-logo-link" aria-label="Accueil Trust &amp; Market">
+								<img src="{{ prerender(asset('assets/img/logo_tm.svg')) }}" alt="Trust &amp; Market">
+							</a>
+							<h1 class="tm-login-heading">{{ 'connexion.titre'|trans }}</h1>
+							<p class="tm-login-subheading">Acc&eacute;dez &agrave; votre espace.</p>
+						</div>
+
+						<div class="form-label-group">
+							<input name="email_canonical" type="email" id="_username" class="form-control input-custom" placeholder="{{ 'general.email'|trans }}" required autofocus>
+							<label for="_username">{{ 'general.email'|trans }}</label>
+							<div class="valid-feedback"></div>
+							<div class="invalid-feedback">
+								{{ 'inscription.erreur.email'|trans }}
+							</div>
+						</div>
+
+						<div class="form-label-group">
+							<input name="password" type="password" id="inputPassword" class="form-control input-custom" placeholder="{{ 'connexion.newsletter'|trans }}" required>
+							<label for="inputPassword">{{ 'connexion.passe'|trans }}</label>
+						</div>
+
+						{% if environnement == 'prod' or environnement == 'dev' %}
+							<div class="tm-login-recaptcha">
+								<div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O" data-action="TRUST_LOGIN"></div>
+							</div>
+						{% endif %}
+
+						<div class="tm-login-helpers">
+							<label>
+								<input type="checkbox" name="_remember_me" value="remember-me">
+								{{ 'connexion.souvenir'|trans }}
+							</label>
+							<a class="special-link" href="{{ path('app_forgot_password_request') }}">{{ 'connexion.passe-oublier'|trans }}</a>
+						</div>
+
+						<div class="tm-login-submit-row">
+							<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+							<button class="btn btn-lg btn-primary btn-md registration-button" type="submit">{{ 'connexion.titre'|trans }}</button>
+						</div>
+
+						<p class="tm-login-links">
+							<span class="tm-login-note-prefix" aria-hidden="true">&larr; </span><a href="{{ path('home') }}" class="tm-login-note-link">{{ 'general.accueil'|trans }}</a>
+							&nbsp;|&nbsp;
+							<a class="special-below-link" href="{{ absolute_url(path('app_register')) }}"><span class="tm-login-note-link">{{ 'connexion.creer-compte'|trans }}</span>&nbsp;&rarr;</a>
+							<br>
+							<a href="/fr/login" class="special-below-link tm-login-lang">
+								<img src="/assets/img/fr.svg" alt="Langue francaise" height="12">
+								Fr
+							</a>
+						</p>
+
+						{% if 'annonces/liste' in app.request.headers.get('referer') or 'annonces/details' in app.request.headers.get('referer') %}
+							<input type="hidden" name="_target_path" value="{{ app.request.headers.get('referer') }}">
+						{% endif %}
+					</form>
+				</div>
+			</section>
 		</div>
-
-		<div class="form-label-group">
-			<input name="email_canonical" type="email" id="_username" class="form-control input-custom" placeholder="{{'general.email'|trans}}" required autofocus>
-			<label for="_username">{{'general.email'|trans}}</label>
-			<div class="valid-feedback"></div>
-			<div class="invalid-feedback">
-				{{"inscription.erreur.email"|trans}}
-			</div>
-		</div>
-
-		<div class="form-label-group">
-			<input name="password" type="password" id="inputPassword" class="form-control input-custom" placeholder="{{'connexion.newsletter'|trans}}" required>
-			<label for="inputPassword">{{'connexion.passe'|trans}}</label>
-		</div>
-		{% if environnement == 'prod' or environnement == 'dev' %}
-			<div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O" data-action="TRUST_LOGIN"></div>
-		{% endif %}
-		<br/>
-		<!-- Hide only on mobile -->
-		<div class="d-none d-sm-block checkbox mb-3 white-t" style="font-size: 12.5px;">
-			<label>
-				<input type="checkbox" name="_remember_me" value="remember-me">
-				{{'connexion.souvenir'|trans}}
-			</label>
-			<a class="float-r special-link" href="{{path('app_forgot_password_request')}}">{{'connexion.passe-oublier'|trans}}</a>
-		</div>
-		<!-- End hide only on mobile -->
-
-		<!-- View only on mobile -->
-		<div class="d-sm-none checkbox mb-3 white-t" style="font-size: 12.5px;">
-			<label>
-				<input type="checkbox" name="_remember_me">{{'connexion.souvenir'|trans}}
-			</label><br>
-			<a class="special-link" href="{{path('app_forgot_password_request')}}">{{'connexion.passe-oublier'|trans}}</a>
-		</div>
-		<!-- End view only on mobile -->
-
-		<div class="text-center">
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-			<button class="btn btn-lg btn-primary btn-md registration-button" type="submit">{{'connexion.titre'|trans}}</button>
-		</div>
-
-		<p class="mt-3 mb-3 text-muted text-center">
-			<a href="{{path('home')}}" class="special-below-link">&larr;&nbsp;<span class="special-link">{{'general.accueil'|trans}}</span>
-			</a>&nbsp;|&nbsp;<a class="special-below-link" href="{{absolute_url(path('app_register')) }}">
-				<span class="special-link">{{'connexion.creer-compte'|trans}}</span>&nbsp;&rarr;</a>
-			<br><a href="/fr/login" class="special-below-link">
-				<img src="/assets/img/fr.svg" alt="Langue francaise" height='12'>
-				Fr</a>
-			<!-- |
-			<a href="/fr/login" class="special-below-link">
-				<img src="/assets/img/gb.svg" alt="Langue anglaise" height='12'>En
-			</a> 
-			-->
-		</p>
-		{% if 'annonces/liste' in app.request.headers.get('referer') or 'annonces/details' in app.request.headers.get('referer') %}
-			<input type="hidden" name="_target_path" value="{{ app.request.headers.get('referer') }}" />
-		{% endif %}
-	</form>
-
+	</main>
 {% endblock %}
 
 {% block javascripts %}
@@ -187,4 +614,3 @@ window.addEventListener('load', () => {
 
 
 {% endblock %}
-
