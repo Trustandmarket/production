@@ -258,14 +258,30 @@
 		}
 
 		.tm-login-form .form-label-group > label {
-			color: #6f6861;
+			position: static;
+			display: block;
+			width: auto;
+			min-height: 0;
+			padding: 0;
+			margin: 0 0 clamp(3px, .5vh, 5px);
+			color: #212529;
 			border: 0;
 			line-height: 1.25;
-			margin: 0;
+			font-size: clamp(.82rem, .9vw, .96rem);
+			font-weight: 600;
+			font-family: "Palanquin Dark", sans-serif;
+			pointer-events: auto;
+			cursor: default;
 		}
 
-		.tm-login-form .form-label-group input:not(:placeholder-shown) ~ label {
-			color: #8b837c;
+		.tm-login-form .form-label-group input:not(:placeholder-shown) {
+			padding-top: clamp(6px, .9vh, 9px);
+			padding-bottom: clamp(6px, .9vh, 9px);
+		}
+
+		.tm-login-form .form-label-group input::placeholder {
+			color: #8d867f;
+			opacity: 1;
 		}
 
 		.tm-login-form .input-custom {
@@ -544,8 +560,8 @@
 						</div>
 
 						<div class="form-label-group">
-							<input name="email_canonical" type="email" id="_username" class="form-control input-custom" placeholder="Adresse e-mail" required autofocus>
 							<label for="_username">Adresse e-mail</label>
+							<input name="email_canonical" type="email" id="_username" class="form-control input-custom" placeholder="Adresse e-mail" required autofocus>
 							<div class="valid-feedback"></div>
 							<div class="invalid-feedback">
 								{{ 'inscription.erreur.email'|trans }}
@@ -553,8 +569,8 @@
 						</div>
 
 						<div class="form-label-group">
-							<input name="password" type="password" id="inputPassword" class="form-control input-custom" placeholder="Mot de passe" required>
 							<label for="inputPassword">Mot de passe</label>
+							<input name="password" type="password" id="inputPassword" class="form-control input-custom" placeholder="Mot de passe" required>
 						</div>
 
 						{% if environnement == 'prod' or environnement == 'dev' %}
