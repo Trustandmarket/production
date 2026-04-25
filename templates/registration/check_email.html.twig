@@ -5,498 +5,545 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
+        html,
         body {
-            background: #f5f5f5 !important;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #f2eee9;
             background-image: none !important;
         }
 
+        .tm-check-email-page,
+        .tm-check-email-wrap,
+        .tm-check-email-visual,
+        .tm-check-email-panel,
+        .tm-check-email-panel-content {
+            box-sizing: border-box;
+        }
+
         .tm-check-email-page {
+            height: 100vh;
+            height: 100dvh;
             min-height: 100vh;
-            padding: 320px 18px 104px;
-            background: #f5f5f5;
+            min-height: 100dvh;
+            width: 100%;
             font-family: "Palanquin", sans-serif;
             color: #212529;
-            width: 100%;
-            box-sizing: border-box;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
         }
 
         .tm-check-email-wrap {
             width: 100%;
-            max-width: 920px;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        .tm-check-email-card {
-            position: relative;
-            width: 100%;
-            max-width: 920px;
-            margin: 0;
-            padding: 1.2rem 1.15rem 1.8rem;
-            border-radius: 32px;
-            background:
-                radial-gradient(circle at top left, rgba(241, 124, 48, 0.14), transparent 22%),
-                radial-gradient(circle at bottom right, rgba(16, 16, 16, 0.04), transparent 26%),
-                linear-gradient(135deg, #fff9f4 0%, #ffffff 46%, #f6f7f9 100%);
-            border: 1px solid rgba(241, 124, 48, 0.18);
-            box-shadow: 0 24px 60px rgba(26, 26, 26, 0.10);
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            background: #fff;
             overflow: hidden;
         }
 
-        .tm-check-email-topbar {
+        .tm-check-email-visual {
             position: relative;
-            min-height: 56px;
-            margin-bottom: clamp(1.1rem, 2vh, 1.45rem);
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: clamp(24px, 4.2vmin, 64px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            color: #fff;
+            background-image:
+                linear-gradient(180deg, rgba(14, 10, 8, 0.28) 0%, rgba(14, 10, 8, 0.68) 100%),
+                var(--tm-check-email-visual-image);
+            background-size: cover;
+            background-position: center;
+            isolation: isolate;
         }
 
-        .tm-check-email-logo {
+        .tm-check-email-visual::after {
+            content: "";
             position: absolute;
-            top: 0;
-            left: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            inset: 0;
+            background:
+                linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 72px 72px;
+            opacity: .18;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .tm-check-email-logo img {
-            width: 46px;
-            height: 46px;
-            object-fit: contain;
+        .tm-check-email-visual > * {
+            position: relative;
+            z-index: 1;
         }
 
-        .tm-check-email-heading-group {
+        .tm-check-email-visual-copy {
+            max-width: clamp(320px, 30vw, 540px);
+            text-shadow: 0 1px 16px rgba(0, 0, 0, .34);
+        }
+
+        .tm-check-email-visual-copy strong {
+            display: block;
+            margin-bottom: clamp(8px, 1.2vh, 16px);
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: clamp(2rem, 5.2vmin, 3.6rem);
+            line-height: .95;
+            font-weight: 700;
+        }
+
+        .tm-check-email-visual-copy span {
+            display: block;
+            max-width: clamp(280px, 26vw, 440px);
+            color: rgba(255, 255, 255, .82);
+            font-size: clamp(.86rem, 1.05vw, 1.12rem);
+            line-height: 1.35;
+        }
+
+        .tm-check-email-panel {
+            max-width: none;
+            margin: 0;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: clamp(16px, 4vh, 52px) clamp(28px, 5vw, 92px);
+            border: 0;
+            border-radius: 0;
+            background: #fff;
+            box-shadow: none;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding-top: 52px;
+            justify-content: flex-start;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-gutter: stable;
         }
 
-        .tm-check-email-kicker {
-            margin: 0 0 .35rem 0;
-            font-size: .78rem;
-            font-weight: 700;
-            letter-spacing: .22em;
-            text-transform: uppercase;
-            color: #f17c30;
-            font-family: "Palanquin Dark", sans-serif;
-            text-align: center;
+        .tm-check-email-panel-content {
+            width: clamp(360px, 31vw, 520px);
+            max-width: 100%;
+            margin: auto;
+        }
+
+        .tm-check-email-topbar {
+            margin-bottom: clamp(10px, 2.1vh, 24px);
+            min-height: 0;
         }
 
         .tm-check-email-heading {
             margin: 0;
-            color: #101010;
-            font-size: clamp(1.9rem, 3.1vh, 2.15rem);
-            line-height: 1.15;
+            color: #212529;
+            font-size: clamp(1.55rem, 2.25vw, 2.3rem);
+            line-height: 1.05;
             font-family: "Palanquin Dark", sans-serif;
             font-weight: 700;
-            text-transform: uppercase;
-            text-align: center;
+            text-align: left;
+            text-transform: none;
+            letter-spacing: 0;
         }
 
         .tm-check-email-subheading {
-            margin: 10px 0 0 0;
-            color: #212529;
-            font-size: .98rem;
-            line-height: 1.55;
-            text-align: center;
-            font-family: "Palanquin", sans-serif;
+            margin-top: clamp(3px, .7vh, 8px);
+            color: #424242;
+            font-size: clamp(.86rem, 1vw, 1.06rem);
+            line-height: 1.35;
+            text-align: left;
         }
 
-        .tm-check-email-steps {
-            margin-bottom: 22px;
-            padding: 1rem 1.1rem;
-            border-radius: 26px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 100%);
-            border: 1px solid rgba(18, 18, 18, 0.07);
-            box-shadow: 0 16px 36px rgba(17, 17, 17, 0.07);
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: .8rem;
-            backdrop-filter: blur(6px);
-        }
-
-        .tm-check-email-step {
+        .tm-register-steps {
+            margin: 0 0 clamp(12px, 2.4vh, 28px);
+            padding: 0;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            min-height: 82px;
-            gap: .3rem;
-            color: #212529;
+            gap: clamp(5px, .7vw, 10px);
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+            backdrop-filter: none;
         }
 
-        .tm-check-email-step.is-upcoming {
-            opacity: .72;
+        .tm-step-pill {
+            min-height: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: clamp(4px, .55vw, 8px);
+            color: #888;
+            white-space: nowrap;
         }
 
-        .tm-check-email-step-index {
+        .tm-step-pill.is-upcoming {
+            color: #777;
+        }
+
+        .tm-step-pill:not(:last-child)::after {
+            content: "";
+            width: clamp(18px, 3.1vw, 34px);
+            height: 1px;
+            margin-left: 4px;
+            background: #cfc8c1;
+        }
+
+        .tm-step-pill-index {
+            width: clamp(18px, 1.55vw, 22px);
+            height: clamp(18px, 1.55vw, 22px);
+            margin-bottom: 0;
+            background: #fff;
+            border: 1px solid #bfb8b1;
+            border-radius: 50%;
+            color: #69625c;
+            font-size: clamp(.66rem, .7vw, .78rem);
             display: inline-flex;
-            width: 24px;
-            height: 24px;
             align-items: center;
             justify-content: center;
-            border-radius: 999px;
-            background: rgba(17, 17, 17, 0.10);
-            color: #fff;
-            font-size: .68rem;
             font-weight: 600;
         }
 
-        .tm-check-email-step.is-active .tm-check-email-step-index {
-            background: linear-gradient(90deg, #f17c30 0%, #ffb787 100%);
+        .tm-step-pill.is-active .tm-step-pill-index {
+            background: #111;
+            border-color: #111;
+            color: #fff;
         }
 
-        .tm-check-email-step strong {
-            display: block;
-            font-size: .98rem;
+        .tm-step-pill.is-passed .tm-step-pill-index {
+            background: #ff7e10;
+            border-color: #ff7e10;
+            color: #fff;
+        }
+
+        .tm-step-pill strong {
+            font-size: clamp(.74rem, .82vw, .88rem);
+            letter-spacing: 0;
+            text-transform: none;
             font-family: "Palanquin Dark", sans-serif;
             font-weight: 700;
-            letter-spacing: .16em;
-            text-transform: uppercase;
         }
 
-        .tm-check-email-step span {
-            display: block;
-            font-size: .86rem;
-            line-height: 1.42;
-            font-family: "Palanquin", sans-serif;
+        .tm-step-pill strong + span {
+            display: none;
         }
 
-        .tm-check-email-panel {
-            width: 100%;
-            max-width: 680px;
-            margin: 30px auto 0;
-            text-align: center;
+        .tm-check-email-content {
+            margin-top: clamp(14px, 2.6vh, 30px);
         }
 
-        .tm-check-email-panel p {
-            margin: 0;
-            color: #212529;
-            font-size: .98rem;
-            line-height: 1.72;
+        .tm-check-email-alert {
+            margin: 0 0 14px;
+            padding: .95rem 1rem;
+            border-radius: 12px;
+            background: #fff4f4;
+            border: 1px solid rgba(193, 61, 61, 0.22);
+            color: #b43737;
+            font-size: .88rem;
+            line-height: 1.5;
+            text-align: left;
         }
 
         .tm-check-email-message {
-            max-width: 580px;
-            margin: 0 auto;
-            text-align: left;
-            font-size: .98rem;
+            margin: 0;
+            color: #212529;
+            line-height: 1.45;
+            font-size: clamp(.86rem, .95vw, 1rem);
             font-family: "Palanquin", sans-serif;
         }
 
         .tm-check-email-status {
-            margin: 1.45rem auto 0;
-            max-width: 580px;
+            margin-top: clamp(14px, 2vh, 20px);
             display: flex;
-            align-items: center;
-            gap: .75rem;
-            padding: 1rem 1.2rem;
-            border-radius: 22px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 100%);
-            border: 1px solid rgba(18, 18, 18, 0.07);
-            box-shadow: 0 16px 36px rgba(17, 17, 17, 0.07);
-            text-align: left;
-            margin-bottom: 1.55rem;
+            align-items: flex-start;
+            gap: 10px;
+            padding: clamp(12px, 1.8vh, 18px) clamp(14px, 1.6vw, 22px);
+            border: 1px solid rgba(255, 126, 16, .28);
+            border-radius: 26px;
+            background: #fff;
+            box-shadow: 0 10px 28px rgba(255, 126, 16, .06);
         }
 
         .tm-check-email-status-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 999px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 126, 16, .62);
+            color: #ff7e10;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             flex: 0 0 auto;
-            background: rgba(241, 124, 48, 0.10);
-            color: #f17c30;
-            font-size: .95rem;
+            margin-top: 2px;
+            font-size: .72rem;
         }
 
         .tm-check-email-status-text {
-            font-size: 0;
-            line-height: 1.5;
-            font-family: "Palanquin Dark", sans-serif;
-            font-weight: 700;
-        }
-
-        .tm-check-email-status-text::after {
-            content: "Découvrez votre compte dès maintenant. Ensuite, validez votre email et accédez à toutes les fonctionnalités.";
-            display: block;
-            font-size: .98rem;
-            line-height: 1.5;
+            margin: 0;
+            color: #212529;
+            line-height: 1.38;
+            font-size: clamp(.86rem, .95vw, 1rem);
         }
 
         .tm-check-email-profile-title {
-            margin: 0 auto 1rem;
-            max-width: 580px;
-            text-align: left;
-            font-size: .98rem;
-            line-height: 1.4;
+            margin: clamp(16px, 2.1vh, 24px) 0 clamp(8px, 1.2vh, 12px);
             color: #212529;
-            font-weight: 700;
+            font-size: clamp(.82rem, .9vw, .96rem);
+            line-height: 1.25;
             font-family: "Palanquin Dark", sans-serif;
+            font-weight: 700;
         }
 
         .tm-check-email-profile-card {
-            width: 100%;
-            max-width: 580px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            padding: 1.05rem 1.15rem;
-            border-radius: 22px;
-            background: rgba(255,255,255,0.98);
-            border: 1px solid rgba(18, 18, 18, 0.08);
-            box-shadow: 0 14px 30px rgba(17, 17, 17, 0.06);
-            text-align: left;
+            gap: clamp(8px, .8vw, 12px);
+            padding: clamp(13px, 1.9vh, 20px) clamp(18px, 1.8vw, 28px);
+            border: 2px solid rgba(255, 126, 16, .28);
+            border-radius: 26px;
+            background: #fff;
+            box-shadow: 0 10px 28px rgba(255, 126, 16, .06);
         }
 
         .tm-check-email-profile-copy strong {
             display: block;
-            margin-bottom: .3rem;
-            font-size: .98rem;
-            line-height: 1.3;
-            color: #212529;
+            margin-bottom: clamp(4px, .7vh, 8px);
+            font-size: clamp(1rem, 1.08vw, 1.18rem);
+            line-height: 1.12;
+            color: #121212;
             font-family: "Palanquin Dark", sans-serif;
             font-weight: 700;
         }
 
         .tm-check-email-profile-copy span {
             display: block;
-            font-size: .95rem;
-            line-height: 1.5;
-            color: #212529;
-            opacity: .82;
+            color: #333;
+            font-size: clamp(.86rem, .95vw, 1rem);
+            line-height: 1.38;
             font-family: "Palanquin", sans-serif;
         }
 
-        .tm-check-email-profile-arrow {
-            color: #c4b49f;
-            font-size: 1.35rem;
-            line-height: 1;
-            flex: 0 0 auto;
-        }
-
         .tm-check-email-actions {
-            margin-top: 1.9rem;
+            margin-top: clamp(18px, 2.5vh, 28px);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.05rem;
-        }
-
-        .tm-check-email-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 336px;
-            min-height: 50px;
-            padding: .85rem 2.5rem;
-            border-radius: 16px;
-            border: 1px solid transparent;
-            text-decoration: none;
-            font-family: "Palanquin Dark", sans-serif;
-            font-size: .98rem;
-            font-weight: 700;
-            transition: border-color .2s ease, box-shadow .2s ease, color .2s ease, background .2s ease;
+            gap: clamp(6px, 1vh, 10px);
         }
 
         .tm-check-email-btn-primary {
-            background: linear-gradient(135deg, #f17c30 0%, #ff9f60 100%);
-            color: #ffffff;
-            border-color: transparent;
-            box-shadow: 0 12px 26px rgba(241, 124, 48, 0.22);
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            min-height: clamp(38px, 5vh, 50px);
+            border-radius: 14px;
+            background: #fff;
+            border: 1px solid #111;
+            color: #111;
+            font-family: "Palanquin Dark", sans-serif;
+            font-weight: 700;
+            font-size: clamp(.82rem, .9vw, .98rem);
+            box-shadow: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: clamp(8px, 1vh, 10px) clamp(18px, 2vw, 28px);
+            transition: background .2s ease, border-color .2s ease, color .2s ease;
         }
 
         .tm-check-email-btn-primary:hover,
         .tm-check-email-btn-primary:focus {
-            color: #ffffff;
-            border-color: transparent;
-            box-shadow: 0 16px 30px rgba(241, 124, 48, 0.28);
-        }
-
-        .tm-check-email-btn-secondary {
-            background: transparent;
-            color: #212529;
-            border-color: transparent;
-            min-height: auto;
-            padding: 0;
-            min-width: 0;
-            font-family: "Palanquin", sans-serif;
-            font-weight: 400;
-            box-shadow: none;
-        }
-
-        .tm-check-email-link {
-            color: #212529;
-            text-decoration: none;
-            font-size: .98rem;
-            line-height: 1.5;
-            opacity: .78;
-        }
-
-        .tm-check-email-link:hover,
-        .tm-check-email-btn-secondary:hover {
-            opacity: 1;
-            color: #212529;
+            background: #ff7e10;
+            border-color: #ff7e10;
+            color: #fff;
             text-decoration: none;
         }
 
-        .tm-check-email-footer {
-            margin-top: 18px;
-            display: flex;
-            justify-content: flex-start;
-            font-size: .96rem;
+        .tm-login-note {
+            color: #212529;
+            font-size: clamp(.74rem, .8vw, .86rem);
+            text-align: center;
+            margin: 0;
+            font-family: "Roboto", sans-serif;
         }
 
-        .tm-check-email-footer a {
+        .tm-login-note a {
             color: #212529;
+            text-decoration: underline;
+        }
+
+        .tm-note-link {
+            color: #212529;
+            text-decoration: underline;
+        }
+
+        .tm-note-link-prefix {
             text-decoration: none;
         }
 
-        .tm-check-email-alert {
-            max-width: 740px;
-            margin: 0 auto 18px;
-            padding: .95rem 1rem;
-            border-radius: 18px;
-            background: #fff4f4;
-            border: 1px solid rgba(193, 61, 61, 0.22);
-            color: #b43737;
-            font-size: .95rem;
-            line-height: 1.5;
-            text-align: left;
+        @media (min-width: 992px) {
+            html,
+            body {
+                overflow: hidden;
+            }
         }
 
         @media (max-width: 991px) {
-            .tm-check-email-page {
-                padding: 550px 18px 64px;
+            html,
+            body,
+            .tm-check-email-page,
+            .tm-check-email-wrap,
+            .tm-check-email-visual,
+            .tm-check-email-panel {
+                height: auto;
             }
 
-            .tm-check-email-card {
-                border-radius: 24px;
-                padding: 20px 16px 24px;
+            html,
+            body {
+                overflow: auto;
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
             }
 
-            .tm-check-email-topbar {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 14px;
-                min-height: auto;
-            }
-
-            .tm-check-email-logo {
-                position: static;
-                order: 1;
-            }
-
-            .tm-check-email-heading-group {
-                order: 2;
-                width: 100%;
-                padding-top: 0;
-            }
-
-            .tm-check-email-steps {
+            .tm-check-email-wrap {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                max-width: none;
+                min-height: 100vh;
+                min-height: 100dvh;
+                margin: 0;
+                overflow: visible;
             }
 
-            .tm-check-email-step {
-                min-height: auto;
+            .tm-check-email-visual {
+                min-height: clamp(260px, 42vh, 420px);
+                padding: 28px;
             }
 
             .tm-check-email-panel {
-                padding: 0;
+                min-height: auto;
+                padding: 28px 20px 30px;
+                justify-content: flex-start;
+                overflow: visible;
             }
 
-            .tm-check-email-message,
-            .tm-check-email-status,
-            .tm-check-email-profile-title,
-            .tm-check-email-profile-card {
-                max-width: 100%;
+            .tm-check-email-panel-content {
+                width: min(460px, 100%);
+                margin: auto;
             }
 
-            .tm-check-email-btn {
-                width: 100%;
-                max-width: 320px;
+            .tm-register-steps {
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+
+            .tm-step-pill:not(:last-child)::after {
+                width: 18px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .tm-check-email-visual {
+                min-height: 240px;
+                padding: 22px;
+            }
+
+            .tm-check-email-visual-copy strong {
+                font-size: 1.8rem;
+            }
+
+            .tm-check-email-visual-copy span {
+                font-size: .9rem;
+            }
+
+            .tm-check-email-panel {
+                padding: 24px 16px 28px;
+            }
+
+            .tm-check-email-heading {
+                font-size: 1.55rem;
             }
         }
     </style>
 {% endblock %}
 
 {% block body %}
+    {% set checkEmailVisualImage = include('Seo/Meta/security_image.html.twig', {code: 'verifier_email_creation_compte_image'})|trim %}
+    {% set checkEmailVisualBackground = checkEmailVisualImage ?: absolute_url(asset('assets/img/john-raptis.png')) %}
+
     <main class="tm-check-email-page">
         <div class="tm-check-email-wrap">
-            <section class="tm-check-email-card">
-                <div class="tm-check-email-topbar">
-                    <a href="{{ path('home') }}" class="tm-check-email-logo" aria-label="Accueil Trust &amp; Market">
-                        <img src="{{ prerender(asset('assets/img/logo_new.svg')) }}" alt="Trust &amp; Market">
-                    </a>
-                    <div class="tm-check-email-heading-group">
-                        <p class="tm-check-email-kicker">Création de compte</p>
-                        <h1 class="tm-check-email-heading">CONFIRMEZ VOTRE EMAIL</h1>
-                        <p class="tm-check-email-subheading">Votre compte a bien été créé.</p>
-                    </div>
+            <section class="tm-check-email-visual" style="--tm-check-email-visual-image: url('{{ checkEmailVisualBackground|e('css') }}');" aria-label="Trust &amp; Market">
+                <div class="tm-check-email-visual-copy">
+                    <strong>La plateforme de la production musicale.</strong>
+                    <span>Studios, musiciens, producteurs : trouvez le bon partenaire pour votre projet.</span>
                 </div>
+            </section>
 
-                <div class="tm-check-email-steps">
-                    <div class="tm-check-email-step">
-                        <span class="tm-check-email-step-index">1</span>
-                        <strong>Créez</strong>
-                        <span>Email, mot de passe et type de profil.</span>
-                    </div>
-                    <div class="tm-check-email-step is-active">
-                        <span class="tm-check-email-step-index">2</span>
-                        <strong>Confirmez</strong>
-                        <span>Validation du compte par email.</span>
-                    </div>
-                    <div class="tm-check-email-step is-upcoming">
-                        <span class="tm-check-email-step-index">3</span>
-                        <strong>Complétez</strong>
-                        <span>Complétez ensuite votre profil.</span>
-                    </div>
-                </div>
-
-                {% for message in app.session.flashbag.get('register_email_error') %}
-                    <div class="tm-check-email-alert">
-                        L’email d’activation n’a pas pu être envoyé automatiquement. {{ message }}
-                    </div>
-                {% endfor %}
-
-                <div class="tm-check-email-panel">
-                    <p class="tm-check-email-message">Nous vous avons envoyé un lien d’activation pour confirmer votre adresse email{% if pending_email %}, {{ pending_email }}{% endif %}, et accéder à la dernière étape de votre profil.</p>
-
-                    <div class="tm-check-email-status">
-                        <span class="tm-check-email-status-icon"><i class="fa fa-plus-circle" aria-hidden="true"></i></span>
-                        <span class="tm-check-email-status-text">Votre compte n’est pas encore activé.</span>
+            <section class="tm-check-email-panel">
+                <div class="tm-check-email-panel-content">
+                    <div class="tm-check-email-topbar">
+                        <h1 class="tm-check-email-heading">Confirmez votre email</h1>
+                        <p class="tm-check-email-subheading">Votre compte a bien &eacute;t&eacute; cr&eacute;&eacute;.</p>
                     </div>
 
-                    <p class="tm-check-email-profile-title">Je me suis inscrit en tant que :</p>
-
-                    <div class="tm-check-email-profile-card">
-                        <div class="tm-check-email-profile-copy">
-                            <strong>{{ role_card.title }}</strong>
-                            <span>{{ role_card.description }}</span>
+                    <div class="tm-register-steps">
+                        <div class="tm-step-pill is-passed">
+                            <span class="tm-step-pill-index">1</span>
+                            <strong>Choisir</strong>
+                            <span>Choix du type de profil.</span>
                         </div>
-                        <span class="tm-check-email-profile-arrow" aria-hidden="true">&rsaquo;</span>
+                        <div class="tm-step-pill is-passed">
+                            <span class="tm-step-pill-index">2</span>
+                            <strong>Cr&eacute;er</strong>
+                            <span>Email, mot de passe et validation.</span>
+                        </div>
+                        <div class="tm-step-pill is-active">
+                            <span class="tm-step-pill-index">3</span>
+                            <strong>Confirmer</strong>
+                            <span>Validation du compte par email.</span>
+                        </div>
+                        <div class="tm-step-pill is-upcoming">
+                            <span class="tm-step-pill-index">4</span>
+                            <strong>Compl&eacute;ter</strong>
+                            <span>Compl&eacute;tez ensuite votre profil.</span>
+                        </div>
                     </div>
 
-                    <div class="tm-check-email-actions">
-                        <a href="{{ path('app_registration_complete_profile') }}" class="tm-check-email-btn tm-check-email-btn-primary">Compléter mon profil</a>
-                        <a href="{{ path('app_login') }}" class="tm-check-email-btn tm-check-email-btn-secondary">Se connecter</a>
-                    </div>
-                </div>
+                    <div class="tm-check-email-content">
+                        {% for message in app.session.flashbag.get('register_email_error') %}
+                            <div class="tm-check-email-alert">
+                                L'email d'activation n'a pas pu &ecirc;tre envoy&eacute; automatiquement. {{ message }}
+                            </div>
+                        {% endfor %}
 
-                <div class="tm-check-email-footer">
-                    <a href="{{ path('home') }}">&larr;&nbsp;<span>Accueil</span></a>
+                        <p class="tm-check-email-message">
+                            Nous vous avons envoy&eacute; un lien d'activation pour confirmer votre adresse email{% if pending_email %}, {{ pending_email }}{% endif %}, et acc&eacute;der &agrave; la derni&egrave;re &eacute;tape de votre profil.
+                        </p>
+
+                        <div class="tm-check-email-status">
+                            <span class="tm-check-email-status-icon"><i class="fa fa-plus-circle" aria-hidden="true"></i></span>
+                            <p class="tm-check-email-status-text">Votre compte n'est pas encore activ&eacute;.</p>
+                        </div>
+
+                        <p class="tm-check-email-profile-title">Je me suis inscrit en tant que :</p>
+
+                        <div class="tm-check-email-profile-card">
+                            <div class="tm-check-email-profile-copy">
+                                <strong>{{ role_card.title }}</strong>
+                                <span>{{ role_card.description }}</span>
+                            </div>
+                        </div>
+
+                        <div class="tm-check-email-actions">
+                            <a href="{{ path('app_registration_complete_profile') }}" class="tm-check-email-btn-primary">Compl&eacute;ter mon profil</a>
+                            <p class="tm-login-note"><span class="tm-note-link-prefix" aria-hidden="true">&larr; </span><a href="{{ path('home') }}" class="tm-note-link">Accueil</a> <span aria-hidden="true">|</span> <a href="{{ path('app_login') }}">Se connecter</a></p>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>
