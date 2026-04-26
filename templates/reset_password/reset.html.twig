@@ -435,13 +435,12 @@
                     </div>
 
                     <div class="form-label-group">
-                        <label for="inputPassword">{{ 'reinitialiser-mot-de-passe.texte-mot-de-passe'|trans }}</label>
+                        <label for="{{ resetForm.plainPassword.first.vars.id }}">{{ 'reinitialiser-mot-de-passe.texte-mot-de-passe'|trans }}</label>
                         {{ form_widget(resetForm.plainPassword.first, {
                             'attr': {
                                 'class': 'form-control input-custom',
                                 'placeholder': '',
                                 'type': 'password',
-                                'id': 'inputPassword',
                                 'autocomplete': 'new-password',
                                 'autofocus': 'autofocus',
                                 'required': 'required'
@@ -494,7 +493,7 @@
     {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var passwordInput = document.getElementById('inputPassword');
+            var passwordInput = document.getElementById('{{ resetForm.plainPassword.first.vars.id }}');
             var strengthRoot = document.getElementById('tm-reset-strength');
             var strengthValue = document.getElementById('tm-reset-strength-value');
 
