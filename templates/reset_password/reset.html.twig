@@ -1,130 +1,426 @@
-{# {% extends 'base.html.twig' %}
-
-{% block title %}Reset your password{% endblock %}
-
-{% block body %}
-    <h1>Reset your password</h1>
-
-    {{ form_start(resetForm) }}
-        {{ form_row(resetForm.plainPassword) }}
-        <button class="btn btn-primary">Reset password</button>
-    {{ form_end(resetForm) }}
-{% endblock %} #}
-
 {% extends 'base.html.twig' %}
 
-{% block title %} {{"passe-oublier.titre"|trans}} | Trust & Market {% endblock %}
+{% block head %}
+    {{ parent() }}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
+
+{% block title %}{{ 'reinitialiser-mot-de-passe.titre'|trans }} | Trust &amp; Market{% endblock %}
 
 {% block stylesheets %}
-  <link href="{{asset('assets/css/floating-labels.css')}}" rel="stylesheet">
     <style>
-      body{ {% if include('Seo/Meta/security_image.html.twig', {code: 'reinitialiser_mot_de_passe_image'}) != "\n" %}
-			background: url({{ include('Seo/Meta/security_image.html.twig', {code: 'reinitialiser_mot_de_passe_image'}) }}) no-repeat center center fixed;
-		{% else %} background: url({{ absolute_url(asset('assets/img/john-raptis.png'))}}) no-repeat center center fixed;
-		{% endif %}
-	        -webkit-background-size: cover;
-	        -moz-background-size: cover;
-	        -o-background-size: cover;
-	        background-size: cover;
-	  }
-      .white-t{
-        color: #fff;
-      }
-      .float-r {
-        float: right;
-      }
-        form{
-        margin-left: auto;
-        margin-right: auto;    
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
         }
-      .special-link{
-        text-decoration: underline;
-        color: #fff;
-      }
-      .special-link:hover{
-        text-decoration: underline;
-        color: #f17c30;
-      }
 
-      .special-below-link{
-        color:#fff;
-      }
-      .special-below-link:hover{
-        text-decoration: none;
-        color:#f17c30;
-      }
-
-      .newcode-button{
-        background: #f17c30;
-        border: none;
-        font-size: 15px;
-      }
-      .newcode-button:hover{
-        color:#f17c30;
-        background: #fff;
-        border: none;
-      }
-
-      .input-custom{
-        background-color: rgba(0, 0, 0, 0.15);
-        color:#ddd;
-      }
-      .input-custom:focus{
-        background-color: rgba(0, 0, 0, 0.15);
-        border-color: #fff;
-        color: #fff;
-      }
-
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
+        body {
+            background: #fff !important;
+            font-family: "Palanquin", sans-serif;
+            color: #212529;
         }
-      }
+
+        .tm-reset-form-page,
+        .tm-reset-form-wrap,
+        .tm-reset-form-visual,
+        .tm-reset-form-panel,
+        .tm-reset-form-panel-content {
+            box-sizing: border-box;
+        }
+
+        .tm-reset-form-page {
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            width: 100%;
+        }
+
+        .tm-reset-form-wrap {
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .tm-reset-form-visual {
+            position: relative;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: clamp(24px, 4.2vmin, 64px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            color: #fff;
+            background-image:
+                linear-gradient(180deg, rgba(14, 10, 8, 0.28) 0%, rgba(14, 10, 8, 0.68) 100%),
+                var(--tm-reset-form-visual-image);
+            background-size: cover;
+            background-position: center;
+            isolation: isolate;
+        }
+
+        .tm-reset-form-visual::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 72px 72px;
+            opacity: .18;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .tm-reset-form-visual > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .tm-reset-form-visual-copy {
+            max-width: clamp(320px, 30vw, 540px);
+            text-shadow: 0 1px 16px rgba(0, 0, 0, .34);
+        }
+
+        .tm-reset-form-visual-copy strong {
+            display: block;
+            margin-bottom: clamp(8px, 1.2vh, 16px);
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: clamp(2rem, 5.2vmin, 3.6rem);
+            line-height: .95;
+            font-weight: 700;
+        }
+
+        .tm-reset-form-visual-copy span {
+            display: block;
+            max-width: clamp(280px, 26vw, 440px);
+            color: rgba(255, 255, 255, .82);
+            font-size: clamp(.86rem, 1.05vw, 1.12rem);
+            line-height: 1.35;
+        }
+
+        .tm-reset-form-panel {
+            max-width: none;
+            margin: 0;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: clamp(16px, 4vh, 52px) clamp(28px, 5vw, 92px);
+            border: 0;
+            border-radius: 0;
+            background: #fff;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-gutter: stable;
+        }
+
+        .tm-reset-form-panel-content {
+            width: clamp(360px, 31vw, 520px);
+            max-width: 100%;
+            margin: auto;
+        }
+
+        .tm-reset-form {
+            width: 100%;
+            margin: 0;
+        }
+
+        .tm-reset-form-header {
+            margin-bottom: clamp(12px, 2vh, 22px);
+            text-align: left;
+        }
+
+        .tm-reset-form-heading {
+            margin: 0;
+            color: #212529;
+            font-size: clamp(1.55rem, 2.25vw, 2.3rem);
+            line-height: 1.05;
+            font-family: "Palanquin Dark", sans-serif;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .tm-reset-form-subheading {
+            margin-top: clamp(3px, .7vh, 8px);
+            color: #424242;
+            font-size: clamp(.86rem, 1vw, 1.06rem);
+            line-height: 1.35;
+        }
+
+        .tm-reset-form .alert {
+            margin-bottom: 12px;
+            border-radius: 12px;
+            font-size: .88rem;
+            line-height: 1.35;
+        }
+
+        .tm-reset-form .form-label-group {
+            margin-bottom: clamp(8px, 1.1vh, 12px);
+        }
+
+        .tm-reset-form .form-label-group > label {
+            display: block;
+            margin: 0 0 clamp(3px, .5vh, 5px);
+            color: #212529;
+            font-size: clamp(.82rem, .9vw, .96rem);
+            font-weight: 600;
+            line-height: 1.25;
+            font-family: "Palanquin Dark", sans-serif;
+        }
+
+        .tm-reset-form .input-custom {
+            width: 100%;
+            min-height: clamp(34px, 4.55vh, 46px);
+            background: #fff;
+            color: #212529;
+            border: 1px solid #cfc8c1;
+            border-radius: 5px;
+            box-shadow: none;
+            padding: clamp(6px, .9vh, 9px) clamp(9px, 1vw, 12px);
+            font-size: clamp(.86rem, .92vw, 1rem);
+            font-family: "Palanquin", sans-serif;
+        }
+
+        .tm-reset-form .input-custom:focus {
+            background: #fff;
+            color: #212529;
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(241, 124, 48, .14);
+        }
+
+        .tm-reset-form .input-custom::placeholder {
+            color: #8d867f;
+            opacity: 1;
+        }
+
+        .tm-reset-form .invalid-feedback,
+        .tm-reset-form .valid-feedback {
+            margin-top: 4px;
+            font-size: .74rem;
+        }
+
+        .tm-reset-form-strength {
+            margin-top: 8px;
+        }
+
+        .tm-reset-form-actions {
+            margin-top: clamp(6px, 1vh, 10px);
+        }
+
+        .tm-reset-form-btn {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            min-height: clamp(38px, 5vh, 50px);
+            border-radius: 14px;
+            background: #fff;
+            border: 1px solid #111;
+            color: #111;
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: clamp(.82rem, .9vw, .98rem);
+            font-weight: 700;
+            box-shadow: none;
+            padding: clamp(8px, 1vh, 10px) clamp(18px, 2vw, 28px);
+            text-transform: none;
+        }
+
+        .tm-reset-form-btn:hover,
+        .tm-reset-form-btn:focus {
+            background: #ff7e10;
+            border-color: #ff7e10;
+            color: #fff;
+        }
+
+        .tm-reset-form-links {
+            margin: clamp(10px, 2vh, 18px) 0 0;
+            font-size: clamp(.74rem, .8vw, .86rem);
+            color: #212529;
+            text-align: center;
+        }
+
+        .tm-reset-form-links a {
+            color: #212529;
+            text-decoration: underline;
+        }
+
+        .tm-reset-form-links a:hover {
+            color: #ff7e10;
+        }
+
+        .tm-note-link-prefix {
+            text-decoration: none;
+            color: #212529;
+        }
+
+        @media (min-width: 992px) {
+            html,
+            body {
+                overflow: hidden;
+            }
+        }
+
+        @media (max-width: 991px) {
+            html,
+            body,
+            .tm-reset-form-page,
+            .tm-reset-form-wrap,
+            .tm-reset-form-visual,
+            .tm-reset-form-panel {
+                height: auto;
+            }
+
+            html,
+            body {
+                overflow: auto;
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+            }
+
+            .tm-reset-form-wrap {
+                grid-template-columns: 1fr;
+                max-width: none;
+                min-height: 100vh;
+                min-height: 100dvh;
+                margin: 0;
+                overflow: visible;
+                align-content: flex-start;
+            }
+
+            .tm-reset-form-visual {
+                min-height: clamp(220px, 38vh, 380px);
+                padding: clamp(20px, 5vw, 30px);
+            }
+
+            .tm-reset-form-panel {
+                min-height: auto;
+                padding: clamp(12px, 2vw, 16px) clamp(16px, 4.5vw, 22px) clamp(24px, 5vw, 32px);
+                justify-content: flex-start;
+                overflow: visible;
+                align-items: stretch;
+            }
+
+            .tm-reset-form-panel-content {
+                width: 100%;
+                max-width: 560px;
+                margin: 0 auto;
+            }
+
+            .tm-reset-form .input-custom {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .tm-reset-form-visual {
+                min-height: 220px;
+                padding: 20px 16px;
+            }
+
+            .tm-reset-form-visual-copy strong {
+                font-size: 1.8rem;
+            }
+
+            .tm-reset-form-visual-copy span {
+                font-size: .9rem;
+            }
+
+            .tm-reset-form-panel {
+                padding: 10px 16px 24px;
+            }
+
+            .tm-reset-form-heading {
+                font-size: 1.55rem;
+            }
+        }
     </style>
- 
- {% endblock %}
-
+{% endblock %}
 
 {% block body %}
-    {{ form_start(resetForm) }}
-        <div class="text-center mb-4">
-				  <a href='/'>
-            <img class="mb-4" src="{{prerender(asset('assets/img/logo_tm.svg'))}}" alt="logo" width="72" height="72">
-          </a>
-          <h1 class="h3 mb-3 font-weight-normal white-t">{{'reinitialiser-mot-de-passe.titre'|trans}}</h1>
-          <p class="white-t">{{'reinitialiser-mot-de-passe.description'|trans}}</p>
+    {% set resetFormVisualImage = include('Seo/Meta/security_image.html.twig', {code: 'reinitialiser_mot_de_passe_image'})|trim %}
+    {% set resetFormVisualBackground = resetFormVisualImage ?: absolute_url(asset('assets/img/john-raptis.png')) %}
+
+    <main class="tm-reset-form-page">
+        <div class="tm-reset-form-wrap">
+            <section class="tm-reset-form-visual" style="--tm-reset-form-visual-image: url('{{ resetFormVisualBackground|e('css') }}');" aria-label="Trust &amp; Market">
+                <div class="tm-reset-form-visual-copy">
+                    <strong>La plateforme de la production musicale.</strong>
+                    <span>Studios, musiciens, producteurs : trouvez le bon partenaire pour votre projet.</span>
+                </div>
+            </section>
+
+            <section class="tm-reset-form-panel">
+                <div class="tm-reset-form-panel-content">
+                    {{ form_start(resetForm, {'attr': {'class': 'tm-reset-form'}}) }}
+
+                    <div class="tm-reset-form-header">
+                        <h1 class="tm-reset-form-heading">{{ 'reinitialiser-mot-de-passe.titre'|trans }}</h1>
+                        <p class="tm-reset-form-subheading">{{ 'reinitialiser-mot-de-passe.description'|trans }}</p>
+                    </div>
+
+                    <div class="form-label-group">
+                        <label for="inputPassword">{{ 'reinitialiser-mot-de-passe.texte-mot-de-passe'|trans }}</label>
+                        {{ form_widget(resetForm.plainPassword.first, {
+                            'attr': {
+                                'class': 'form-control input-custom',
+                                'placeholder': '',
+                                'type': 'password',
+                                'id': 'inputPassword',
+                                'autocomplete': 'new-password',
+                                'autofocus': 'autofocus',
+                                'required': 'required'
+                            }
+                        }) }}
+                        {{ form_errors(resetForm.plainPassword.first) }}
+                    </div>
+
+                    <div class="form-label-group">
+                        <label for="{{ resetForm.plainPassword.second.vars.id }}">{{ 'reinitialiser-mot-de-passe.texte-repeter-mot-de-passe'|trans }}</label>
+                        {{ form_widget(resetForm.plainPassword.second, {
+                            'attr': {
+                                'class': 'form-control input-custom',
+                                'placeholder': '',
+                                'type': 'password',
+                                'autocomplete': 'new-password'
+                            }
+                        }) }}
+                        {{ form_errors(resetForm.plainPassword.second) }}
+                        <div class="tm-reset-form-strength" id="progress-container"></div>
+                    </div>
+
+                    <div class="tm-reset-form-actions">
+                        <button class="btn btn-lg btn-primary btn-md tm-reset-form-btn" id="submitNew" type="submit">{{ 'reinitialiser-mot-de-passe.valider'|trans }}</button>
+                        <p class="tm-reset-form-links">
+                            <span class="tm-note-link-prefix" aria-hidden="true">&larr; </span><a href="{{ path('home') }}">Accueil</a>
+                            &nbsp;|&nbsp;
+                            <a href="{{ path('app_login') }}">Se connecter</a>
+                        </p>
+                    </div>
+
+                    {{ form_end(resetForm) }}
+                </div>
+            </section>
         </div>
-
-        <div class="form-label-group">
-            {{ form_widget(resetForm.plainPassword.first , {'attr':{'class':'form-control input-custom', 'placeholder':'','type':'password', 'id':'inputPassword','value':'','autofocus':'autofocus','required':'required'}}) }}
-            {{ form_label(resetForm.plainPassword.first, 'reinitialiser-mot-de-passe.texte-mot-de-passe'|trans) }}
-            {{ form_errors(resetForm.plainPassword.first) }}
-        </div>
-
-        <div class="form-label-group">
-            {{ form_widget(resetForm.plainPassword.second , {'attr':{'class':'form-control input-custom', 'placeholder':'','type':'password', 'id':'inputPassword','value':''}}) }}
-            {{ form_label(resetForm.plainPassword.second, 'reinitialiser-mot-de-passe.texte-repeter-mot-de-passe'|trans) }}
-            {{ form_errors(resetForm.plainPassword.second) }}
-            <div class="mt-2" id="progress-container"></div>
-        </div>
-
-        <div class="mb-3 text-center">
-            <button class="btn btn-lg btn-primary btn-md newcode-button" id="submitNew"  type="submit">{{'reinitialiser-mot-de-passe.valider'|trans}}</button>
-        </div>
-
-    {{ form_end(resetForm) }}
-
+    </main>
 {% endblock %}
 
 {% block javascripts %}
-
- {% endblock %}
+{% endblock %}
