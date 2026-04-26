@@ -112,15 +112,16 @@ class ResetPasswordController extends AbstractController
         $data = [
             'to' => [
                 [
-                    'Email' => $user->getEmailCanonical(),
-                    'Name' => $user->getDisplayName()
-                ]
+                    'email' => $user->getEmailCanonical(),
+                    'name' => $user->getDisplayName(),
+                ],
             ],
             'templateId' => 4,
             'params' => [
-                'url_resetpwd' => $reset_url
-            ]
+                'url_resetpwd' => $reset_url,
+            ],
         ];
+        $apiKey = (string) ($_SERVER['SENDBLUE_API_KEY'] ?? $_ENV['SENDBLUE_API_KEY'] ?? getenv('SENDBLUE_API_KEY') ?? '');
 
         // Initialize cURL
         $ch = curl_init();
@@ -130,16 +131,29 @@ class ResetPasswordController extends AbstractController
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'accept: application/json',
-            'api-key: ' . $_SERVER['SENDBLUE_API_KEY'], // Replace with your actual API key
-            'content-type: application/json'
+            'api-key: ' . $apiKey,
+            'content-type: application/json',
         ]);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
         // Execute the request
         $response = curl_exec($ch);
+        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         // Close cURL session
         curl_close($ch);
+
+        if ($apiKey === '' || $response === false || $httpCode < 200 || $httpCode >= 300) {
+            error_log(sprintf(
+                '[reset-password] Brevo send failed for user %s (apiKeyEmpty=%s, httpCode=%d, curlError=%s, response=%s)',
+                (string) $user->getEmailCanonical(),
+                $apiKey === '' ? 'yes' : 'no',
+                $httpCode,
+                $curlError,
+                (string) $response
+            ));
+        }
 
 
         // Store the token object in session for retrieval in check-email route.

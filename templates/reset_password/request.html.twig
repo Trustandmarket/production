@@ -143,7 +143,7 @@
     </div>
 
     <div class="form-label-group">
-        {{ form_widget(requestForm.email_canonical , {'attr':{'class':'form-control input-custom','type':'text', 'id':'email_canonical','name':'email_canonical','required':'required'}}) }}
+        {{ form_widget(requestForm.email_canonical , {'attr':{'class':'form-control input-custom'}}) }}
         {{ form_label(requestForm.email_canonical, 'general.email'|trans) }}
         {{ form_errors(requestForm.email_canonical) }}
     </div>
@@ -188,5 +188,4 @@
         })
     </script>
 {% endblock %}
-
 
