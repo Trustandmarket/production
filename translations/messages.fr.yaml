@@ -97,11 +97,11 @@ email-changer-mot-de-passe:
     remerciements: 'Votre équipe de service client Trust & Market'
     email-inexistant: 'Cette adresse email n''est pas enregistrée'
 reinitialiser-mot-de-passe:
-    titre: 'Nouveau mot de passe'
-    description: 'Veuillez saisir votre nouveau mot de passe ci-dessous'
+    titre: 'Choisissez un nouveau mot de passe'
+    description: 'Choisissez un mot de passe sécurisé d''au moins 8 caractères.'
     texte-mot-de-passe: 'Nouveau mot de passe'
     texte-repeter-mot-de-passe: 'Confirmer le nouveau mot de passe'
-    valider: 'Réinitialisation du mot de passe'
+    valider: 'Enregistrer mon mot de passe'
     succes: 'Votre mot de passe a été réinitialisé'
 admin:
     menu: { edit-page: 'Edit a page', create-page: 'Créer une nouvelle page', all-pages: 'Toutes les pages', manage-page: 'Gérer les pages', manage-category: 'Gérer les Categories', gerer-livraisons: 'Gérer les Livraisons', type-prestation: 'Type de prestation', seuil-livraison-gratuite: 'Seuils des frais de livraisons', demande-de-referencement: 'Demandes de referencements', operations-frais-gratuit: 'Opé frais gratuits', gerer-criteres: 'Gerer les criteres', categorie-produit: 'Categorie produit', emailing: Emailing, dashboard: 'Tableau de bord', landing_pages: 'Landings Pages', manage-user: 'Gérer les utilisateurs', all-user: 'Tous les utilisateurs', add-user: 'Ajouter un utilisateur', manage-post: 'Gérer les annonces', all-post: 'Toutes les annonces', all-devis: 'Tout les devis', add-post: 'Ajouter une annonce', all-categories: 'Toutes les catégories', all-activities: 'Liste d''activités', manage-oders: 'Gérer les commandes', all-orders: 'Toutes les commandes', manage-article: 'Gérer les articles', all-article: 'Toutes les articles', writte-article: 'Rediger un article', message: Commentaires, setting: Paramètres, language: Langue, deconnexion: Deconnexion, traduction: 'Fichier de traduction', nouvelle-page: 'Créer une page', modifier-page: 'Modifié la page', pages: 'Toutes les pages', home-page: 'Modifié la page d''accueil', update-category: 'Modifié la categorie', new-category: 'Ajouter une categorie', modifier-menu: ' Menu  et pages', menu-entete: 'Menu d''entete de page', menu-pied: 'Menu du pied de page', libelle: Libellé, sous-menu: 'Voir les sous menu liés', modifier: 'Modifié le menu', menu-page: 'Sous menu associés', modifie-page: 'Modifié la page', add-menu: 'Ajouter un menu', type: 'Type de menu', add-page: 'Ajouter une nouvelle page', configure-email: 'Configuration des emails', add-email: 'Ajouter un email', gerer-marketing: Marketing, actualite: Actualité, frais-livraison: 'Frais de livraison', ops-speciales: 'Opés. spéciales', ops-brouillon: Brouillon, promo-com: 'Promo et com', leads-gen: 'Leads gen', type-de-livraison: 'Types de livraisons', experiences: Experiences, offre: 'Offres pro', abonnement: Abonnements }
