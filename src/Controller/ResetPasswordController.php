@@ -59,6 +59,10 @@ class ResetPasswordController extends AbstractController
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
+        $locale = (string) ($request->attributes->get('_locale') ?? $request->getLocale() ?? 'fr');
+        if ($locale === '') {
+            $locale = 'fr';
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse',
@@ -68,7 +72,8 @@ class ResetPasswordController extends AbstractController
                 return $this->processSendingPasswordResetEmail(
                     $form->get('email_canonical')->getData(),
                     $mailer,
-                    $translator
+                    $translator,
+                    $locale
                 );
             } else {
                 throw new CustomUserMessageAccountStatusException($recaptcha['message']);
@@ -80,14 +85,14 @@ class ResetPasswordController extends AbstractController
         ]);
     }
 
-    private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer, TranslatorInterface $translator): RedirectResponse
+    private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer, TranslatorInterface $translator, string $locale = 'fr'): RedirectResponse
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy([
             'email_canonical' => $emailFormData,
         ]);
         // Do not reveal whether a user account was found or not.
         if (!$user) {
-            return $this->redirectToRoute('app_check_email');
+            return $this->redirectToRoute('app_check_email', ['_locale' => $locale]);
         }
 
         try {
@@ -104,9 +109,9 @@ class ResetPasswordController extends AbstractController
             //     $translator->trans($e->getReason(), [], 'ResetPasswordBundle')
             // ));
 
-            return $this->redirectToRoute('app_check_email');
+            return $this->redirectToRoute('app_check_email', ['_locale' => $locale]);
         }
-        $reset_url = $this->generateUrl('app_reset_password', ['token' => $resetToken->getToken()], UrlGenerator::ABSOLUTE_URL);
+        $reset_url = $this->generateUrl('app_reset_password', ['_locale' => $locale, 'token' => $resetToken->getToken()], UrlGenerator::ABSOLUTE_URL);
         
         //Send request email
         $data = [
@@ -143,8 +148,9 @@ class ResetPasswordController extends AbstractController
         $curlError = curl_error($ch);
         // Close cURL session
         curl_close($ch);
+        $brevoSent = $apiKey !== '' && $response !== false && $httpCode >= 200 && $httpCode < 300;
 
-        if ($apiKey === '' || $response === false || $httpCode < 200 || $httpCode >= 300) {
+        if (!$brevoSent) {
             error_log(sprintf(
                 '[reset-password] Brevo send failed for user %s (apiKeyEmpty=%s, httpCode=%d, curlError=%s, response=%s)',
                 (string) $user->getEmailCanonical(),
@@ -153,13 +159,32 @@ class ResetPasswordController extends AbstractController
                 $curlError,
                 (string) $response
             ));
+
+            try {
+                $fallbackEmail = (new TemplatedEmail())
+                    ->from(new Address('commerce@trustandmarket.com', 'Trust & Market'))
+                    ->to(new Address((string) $user->getEmailCanonical(), (string) $user->getDisplayName()))
+                    ->subject('Réinitialisation de votre mot de passe')
+                    ->htmlTemplate('reset_password/email.html.twig')
+                    ->context([
+                        'resetToken' => $resetToken,
+                    ]);
+
+                $mailer->send($fallbackEmail);
+            } catch (\Throwable $e) {
+                error_log(sprintf(
+                    '[reset-password] Symfony mailer fallback failed for user %s (%s)',
+                    (string) $user->getEmailCanonical(),
+                    $e->getMessage()
+                ));
+            }
         }
 
 
         // Store the token object in session for retrieval in check-email route.
         $this->setTokenObjectInSession($resetToken);
 
-        return $this->redirectToRoute('app_check_email');
+        return $this->redirectToRoute('app_check_email', ['_locale' => $locale]);
     }
 
     /**
@@ -199,7 +224,9 @@ class ResetPasswordController extends AbstractController
             // loaded in a browser and potentially leaking the token to 3rd party JavaScript.
             $this->storeTokenInSession($token);
 
-            return $this->redirectToRoute('app_reset_password');
+            return $this->redirectToRoute('app_reset_password', [
+                '_locale' => (string) ($request->attributes->get('_locale') ?? $request->getLocale() ?? 'fr'),
+            ]);
         }
 
         $token = $this->getTokenFromSession();
