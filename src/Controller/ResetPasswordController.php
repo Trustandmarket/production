@@ -263,8 +263,16 @@ class ResetPasswordController extends AbstractController
             $user->setPassword($encodedPassword);
             $this->entityManager->flush();
 
-            //Check mangopay
-            $this->storePaymentData($entityManager, $user);
+            // Check mangopay (must never block password reset flow)
+            try {
+                $this->storePaymentData($entityManager, $user);
+            } catch (\Throwable $e) {
+                error_log(sprintf(
+                    '[reset-password] storePaymentData failed for user %s (%s)',
+                    (string) $user->getEmailCanonical(),
+                    $e->getMessage()
+                ));
+            }
 
             // The session is cleaned up after the password has been changed.
             $this->cleanSessionAfterReset();
@@ -291,6 +299,9 @@ class ResetPasswordController extends AbstractController
             $mpAccount = $mpAccount->getMetaValue();
         } else {
             $payment = new Payment();
+            $userType = null;
+            $description = '';
+            $legalPersonType = '';
             if (in_array('ROLE_ABONNE', $user->getRoles())) {
                 $userType = 'UserNatural';
                 $description = 'Client';
@@ -305,6 +316,10 @@ class ResetPasswordController extends AbstractController
                 $userType = 'UserLegal';
                 $description = 'Societe';
                 $legalPersonType = 'Business';
+            }
+
+            if ($userType === null) {
+                return;
             }
             $first_name = $entityManager->getRepository(WpUsermeta::class)->findOneBy(['userId' => $user->getId(), 'metaKey' => 'first_name']);
             if ($first_name) {
@@ -334,19 +349,32 @@ class ResetPasswordController extends AbstractController
                 $residence = null;
             }
 
+            $birthDate = $user->getDateNaissance();
+            $birthTimestamp = null;
+            if (is_string($birthDate) && trim($birthDate) !== '') {
+                $parsedBirthTimestamp = strtotime($birthDate);
+                if ($parsedBirthTimestamp !== false) {
+                    $birthTimestamp = $parsedBirthTimestamp;
+                }
+            }
+
             $mangopayUser = $payment->createMangoUser(
                 $userType,
                 $legalPersonType,
-                trim($first_name),
-                trim($last_name),
-                strtotime($user->getDateNaissance()),
+                trim((string) $first_name),
+                trim((string) $last_name),
+                $birthTimestamp,
                 $nationalite,
                 $residence,
                 $user->getEmailCanonical()
             );
 
+            if (!is_object($mangopayUser) || !isset($mangopayUser->Id)) {
+                return;
+            }
+
             $mpAccount = new WpUsermeta();
-            $mpAccount->setUserId($this->getUser()->getId());
+            $mpAccount->setUserId($user->getId());
             $mpAccount->setMetaKey('mp_user_id_sandbox');
             $mpAccount->setMetaValue($mangopayUser->Id);
             $entityManager->persist($mpAccount);
