@@ -221,6 +221,64 @@
             margin-top: 8px;
         }
 
+        .tm-reset-strength[hidden] {
+            display: none !important;
+        }
+
+        .tm-reset-strength-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
+            font-size: .78rem;
+            line-height: 1.2;
+        }
+
+        .tm-reset-strength-title {
+            color: #5f5a55;
+            font-family: "Palanquin", sans-serif;
+        }
+
+        .tm-reset-strength-value {
+            font-family: "Palanquin Dark", sans-serif;
+            font-weight: 700;
+            color: #5f5a55;
+            text-transform: uppercase;
+            letter-spacing: .02em;
+        }
+
+        .tm-reset-strength-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: #ede8e2;
+            overflow: hidden;
+        }
+
+        .tm-reset-strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: inherit;
+            transition: width .2s ease, background-color .2s ease;
+            background: #c13d3d;
+        }
+
+        .tm-reset-strength.is-weak .tm-reset-strength-fill {
+            width: 33%;
+            background: #c13d3d;
+        }
+
+        .tm-reset-strength.is-medium .tm-reset-strength-fill {
+            width: 66%;
+            background: #ff7e10;
+        }
+
+        .tm-reset-strength.is-strong .tm-reset-strength-fill {
+            width: 100%;
+            background: #198754;
+        }
+
         .tm-reset-form-actions {
             margin-top: clamp(6px, 1vh, 10px);
         }
@@ -390,6 +448,17 @@
                             }
                         }) }}
                         {{ form_errors(resetForm.plainPassword.first) }}
+                        <div class="tm-reset-form-strength">
+                            <div id="tm-reset-strength" class="tm-reset-strength" hidden>
+                                <div class="tm-reset-strength-meta">
+                                    <span class="tm-reset-strength-title">Force du mot de passe</span>
+                                    <span id="tm-reset-strength-value" class="tm-reset-strength-value" aria-live="polite">faible</span>
+                                </div>
+                                <div class="tm-reset-strength-track">
+                                    <div class="tm-reset-strength-fill"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-label-group">
@@ -403,7 +472,6 @@
                             }
                         }) }}
                         {{ form_errors(resetForm.plainPassword.second) }}
-                        <div class="tm-reset-form-strength" id="progress-container"></div>
                     </div>
 
                     <div class="tm-reset-form-actions">
@@ -423,4 +491,81 @@
 {% endblock %}
 
 {% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var passwordInput = document.getElementById('inputPassword');
+            var strengthRoot = document.getElementById('tm-reset-strength');
+            var strengthValue = document.getElementById('tm-reset-strength-value');
+
+            if (!passwordInput || !strengthRoot || !strengthValue) {
+                return;
+            }
+
+            function evaluatePasswordStrength(password) {
+                if (!password) {
+                    return null;
+                }
+
+                var score = 0;
+
+                if (password.length >= 8) {
+                    score += 1;
+                }
+                if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+                    score += 1;
+                }
+                if (/\d/.test(password)) {
+                    score += 1;
+                }
+                if (/[^A-Za-z0-9]/.test(password)) {
+                    score += 1;
+                }
+                if (password.length >= 12) {
+                    score += 1;
+                }
+
+                if (score <= 2) {
+                    return 'weak';
+                }
+                if (score <= 4) {
+                    return 'medium';
+                }
+                return 'strong';
+            }
+
+            function renderStrength() {
+                var value = passwordInput.value || '';
+                var strength = evaluatePasswordStrength(value);
+
+                strengthRoot.classList.remove('is-weak', 'is-medium', 'is-strong');
+
+                if (strength === null) {
+                    strengthRoot.hidden = true;
+                    return;
+                }
+
+                strengthRoot.hidden = false;
+
+                if (strength === 'weak') {
+                    strengthRoot.classList.add('is-weak');
+                    strengthValue.textContent = 'faible';
+                    return;
+                }
+
+                if (strength === 'medium') {
+                    strengthRoot.classList.add('is-medium');
+                    strengthValue.textContent = 'moyen';
+                    return;
+                }
+
+                strengthRoot.classList.add('is-strong');
+                strengthValue.textContent = 'fort';
+            }
+
+            passwordInput.addEventListener('input', renderStrength);
+            passwordInput.addEventListener('blur', renderStrength);
+            renderStrength();
+        });
+    </script>
 {% endblock %}
