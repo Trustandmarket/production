@@ -62,7 +62,7 @@ inscription:
 passe-oublier:
     titre: 'Mot de passe oublié'
     description: 'Entrez votre adresse email, nous vous enverrons un lien pour réinitialiser votre mot de passe.'
-    valider: Valider
+    valider: 'Envoyer le lien'
 verification-email:
     message-accueil: 'Bienvenue, un email vient de vous être envoyé !'
     conseil: 'Merci de cliquer sur le lien dans l''email pour valider votre inscription.'
