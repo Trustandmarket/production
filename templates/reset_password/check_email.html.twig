@@ -1,86 +1,377 @@
-<!doctype html>
-<html lang="fr">
-  <head>
+{% extends 'base.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Réinitialiser mot de passe | Trust & Market</title>
+{% endblock %}
 
-    <!-- Bootstrap core CSS -->
-    <link href="{{asset('assets/css/bootstrap.min.css')}}" rel="stylesheet">
-    <!-- Font awesome and date picker -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
+{% block title %}Reinitialiser mot de passe | Trust &amp; Market{% endblock %}
 
+{% block stylesheets %}
     <style>
-      body{ {% if include('Seo/Meta/security_image.html.twig', {code: 'verifier_email_reinitialiser_compte_image'}) != "\n" %}
-			background: url({{ include('Seo/Meta/security_image.html.twig', {code: 'verifier_email_reinitialiser_compte_image'}) }}) no-repeat center center fixed;
-		{% else %} background: url({{ absolute_url(asset('assets/img/john-raptis.png'))}}) no-repeat center center fixed;
-		{% endif %}
-	        -webkit-background-size: cover;
-	        -moz-background-size: cover;
-	        -o-background-size: cover;
-	        background-size: cover;
-	  }
-      .white-t{
-        color: #fff;
-      }
-
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-      .registration-ok {
-        width: 100%;
-        max-width: 600px;
-        padding: 15px;
-        margin: auto;
-      }
-      .btn-primary {
-        background: #f17c30 !important;
-        border: none
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
         }
-      }
-      @media only screen and (max-width: 768px) {
-        /* For mobile phones: */
-        body{
-            background-size: auto;
+
+        body {
+            background: #fff !important;
+            font-family: "Palanquin", sans-serif;
+            color: #212529;
         }
-      }
+
+        .tm-reset-check-page,
+        .tm-reset-check-wrap,
+        .tm-reset-check-visual,
+        .tm-reset-check-panel,
+        .tm-reset-check-panel-content {
+            box-sizing: border-box;
+        }
+
+        .tm-reset-check-page {
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            width: 100%;
+        }
+
+        .tm-reset-check-wrap {
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .tm-reset-check-visual {
+            position: relative;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: clamp(24px, 4.2vmin, 64px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            color: #fff;
+            background-image:
+                linear-gradient(180deg, rgba(14, 10, 8, 0.28) 0%, rgba(14, 10, 8, 0.68) 100%),
+                var(--tm-reset-check-visual-image);
+            background-size: cover;
+            background-position: center;
+            isolation: isolate;
+        }
+
+        .tm-reset-check-visual::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 72px 72px;
+            opacity: .18;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .tm-reset-check-visual > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .tm-reset-check-visual-copy {
+            max-width: clamp(320px, 30vw, 540px);
+            text-shadow: 0 1px 16px rgba(0, 0, 0, .34);
+        }
+
+        .tm-reset-check-visual-copy strong {
+            display: block;
+            margin-bottom: clamp(8px, 1.2vh, 16px);
+            font-family: "Palanquin Dark", sans-serif;
+            font-size: clamp(2rem, 5.2vmin, 3.6rem);
+            line-height: .95;
+            font-weight: 700;
+        }
+
+        .tm-reset-check-visual-copy span {
+            display: block;
+            max-width: clamp(280px, 26vw, 440px);
+            color: rgba(255, 255, 255, .82);
+            font-size: clamp(.86rem, 1.05vw, 1.12rem);
+            line-height: 1.35;
+        }
+
+        .tm-reset-check-panel {
+            max-width: none;
+            margin: 0;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: clamp(16px, 4vh, 52px) clamp(28px, 5vw, 92px);
+            border: 0;
+            border-radius: 0;
+            background: #fff;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-gutter: stable;
+        }
+
+        .tm-reset-check-panel-content {
+            width: clamp(360px, 31vw, 520px);
+            max-width: 100%;
+            margin: auto;
+        }
+
+        .tm-reset-check-header {
+            margin-bottom: clamp(10px, 2.1vh, 22px);
+            text-align: left;
+        }
+
+        .tm-reset-check-heading {
+            margin: 0;
+            color: #212529;
+            font-size: clamp(1.55rem, 2.25vw, 2.3rem);
+            line-height: 1.05;
+            font-family: "Palanquin Dark", sans-serif;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .tm-reset-check-subheading {
+            margin-top: clamp(3px, .7vh, 8px);
+            color: #424242;
+            font-size: clamp(.86rem, 1vw, 1.06rem);
+            line-height: 1.35;
+        }
+
+        .tm-reset-check-expiration {
+            margin: 0;
+            color: #212529;
+            line-height: 1.45;
+            font-size: clamp(.86rem, .95vw, 1rem);
+        }
+
+        .tm-reset-check-status {
+            margin-top: clamp(14px, 2vh, 20px);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: clamp(12px, 1.8vh, 18px) clamp(14px, 1.6vw, 22px);
+            border: 1px solid rgba(255, 126, 16, .28);
+            border-radius: 26px;
+            background: #fff;
+            box-shadow: 0 10px 28px rgba(255, 126, 16, .06);
+        }
+
+        .tm-reset-check-status-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 126, 16, .62);
+            color: #ff7e10;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            margin-top: 2px;
+            font-size: .72rem;
+        }
+
+        .tm-reset-check-status-text {
+            margin: 0;
+            color: #212529;
+            line-height: 1.38;
+            font-size: clamp(.86rem, .95vw, 1rem);
+        }
+
+        .tm-reset-check-actions {
+            margin-top: clamp(18px, 2.5vh, 28px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(6px, 1vh, 10px);
+        }
+
+        .tm-reset-check-btn-primary {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            min-height: clamp(38px, 5vh, 50px);
+            border-radius: 14px;
+            background: #fff;
+            border: 1px solid #111;
+            color: #111;
+            font-family: "Palanquin Dark", sans-serif;
+            font-weight: 700;
+            font-size: clamp(.82rem, .9vw, .98rem);
+            box-shadow: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: clamp(8px, 1vh, 10px) clamp(18px, 2vw, 28px);
+            transition: background .2s ease, border-color .2s ease, color .2s ease;
+        }
+
+        .tm-reset-check-btn-primary:hover,
+        .tm-reset-check-btn-primary:focus {
+            background: #ff7e10;
+            border-color: #ff7e10;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .tm-reset-check-note {
+            color: #212529;
+            font-size: clamp(.74rem, .8vw, .86rem);
+            text-align: center;
+            margin: 0;
+            font-family: "Roboto", sans-serif;
+        }
+
+        .tm-reset-check-note a {
+            color: #212529;
+            text-decoration: underline;
+        }
+
+        .tm-reset-check-note a:hover {
+            color: #ff7e10;
+        }
+
+        .tm-note-link-prefix {
+            text-decoration: none;
+            color: #212529;
+        }
+
+        @media (min-width: 992px) {
+            html,
+            body {
+                overflow: hidden;
+            }
+        }
+
+        @media (max-width: 991px) {
+            html,
+            body,
+            .tm-reset-check-page,
+            .tm-reset-check-wrap,
+            .tm-reset-check-visual,
+            .tm-reset-check-panel {
+                height: auto;
+            }
+
+            html,
+            body {
+                overflow: auto;
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+            }
+
+            .tm-reset-check-wrap {
+                grid-template-columns: 1fr;
+                max-width: none;
+                min-height: 100vh;
+                min-height: 100dvh;
+                margin: 0;
+                overflow: visible;
+                align-content: flex-start;
+            }
+
+            .tm-reset-check-visual {
+                min-height: clamp(180px, 32vh, 300px);
+                padding: clamp(18px, 5vw, 28px);
+            }
+
+            .tm-reset-check-panel {
+                min-height: auto;
+                padding: clamp(22px, 5vw, 30px) clamp(16px, 4.5vw, 22px) clamp(28px, 6vw, 34px);
+                justify-content: flex-start;
+                overflow: visible;
+                align-items: stretch;
+            }
+
+            .tm-reset-check-panel-content {
+                width: 100%;
+                max-width: 520px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .tm-reset-check-visual {
+                min-height: 180px;
+                padding: 18px 16px;
+            }
+
+            .tm-reset-check-visual-copy strong {
+                font-size: 1.8rem;
+            }
+
+            .tm-reset-check-visual-copy span {
+                font-size: .9rem;
+            }
+
+            .tm-reset-check-panel {
+                padding: 22px 14px 26px;
+            }
+
+            .tm-reset-check-heading {
+                font-size: 1.55rem;
+            }
+        }
     </style>
-    <!-- Custom styles for this template -->
-    <link href="{{asset('assets/css/floating-labels.css')}}" rel="stylesheet">
-  </head>
-  <body>
-    
-    <div class="registration-ok">
-      <div class="text-center mb-5">
-        <a href='/'>
-          <img class="mb-4" src="{{ prerender(asset('assets/img/logo_tm.svg')) }}" alt="logo" width="72" height="72">
-        </a>
-        <h1 class="h3 mb-3 font-weight-normal white-t">{{'changer-mot-de-passe.message-accueil'|trans}}</h1>
-        <p class="white-t">{{'changer-mot-de-passe.conseil'|trans}}</p>
-        <p class="white-t">Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
-      </div>
+{% endblock %}
 
-      <div class="text-center">
-          <p class="white-t">Si vous ne recevez pas d'e-mail, veuillez vérifier votre dossier spam ou <br><a class="btn btn-lg btn-primary btn-lg mt-3" href="{{ path('app_forgot_password_request') }}">Réessayez.</a></p>
-      </div>
-    </div>
+{% block body %}
+    {% set resetCheckVisualImage = include('Seo/Meta/security_image.html.twig', {code: 'verifier_email_reinitialiser_compte_image'})|trim %}
+    {% set resetCheckVisualBackground = resetCheckVisualImage ?: absolute_url(asset('assets/img/john-raptis.png')) %}
 
-<!-- jQuery -->
-<script src="{{asset('assets/js/jquery-3.4.1.min.js')}}"></script>
-<!-- Bootstrap Js -->
-<script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
-</body>
-</html>
+    <main class="tm-reset-check-page">
+        <div class="tm-reset-check-wrap">
+            <section class="tm-reset-check-visual" style="--tm-reset-check-visual-image: url('{{ resetCheckVisualBackground|e('css') }}');" aria-label="Trust &amp; Market">
+                <div class="tm-reset-check-visual-copy">
+                    <strong>La plateforme de la production musicale.</strong>
+                    <span>Studios, musiciens, producteurs : trouvez le bon partenaire pour votre projet.</span>
+                </div>
+            </section>
 
+            <section class="tm-reset-check-panel">
+                <div class="tm-reset-check-panel-content">
+                    <div class="tm-reset-check-header">
+                        <h1 class="tm-reset-check-heading">{{ 'changer-mot-de-passe.message-accueil'|trans }}</h1>
+                        <p class="tm-reset-check-subheading">{{ 'changer-mot-de-passe.conseil'|trans }}</p>
+                    </div>
 
+                    <p class="tm-reset-check-expiration">Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+
+                    <div class="tm-reset-check-status">
+                        <span class="tm-reset-check-status-icon">+</span>
+                        <p class="tm-reset-check-status-text">Si vous ne recevez pas d'e-mail, veuillez v&eacute;rifier votre dossier spam.</p>
+                    </div>
+
+                    <div class="tm-reset-check-actions">
+                        <a href="{{ path('app_forgot_password_request') }}" class="tm-reset-check-btn-primary">R&eacute;essayer</a>
+                        <p class="tm-reset-check-note"><span class="tm-note-link-prefix" aria-hidden="true">&larr; </span><a href="{{ path('home') }}">Accueil</a> <span aria-hidden="true">|</span> <a href="{{ path('app_login') }}">Se connecter</a></p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+{% endblock %}
