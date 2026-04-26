@@ -61,7 +61,7 @@ inscription:
     erreur: { titre: Erreur, email: 'Adresse Email invalide', date: 'Format de la date incorrect', email-utilisee: 'Adresse Email déja utilisée', verification-mot-de-passe: 'Le mot de passe ne correspond pas', erreur: 'Ce champ contient une erreur!', ob: 'Ce champ est obligatoire', ok: OK }
 passe-oublier:
     titre: 'Mot de passe oublié'
-    description: 'Veuillez renseigner votre adresse e-mail ci-dessous :'
+    description: 'Entrez votre adresse email, nous vous enverrons un lien pour réinitialiser votre mot de passe.'
     valider: Valider
 verification-email:
     message-accueil: 'Bienvenue, un email vient de vous être envoyé !'
