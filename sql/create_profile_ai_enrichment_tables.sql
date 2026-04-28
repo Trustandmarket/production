@@ -8,14 +8,9 @@ CREATE TABLE IF NOT EXISTS profile_ai_enrichment_jobs (
     last_error TEXT DEFAULT NULL,
     prompt_version VARCHAR(50) DEFAULT NULL,
     confidence_global DECIMAL(5,4) DEFAULT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    active_profile_id BIGINT UNSIGNED GENERATED ALWAYS AS (
-        CASE
-            WHEN status IN ('pending', 'processing', 'awaiting_user', 'applying') THEN profile_id
-            ELSE NULL
-        END
-    ) STORED,
+    active_profile_id BIGINT UNSIGNED DEFAULT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME DEFAULT NULL,
     INDEX IDX_PAEJ_PROFILE_STATUS_CREATED (profile_id, status, created_at),
     INDEX IDX_PAEJ_STATUS_CREATED (status, created_at),
     UNIQUE INDEX UNIQ_PAEJ_ONE_ACTIVE_PROFILE (active_profile_id),
@@ -32,8 +27,8 @@ CREATE TABLE IF NOT EXISTS profile_ai_suggestions (
     source_type VARCHAR(50) DEFAULT NULL,
     status VARCHAR(30) NOT NULL DEFAULT 'suggested',
     final_value LONGTEXT DEFAULT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME DEFAULT NULL,
     INDEX IDX_PAS_JOB_ID (enrichment_job_id),
     INDEX IDX_PAS_PROFILE_STATUS (profile_id, status),
     UNIQUE INDEX UNIQ_PAS_JOB_FIELD (enrichment_job_id, field_name),
