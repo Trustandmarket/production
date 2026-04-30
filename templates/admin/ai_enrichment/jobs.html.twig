@@ -15,6 +15,7 @@
         .tm-ai-filters .tm-ai-actions { display: flex; gap: 8px; align-items: end; }
         .tm-ai-btn { border: 0; border-radius: 8px; background: #1d4ed8; color: #fff; padding: 8px 12px; cursor: pointer; }
         .tm-ai-btn-ghost { background: #475569; }
+        .tm-ai-btn-mini { padding: 5px 8px; font-size: 12px; line-height: 1.2; }
         .tm-ai-table-wrap { overflow: auto; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; }
         .tm-ai-table { width: 100%; border-collapse: collapse; min-width: 1180px; }
         .tm-ai-table th, .tm-ai-table td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; vertical-align: top; font-size: 13px; }
@@ -29,6 +30,7 @@
         .tm-ai-muted { color: #64748b; }
         .tm-ai-pagination { margin-top: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .tm-ai-link { color: #1d4ed8; text-decoration: none; font-weight: 600; }
+        .tm-ai-action-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .tm-ai-error { margin: 10px 0; color: #b91c1c; font-weight: 600; }
         .tm-ai-selected { margin-top: 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; padding: 12px; }
         .tm-ai-selected h3 { margin: 0 0 8px; }
@@ -204,6 +206,12 @@
 
             const detailUrl = (id) => detailTemplate.replace(/0$/, String(id));
 
+            const escapeAttr = (value) => String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
             const decodeValue = (value) => {
                 if (value === null || value === undefined) return '-';
                 if (typeof value === 'string') return value;
@@ -281,6 +289,13 @@
                         : `#${item.profile_id}`;
                     const profileHref = profile.admin_detail_url || '#';
                     const errorText = item.last_error ? truncate(item.last_error, 80) : '';
+                    const safeErrorTitle = escapeAttr(item.last_error || '');
+                    const canRetry = item.can_retry === true;
+                    const retryUrl = item.retry_url || `/bo/enrichment-jobs/${item.id}/retry`;
+                    const safeRetryUrl = escapeAttr(retryUrl);
+                    const retryButton = canRetry
+                        ? `<button type="button" class="tm-ai-btn tm-ai-btn-ghost tm-ai-btn-mini js-retry-job" data-job-id="${item.id}" data-retry-url="${safeRetryUrl}">Relancer</button>`
+                        : '';
 
                     const backofficeDetailUrl = item.backoffice_detail_url || detailUrl(item.id);
                     const inlineDetailUrl = new URL(backofficeDetailUrl, window.location.origin);
@@ -296,8 +311,13 @@
                         <td>${item.confidence_global ?? '-'}</td>
                         <td>${item.prompt_version ?? '-'}</td>
                         <td>${item.updated_at ?? '-'}</td>
-                        <td title="${item.last_error || ''}">${errorText || '-'}</td>
-                        <td><a class="tm-ai-link" href="${inlineDetailUrl.toString()}">Voir</a></td>
+                        <td title="${safeErrorTitle}">${errorText || '-'}</td>
+                        <td>
+                            <div class="tm-ai-action-group">
+                                <a class="tm-ai-link" href="${inlineDetailUrl.toString()}">Voir</a>
+                                ${retryButton}
+                            </div>
+                        </td>
                     `;
                     jobsTbody.appendChild(tr);
                 });
@@ -420,6 +440,56 @@
                 }
             };
 
+            const retryJob = async (jobId, retryUrl, buttonEl) => {
+                if (!Number.isFinite(jobId) || jobId <= 0) {
+                    return;
+                }
+
+                if (!window.confirm(`Relancer le job #${jobId} ?`)) {
+                    return;
+                }
+
+                const originalLabel = buttonEl ? buttonEl.textContent : 'Relancer';
+                if (buttonEl) {
+                    buttonEl.disabled = true;
+                    buttonEl.textContent = 'Relance...';
+                }
+
+                clearError();
+
+                try {
+                    const response = await fetch(retryUrl || `/bo/enrichment-jobs/${jobId}/retry`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+
+                    const payload = await response.json().catch(() => ({
+                        ok: false,
+                        error: 'Reponse JSON invalide.',
+                    }));
+
+                    if (!response.ok || !payload.ok) {
+                        throw new Error(payload.error || 'Erreur relance job');
+                    }
+
+                    const newJobId = Number(payload?.job?.id || 0);
+                    if (newJobId > 0) {
+                        selectedJobId = newJobId;
+                        currentPage = 1;
+                        form.elements.namedItem('page').value = '1';
+                    }
+
+                    await loadJobs();
+                } catch (error) {
+                    showError(error.message || 'Erreur inconnue');
+                } finally {
+                    if (buttonEl) {
+                        buttonEl.disabled = false;
+                        buttonEl.textContent = originalLabel || 'Relancer';
+                    }
+                }
+            };
+
             form.addEventListener('submit', (event) => {
                 event.preventDefault();
                 currentPage = 1;
@@ -450,6 +520,18 @@
                 currentPage += 1;
                 form.elements.namedItem('page').value = String(currentPage);
                 loadJobs();
+            });
+
+            jobsTbody.addEventListener('click', (event) => {
+                const retryButton = event.target.closest('.js-retry-job');
+                if (!retryButton) {
+                    return;
+                }
+
+                event.preventDefault();
+                const jobId = Number(retryButton.dataset.jobId || '0');
+                const retryUrl = String(retryButton.dataset.retryUrl || '');
+                retryJob(jobId, retryUrl, retryButton);
             });
 
             const hiddenPage = document.createElement('input');
