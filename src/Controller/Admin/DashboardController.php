@@ -33,6 +33,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -76,9 +77,50 @@ class DashboardController extends AbstractDashboardController
         ]);
     }
 
+    #[Route('/{_locale}/admin/ai-enrichment/dashboard', name: 'admin_ai_enrichment_dashboard', methods: ['GET'])]
+    public function aiEnrichmentDashboard(string $_locale): Response
+    {
+        $this->denyAiEnrichmentAccess();
+
+        return $this->render('admin/ai_enrichment/dashboard.html.twig', [
+            'locale' => $_locale,
+            'jobs_url' => $this->generateUrl('admin_ai_enrichment_jobs', ['_locale' => $_locale]),
+        ]);
+    }
+
+    #[Route('/{_locale}/admin/ai-enrichment/jobs', name: 'admin_ai_enrichment_jobs', methods: ['GET'])]
+    public function aiEnrichmentJobs(string $_locale): Response
+    {
+        $this->denyAiEnrichmentAccess();
+
+        return $this->render('admin/ai_enrichment/jobs.html.twig', [
+            'locale' => $_locale,
+            'dashboard_url' => $this->generateUrl('admin_ai_enrichment_dashboard', ['_locale' => $_locale]),
+            'detail_url_template' => $this->generateUrl('admin_ai_enrichment_job_detail', ['_locale' => $_locale, 'id' => 0]),
+        ]);
+    }
+
+    #[Route('/{_locale}/admin/ai-enrichment/jobs/{id<\d+>}', name: 'admin_ai_enrichment_job_detail', methods: ['GET'])]
+    public function aiEnrichmentJobDetail(string $_locale, int $id): RedirectResponse
+    {
+        $this->denyAiEnrichmentAccess();
+
+        return $this->redirectToRoute('admin_ai_enrichment_jobs', [
+            '_locale' => $_locale,
+            'selected_job' => $id,
+        ]);
+    }
+
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()->setTitle('Trust&Market')->disableUrlSignatures();
+    }
+
+    private function denyAiEnrichmentAccess(): void
+    {
+        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COMMERCE')) {
+            throw $this->createAccessDeniedException('Acces refuse.');
+        }
     }
 
     public function configureMenuItems(): iterable
