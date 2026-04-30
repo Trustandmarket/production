@@ -1,0 +1,160 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block page_title %}
+    Trust Agentique IA - Dashboard
+{% endblock %}
+
+{% block main %}
+    <style>
+        .tm-ai-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 16px; }
+        .tm-ai-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; }
+        .tm-ai-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: .04em; }
+        .tm-ai-value { font-size: 28px; font-weight: 700; color: #0f172a; margin-top: 8px; }
+        .tm-ai-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; margin-bottom: 10px; }
+        .tm-ai-row label { font-size: 13px; color: #334155; display: flex; flex-direction: column; gap: 4px; }
+        .tm-ai-row input { border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; }
+        .tm-ai-btn { border: 0; border-radius: 8px; background: #1d4ed8; color: #fff; padding: 8px 12px; cursor: pointer; }
+        .tm-ai-btn-secondary { background: #0f766e; text-decoration: none; display: inline-block; }
+        .tm-ai-errors { margin-top: 18px; }
+        .tm-ai-errors ul { margin: 8px 0 0; padding-left: 18px; }
+        .tm-ai-errors li { margin: 5px 0; color: #374151; }
+        .tm-ai-muted { color: #64748b; font-size: 13px; }
+        .tm-ai-alert { margin-top: 10px; color: #b91c1c; font-weight: 600; }
+    </style>
+
+    <div class="content-panel">
+        <h2 style="margin:0;">Trust Agentique IA</h2>
+        <p class="tm-ai-muted">Suivi global des jobs d enrichissement.</p>
+
+        <div class="tm-ai-row">
+            <label>
+                Date debut
+                <input type="date" id="fromDate">
+            </label>
+            <label>
+                Date fin
+                <input type="date" id="toDate">
+            </label>
+            <button id="refreshStats" class="tm-ai-btn">Rafraichir</button>
+            <a class="tm-ai-btn tm-ai-btn-secondary" href="{{ jobs_url }}">Voir les jobs</a>
+        </div>
+
+        <div id="statsError" class="tm-ai-alert" style="display:none;"></div>
+
+        <div class="tm-ai-grid">
+            <div class="tm-ai-card"><div class="tm-ai-label">Total jobs</div><div id="kpiTotal" class="tm-ai-value">-</div></div>
+            <div class="tm-ai-card"><div class="tm-ai-label">Taux succes</div><div id="kpiSuccessRate" class="tm-ai-value">-</div></div>
+            <div class="tm-ai-card"><div class="tm-ai-label">Temps moyen (sec)</div><div id="kpiAvg" class="tm-ai-value">-</div></div>
+            <div class="tm-ai-card"><div class="tm-ai-label">Failed</div><div id="kpiFailed" class="tm-ai-value">-</div></div>
+        </div>
+
+        <div class="tm-ai-grid">
+            <div class="tm-ai-card"><div class="tm-ai-label">Pending</div><div id="statusPending" class="tm-ai-value">0</div></div>
+            <div class="tm-ai-card"><div class="tm-ai-label">Processing</div><div id="statusProcessing" class="tm-ai-value">0</div></div>
+            <div class="tm-ai-card"><div class="tm-ai-label">Awaiting user</div><div id="statusAwaiting" class="tm-ai-value">0</div></div>
+            <div class="tm-ai-card"><div class="tm-ai-label">Applying</div><div id="statusApplying" class="tm-ai-value">0</div></div>
+            <div class="tm-ai-card"><div class="tm-ai-label">Success</div><div id="statusSuccess" class="tm-ai-value">0</div></div>
+            <div class="tm-ai-card"><div class="tm-ai-label">Failed</div><div id="statusFailed" class="tm-ai-value">0</div></div>
+        </div>
+
+        <div class="tm-ai-errors">
+            <h3 style="margin-bottom:4px;">Top erreurs</h3>
+            <ul id="topErrorsList"></ul>
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            const fromInput = document.getElementById('fromDate');
+            const toInput = document.getElementById('toDate');
+            const refreshBtn = document.getElementById('refreshStats');
+            const errorBox = document.getElementById('statsError');
+
+            const defaultDates = () => {
+                const now = new Date();
+                const to = now.toISOString().slice(0, 10);
+                const fromDate = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
+                const from = fromDate.toISOString().slice(0, 10);
+                return { from, to };
+            };
+
+            const showError = (message) => {
+                errorBox.style.display = 'block';
+                errorBox.textContent = message;
+            };
+
+            const clearError = () => {
+                errorBox.style.display = 'none';
+                errorBox.textContent = '';
+            };
+
+            const setText = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = value;
+            };
+
+            const loadStats = async () => {
+                clearError();
+                const from = fromInput.value;
+                const to = toInput.value;
+                const params = new URLSearchParams();
+                if (from) params.set('from', from);
+                if (to) params.set('to', to);
+
+                try {
+                    const response = await fetch(`/bo/enrichment-jobs/stats?${params.toString()}`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    const payload = await response.json();
+                    if (!response.ok || !payload.ok) {
+                        throw new Error(payload.error || 'Erreur chargement stats');
+                    }
+
+                    const stats = payload.stats || {};
+                    const byStatus = stats.by_status || {};
+
+                    setText('kpiTotal', String(stats.total_jobs ?? 0));
+                    setText('kpiSuccessRate', `${stats.success_rate_percent ?? 0}%`);
+                    setText('kpiAvg', stats.avg_processing_seconds ?? '-');
+                    setText('kpiFailed', String(byStatus.failed ?? 0));
+
+                    setText('statusPending', String(byStatus.pending ?? 0));
+                    setText('statusProcessing', String(byStatus.processing ?? 0));
+                    setText('statusAwaiting', String(byStatus.awaiting_user ?? 0));
+                    setText('statusApplying', String(byStatus.applying ?? 0));
+                    setText('statusSuccess', String(byStatus.success ?? 0));
+                    setText('statusFailed', String(byStatus.failed ?? 0));
+
+                    const errors = Array.isArray(stats.top_errors) ? stats.top_errors : [];
+                    const list = document.getElementById('topErrorsList');
+                    list.innerHTML = '';
+                    if (errors.length === 0) {
+                        const li = document.createElement('li');
+                        li.textContent = 'Aucune erreur recensee.';
+                        list.appendChild(li);
+                    } else {
+                        errors.forEach((row) => {
+                            const li = document.createElement('li');
+                            li.textContent = `${row.message} (x${row.occurrences})`;
+                            list.appendChild(li);
+                        });
+                    }
+                } catch (error) {
+                    showError(error.message || 'Erreur inconnue');
+                }
+            };
+
+            const init = () => {
+                const defaults = defaultDates();
+                if (!fromInput.value) fromInput.value = defaults.from;
+                if (!toInput.value) toInput.value = defaults.to;
+                refreshBtn.addEventListener('click', loadStats);
+                loadStats();
+            };
+
+            init();
+        })();
+    </script>
+{% endblock %}
+

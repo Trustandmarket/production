@@ -26,7 +26,7 @@ use App\Controller\Admin\ToutesCategories\WpTermTaxonomyCrudController as Toutes
 use App\Controller\Admin\Activities\WpTermTaxonomyCrudController as ActivitiesCrudController;
 use App\Controller\Admin\Configurations\{DepartementCrudController, OffreInterneCrudController, MusicUniverseCrudController};
 use App\Controller\Admin\Paiements\{AbonnementCrudController};
-use App\Entity\{OffreInterne, ReminderLog, User, WpComments, Departement, WpTerms, WpTermTaxonomy, Abonnement, MusicUniverse};
+use App\Entity\{OffreInterne, ReminderLog, User, WpComments, WpPosts, Departement, WpTerms, WpTermTaxonomy, Abonnement, MusicUniverse};
 use App\Service\Payment;
 use App\Service\ServiceManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -142,6 +142,11 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToCrud('admin.menu.manage-oders', 'fa fa-shopping-basket', WpPosts::class)->setController(CommandesCrudController::class),
                 MenuItem::linkToRoute('Infos-bulle', 'fa fa-comment', 'get_infos_bulle'),
                 MenuItem::linkToRoute('Infos-bulle Calendrier', 'fa fa-comment', 'get_calendar_infos_bulle'),
+            ]);
+
+            yield MenuItem::subMenu('Trust Agentique IA', 'fa fa-robot')->setSubItems([
+                MenuItem::linkToRoute('Dashboard IA', 'fa fa-chart-line', 'admin_ai_enrichment_dashboard'),
+                MenuItem::linkToRoute('Jobs IA', 'fa fa-list', 'admin_ai_enrichment_jobs'),
             ]);
         }
 

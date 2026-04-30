@@ -1,0 +1,322 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block page_title %}
+    Trust Agentique IA - Jobs
+{% endblock %}
+
+{% block main %}
+    <style>
+        .tm-ai-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+        .tm-ai-head a { text-decoration: none; color: #1d4ed8; font-weight: 600; }
+        .tm-ai-filters { border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; background: #fff; margin-bottom: 14px; }
+        .tm-ai-filters form { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+        .tm-ai-filters label { font-size: 12px; color: #334155; display: flex; flex-direction: column; gap: 4px; }
+        .tm-ai-filters input, .tm-ai-filters select { border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 8px; }
+        .tm-ai-filters .tm-ai-actions { display: flex; gap: 8px; align-items: end; }
+        .tm-ai-btn { border: 0; border-radius: 8px; background: #1d4ed8; color: #fff; padding: 8px 12px; cursor: pointer; }
+        .tm-ai-btn-ghost { background: #475569; }
+        .tm-ai-table-wrap { overflow: auto; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; }
+        .tm-ai-table { width: 100%; border-collapse: collapse; min-width: 1180px; }
+        .tm-ai-table th, .tm-ai-table td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; vertical-align: top; font-size: 13px; }
+        .tm-ai-table th { background: #f8fafc; color: #334155; position: sticky; top: 0; }
+        .tm-ai-tag { display: inline-block; border-radius: 999px; padding: 3px 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .tm-ai-tag-pending { background: #fff7ed; color: #c2410c; }
+        .tm-ai-tag-processing { background: #eff6ff; color: #1d4ed8; }
+        .tm-ai-tag-awaiting_user { background: #ecfeff; color: #0f766e; }
+        .tm-ai-tag-applying { background: #ede9fe; color: #6d28d9; }
+        .tm-ai-tag-success { background: #ecfdf5; color: #166534; }
+        .tm-ai-tag-failed { background: #fef2f2; color: #b91c1c; }
+        .tm-ai-muted { color: #64748b; }
+        .tm-ai-pagination { margin-top: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .tm-ai-link { color: #1d4ed8; text-decoration: none; font-weight: 600; }
+        .tm-ai-error { margin: 10px 0; color: #b91c1c; font-weight: 600; }
+    </style>
+
+    <div class="tm-ai-head">
+        <h2 style="margin:0;">Trust Agentique IA - Jobs</h2>
+        <a href="{{ dashboard_url }}">Voir dashboard</a>
+    </div>
+
+    <div class="tm-ai-filters">
+        <form id="filtersForm">
+            <label>Status
+                <select id="fStatus" name="status">
+                    <option value="">Tous</option>
+                    <option value="pending">pending</option>
+                    <option value="processing">processing</option>
+                    <option value="awaiting_user">awaiting_user</option>
+                    <option value="applying">applying</option>
+                    <option value="success">success</option>
+                    <option value="failed">failed</option>
+                </select>
+            </label>
+            <label>Input type
+                <select id="fInputType" name="input_type">
+                    <option value="">Tous</option>
+                    <option value="studio_name">studio_name</option>
+                    <option value="website">website</option>
+                </select>
+            </label>
+            <label>Profile ID
+                <input id="fProfileId" name="profile_id" type="number" min="1" placeholder="ex: 42">
+            </label>
+            <label>Has error
+                <select id="fHasError" name="has_error">
+                    <option value="">Tous</option>
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                </select>
+            </label>
+            <label>Min confidence
+                <input id="fMinConfidence" name="min_confidence" type="number" min="0" max="1" step="0.01" placeholder="0.60">
+            </label>
+            <label>Max confidence
+                <input id="fMaxConfidence" name="max_confidence" type="number" min="0" max="1" step="0.01" placeholder="0.95">
+            </label>
+            <label>Date debut
+                <input id="fFrom" name="from" type="date">
+            </label>
+            <label>Date fin
+                <input id="fTo" name="to" type="date">
+            </label>
+            <label>Per page
+                <select id="fPerPage" name="per_page">
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </label>
+            <label>Sort
+                <select id="fSort" name="sort">
+                    <option value="created_at">created_at</option>
+                    <option value="updated_at">updated_at</option>
+                    <option value="status">status</option>
+                    <option value="confidence_global">confidence_global</option>
+                    <option value="attempt_count">attempt_count</option>
+                    <option value="profile_id">profile_id</option>
+                    <option value="id">id</option>
+                </select>
+            </label>
+            <label>Order
+                <select id="fOrder" name="order">
+                    <option value="DESC">DESC</option>
+                    <option value="ASC">ASC</option>
+                </select>
+            </label>
+            <div class="tm-ai-actions">
+                <button class="tm-ai-btn" type="submit">Appliquer</button>
+                <button class="tm-ai-btn tm-ai-btn-ghost" id="resetFilters" type="button">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="jobsError" class="tm-ai-error" style="display:none;"></div>
+    <div id="jobsSummary" class="tm-ai-muted" style="margin-bottom:8px;"></div>
+
+    <div class="tm-ai-table-wrap">
+        <table class="tm-ai-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Profil</th>
+                <th>Input</th>
+                <th>Status</th>
+                <th>Attempts</th>
+                <th>Confidence</th>
+                <th>Prompt</th>
+                <th>Updated</th>
+                <th>Error</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="jobsTbody">
+            <tr><td colspan="10" class="tm-ai-muted">Chargement...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tm-ai-pagination">
+        <button id="prevPage" class="tm-ai-btn tm-ai-btn-ghost" type="button">Page precedente</button>
+        <button id="nextPage" class="tm-ai-btn tm-ai-btn-ghost" type="button">Page suivante</button>
+        <span id="paginationInfo" class="tm-ai-muted"></span>
+    </div>
+
+    <script>
+        (() => {
+            const detailTemplate = '{{ detail_url_template }}';
+            const form = document.getElementById('filtersForm');
+            const jobsTbody = document.getElementById('jobsTbody');
+            const jobsError = document.getElementById('jobsError');
+            const jobsSummary = document.getElementById('jobsSummary');
+            const paginationInfo = document.getElementById('paginationInfo');
+            const prevPageBtn = document.getElementById('prevPage');
+            const nextPageBtn = document.getElementById('nextPage');
+            const resetBtn = document.getElementById('resetFilters');
+
+            let currentPage = 1;
+            let totalPages = 0;
+
+            const fields = ['status', 'input_type', 'profile_id', 'has_error', 'min_confidence', 'max_confidence', 'from', 'to', 'per_page', 'sort', 'order', 'page'];
+
+            const tagClass = (status) => {
+                const safe = String(status || '').replace(/[^a-z_]/g, '');
+                return `tm-ai-tag tm-ai-tag-${safe}`;
+            };
+
+            const detailUrl = (id) => detailTemplate.replace(/0$/, String(id));
+
+            const readFiltersFromUrl = () => {
+                const params = new URLSearchParams(window.location.search);
+                fields.forEach((name) => {
+                    const el = form.elements.namedItem(name);
+                    if (!el) return;
+                    if (params.has(name)) {
+                        el.value = params.get(name) || '';
+                    }
+                });
+                if (!params.has('per_page')) form.elements.namedItem('per_page').value = '20';
+                if (!params.has('sort')) form.elements.namedItem('sort').value = 'created_at';
+                if (!params.has('order')) form.elements.namedItem('order').value = 'DESC';
+                currentPage = Math.max(1, Number(params.get('page') || '1'));
+            };
+
+            const buildParamsFromForm = () => {
+                const params = new URLSearchParams();
+                fields.forEach((name) => {
+                    const el = form.elements.namedItem(name);
+                    if (!el) return;
+                    const value = String(el.value || '').trim();
+                    if (value !== '') params.set(name, value);
+                });
+                return params;
+            };
+
+            const pushUrl = (params) => {
+                const query = params.toString();
+                const url = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+                window.history.replaceState({}, '', url);
+            };
+
+            const showError = (message) => {
+                jobsError.style.display = 'block';
+                jobsError.textContent = message;
+            };
+
+            const clearError = () => {
+                jobsError.style.display = 'none';
+                jobsError.textContent = '';
+            };
+
+            const truncate = (text, max = 90) => {
+                const value = String(text || '');
+                if (value.length <= max) return value;
+                return value.slice(0, max) + '...';
+            };
+
+            const renderRows = (items) => {
+                jobsTbody.innerHTML = '';
+                if (!Array.isArray(items) || items.length === 0) {
+                    jobsTbody.innerHTML = '<tr><td colspan="10" class="tm-ai-muted">Aucun job.</td></tr>';
+                    return;
+                }
+
+                items.forEach((item) => {
+                    const tr = document.createElement('tr');
+                    const profile = item.profile || {};
+                    const profileLabel = profile.display_name
+                        ? `#${item.profile_id} - ${profile.display_name}`
+                        : `#${item.profile_id}`;
+                    const profileHref = profile.admin_detail_url || '#';
+                    const errorText = item.last_error ? truncate(item.last_error, 80) : '';
+
+                    tr.innerHTML = `
+                        <td>#${item.id}</td>
+                        <td><a class="tm-ai-link" href="${profileHref}" target="_blank" rel="noopener">${profileLabel}</a></td>
+                        <td><div><strong>${item.input_type}</strong></div><div class="tm-ai-muted">${truncate(item.input_value, 60)}</div></td>
+                        <td><span class="${tagClass(item.status)}">${item.status}</span></td>
+                        <td>${item.attempt_count ?? 0}</td>
+                        <td>${item.confidence_global ?? '-'}</td>
+                        <td>${item.prompt_version ?? '-'}</td>
+                        <td>${item.updated_at ?? '-'}</td>
+                        <td title="${item.last_error || ''}">${errorText || '-'}</td>
+                        <td><a class="tm-ai-link" href="${detailUrl(item.id)}">Voir</a></td>
+                    `;
+                    jobsTbody.appendChild(tr);
+                });
+            };
+
+            const loadJobs = async () => {
+                clearError();
+                const params = buildParamsFromForm();
+                if (!params.has('page')) params.set('page', String(currentPage));
+                pushUrl(params);
+
+                try {
+                    const response = await fetch(`/bo/enrichment-jobs?${params.toString()}`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    const payload = await response.json();
+                    if (!response.ok || !payload.ok) {
+                        throw new Error(payload.error || 'Erreur chargement jobs');
+                    }
+
+                    renderRows(payload.items || []);
+                    const pagination = payload.pagination || {};
+                    currentPage = Number(pagination.page || 1);
+                    totalPages = Number(pagination.total_pages || 0);
+
+                    jobsSummary.textContent = `Total: ${pagination.total || 0} jobs`;
+                    paginationInfo.textContent = `Page ${currentPage} / ${totalPages || 1}`;
+                    prevPageBtn.disabled = currentPage <= 1;
+                    nextPageBtn.disabled = totalPages > 0 ? currentPage >= totalPages : true;
+                } catch (error) {
+                    renderRows([]);
+                    showError(error.message || 'Erreur inconnue');
+                }
+            };
+
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                currentPage = 1;
+                form.elements.namedItem('page').value = '1';
+                loadJobs();
+            });
+
+            resetBtn.addEventListener('click', () => {
+                window.history.replaceState({}, '', window.location.pathname);
+                form.reset();
+                form.elements.namedItem('per_page').value = '20';
+                form.elements.namedItem('sort').value = 'created_at';
+                form.elements.namedItem('order').value = 'DESC';
+                currentPage = 1;
+                loadJobs();
+            });
+
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage <= 1) return;
+                currentPage -= 1;
+                form.elements.namedItem('page').value = String(currentPage);
+                loadJobs();
+            });
+
+            nextPageBtn.addEventListener('click', () => {
+                if (totalPages > 0 && currentPage >= totalPages) return;
+                currentPage += 1;
+                form.elements.namedItem('page').value = String(currentPage);
+                loadJobs();
+            });
+
+            const hiddenPage = document.createElement('input');
+            hiddenPage.type = 'hidden';
+            hiddenPage.name = 'page';
+            hiddenPage.value = '1';
+            form.appendChild(hiddenPage);
+
+            readFiltersFromUrl();
+            form.elements.namedItem('page').value = String(currentPage);
+            loadJobs();
+        })();
+    </script>
+{% endblock %}
+
