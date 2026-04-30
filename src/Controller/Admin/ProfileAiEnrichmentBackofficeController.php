@@ -611,17 +611,17 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
             return null;
         }
 
-        $trimmed = trim($value);
+        $trimmed = trim($this->sanitizeUtf8String($value));
         if ($trimmed === '') {
             return '';
         }
 
         $decoded = json_decode($trimmed, true);
         if (json_last_error() === JSON_ERROR_NONE) {
-            return $decoded;
+            return $this->sanitizeUtf8Value($decoded);
         }
 
-        return $value;
+        return $this->sanitizeUtf8String($value);
     }
 
     private function shorten(string $value, int $maxLength): string
@@ -648,11 +648,11 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
     private function resolveAdminLocale(?string $locale): string
     {
         $value = strtolower(trim((string) $locale));
-        if ($value === '') {
-            return 'fr';
+        if (str_starts_with($value, 'en')) {
+            return 'en';
         }
 
-        return $value;
+        return 'fr';
     }
 
     private function buildAdminUserDetailUrl(int $profileId, string $locale): string
@@ -661,13 +661,56 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
             return '';
         }
 
-        $urlGenerator = clone $this->adminUrlGenerator;
+        try {
+            $urlGenerator = clone $this->adminUrlGenerator;
 
-        return $urlGenerator
-            ->setRoute('admin', ['_locale' => $locale])
-            ->setController(UserCrudController::class)
-            ->setAction(Action::DETAIL)
-            ->setEntityId($profileId)
-            ->generateUrl();
+            return $urlGenerator
+                ->setRoute('admin', ['_locale' => $locale])
+                ->setController(UserCrudController::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($profileId)
+                ->generateUrl();
+        } catch (\Throwable) {
+            return '';
+        }
+    }
+
+    private function sanitizeUtf8Value(mixed $value): mixed
+    {
+        if (is_string($value)) {
+            return $this->sanitizeUtf8String($value);
+        }
+
+        if (is_array($value)) {
+            $clean = [];
+            foreach ($value as $key => $item) {
+                $cleanKey = is_string($key) ? $this->sanitizeUtf8String($key) : $key;
+                $clean[$cleanKey] = $this->sanitizeUtf8Value($item);
+            }
+
+            return $clean;
+        }
+
+        return $value;
+    }
+
+    private function sanitizeUtf8String(string $value): string
+    {
+        if (function_exists('mb_check_encoding') && mb_check_encoding($value, 'UTF-8')) {
+            return $value;
+        }
+
+        if (function_exists('iconv')) {
+            $converted = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
+            if (is_string($converted) && $converted !== '') {
+                return $converted;
+            }
+        }
+
+        if (function_exists('mb_convert_encoding')) {
+            return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+        }
+
+        return $value;
     }
 }
