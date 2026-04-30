@@ -30,6 +30,13 @@
         .tm-ai-pagination { margin-top: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .tm-ai-link { color: #1d4ed8; text-decoration: none; font-weight: 600; }
         .tm-ai-error { margin: 10px 0; color: #b91c1c; font-weight: 600; }
+        .tm-ai-selected { margin-top: 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; padding: 12px; }
+        .tm-ai-selected h3 { margin: 0 0 8px; }
+        .tm-ai-selected-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 10px; }
+        .tm-ai-selected-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; }
+        .tm-ai-selected-card .k { font-size: 11px; color: #64748b; text-transform: uppercase; }
+        .tm-ai-selected-card .v { margin-top: 4px; font-size: 13px; color: #0f172a; word-break: break-word; }
+        pre.tm-ai-json { white-space: pre-wrap; margin: 0; font-size: 12px; color: #1f2937; }
     </style>
 
     <div class="tm-ai-head">
@@ -141,6 +148,31 @@
         <span id="paginationInfo" class="tm-ai-muted"></span>
     </div>
 
+    <div id="selectedJobPanel" class="tm-ai-selected" style="display:none;">
+        <h3 id="selectedJobTitle">Detail job</h3>
+        <div id="selectedJobError" class="tm-ai-error" style="display:none;"></div>
+        <div id="selectedJobMeta" class="tm-ai-selected-grid"></div>
+        <div id="selectedJobSummary" class="tm-ai-muted" style="margin-bottom:8px;"></div>
+        <div class="tm-ai-table-wrap">
+            <table class="tm-ai-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Field</th>
+                    <th>Status</th>
+                    <th>Confidence</th>
+                    <th>Source</th>
+                    <th>Suggested value</th>
+                    <th>Final value</th>
+                </tr>
+                </thead>
+                <tbody id="selectedJobSuggestions">
+                <tr><td colspan="7" class="tm-ai-muted">Aucune selection.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
         (() => {
             const detailTemplate = '{{ detail_url_template }}';
@@ -152,9 +184,16 @@
             const prevPageBtn = document.getElementById('prevPage');
             const nextPageBtn = document.getElementById('nextPage');
             const resetBtn = document.getElementById('resetFilters');
+            const selectedPanel = document.getElementById('selectedJobPanel');
+            const selectedTitle = document.getElementById('selectedJobTitle');
+            const selectedError = document.getElementById('selectedJobError');
+            const selectedMeta = document.getElementById('selectedJobMeta');
+            const selectedSummary = document.getElementById('selectedJobSummary');
+            const selectedSuggestions = document.getElementById('selectedJobSuggestions');
 
             let currentPage = 1;
             let totalPages = 0;
+            let selectedJobId = null;
 
             const fields = ['status', 'input_type', 'profile_id', 'has_error', 'min_confidence', 'max_confidence', 'from', 'to', 'per_page', 'sort', 'order', 'page'];
 
@@ -164,6 +203,16 @@
             };
 
             const detailUrl = (id) => detailTemplate.replace(/0$/, String(id));
+
+            const decodeValue = (value) => {
+                if (value === null || value === undefined) return '-';
+                if (typeof value === 'string') return value;
+                try {
+                    return JSON.stringify(value, null, 2);
+                } catch (e) {
+                    return String(value);
+                }
+            };
 
             const readFiltersFromUrl = () => {
                 const params = new URLSearchParams(window.location.search);
@@ -177,6 +226,10 @@
                 if (!params.has('per_page')) form.elements.namedItem('per_page').value = '20';
                 if (!params.has('sort')) form.elements.namedItem('sort').value = 'created_at';
                 if (!params.has('order')) form.elements.namedItem('order').value = 'DESC';
+                if (params.has('selected_job')) {
+                    const candidate = Number(params.get('selected_job') || '0');
+                    selectedJobId = candidate > 0 ? candidate : null;
+                }
                 currentPage = Math.max(1, Number(params.get('page') || '1'));
             };
 
@@ -230,6 +283,9 @@
                     const errorText = item.last_error ? truncate(item.last_error, 80) : '';
 
                     const backofficeDetailUrl = item.backoffice_detail_url || detailUrl(item.id);
+                    const inlineDetailUrl = new URL(backofficeDetailUrl, window.location.origin);
+                    inlineDetailUrl.searchParams.set('selected_job', String(item.id));
+                    inlineDetailUrl.searchParams.set('page', String(currentPage));
 
                     tr.innerHTML = `
                         <td>#${item.id}</td>
@@ -241,10 +297,95 @@
                         <td>${item.prompt_version ?? '-'}</td>
                         <td>${item.updated_at ?? '-'}</td>
                         <td title="${item.last_error || ''}">${errorText || '-'}</td>
-                        <td><a class="tm-ai-link" href="${backofficeDetailUrl}">Voir</a></td>
+                        <td><a class="tm-ai-link" href="${inlineDetailUrl.toString()}">Voir</a></td>
                     `;
                     jobsTbody.appendChild(tr);
                 });
+            };
+
+            const clearSelectedError = () => {
+                selectedError.style.display = 'none';
+                selectedError.textContent = '';
+            };
+
+            const showSelectedError = (message) => {
+                selectedError.style.display = 'block';
+                selectedError.textContent = message;
+            };
+
+            const renderSelectedJob = (payload) => {
+                const job = payload.job || {};
+                const summary = payload.suggestions_summary || {};
+                const suggestions = Array.isArray(payload.suggestions) ? payload.suggestions : [];
+                selectedTitle.textContent = `Detail job #${job.id || selectedJobId || ''}`;
+                selectedSummary.textContent = `suggested: ${summary.suggested || 0} | accepted: ${summary.accepted || 0} | edited: ${summary.edited || 0} | rejected: ${summary.rejected || 0}`;
+
+                const profile = job.profile || {};
+                const profileLabel = profile.display_name ? `#${job.profile_id} - ${profile.display_name}` : `#${job.profile_id || '-'}`;
+                const profileHref = profile.admin_detail_url || '#';
+
+                const blocks = [
+                    ['Status', `<span class="${tagClass(job.status)}">${job.status || '-'}</span>`],
+                    ['Profil', `<a class="tm-ai-link" href="${profileHref}" target="_blank" rel="noopener">${profileLabel}</a>`],
+                    ['Input', `${job.input_type || '-'} | ${truncate(job.input_value || '-', 80)}`],
+                    ['Confidence', job.confidence_global ?? '-'],
+                    ['Attempts', job.attempt_count ?? 0],
+                    ['Prompt', job.prompt_version || '-'],
+                    ['Updated', job.updated_at || '-'],
+                    ['Last error', job.last_error || '-']
+                ];
+
+                selectedMeta.innerHTML = blocks.map(([k, v]) => `
+                    <div class="tm-ai-selected-card">
+                        <div class="k">${k}</div>
+                        <div class="v">${v}</div>
+                    </div>
+                `).join('');
+
+                selectedSuggestions.innerHTML = '';
+                if (suggestions.length === 0) {
+                    selectedSuggestions.innerHTML = '<tr><td colspan="7" class="tm-ai-muted">Aucune suggestion.</td></tr>';
+                } else {
+                    suggestions.forEach((row) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>#${row.id}</td>
+                            <td>${row.field_name || '-'}</td>
+                            <td><span class="${tagClass(row.status)}">${row.status || '-'}</span></td>
+                            <td>${row.confidence_score ?? '-'}</td>
+                            <td>${row.source_type || '-'}</td>
+                            <td><pre class="tm-ai-json">${decodeValue(row.suggested_value)}</pre></td>
+                            <td><pre class="tm-ai-json">${decodeValue(row.final_value)}</pre></td>
+                        `;
+                        selectedSuggestions.appendChild(tr);
+                    });
+                }
+            };
+
+            const loadSelectedJob = async () => {
+                if (!selectedJobId || selectedJobId <= 0) {
+                    selectedPanel.style.display = 'none';
+                    return;
+                }
+                selectedPanel.style.display = 'block';
+                clearSelectedError();
+                selectedMeta.innerHTML = '';
+                selectedSuggestions.innerHTML = '<tr><td colspan="7" class="tm-ai-muted">Chargement...</td></tr>';
+
+                try {
+                    const response = await fetch(`/bo/enrichment-jobs/${selectedJobId}`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    const payload = await response.json();
+                    if (!response.ok || !payload.ok) {
+                        throw new Error(payload.error || 'Erreur chargement detail job');
+                    }
+                    renderSelectedJob(payload);
+                } catch (error) {
+                    showSelectedError(error.message || 'Erreur inconnue');
+                    selectedSuggestions.innerHTML = '<tr><td colspan="7" class="tm-ai-muted">Echec de chargement.</td></tr>';
+                }
             };
 
             const loadJobs = async () => {
@@ -272,6 +413,7 @@
                     paginationInfo.textContent = `Page ${currentPage} / ${totalPages || 1}`;
                     prevPageBtn.disabled = currentPage <= 1;
                     nextPageBtn.disabled = totalPages > 0 ? currentPage >= totalPages : true;
+                    loadSelectedJob();
                 } catch (error) {
                     renderRows([]);
                     showError(error.message || 'Erreur inconnue');
@@ -292,6 +434,7 @@
                 form.elements.namedItem('sort').value = 'created_at';
                 form.elements.namedItem('order').value = 'DESC';
                 currentPage = 1;
+                selectedJobId = null;
                 loadJobs();
             });
 

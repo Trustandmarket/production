@@ -36,10 +36,11 @@ class ProfileAiEnrichmentBackofficePageController extends AbstractController
     {
         $this->denyIfNoBackofficeAiAccess();
 
-        return $this->render('admin/ai_enrichment/detail.html.twig', [
-            'locale' => $_locale,
-            'job_id' => $id,
-            'jobs_url' => $this->generateUrl('admin_ai_enrichment_jobs', ['_locale' => $_locale]),
+        // Defensive fallback: reuse the stable jobs page with selected_job to avoid
+        // hard failure if the dedicated detail template is unavailable on target env.
+        return $this->redirectToRoute('admin_ai_enrichment_jobs', [
+            '_locale' => $_locale,
+            'selected_job' => $id,
         ]);
     }
 
