@@ -1,10 +1,10 @@
-{% extends '@!EasyAdmin/layout.html.twig' %}
+{% extends 'admin/ai_enrichment/_base.html.twig' %}
 
 {% block page_title %}
     Trust Agentique IA - Dashboard
 {% endblock %}
 
-{% block main %}
+{% block content %}
     <style>
         .tm-ai-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 16px; }
         .tm-ai-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; }
@@ -157,4 +157,3 @@
         })();
     </script>
 {% endblock %}
-

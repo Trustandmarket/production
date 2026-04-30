@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block page_title %}Trust Agentique IA{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --line: #dbe4ee;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --brand: #1d4ed8;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--ink); }
+        .tm-ai-shell { max-width: 1400px; margin: 0 auto; padding: 18px; }
+        .tm-ai-topnav {
+            display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+            padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px;
+            background: var(--card); margin-bottom: 14px;
+        }
+        .tm-ai-topnav a { color: var(--brand); text-decoration: none; font-weight: 700; }
+        .tm-ai-topnav .tm-ai-spacer { flex: 1; }
+        .tm-ai-chip {
+            font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+            color: #0f766e; background: #ecfeff; border: 1px solid #99f6e4; border-radius: 999px;
+            padding: 3px 8px;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+<div class="tm-ai-shell">
+    <div class="tm-ai-topnav">
+        <a href="/{{ locale|default('fr') }}/admin">Admin</a>
+        <a href="/{{ locale|default('fr') }}/admin/ai-enrichment/dashboard">Dashboard IA</a>
+        <a href="/{{ locale|default('fr') }}/admin/ai-enrichment/jobs">Jobs IA</a>
+        <span class="tm-ai-spacer"></span>
+        <span class="tm-ai-chip">Trust Agentique IA</span>
+    </div>
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>
+
