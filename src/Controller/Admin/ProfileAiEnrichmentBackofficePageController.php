@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProfileAiEnrichmentBackofficePageController extends AbstractController
 {
-    #[Route('/{_locale}/admin/ai-enrichment/dashboard', name: 'admin_ai_enrichment_dashboard', requirements: ['_locale' => 'fr|en'], methods: ['GET'])]
+    #[Route('/{_locale}/admin/ai-enrichment/dashboard', name: 'admin_ai_enrichment_dashboard', methods: ['GET'])]
     public function dashboard(string $_locale): Response
     {
         $this->denyIfNoBackofficeAiAccess();
@@ -19,7 +19,7 @@ class ProfileAiEnrichmentBackofficePageController extends AbstractController
         ]);
     }
 
-    #[Route('/{_locale}/admin/ai-enrichment/jobs', name: 'admin_ai_enrichment_jobs', requirements: ['_locale' => 'fr|en'], methods: ['GET'])]
+    #[Route('/{_locale}/admin/ai-enrichment/jobs', name: 'admin_ai_enrichment_jobs', methods: ['GET'])]
     public function jobs(string $_locale): Response
     {
         $this->denyIfNoBackofficeAiAccess();
@@ -31,7 +31,7 @@ class ProfileAiEnrichmentBackofficePageController extends AbstractController
         ]);
     }
 
-    #[Route('/{_locale}/admin/ai-enrichment/jobs/{id<\d+>}', name: 'admin_ai_enrichment_job_detail', requirements: ['_locale' => 'fr|en'], methods: ['GET'])]
+    #[Route('/{_locale}/admin/ai-enrichment/jobs/{id<\d+>}', name: 'admin_ai_enrichment_job_detail', methods: ['GET'])]
     public function detail(string $_locale, int $id): Response
     {
         $this->denyIfNoBackofficeAiAccess();

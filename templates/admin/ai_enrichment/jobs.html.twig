@@ -229,6 +229,8 @@
                     const profileHref = profile.admin_detail_url || '#';
                     const errorText = item.last_error ? truncate(item.last_error, 80) : '';
 
+                    const backofficeDetailUrl = item.backoffice_detail_url || detailUrl(item.id);
+
                     tr.innerHTML = `
                         <td>#${item.id}</td>
                         <td><a class="tm-ai-link" href="${profileHref}" target="_blank" rel="noopener">${profileLabel}</a></td>
@@ -239,7 +241,7 @@
                         <td>${item.prompt_version ?? '-'}</td>
                         <td>${item.updated_at ?? '-'}</td>
                         <td title="${item.last_error || ''}">${errorText || '-'}</td>
-                        <td><a class="tm-ai-link" href="${detailUrl(item.id)}">Voir</a></td>
+                        <td><a class="tm-ai-link" href="${backofficeDetailUrl}">Voir</a></td>
                     `;
                     jobsTbody.appendChild(tr);
                 });
@@ -319,4 +321,3 @@
         })();
     </script>
 {% endblock %}
-

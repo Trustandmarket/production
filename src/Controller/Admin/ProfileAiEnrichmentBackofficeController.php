@@ -233,14 +233,16 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
         $items = [];
         foreach ($rows as $row) {
             $itemProfileId = (int) $row['profile_id'];
+            $jobId = (int) $row['id'];
             $items[] = [
-                'id' => (int) $row['id'],
+                'id' => $jobId,
                 'profile_id' => $itemProfileId,
                 'profile' => [
                     'id' => $itemProfileId,
                     'display_name' => $row['profile_display_name'] !== null ? (string) $row['profile_display_name'] : null,
                     'admin_detail_url' => $this->buildAdminUserDetailUrl($itemProfileId, $locale),
                 ],
+                'backoffice_detail_url' => $this->buildBackofficeJobDetailUrl($jobId, $locale),
                 'input_type' => (string) $row['input_type'],
                 'input_value' => (string) $row['input_value'],
                 'status' => (string) $row['status'],
@@ -670,6 +672,22 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
                 ->setAction(Action::DETAIL)
                 ->setEntityId($profileId)
                 ->generateUrl();
+        } catch (\Throwable) {
+            return '';
+        }
+    }
+
+    private function buildBackofficeJobDetailUrl(int $jobId, string $locale): string
+    {
+        if ($jobId <= 0) {
+            return '';
+        }
+
+        try {
+            return $this->generateUrl('admin_ai_enrichment_job_detail', [
+                '_locale' => $locale,
+                'id' => $jobId,
+            ]);
         } catch (\Throwable) {
             return '';
         }
