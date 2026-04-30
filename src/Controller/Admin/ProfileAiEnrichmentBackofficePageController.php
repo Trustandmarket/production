@@ -13,10 +13,14 @@ class ProfileAiEnrichmentBackofficePageController extends AbstractController
     {
         $this->denyIfNoBackofficeAiAccess();
 
-        return $this->render('admin/ai_enrichment/dashboard.html.twig', [
-            'locale' => $_locale,
-            'jobs_url' => $this->generateUrl('admin_ai_enrichment_jobs', ['_locale' => $_locale]),
-        ]);
+        try {
+            return $this->render('admin/ai_enrichment/dashboard.html.twig', [
+                'locale' => $_locale,
+                'jobs_url' => $this->generateUrl('admin_ai_enrichment_jobs', ['_locale' => $_locale]),
+            ]);
+        } catch (\Throwable $e) {
+            return $this->fallbackResponse('dashboard', $_locale, $e);
+        }
     }
 
     #[Route('/{_locale}/admin/ai-enrichment/jobs', name: 'admin_ai_enrichment_jobs', methods: ['GET'])]
@@ -24,11 +28,15 @@ class ProfileAiEnrichmentBackofficePageController extends AbstractController
     {
         $this->denyIfNoBackofficeAiAccess();
 
-        return $this->render('admin/ai_enrichment/jobs.html.twig', [
-            'locale' => $_locale,
-            'dashboard_url' => $this->generateUrl('admin_ai_enrichment_dashboard', ['_locale' => $_locale]),
-            'detail_url_template' => $this->generateUrl('admin_ai_enrichment_job_detail', ['_locale' => $_locale, 'id' => 0]),
-        ]);
+        try {
+            return $this->render('admin/ai_enrichment/jobs.html.twig', [
+                'locale' => $_locale,
+                'dashboard_url' => $this->generateUrl('admin_ai_enrichment_dashboard', ['_locale' => $_locale]),
+                'detail_url_template' => $this->generateUrl('admin_ai_enrichment_job_detail', ['_locale' => $_locale, 'id' => 0]),
+            ]);
+        } catch (\Throwable $e) {
+            return $this->fallbackResponse('jobs', $_locale, $e);
+        }
     }
 
     #[Route('/{_locale}/admin/ai-enrichment/jobs/{id<\d+>}', name: 'admin_ai_enrichment_job_detail', methods: ['GET'])]
@@ -53,5 +61,26 @@ class ProfileAiEnrichmentBackofficePageController extends AbstractController
         if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted('ROLE_COMMERCE')) {
             throw $this->createAccessDeniedException('Acces refuse.');
         }
+    }
+
+    private function fallbackResponse(string $screen, string $locale, \Throwable $e): Response
+    {
+        $jobsUrl = $this->generateUrl('admin_ai_enrichment_jobs', ['_locale' => $locale]);
+        $dashboardUrl = $this->generateUrl('admin_ai_enrichment_dashboard', ['_locale' => $locale]);
+
+        $html = sprintf(
+            '<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Trust Agentique IA - Fallback</title></head><body style="font-family:Arial,sans-serif;padding:20px;">
+            <h2>Trust Agentique IA (fallback)</h2>
+            <p>Un incident est survenu sur l ecran <strong>%s</strong>.</p>
+            <p><a href="%s">Dashboard</a> | <a href="%s">Jobs</a></p>
+            <pre style="background:#f8fafc;border:1px solid #cbd5e1;padding:12px;white-space:pre-wrap;">%s</pre>
+            </body></html>',
+            htmlspecialchars($screen, ENT_QUOTES),
+            htmlspecialchars($dashboardUrl, ENT_QUOTES),
+            htmlspecialchars($jobsUrl, ENT_QUOTES),
+            htmlspecialchars($e->getMessage(), ENT_QUOTES)
+        );
+
+        return new Response($html, 200);
     }
 }
