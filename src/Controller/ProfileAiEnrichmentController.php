@@ -585,6 +585,27 @@ class ProfileAiEnrichmentController extends AbstractController
                 $metaKeys = ['billing_company', 'nom_commercial'];
                 break;
 
+            case 'siret':
+                $siret = $this->normalizeSiret($this->toSingleString($value));
+                if ($siret === '') {
+                    $warnings[] = 'SIRET invalide ou vide, non applique.';
+                    break;
+                }
+                $this->serviceManager->updateUserMeta($profileId, 'siret', $siret);
+                $metaKeys = ['siret'];
+                break;
+
+            case 'tva_number':
+            case 'tva':
+                $tvaNumber = $this->normalizeTvaNumber($this->toSingleString($value));
+                if ($tvaNumber === '') {
+                    $warnings[] = 'Numero TVA invalide ou vide, non applique.';
+                    break;
+                }
+                $this->serviceManager->updateUserMeta($profileId, 'tva', $tvaNumber);
+                $metaKeys = ['tva'];
+                break;
+
             case 'skills':
                 $skills = $this->normalizeList($value);
                 $skillValue = implode(',', $skills);
@@ -688,6 +709,34 @@ class ProfileAiEnrichmentController extends AbstractController
         }
 
         return [$metaKeys, $warnings];
+    }
+
+    private function normalizeSiret(string $value): string
+    {
+        $digits = preg_replace('/\D+/', '', trim($value));
+        if (!is_string($digits) || strlen($digits) !== 14) {
+            return '';
+        }
+
+        return $digits;
+    }
+
+    private function normalizeTvaNumber(string $value): string
+    {
+        $compact = preg_replace('/[^A-Z0-9]/', '', strtoupper(trim($value)));
+        if (!is_string($compact) || $compact === '') {
+            return '';
+        }
+
+        if (preg_match('/^FR[0-9A-Z]{2}[0-9]{9}$/', $compact) === 1) {
+            return $compact;
+        }
+
+        if (preg_match('/^[0-9A-Z]{2}[0-9]{9}$/', $compact) === 1) {
+            return 'FR' . $compact;
+        }
+
+        return '';
     }
 
     private function applyAddressSuggestion(int $profileId, mixed $value): array
