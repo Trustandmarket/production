@@ -33,6 +33,8 @@ class ProfileAiEnrichmentWorkerCommand extends Command
     private const FIELD_PHOTOS = 'photos';
     private const FIELD_VIDEOS = 'videos';
     private const FIELD_AVATAR_URL = 'avatar_url';
+    private const FIELD_SIRET = 'siret';
+    private const FIELD_TVA_NUMBER = 'tva_number';
     private const LIVE_PROMPT_VERSION = 'live-v1';
 
     private const ALLOWED_FIELDS = [
@@ -46,6 +48,8 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         self::FIELD_PHOTOS,
         self::FIELD_VIDEOS,
         self::FIELD_AVATAR_URL,
+        self::FIELD_SIRET,
+        self::FIELD_TVA_NUMBER,
     ];
 
     public function __construct(private readonly EntityManagerInterface $em)
@@ -506,6 +510,8 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         $imageCandidates = $this->extractImageCandidates($html, $url);
         $videoCandidates = $this->extractVideoCandidates($html);
         $addressHint = $this->extractAddressHint($html);
+        $siret = $this->extractSiretFromHtml($html);
+        $tvaNumber = $this->extractTvaNumberFromHtml($html);
 
         return [
             'url' => $url,
@@ -519,6 +525,8 @@ class ProfileAiEnrichmentWorkerCommand extends Command
             'image_candidates' => $imageCandidates,
             'video_candidates' => $videoCandidates,
             'address_hint' => $addressHint,
+            'siret' => $siret,
+            'tva_number' => $tvaNumber,
         ];
     }
 
@@ -647,6 +655,12 @@ class ProfileAiEnrichmentWorkerCommand extends Command
                 $text = trim((string) $value);
                 return $text !== '' ? $text : null;
 
+            case self::FIELD_SIRET:
+                return $this->normalizeSiretValue($value);
+
+            case self::FIELD_TVA_NUMBER:
+                return $this->normalizeTvaNumberValue($value);
+
             case self::FIELD_SKILLS:
             case self::FIELD_PHOTOS:
             case self::FIELD_VIDEOS:
@@ -700,6 +714,26 @@ class ProfileAiEnrichmentWorkerCommand extends Command
                 'field_name' => self::FIELD_PHONE,
                 'suggested_value' => $phone,
                 'confidence_score' => 0.72,
+                'source_type' => 'merged',
+            ];
+        }
+
+        $siret = $this->extractSiretCandidate($merged);
+        if ($siret !== null) {
+            $suggestions[] = [
+                'field_name' => self::FIELD_SIRET,
+                'suggested_value' => $siret,
+                'confidence_score' => 0.76,
+                'source_type' => 'merged',
+            ];
+        }
+
+        $tvaNumber = $this->extractTvaNumberCandidate($merged);
+        if ($tvaNumber !== null) {
+            $suggestions[] = [
+                'field_name' => self::FIELD_TVA_NUMBER,
+                'suggested_value' => $tvaNumber,
+                'confidence_score' => 0.74,
                 'source_type' => 'merged',
             ];
         }
@@ -813,7 +847,7 @@ Tu es un agent d enrichissement de profil professionnel.
 Tu dois repondre UNIQUEMENT en JSON valide.
 Regles:
 - N invente aucune information qui n est pas presente dans les preuves.
-- Propose seulement des champs parmi: phone, main_activity, business_name, skills, addresses, experiences_text, project_references_text, photos, videos, avatar_url.
+- Propose seulement des champs parmi: phone, main_activity, business_name, skills, addresses, experiences_text, project_references_text, photos, videos, avatar_url, siret, tva_number.
 - Pour chaque suggestion, fournis: field_name, suggested_value, confidence_score (0..1), source_type.
 - Si une valeur est incertaine, baisse confidence_score.
 - Utilise un tableau JSON pour skills/photos/videos.
@@ -988,6 +1022,105 @@ TXT;
         return array_values(array_unique($items));
     }
 
+    private function normalizeSiretValue(mixed $value): ?string
+    {
+        $digits = preg_replace('/\D+/', '', trim((string) $value));
+        if (!is_string($digits) || strlen($digits) !== 14) {
+            return null;
+        }
+
+        return $digits;
+    }
+
+    private function normalizeTvaNumberValue(mixed $value): ?string
+    {
+        $compact = preg_replace('/[^A-Z0-9]/', '', strtoupper(trim((string) $value)));
+        if (!is_string($compact) || $compact === '') {
+            return null;
+        }
+
+        if (preg_match('/^FR[0-9A-Z]{2}[0-9]{9}$/', $compact) === 1) {
+            return $compact;
+        }
+
+        if (preg_match('/^[0-9A-Z]{2}[0-9]{9}$/', $compact) === 1) {
+            return 'FR' . $compact;
+        }
+
+        return null;
+    }
+
+    private function extractSiretCandidate(array $merged): ?string
+    {
+        foreach (['siret', 'siret_number'] as $key) {
+            if (!array_key_exists($key, $merged)) {
+                continue;
+            }
+
+            $normalized = $this->normalizeSiretValue($merged[$key]);
+            if ($normalized !== null) {
+                return $normalized;
+            }
+        }
+
+        $candidate = $this->findFirstRegexMatchInValue($merged, '/(?:\d[\s\.\-]?){14}/');
+        if ($candidate === null) {
+            return null;
+        }
+
+        return $this->normalizeSiretValue($candidate);
+    }
+
+    private function extractTvaNumberCandidate(array $merged): ?string
+    {
+        foreach (['tva_number', 'vat_number', 'tva', 'vat'] as $key) {
+            if (!array_key_exists($key, $merged)) {
+                continue;
+            }
+
+            $normalized = $this->normalizeTvaNumberValue($merged[$key]);
+            if ($normalized !== null) {
+                return $normalized;
+            }
+        }
+
+        $candidate = $this->findFirstRegexMatchInValue($merged, '/FR[\s\.\-]*[0-9A-Z]{2}[\s\.\-]*(?:\d[\s\.\-]*){9}/i');
+        if ($candidate === null) {
+            return null;
+        }
+
+        return $this->normalizeTvaNumberValue($candidate);
+    }
+
+    private function findFirstRegexMatchInValue(mixed $value, string $pattern): ?string
+    {
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                $candidate = $this->findFirstRegexMatchInValue($item, $pattern);
+                if ($candidate !== null) {
+                    return $candidate;
+                }
+            }
+
+            return null;
+        }
+
+        if (!is_scalar($value)) {
+            return null;
+        }
+
+        $text = trim((string) $value);
+        if ($text === '') {
+            return null;
+        }
+
+        if (preg_match($pattern, $text, $matches) !== 1) {
+            return null;
+        }
+
+        return (string) ($matches[0] ?? '');
+    }
+
     private function isAssociative(array $array): bool
     {
         if ($array === []) {
@@ -1136,6 +1269,34 @@ TXT;
         }
 
         return '';
+    }
+
+    private function extractSiretFromHtml(string $html): ?string
+    {
+        $text = strip_tags($html);
+        if (!is_string($text) || trim($text) === '') {
+            return null;
+        }
+
+        if (preg_match('/(?:\d[\s\.\-]?){14}/', $text, $matches) !== 1) {
+            return null;
+        }
+
+        return $this->normalizeSiretValue((string) ($matches[0] ?? ''));
+    }
+
+    private function extractTvaNumberFromHtml(string $html): ?string
+    {
+        $text = strip_tags($html);
+        if (!is_string($text) || trim($text) === '') {
+            return null;
+        }
+
+        if (preg_match('/FR[\s\.\-]*[0-9A-Z]{2}[\s\.\-]*(?:\d[\s\.\-]*){9}/i', $text, $matches) !== 1) {
+            return null;
+        }
+
+        return $this->normalizeTvaNumberValue((string) ($matches[0] ?? ''));
     }
 
     private function resolveUrl(string $baseUrl, string $candidate): string
@@ -1340,6 +1501,11 @@ TXT;
         ];
 
         $phone = '+33' . str_pad((string) (($seed % 900000000) + 100000000), 9, '0', STR_PAD_LEFT);
+        $siren = str_pad((string) (($seed % 900000000) + 100000000), 9, '0', STR_PAD_LEFT);
+        $nic = str_pad((string) (($seed % 99999) + 1), 5, '0', STR_PAD_LEFT);
+        $siret = $siren . $nic;
+        $tvaKey = str_pad(strtoupper(base_convert((string) ($seed % 1296), 10, 36)), 2, '0', STR_PAD_LEFT);
+        $tvaNumber = 'FR' . $tvaKey . $siren;
 
         return [
             [
@@ -1407,6 +1573,18 @@ TXT;
                 'suggested_value' => $website . '/media/avatar.jpg',
                 'confidence_score' => 0.80,
                 'source_type' => 'website_scraping',
+            ],
+            [
+                'field_name' => self::FIELD_SIRET,
+                'suggested_value' => $siret,
+                'confidence_score' => 0.9,
+                'source_type' => 'merged',
+            ],
+            [
+                'field_name' => self::FIELD_TVA_NUMBER,
+                'suggested_value' => $tvaNumber,
+                'confidence_score' => 0.88,
+                'source_type' => 'merged',
             ],
         ];
     }
