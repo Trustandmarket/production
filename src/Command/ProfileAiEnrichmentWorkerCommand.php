@@ -268,6 +268,8 @@ class ProfileAiEnrichmentWorkerCommand extends Command
             $suggestions = $this->buildFallbackSuggestionsFromEvidence($inputType, $inputValue, $evidence);
         }
 
+        $suggestions = $this->appendNarrativeSuggestionsIfMissing($suggestions, $inputValue, $evidence);
+
         if (empty($suggestions)) {
             throw new \RuntimeException('Aucune suggestion generee apres traitement LLM.');
         }
@@ -737,6 +739,128 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         return $suggestions;
     }
 
+    private function appendNarrativeSuggestionsIfMissing(
+        array $suggestions,
+        string $inputValue,
+        array $evidence
+    ): array {
+        $existingFields = [];
+        foreach ($suggestions as $suggestion) {
+            if (!is_array($suggestion)) {
+                continue;
+            }
+            $fieldName = trim((string) ($suggestion['field_name'] ?? ''));
+            if ($fieldName !== '') {
+                $existingFields[$fieldName] = true;
+            }
+        }
+
+        $merged = $this->flattenEvidence($evidence);
+        $businessName = trim((string) ($merged['name'] ?? $merged['og_title'] ?? $inputValue));
+        if ($businessName === '') {
+            $businessName = 'Ce professionnel';
+        }
+
+        $activity = $this->extractActivityFromEvidence($merged);
+        $location = trim((string) ($merged['formatted_address'] ?? $merged['address_hint'] ?? ''));
+        $ogDescription = trim((string) ($merged['og_description'] ?? ''));
+
+        if (!isset($existingFields[self::FIELD_EXPERIENCES_TEXT])) {
+            $experienceText = '';
+            if ($ogDescription !== '') {
+                $experienceText = $this->truncateText($ogDescription, 420);
+            } else {
+                $experienceText = $businessName . ' accompagne des projets';
+                if ($activity !== '') {
+                    $experienceText .= ' en ' . $activity;
+                }
+                if ($location !== '') {
+                    $experienceText .= ' a ' . $location;
+                }
+                $experienceText .= '.';
+            }
+
+            $experienceText = trim($experienceText);
+            if ($experienceText !== '') {
+                $suggestions[] = [
+                    'field_name' => self::FIELD_EXPERIENCES_TEXT,
+                    'suggested_value' => $experienceText,
+                    'confidence_score' => 0.62,
+                    'source_type' => 'merged',
+                ];
+            }
+        }
+
+        if (!isset($existingFields[self::FIELD_PROJECT_REFERENCES_TEXT])) {
+            $projectReferences = '';
+            $socialLinks = $this->normalizeStringList($merged['social_links'] ?? []);
+            if (!empty($socialLinks)) {
+                $projectReferences = 'Canaux identifies: ' . implode(', ', array_slice($socialLinks, 0, 3)) . '.';
+            } else {
+                $projectReferences = 'References projets en lien avec ';
+                if ($activity !== '') {
+                    $projectReferences .= $activity;
+                } else {
+                    $projectReferences .= 'l activite principale';
+                }
+                if ($location !== '') {
+                    $projectReferences .= ' a ' . $location;
+                }
+                $projectReferences .= '.';
+            }
+
+            $projectReferences = trim($projectReferences);
+            if ($projectReferences !== '') {
+                $suggestions[] = [
+                    'field_name' => self::FIELD_PROJECT_REFERENCES_TEXT,
+                    'suggested_value' => $projectReferences,
+                    'confidence_score' => 0.58,
+                    'source_type' => 'merged',
+                ];
+            }
+        }
+
+        return $suggestions;
+    }
+
+    private function extractActivityFromEvidence(array $merged): string
+    {
+        $types = $merged['types'] ?? null;
+        if (is_array($types)) {
+            foreach ($types as $type) {
+                $candidate = trim((string) $type);
+                if ($candidate === '' || in_array($candidate, ['point_of_interest', 'establishment'], true)) {
+                    continue;
+                }
+                return str_replace('_', ' ', $candidate);
+            }
+        }
+
+        return '';
+    }
+
+    private function truncateText(string $text, int $maxLength): string
+    {
+        $text = trim($text);
+        if ($text === '' || $maxLength < 1) {
+            return '';
+        }
+
+        if (function_exists('mb_strlen') && function_exists('mb_substr')) {
+            if (mb_strlen($text) <= $maxLength) {
+                return $text;
+            }
+
+            return rtrim(mb_substr($text, 0, $maxLength)) . '...';
+        }
+
+        if (strlen($text) <= $maxLength) {
+            return $text;
+        }
+
+        return rtrim(substr($text, 0, $maxLength)) . '...';
+    }
+
     private function flattenEvidence(array $evidence): array
     {
         $result = [];
@@ -817,6 +941,7 @@ Regles:
 - Pour chaque suggestion, fournis: field_name, suggested_value, confidence_score (0..1), source_type.
 - Si une valeur est incertaine, baisse confidence_score.
 - Utilise un tableau JSON pour skills.
+- Quand c est possible a partir des preuves, renseigne aussi experiences_text et project_references_text.
 - Tu peux renvoyer une adresse soit en string, soit en objet {address, city, postal_code, country, state}.
 - Format final attendu:
 {
