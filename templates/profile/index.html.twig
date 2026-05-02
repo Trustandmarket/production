@@ -179,6 +179,44 @@
             text-align: left;
         }
 
+        .tm-ta-entry-note {
+            margin-bottom: 1rem;
+            padding: 0.9rem 1rem;
+            border-radius: 12px;
+            background: #262626;
+            color: #ffffff;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+
+        .tm-ta-entry-title-left {
+            text-align: left !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .swal2-actions .tm-ta-entry-confirm-btn,
+        .swal2-actions .tm-ta-entry-cancel-btn {
+            border: 0;
+            border-radius: 8px;
+            padding: 0.65rem 1rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .swal2-actions .tm-ta-entry-confirm-btn {
+            background: #ff7e10;
+        }
+
+        .swal2-actions .tm-ta-entry-cancel-btn {
+            background: #262626;
+        }
+
+        .swal2-actions .tm-ta-entry-confirm-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
         .tm-ta-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -1652,9 +1690,15 @@
                     showCancelButton: true,
                     confirmButtonText: 'Trouver mes informations',
                     cancelButtonText: 'Annuler',
+                    buttonsStyling: false,
+                    customClass: {
+                        title: 'tm-ta-entry-title-left',
+                        confirmButton: 'tm-ta-entry-confirm-btn',
+                        cancelButton: 'tm-ta-entry-cancel-btn'
+                    },
                     html: `
                         <div class="text-left">
-                            <p class="tm-ta-review-note">
+                            <p class="tm-ta-entry-note">
                                 Renseignez soit le nom de votre studio, soit votre site web.
                             </p>
                             <div class="form-group text-left">
@@ -1673,7 +1717,7 @@
                                 <input type="text" id="trustAgentInputValue" class="form-control" value="${escapeHtml(defaultInput)}" placeholder="Ex : Studio Rivoli">
                             </div>
                             <div class="form-group text-left mt-3 mb-0" id="trustAgentRegionGroup">
-                                <label for="trustAgentInputRegion" class="font-weight-bold">Ville/Region (optionnel)</label>
+                                <label for="trustAgentInputRegion" class="font-weight-bold">Ville/Region</label>
                                 <input type="text" id="trustAgentInputRegion" class="form-control" placeholder="Ex : Ile-de-France">
                             </div>
                         </div>
@@ -1684,6 +1728,43 @@
                         var regionGroup = document.getElementById('trustAgentRegionGroup');
                         var studioRadio = document.getElementById('trustAgentInputStudio');
                         var websiteRadio = document.getElementById('trustAgentInputWebsite');
+                        var confirmButton = Swal.getConfirmButton();
+
+                        function getCurrentInputType() {
+                            return studioRadio && studioRadio.checked ? 'studio_name' : 'website';
+                        }
+
+                        function isEntryFormValid(inputType, inputValue, inputRegion) {
+                            if (!inputType || inputValue === '') {
+                                return false;
+                            }
+
+                            if (inputType === 'website' && !isLikelyWebsite(inputValue)) {
+                                return false;
+                            }
+
+                            if (inputType === 'studio_name') {
+                                if (inputRegion === '') {
+                                    return false;
+                                }
+                                if (inputRegion.length > 120) {
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        }
+
+                        function refreshConfirmState() {
+                            if (!confirmButton || !input || !regionInput) {
+                                return;
+                            }
+
+                            var inputType = getCurrentInputType();
+                            var inputValue = input.value.trim();
+                            var inputRegion = regionInput.value.trim();
+                            confirmButton.disabled = !isEntryFormValid(inputType, inputValue, inputRegion);
+                        }
 
                         function refreshPlaceholder() {
                             if (!input || !studioRadio || !websiteRadio || !regionGroup) {
@@ -1698,6 +1779,8 @@
                             if (websiteRadio.checked && input.value.trim() === defaultInput) {
                                 input.value = '';
                             }
+
+                            refreshConfirmState();
                         }
 
                         if (studioRadio) {
@@ -1705,6 +1788,12 @@
                         }
                         if (websiteRadio) {
                             websiteRadio.addEventListener('change', refreshPlaceholder);
+                        }
+                        if (input) {
+                            input.addEventListener('input', refreshConfirmState);
+                        }
+                        if (regionInput) {
+                            regionInput.addEventListener('input', refreshConfirmState);
                         }
                         refreshPlaceholder();
                     },
@@ -1728,6 +1817,11 @@
 
                         if (inputType === 'website' && !isLikelyWebsite(inputValue)) {
                             Swal.showValidationMessage('Le site web semble invalide.');
+                            return false;
+                        }
+
+                        if (inputType === 'studio_name' && inputRegion === '') {
+                            Swal.showValidationMessage('Renseignez la ville/region.');
                             return false;
                         }
 
