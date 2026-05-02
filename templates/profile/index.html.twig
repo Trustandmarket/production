@@ -355,9 +355,21 @@
 
         .tm-ta-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(6, minmax(0, 1fr));
             gap: 14px;
             text-align: left;
+        }
+
+        .tm-ta-span-2 {
+            grid-column: span 2;
+        }
+
+        .tm-ta-span-3 {
+            grid-column: span 3;
+        }
+
+        .tm-ta-span-6 {
+            grid-column: 1 / -1;
         }
 
         .tm-ta-card {
@@ -365,10 +377,6 @@
             border-radius: 14px;
             padding: 14px;
             background: #fff;
-        }
-
-        .tm-ta-card-address {
-            grid-column: 1 / -1;
         }
 
         .tm-ta-head {
@@ -403,10 +411,26 @@
             min-height: 44px;
         }
 
+        .tm-ta-card textarea.form-control {
+            min-height: 130px;
+        }
+
         .tm-ta-helper {
             font-size: 12px;
             color: #64748b;
             margin-top: 8px;
+        }
+
+        @media (max-width: 991.98px) {
+            .tm-ta-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tm-ta-span-2,
+            .tm-ta-span-3,
+            .tm-ta-span-6 {
+                grid-column: 1 / -1;
+            }
         }
 
         .swal2-container {
@@ -2233,6 +2257,50 @@
                 }
             }
 
+            function normalizeReviewFieldKey(fieldKey) {
+                var key = String(fieldKey || '').trim();
+                if (key === 'tva') {
+                    return 'tva_number';
+                }
+                return key;
+            }
+
+            function getReviewFieldOrder(fieldKey) {
+                var key = normalizeReviewFieldKey(fieldKey);
+                var orderMap = {
+                    business_name: 10,
+                    phone: 20,
+                    main_activity: 30,
+                    addresses: 40,
+                    skills: 50,
+                    experiences_text: 60,
+                    project_references_text: 70,
+                    siret: 80,
+                    tva_number: 90
+                };
+
+                return Object.prototype.hasOwnProperty.call(orderMap, key) ? orderMap[key] : 999;
+            }
+
+            function getReviewCardClass(entry) {
+                var key = normalizeReviewFieldKey(entry.key);
+                if (key === 'business_name' || key === 'phone' || key === 'main_activity') {
+                    return 'tm-ta-card tm-ta-span-2';
+                }
+                if (key === 'addresses' || key === 'skills' || key === 'experiences_text' || key === 'project_references_text') {
+                    return 'tm-ta-card tm-ta-span-6';
+                }
+                if (key === 'siret' || key === 'tva_number') {
+                    return 'tm-ta-card tm-ta-span-3';
+                }
+                return entry.kind === 'text' ? 'tm-ta-card tm-ta-span-2' : 'tm-ta-card tm-ta-span-6';
+            }
+
+            function isReviewLargeTextField(entry) {
+                var key = normalizeReviewFieldKey(entry.key);
+                return key === 'experiences_text' || key === 'project_references_text';
+            }
+
             function buildTrustAgentReviewModel(payload) {
                 var suggestions = Array.isArray(payload.suggestions) ? payload.suggestions : [];
                 var model = {
@@ -2264,6 +2332,14 @@
                     });
                 });
 
+                model.entries.sort(function (left, right) {
+                    var orderDiff = getReviewFieldOrder(left.key) - getReviewFieldOrder(right.key);
+                    if (orderDiff !== 0) {
+                        return orderDiff;
+                    }
+                    return String(left.label || '').localeCompare(String(right.label || ''));
+                });
+
                 return model;
             }
 
@@ -2275,7 +2351,8 @@
                     var valueId = 'ta-value-' + entry.suggestionId;
                     var helper = '';
                     var editor;
-                    var cardClass = entry.kind === 'text' ? 'tm-ta-card' : 'tm-ta-card tm-ta-card-address';
+                    var cardClass = getReviewCardClass(entry);
+                    var isLargeText = isReviewLargeTextField(entry);
 
                     if (entry.kind === 'array') {
                         helper = '<div class="tm-ta-helper">Format attendu : liste JSON.</div>';
@@ -2283,6 +2360,8 @@
                     } else if (entry.kind === 'object') {
                         helper = '<div class="tm-ta-helper">Format attendu : objet JSON.</div>';
                         editor = '<textarea id="' + valueId + '" class="form-control" rows="6">' + escapeHtml(entry.editorValue) + '</textarea>';
+                    } else if (isLargeText) {
+                        editor = '<textarea id="' + valueId + '" class="form-control" rows="7">' + escapeHtml(entry.editorValue) + '</textarea>';
                     } else {
                         editor = '<input type="text" id="' + valueId + '" class="form-control" value="' + escapeHtml(entry.editorValue) + '">';
                     }
@@ -2399,7 +2478,7 @@
 
                 var result = await Swal.fire({
                     title: 'Verifier toutes les suggestions TrustAgent',
-                    width: 960,
+                    width: 1100,
                     showCancelButton: true,
                     confirmButtonText: 'Appliquer les suggestions',
                     cancelButtonText: 'Fermer',
