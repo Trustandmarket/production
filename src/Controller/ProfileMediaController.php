@@ -163,7 +163,7 @@ class ProfileMediaController extends AbstractController
         ]);
     }
 
-    private function normalizeStoredVideos($value): array
+    private function normalizeStoredVideos($value)
     {
         if (!is_string($value)) {
             return [];
@@ -174,19 +174,40 @@ class ProfileMediaController extends AbstractController
             return [];
         }
 
-        $decoded = @unserialize($trimmed, ['allowed_classes' => false]);
+        $decoded = @unserialize($trimmed);
         if (is_array($decoded)) {
-            return array_values(array_filter($decoded, static fn ($item) => trim((string) $item) !== ''));
+            $result = [];
+            foreach ($decoded as $item) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $result[] = $item;
+                }
+            }
+            return array_values($result);
         }
 
         $json = json_decode($trimmed, true);
         if (is_array($json)) {
-            return array_values(array_filter($json, static fn ($item) => trim((string) $item) !== ''));
+            $result = [];
+            foreach ($json as $item) {
+                $item = trim((string) $item);
+                if ($item !== '') {
+                    $result[] = $item;
+                }
+            }
+            return array_values($result);
         }
 
         if (preg_match('/[\r\n,]/', $trimmed) === 1) {
             $parts = preg_split('/[\r\n,]+/', $trimmed) ?: [];
-            return array_values(array_filter(array_map('trim', $parts), static fn ($item) => $item !== ''));
+            $result = [];
+            foreach ($parts as $part) {
+                $part = trim((string) $part);
+                if ($part !== '') {
+                    $result[] = $part;
+                }
+            }
+            return array_values($result);
         }
 
         return [$trimmed];
