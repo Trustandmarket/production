@@ -374,15 +374,30 @@
             }
         }
 
+        .tm-ta-review-shell {
+            text-align: left;
+        }
+
+        .tm-ta-review-title {
+            margin: 0;
+            color: #1f2937;
+            font-size: 2.05rem;
+            font-weight: 700;
+            line-height: 1.15;
+        }
+
+        .tm-ta-review-subtitle {
+            margin: 0.4rem 0 1.1rem 0;
+            color: #52525b;
+            font-size: 1.12rem;
+            line-height: 1.32;
+        }
+
         .tm-ta-grid {
             display: grid;
             grid-template-columns: repeat(6, minmax(0, 1fr));
             gap: 14px;
             text-align: left;
-        }
-
-        .tm-ta-span-2 {
-            grid-column: span 2;
         }
 
         .tm-ta-span-3 {
@@ -394,10 +409,10 @@
         }
 
         .tm-ta-card {
-            border: 1px solid #e5e7eb;
+            border: 1px solid #e9e8e2;
             border-radius: 14px;
             padding: 14px;
-            background: #fff;
+            background: #f1f0ea;
         }
 
         .tm-ta-head {
@@ -409,9 +424,21 @@
         }
 
         .tm-ta-head label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             margin: 0;
             font-weight: 700;
-            color: #111827;
+            color: #1f2937;
+            font-size: 1.04rem;
+        }
+
+        .tm-ta-head input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #1a73e8;
+            margin: 0;
+            transform: translateY(1px);
         }
 
         .tm-ta-meta {
@@ -419,17 +446,25 @@
             align-items: center;
             gap: 6px;
             font-size: 12px;
-            color: #475569;
-            background: #f8fafc;
+            color: #3f7a2d;
+            background: #e3ecd6;
             border-radius: 999px;
             padding: 4px 10px;
             white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .tm-ta-meta.is-muted {
+            color: #6b7280;
+            background: #e5e7eb;
         }
 
         .tm-ta-card .form-control,
         .tm-ta-card .custom-select {
             border-radius: 10px;
             min-height: 44px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
         }
 
         .tm-ta-card textarea.form-control {
@@ -442,12 +477,38 @@
             margin-top: 8px;
         }
 
+        .tm-ta-review-divider {
+            margin-top: 16px;
+            border-top: 1px solid #dddddd;
+        }
+
+        .tm-ta-skill-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tm-ta-skill-chip {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid #b7b9bc;
+            border-radius: 999px;
+            padding: 0.34rem 0.82rem;
+            background: #f8f8f7;
+            color: #2f2f2f;
+            font-size: 0.95rem;
+            line-height: 1.2;
+        }
+
+        .tm-ta-skill-chip.is-empty {
+            color: #6b7280;
+        }
+
         @media (max-width: 991.98px) {
             .tm-ta-grid {
                 grid-template-columns: 1fr;
             }
 
-            .tm-ta-span-2,
             .tm-ta-span-3,
             .tm-ta-span-6 {
                 grid-column: 1 / -1;
@@ -1850,7 +1911,66 @@
                 return JSON.stringify(normalizeForCompare(left)) === JSON.stringify(normalizeForCompare(right));
             }
 
+            function parseCommaSeparatedList(rawValue) {
+                return String(rawValue || '')
+                    .split(',')
+                    .map(function (item) {
+                        return String(item || '').trim();
+                    })
+                    .filter(function (item) {
+                        return item !== '';
+                    });
+            }
+
             function parseEditorValue(entry, rawValue) {
+                var normalizedKey = normalizeReviewFieldKey(entry.key);
+
+                if (normalizedKey === 'skills') {
+                    var trimmedSkills = String(rawValue || '').trim();
+                    if (trimmedSkills === '') {
+                        return [];
+                    }
+
+                    if (trimmedSkills.charAt(0) === '[') {
+                        try {
+                            var parsedSkills = JSON.parse(trimmedSkills);
+                            if (Array.isArray(parsedSkills)) {
+                                return parsedSkills
+                                    .map(function (item) {
+                                        return String(item || '').trim();
+                                    })
+                                    .filter(function (item) {
+                                        return item !== '';
+                                    });
+                            }
+                        } catch (error) {
+                            // fallback to comma-separated list
+                        }
+                    }
+
+                    return parseCommaSeparatedList(trimmedSkills);
+                }
+
+                if (normalizedKey === 'addresses') {
+                    var trimmedAddress = String(rawValue || '').trim();
+                    if (trimmedAddress === '') {
+                        return '';
+                    }
+
+                    if (trimmedAddress.charAt(0) === '{') {
+                        try {
+                            var parsedAddress = JSON.parse(trimmedAddress);
+                            if (parsedAddress !== null && !Array.isArray(parsedAddress) && typeof parsedAddress === 'object') {
+                                return parsedAddress;
+                            }
+                        } catch (error) {
+                            // keep plain string when JSON parse fails
+                        }
+                    }
+
+                    return trimmedAddress;
+                }
+
                 if (entry.kind === 'array' || entry.kind === 'object') {
                     try {
                         var parsed = JSON.parse(rawValue);
@@ -2286,6 +2406,23 @@
                 return key;
             }
 
+            function getReviewFieldLabel(fieldKey) {
+                var key = normalizeReviewFieldKey(fieldKey);
+                var labels = {
+                    business_name: 'Nom',
+                    phone: 'Téléphone',
+                    main_activity: 'Activité principale',
+                    addresses: 'Adresse',
+                    skills: 'Compétences',
+                    experiences_text: 'Présentation',
+                    project_references_text: 'Références projets',
+                    siret: 'SIRET',
+                    tva_number: 'Numéro TVA'
+                };
+
+                return labels[key] || getFieldLabel(key);
+            }
+
             function getReviewFieldOrder(fieldKey) {
                 var key = normalizeReviewFieldKey(fieldKey);
                 var orderMap = {
@@ -2305,8 +2442,8 @@
 
             function getReviewCardClass(entry) {
                 var key = normalizeReviewFieldKey(entry.key);
-                if (key === 'business_name' || key === 'phone' || key === 'main_activity') {
-                    return 'tm-ta-card tm-ta-span-2';
+                if (key === 'business_name' || key === 'phone') {
+                    return 'tm-ta-card tm-ta-span-3';
                 }
                 if (key === 'addresses' || key === 'skills' || key === 'experiences_text' || key === 'project_references_text') {
                     return 'tm-ta-card tm-ta-span-6';
@@ -2314,12 +2451,99 @@
                 if (key === 'siret' || key === 'tva_number') {
                     return 'tm-ta-card tm-ta-span-3';
                 }
-                return entry.kind === 'text' ? 'tm-ta-card tm-ta-span-2' : 'tm-ta-card tm-ta-span-6';
+                if (key === 'main_activity') {
+                    return 'tm-ta-card tm-ta-span-6';
+                }
+                return entry.kind === 'text' ? 'tm-ta-card tm-ta-span-3' : 'tm-ta-card tm-ta-span-6';
             }
 
             function isReviewLargeTextField(entry) {
                 var key = normalizeReviewFieldKey(entry.key);
                 return key === 'experiences_text' || key === 'project_references_text';
+            }
+
+            function formatAddressValue(value) {
+                if (value === null || value === undefined) {
+                    return '';
+                }
+
+                if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+                    var parts = [];
+                    ['address', 'line1', 'city', 'postal_code', 'state', 'country'].forEach(function (k) {
+                        var segment = String(value[k] || '').trim();
+                        if (segment !== '') {
+                            parts.push(segment);
+                        }
+                    });
+                    return parts.join(', ');
+                }
+
+                return String(value || '').trim();
+            }
+
+            function buildReviewEditorValue(fieldKey, kind, value) {
+                var key = normalizeReviewFieldKey(fieldKey);
+
+                if (key === 'skills') {
+                    if (Array.isArray(value)) {
+                        return value
+                            .map(function (item) {
+                                return String(item || '').trim();
+                            })
+                            .filter(function (item) {
+                                return item !== '';
+                            })
+                            .join(', ');
+                    }
+                    return String(value === null || value === undefined ? '' : value);
+                }
+
+                if (key === 'addresses') {
+                    return formatAddressValue(value);
+                }
+
+                return valueToEditorText(kind, value);
+            }
+
+            function buildReviewBadge(entry) {
+                var sourceType = String(entry.sourceType || '').trim();
+                var normalizedSource = sourceType === '' ? 'merged' : sourceType;
+                var sourceMap = {
+                    google_places: 'Google',
+                    google_places_find: 'Google',
+                    website_scraping: 'Web',
+                    llm: 'IA',
+                    merged: 'Web',
+                    not_found: 'Non trouvé'
+                };
+
+                var sourceLabel = sourceMap[normalizedSource] || sourceType || 'Web';
+                if (normalizedSource === 'not_found') {
+                    return {
+                        className: 'tm-ta-meta is-muted',
+                        text: 'Non trouvé'
+                    };
+                }
+
+                var confidenceText = (typeof entry.confidence === 'number' && !isNaN(entry.confidence) && entry.confidence > 0)
+                    ? formatConfidence(entry.confidence)
+                    : 'manuel';
+
+                return {
+                    className: 'tm-ta-meta',
+                    text: sourceLabel + ' · ' + confidenceText
+                };
+            }
+
+            function buildSkillChipsHtml(editorValue) {
+                var items = parseCommaSeparatedList(editorValue);
+                if (!items.length) {
+                    return '<span class="tm-ta-skill-chip is-empty">À compléter manuellement</span>';
+                }
+
+                return items.map(function (item) {
+                    return '<span class="tm-ta-skill-chip">' + escapeHtml(item) + '</span>';
+                }).join('');
             }
 
             function buildTrustAgentReviewModel(payload) {
@@ -2342,13 +2566,14 @@
 
                     model.entries.push({
                         key: fieldName,
+                        normalizedKey: normalizeReviewFieldKey(fieldName),
                         kind: kind,
                         suggestionId: suggestionId,
-                        label: getFieldLabel(fieldName),
+                        label: getReviewFieldLabel(fieldName),
                         sourceType: suggestion.source_type || 'merged',
                         confidence: suggestion.confidence_score,
                         originalValue: workingValue,
-                        editorValue: valueToEditorText(kind, workingValue),
+                        editorValue: buildReviewEditorValue(fieldName, kind, workingValue),
                         selected: selected
                     });
                 });
@@ -2366,7 +2591,7 @@
 
             function buildTrustAgentReviewHtml(model) {
                 var cards = model.entries.map(function (entry) {
-                    var meta = escapeHtml(entry.sourceType) + ' - ' + escapeHtml(formatConfidence(entry.confidence));
+                    var badge = buildReviewBadge(entry);
                     var checkedAttr = entry.selected ? ' checked' : '';
                     var checkboxId = 'ta-use-' + entry.suggestionId;
                     var valueId = 'ta-value-' + entry.suggestionId;
@@ -2374,12 +2599,16 @@
                     var editor;
                     var cardClass = getReviewCardClass(entry);
                     var isLargeText = isReviewLargeTextField(entry);
+                    var normalizedKey = normalizeReviewFieldKey(entry.key);
 
-                    if (entry.kind === 'array') {
+                    if (normalizedKey === 'skills') {
+                        helper = '<div class="tm-ta-helper">Séparez les compétences avec des virgules.</div>';
+                        editor = `
+                            <div class="tm-ta-skill-chips">${buildSkillChipsHtml(entry.editorValue)}</div>
+                            <input type="text" id="${valueId}" class="form-control mt-2" value="${escapeHtml(entry.editorValue)}" placeholder="Enregistrement audio, Mixage">
+                        `;
+                    } else if (entry.kind === 'array') {
                         helper = '<div class="tm-ta-helper">Format attendu : liste JSON.</div>';
-                        editor = '<textarea id="' + valueId + '" class="form-control" rows="6">' + escapeHtml(entry.editorValue) + '</textarea>';
-                    } else if (entry.kind === 'object') {
-                        helper = '<div class="tm-ta-helper">Format attendu : objet JSON.</div>';
                         editor = '<textarea id="' + valueId + '" class="form-control" rows="6">' + escapeHtml(entry.editorValue) + '</textarea>';
                     } else if (isLargeText) {
                         editor = '<textarea id="' + valueId + '" class="form-control" rows="7">' + escapeHtml(entry.editorValue) + '</textarea>';
@@ -2391,7 +2620,7 @@
                         <div class="${cardClass}">
                             <div class="tm-ta-head">
                                 <label><input type="checkbox" id="${checkboxId}"${checkedAttr}> ${escapeHtml(entry.label)}</label>
-                                <span class="tm-ta-meta">${meta}</span>
+                                <span class="${badge.className}">${escapeHtml(badge.text)}</span>
                             </div>
                             ${editor}
                             ${helper}
@@ -2400,10 +2629,12 @@
                 }).join('');
 
                 return `
-                    <div class="tm-ta-review-note">
-                        Verifiez toutes les suggestions puis confirmez. Les champs non coches seront rejetes pour ce job.
+                    <div class="tm-ta-review-shell">
+                        <h3 class="tm-ta-review-title">Vérifiez et confirmez vos informations</h3>
+                        <p class="tm-ta-review-subtitle">Complété par TrustAgent — décochez les champs que vous souhaitez ignorer.</p>
+                        <div class="tm-ta-grid">${cards}</div>
+                        <div class="tm-ta-review-divider"></div>
                     </div>
-                    <div class="tm-ta-grid">${cards}</div>
                 `;
             }
 
@@ -2433,7 +2664,14 @@
                     }
 
                     var parsedValue = parseEditorValue(entry, rawValue);
-                    var isUnchanged = deepEqualValues(parsedValue, entry.originalValue);
+                    var normalizedKey = normalizeReviewFieldKey(entry.key);
+                    var comparableOriginalValue = entry.originalValue;
+                    if (normalizedKey === 'skills') {
+                        comparableOriginalValue = parseCommaSeparatedList(entry.editorValue);
+                    } else if (normalizedKey === 'addresses') {
+                        comparableOriginalValue = entry.editorValue;
+                    }
+                    var isUnchanged = deepEqualValues(parsedValue, comparableOriginalValue);
 
                     if (isUnchanged) {
                         decisions.push({
@@ -2498,11 +2736,12 @@
                 }
 
                 var result = await Swal.fire({
-                    title: 'Verifier toutes les suggestions TrustAgent',
+                    title: '',
                     width: 1100,
                     showCancelButton: true,
                     confirmButtonText: 'Appliquer les suggestions',
                     cancelButtonText: 'Fermer',
+                    reverseButtons: true,
                     buttonsStyling: false,
                     customClass: {
                         actions: 'tm-ta-review-actions',
