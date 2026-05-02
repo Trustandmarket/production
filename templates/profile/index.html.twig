@@ -195,6 +195,10 @@
             margin-right: 0 !important;
         }
 
+        .swal2-actions.tm-ta-entry-actions {
+            gap: 14px;
+        }
+
         .swal2-actions .tm-ta-entry-confirm-btn,
         .swal2-actions .tm-ta-entry-cancel-btn {
             border: 0;
@@ -1430,6 +1434,9 @@
     <script src="{{ asset('assets/phone/js/intlTelInput.min.js') }}"></script>
     <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.18/dist/sweetalert2.all.min.js"></script>
+    {% if google_maps_api_key is defined and google_maps_api_key|trim != '' %}
+        <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key|url_encode }}&libraries=places"></script>
+    {% endif %}
     <!-- Tinymce editor -->
     <script type="text/javascript" src='{{ asset('admin/tinymce/js/tinymce/tinymce.min.js') }}'></script>
     <!-- owl carousel -->
@@ -1693,6 +1700,7 @@
                     buttonsStyling: false,
                     customClass: {
                         title: 'tm-ta-entry-title-left',
+                        actions: 'tm-ta-entry-actions',
                         confirmButton: 'tm-ta-entry-confirm-btn',
                         cancelButton: 'tm-ta-entry-cancel-btn'
                     },
@@ -1729,6 +1737,89 @@
                         var studioRadio = document.getElementById('trustAgentInputStudio');
                         var websiteRadio = document.getElementById('trustAgentInputWebsite');
                         var confirmButton = Swal.getConfirmButton();
+
+                        function getAddressComponent(place, acceptedTypes, useShortName) {
+                            if (!place || !Array.isArray(place.address_components)) {
+                                return '';
+                            }
+
+                            for (var i = 0; i < place.address_components.length; i += 1) {
+                                var component = place.address_components[i];
+                                if (!component || !Array.isArray(component.types)) {
+                                    continue;
+                                }
+                                for (var t = 0; t < component.types.length; t += 1) {
+                                    if (acceptedTypes.indexOf(component.types[t]) !== -1) {
+                                        return String(useShortName ? (component.short_name || '') : (component.long_name || '')).trim();
+                                    }
+                                }
+                            }
+
+                            return '';
+                        }
+
+                        function resolveRegionLabelFromPlace(place, fallbackValue) {
+                            if (!place || typeof place !== 'object') {
+                                return String(fallbackValue || '').trim();
+                            }
+
+                            var city = getAddressComponent(place, ['locality', 'postal_town', 'administrative_area_level_3'], false);
+                            var region = getAddressComponent(place, ['administrative_area_level_1', 'administrative_area_level_2'], false);
+                            var country = getAddressComponent(place, ['country'], true);
+                            var parts = [];
+
+                            if (city !== '') {
+                                parts.push(city);
+                            }
+                            if (region !== '' && region !== city) {
+                                parts.push(region);
+                            }
+                            if (country !== '') {
+                                parts.push(country);
+                            }
+
+                            var joined = parts.join(', ').trim();
+                            if (joined !== '') {
+                                return joined;
+                            }
+
+                            var formattedAddress = String(place.formatted_address || '').trim();
+                            if (formattedAddress !== '') {
+                                return formattedAddress;
+                            }
+
+                            var placeName = String(place.name || '').trim();
+                            if (placeName !== '') {
+                                return placeName;
+                            }
+
+                            return String(fallbackValue || '').trim();
+                        }
+
+                        function initRegionAutocomplete() {
+                            if (!regionInput) {
+                                return;
+                            }
+                            if (!window.google || !window.google.maps || !window.google.maps.places || typeof window.google.maps.places.Autocomplete !== 'function') {
+                                return;
+                            }
+
+                            regionInput.setAttribute('autocomplete', 'off');
+                            var autocomplete = new google.maps.places.Autocomplete(regionInput, {
+                                types: ['(regions)'],
+                                componentRestrictions: { country: 'fr' },
+                                fields: ['name', 'formatted_address', 'address_components']
+                            });
+
+                            autocomplete.addListener('place_changed', function () {
+                                var place = autocomplete.getPlace();
+                                var nextValue = resolveRegionLabelFromPlace(place, regionInput.value);
+                                if (nextValue !== '') {
+                                    regionInput.value = nextValue;
+                                }
+                                refreshConfirmState();
+                            });
+                        }
 
                         function getCurrentInputType() {
                             return studioRadio && studioRadio.checked ? 'studio_name' : 'website';
@@ -1795,6 +1886,7 @@
                         if (regionInput) {
                             regionInput.addEventListener('input', refreshConfirmState);
                         }
+                        initRegionAutocomplete();
                         refreshPlaceholder();
                     },
                     preConfirm: function () {

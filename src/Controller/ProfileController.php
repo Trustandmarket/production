@@ -290,6 +290,7 @@ class ProfileController extends AbstractController
             'activities' => $this->service_manager->postCategorie1('product_activity'), 'principal_activity' => $principal_activity,
             'departements' => $departements, 'user_departement' => $departement,
             'profile_completion_rate' => $profileCompletionRate,
+            'google_maps_api_key' => $this->getGoogleMapsApiKey(),
             'page_name' => 'Profil et informations personnelles'
         ]);
         // code...
@@ -834,6 +835,26 @@ class ProfileController extends AbstractController
         $this->service_manager->updateUserMeta((int) $user->getId(), 'profile_completion_rate', (string) $rate);
 
         return $rate;
+    }
+
+    private function getGoogleMapsApiKey(): string
+    {
+        $fromEnv = $_ENV['GOOGLE_MAPS_API_KEY'] ?? null;
+        if (is_string($fromEnv) && trim($fromEnv) !== '') {
+            return trim($fromEnv);
+        }
+
+        $fromServer = $_SERVER['GOOGLE_MAPS_API_KEY'] ?? null;
+        if (is_string($fromServer) && trim($fromServer) !== '') {
+            return trim($fromServer);
+        }
+
+        $fromGetEnv = getenv('GOOGLE_MAPS_API_KEY');
+        if (is_string($fromGetEnv) && trim($fromGetEnv) !== '') {
+            return trim($fromGetEnv);
+        }
+
+        return '';
     }
 }
 
