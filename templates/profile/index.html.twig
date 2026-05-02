@@ -2559,41 +2559,68 @@
                 return false;
             });
 
-            $(document).on('click', '.delete_port', function (e) { // On emp�che le navigateur de soumettre le formulaire
+            function isDeleteSuccessResponse(response) {
+                if (response === 1 || response === '1') {
+                    return true;
+                }
+
+                if (typeof response === 'string' && response.trim() === '1') {
+                    return true;
+                }
+
+                return !!(response && typeof response === 'object' && Number(response.result) === 1);
+            }
+
+            $(document).on('click', '.delete_port', function (e) {
                 e.preventDefault();
+
                 let t = $(this);
-                let urlPath = $(this).attr('href');
-                swal({
+                let urlPath = t.attr('href');
+                if (!urlPath) {
+                    return;
+                }
+
+                Swal.fire({
                     title: "Suppression de l'objet",
-                    text: "Attention l'objet sera Supprimé et n'apparaitra plus sur le site",
-                    type: "info",
+                    text: "Attention l'objet sera supprime et n'apparaitra plus sur le site",
+                    icon: "warning",
                     showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
+                    confirmButtonColor: "#d33",
                     confirmButtonText: "Supprimer",
                     cancelButtonText: "Annuler",
-                    closeOnConfirm: false,
-                    closeOnCancel: false,
-                    showLoaderOnConfirm: true
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        $.ajax({
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        return $.ajax({
                             url: urlPath,
-                            type: 'GET',
-                            success: function (response) {
-                                if (response == 1) {
-                                    swal("suppression terminée", "", "success");
-                                    t.parents('li').hide();
-                                } else {
-                                    swal("erreur de suppression", "", "error");
-                                }
-                            },
-                            error: function (response) {
-                                swal("erreur de suppression", "", "error");
+                            type: 'GET'
+                        }).then(function (response) {
+                            if (!isDeleteSuccessResponse(response)) {
+                                throw new Error("Erreur de suppression");
                             }
+                            return response;
+                        }).catch(function () {
+                            Swal.showValidationMessage("Erreur de suppression");
+                            return false;
                         });
-                    } else {
-                        swal.close();
+                    },
+                    allowOutsideClick: function () {
+                        return !Swal.isLoading();
                     }
+                }).then(function (result) {
+                    if (!result.isConfirmed) {
+                        return;
+                    }
+
+                    t.parents('li').first().fadeOut(200, function () {
+                        $(this).remove();
+                    });
+
+                    Swal.fire({
+                        title: "Suppression terminee",
+                        icon: "success",
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
                 });
             });
 
@@ -2656,3 +2683,4 @@
         });
     </script>
 {% endblock %}
+
