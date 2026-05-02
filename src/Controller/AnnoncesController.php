@@ -158,7 +158,8 @@ class AnnoncesController extends AbstractController
             'text_wishlist' => $text_wishlist,
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
-            'nom_commercial' => $request->get('nom_commercial', null)
+            'nom_commercial' => $request->get('nom_commercial', null),
+            'google_maps_api_key' => $this->getGoogleMapsApiKey(),
         ]);
     }
 
@@ -225,7 +226,8 @@ class AnnoncesController extends AbstractController
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'nom_commercial' => $request->get('nom_commercial', null),
-            'id_commercial' => $request->get('id_commercial', null)
+            'id_commercial' => $request->get('id_commercial', null),
+            'google_maps_api_key' => $this->getGoogleMapsApiKey(),
         ]);
     }
 
@@ -689,6 +691,26 @@ class AnnoncesController extends AbstractController
             return new JsonResponse(['status' => 401, 'color' => null,
                 'message' => 'Une erreur est survenue', 'data' => null]);
         }
+    }
+
+    private function getGoogleMapsApiKey(): string
+    {
+        $fromEnv = $_ENV['GOOGLE_MAPS_API_KEY'] ?? null;
+        if (is_string($fromEnv) && trim($fromEnv) !== '') {
+            return trim($fromEnv);
+        }
+
+        $fromServer = $_SERVER['GOOGLE_MAPS_API_KEY'] ?? null;
+        if (is_string($fromServer) && trim($fromServer) !== '') {
+            return trim($fromServer);
+        }
+
+        $fromGetEnv = getenv('GOOGLE_MAPS_API_KEY');
+        if (is_string($fromGetEnv) && trim($fromGetEnv) !== '') {
+            return trim($fromGetEnv);
+        }
+
+        return '';
     }
 
 }

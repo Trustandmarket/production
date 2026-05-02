@@ -149,7 +149,7 @@
                                     </select>
                                     <input type="text"
                                            value="{% if code_postal_ville != '' %}{{ code_postal_ville }}{% endif %}"
-                                           class="form-control" name="code_postal_ville"
+                                           class="form-control" name="code_postal_ville" id="code_postal_ville"
                                            placeholder="Code postal et/ou Ville">
                                     <div class="row">
                                         <div class="col-md-12">
@@ -247,6 +247,9 @@
 
 {% block javascripts %}
     {{ parent() }}
+    {% if google_maps_api_key is defined and google_maps_api_key|trim != '' %}
+        <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key|url_encode }}&libraries=places"></script>
+    {% endif %}
 
     <!-- jQuery plugin for datepicker -->
     <script src="{{ prerender(asset('assets/js/gijgo-js/gijgo.min.2.js')) }}"></script>
@@ -267,6 +270,76 @@
                     }
                 }
             );
+
+            function getAddressComponent(place, types, useShortName) {
+                if (!place || !Array.isArray(place.address_components)) {
+                    return '';
+                }
+
+                for (var i = 0; i < place.address_components.length; i += 1) {
+                    var component = place.address_components[i];
+                    var componentTypes = component.types || [];
+                    for (var j = 0; j < types.length; j += 1) {
+                        if (componentTypes.indexOf(types[j]) !== -1) {
+                            return useShortName ? (component.short_name || '') : (component.long_name || '');
+                        }
+                    }
+                }
+
+                return '';
+            }
+
+            function formatCitySearchValue(place) {
+                if (!place) {
+                    return '';
+                }
+
+                var city = getAddressComponent(place, ['locality', 'postal_town', 'administrative_area_level_3'], false);
+                var postcode = getAddressComponent(place, ['postal_code'], false);
+                var region = getAddressComponent(place, ['administrative_area_level_1'], false);
+                var parts = [];
+
+                if (postcode !== '') {
+                    parts.push(postcode);
+                }
+                if (city !== '') {
+                    parts.push(city);
+                } else if (place.name) {
+                    parts.push(String(place.name));
+                }
+                if (region !== '' && region !== city) {
+                    parts.push(region);
+                }
+
+                return parts.join(' ').trim();
+            }
+
+            function initializeCityAutocomplete(selector) {
+                var input = document.querySelector(selector);
+                if (!input) {
+                    return;
+                }
+                if (!window.google || !window.google.maps || !window.google.maps.places || typeof window.google.maps.places.Autocomplete !== 'function') {
+                    return;
+                }
+
+                input.setAttribute('autocomplete', 'off');
+                var autocomplete = new google.maps.places.Autocomplete(input, {
+                    types: ['(cities)'],
+                    fields: ['address_components', 'formatted_address', 'name'],
+                    componentRestrictions: {country: ['fr']}
+                });
+
+                autocomplete.addListener('place_changed', function () {
+                    var place = autocomplete.getPlace();
+                    var formattedValue = formatCitySearchValue(place);
+                    if (formattedValue !== '') {
+                        input.value = formattedValue;
+                    }
+                });
+            }
+
+            initializeCityAutocomplete('#code_postal_ville');
 
             //Hambuger menu icon
             $('.animated-button-icon').on('click', function () {
