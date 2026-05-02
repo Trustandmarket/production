@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS profile_ai_enrichment_jobs (
     profile_id BIGINT UNSIGNED NOT NULL,
     input_type VARCHAR(30) NOT NULL,
     input_value VARCHAR(500) NOT NULL,
+    input_region VARCHAR(120) DEFAULT NULL,
     status VARCHAR(30) NOT NULL DEFAULT 'pending',
     attempt_count INT UNSIGNED NOT NULL DEFAULT 0,
     last_error TEXT DEFAULT NULL,

@@ -148,7 +148,7 @@ class ProfileAiEnrichmentWorkerCommand extends Command
     {
         if ($targetJobId !== null && $targetJobId > 0) {
             $row = $conn->fetchAssociative(
-                'SELECT id, profile_id, input_type, input_value, prompt_version, attempt_count
+                'SELECT id, profile_id, input_type, input_value, input_region, prompt_version, attempt_count
                  FROM profile_ai_enrichment_jobs
                  WHERE id = :id AND status = :status
                  LIMIT 1',
@@ -162,7 +162,7 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         }
 
         $row = $conn->fetchAssociative(
-            'SELECT id, profile_id, input_type, input_value, prompt_version, attempt_count
+            'SELECT id, profile_id, input_type, input_value, input_region, prompt_version, attempt_count
              FROM profile_ai_enrichment_jobs
              WHERE status = :status
              ORDER BY created_at ASC, id ASC
@@ -254,16 +254,20 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         $profileId = (int) $job['profile_id'];
         $inputType = (string) $job['input_type'];
         $inputValue = trim((string) $job['input_value']);
+        $inputRegion = trim((string) ($job['input_region'] ?? ''));
+        if ($inputRegion === '') {
+            $inputRegion = null;
+        }
         if ($inputValue === '') {
             throw new \RuntimeException('Le job ne contient aucune valeur d entree.');
         }
 
-        $evidence = $this->collectLiveEvidence($inputType, $inputValue, $liveConfig);
+        $evidence = $this->collectLiveEvidence($inputType, $inputValue, $inputRegion, $liveConfig);
         if (empty($evidence['sources'])) {
             throw new \RuntimeException('Aucune source exploitable recuperee (Google/scraping).');
         }
 
-        $llmPayload = $this->generateSuggestionsFromLlm($jobId, $profileId, $inputType, $inputValue, $evidence, $liveConfig);
+        $llmPayload = $this->generateSuggestionsFromLlm($jobId, $profileId, $inputType, $inputValue, $inputRegion, $evidence, $liveConfig);
         $suggestions = $this->sanitizeSuggestions($llmPayload['suggestions'] ?? []);
 
         if (empty($suggestions)) {
@@ -324,13 +328,21 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         }
     }
 
-    private function collectLiveEvidence(string $inputType, string $inputValue, array $liveConfig): array
+    private function collectLiveEvidence(string $inputType, string $inputValue, ?string $inputRegion, array $liveConfig): array
     {
         $sources = [];
         $warnings = [];
 
         if ($inputType === 'studio_name') {
-            $candidate = $this->googleFindPlaceFromText($inputValue, $liveConfig);
+            $candidate = null;
+            $studioQueries = $this->buildStudioSearchQueries($inputValue, $inputRegion);
+            foreach ($studioQueries as $query) {
+                $candidate = $this->googleFindPlaceFromText($query, $liveConfig);
+                if ($candidate !== null) {
+                    $candidate['_query'] = $query;
+                    break;
+                }
+            }
             if ($candidate !== null) {
                 $sources[] = [
                     'source_id' => 'gp_find_1',
@@ -361,6 +373,8 @@ class ProfileAiEnrichmentWorkerCommand extends Command
                         }
                     }
                 }
+            } else {
+                $warnings[] = 'Google Places: aucun candidat trouve pour le nom de studio.';
             }
         } elseif ($inputType === 'website') {
             $website = $this->normalizeWebsiteUrl($inputValue);
@@ -529,12 +543,13 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         int $profileId,
         string $inputType,
         string $inputValue,
+        ?string $inputRegion,
         array $evidence,
         array $liveConfig
     ): array {
         $endpoint = rtrim((string) $liveConfig['openai_base_url'], '/') . '/chat/completions';
         $systemPrompt = $this->buildLiveSystemPrompt();
-        $userPrompt = $this->buildLiveUserPrompt($jobId, $profileId, $inputType, $inputValue, $evidence);
+        $userPrompt = $this->buildLiveUserPrompt($jobId, $profileId, $inputType, $inputValue, $inputRegion, $evidence);
 
         $body = json_encode([
             'model' => $liveConfig['openai_model'],
@@ -1099,6 +1114,7 @@ TXT;
         int $profileId,
         string $inputType,
         string $inputValue,
+        ?string $inputRegion,
         array $evidence
     ): string {
         $payload = [
@@ -1106,6 +1122,7 @@ TXT;
             'profile_id' => $profileId,
             'input_type' => $inputType,
             'input_value' => $inputValue,
+            'input_region' => $inputRegion,
             'allowed_fields' => self::ALLOWED_FIELDS,
             'narrative_requirements' => [
                 'experiences_text' => [
@@ -1201,6 +1218,38 @@ TXT;
         }
 
         return rtrim($normalized, '/');
+    }
+
+    private function buildStudioSearchQueries(string $studioName, ?string $inputRegion): array
+    {
+        $studioName = trim($studioName);
+        $region = trim((string) $inputRegion);
+        $queries = [];
+
+        if ($studioName === '') {
+            return $queries;
+        }
+
+        if ($region !== '') {
+            $queries[] = sprintf('%s, %s, France', $studioName, $region);
+            $queries[] = sprintf('%s, %s', $studioName, $region);
+        }
+
+        $queries[] = sprintf('%s, France', $studioName);
+        $queries[] = $studioName;
+
+        $normalized = [];
+        foreach ($queries as $query) {
+            $query = trim($query);
+            if ($query === '') {
+                continue;
+            }
+            if (!in_array($query, $normalized, true)) {
+                $normalized[] = $query;
+            }
+        }
+
+        return $normalized;
     }
 
     private function buildPlaceQueryFromWebsite(string $websiteUrl, array $scraping): string

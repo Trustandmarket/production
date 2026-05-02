@@ -1672,19 +1672,29 @@
                                 <label for="trustAgentInputValue" class="font-weight-bold">Valeur a rechercher</label>
                                 <input type="text" id="trustAgentInputValue" class="form-control" value="${escapeHtml(defaultInput)}" placeholder="Ex : Studio Rivoli">
                             </div>
+                            <div class="form-group text-left mt-3 mb-0" id="trustAgentRegionGroup">
+                                <label for="trustAgentInputRegion" class="font-weight-bold">Ville/Region (optionnel)</label>
+                                <input type="text" id="trustAgentInputRegion" class="form-control" placeholder="Ex : Ile-de-France">
+                            </div>
                         </div>
                     `,
                     didOpen: function () {
                         var input = document.getElementById('trustAgentInputValue');
+                        var regionInput = document.getElementById('trustAgentInputRegion');
+                        var regionGroup = document.getElementById('trustAgentRegionGroup');
                         var studioRadio = document.getElementById('trustAgentInputStudio');
                         var websiteRadio = document.getElementById('trustAgentInputWebsite');
 
                         function refreshPlaceholder() {
-                            if (!input || !studioRadio || !websiteRadio) {
+                            if (!input || !studioRadio || !websiteRadio || !regionGroup) {
                                 return;
                             }
 
                             input.placeholder = studioRadio.checked ? 'Ex : Studio Rivoli' : 'Ex : https://www.monsite.fr';
+                            regionGroup.style.display = studioRadio.checked ? 'block' : 'none';
+                            if (!studioRadio.checked && regionInput) {
+                                regionInput.value = '';
+                            }
                             if (websiteRadio.checked && input.value.trim() === defaultInput) {
                                 input.value = '';
                             }
@@ -1701,8 +1711,10 @@
                     preConfirm: function () {
                         var selected = document.querySelector('input[name="trustAgentInputType"]:checked');
                         var input = document.getElementById('trustAgentInputValue');
+                        var regionInput = document.getElementById('trustAgentInputRegion');
                         var inputType = selected ? selected.value : '';
                         var inputValue = input ? input.value.trim() : '';
+                        var inputRegion = regionInput ? regionInput.value.trim() : '';
 
                         if (!inputType) {
                             Swal.showValidationMessage('Choisissez une source.');
@@ -1719,9 +1731,15 @@
                             return false;
                         }
 
+                        if (inputType === 'studio_name' && inputRegion.length > 120) {
+                            Swal.showValidationMessage('Le champ ville/region est trop long (max 120 caracteres).');
+                            return false;
+                        }
+
                         return {
                             input_type: inputType,
-                            input_value: inputValue
+                            input_value: inputValue,
+                            input_region: inputType === 'studio_name' && inputRegion !== '' ? inputRegion : null
                         };
                     }
                 });

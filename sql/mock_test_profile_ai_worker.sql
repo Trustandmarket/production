@@ -13,11 +13,13 @@ How to use:
 SET @profile_id := 1; /* TODO: replace with a real profile/user id */
 SET @input_type := 'studio_name'; /* studio_name | website */
 SET @input_value := CONCAT('mock_test_', DATE_FORMAT(NOW(), '%Y%m%d_%H%i%s'));
+SET @input_region := 'Ile-de-France'; /* optionnel, seulement pour studio_name */
 
 INSERT INTO profile_ai_enrichment_jobs (
     profile_id,
     input_type,
     input_value,
+    input_region,
     status,
     attempt_count,
     last_error,
@@ -30,6 +32,7 @@ INSERT INTO profile_ai_enrichment_jobs (
     @profile_id,
     @input_type,
     @input_value,
+    @input_region,
     'pending',
     0,
     NULL,
@@ -46,13 +49,15 @@ SELECT
     @job_id AS created_job_id,
     @profile_id AS profile_id,
     @input_type AS input_type,
-    @input_value AS input_value;
+    @input_value AS input_value,
+    @input_region AS input_region;
 
 SELECT
     id,
     profile_id,
     input_type,
     input_value,
+    input_region,
     status,
     attempt_count,
     last_error,

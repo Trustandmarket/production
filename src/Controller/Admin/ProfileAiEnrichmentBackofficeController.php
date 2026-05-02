@@ -225,7 +225,7 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
 
         $offset = ($page - 1) * $perPage;
         $rows = $conn->fetchAllAssociative(
-            "SELECT j.id, j.profile_id, u.display_name AS profile_display_name, j.input_type, j.input_value, j.status, j.attempt_count, j.last_error,
+            "SELECT j.id, j.profile_id, u.display_name AS profile_display_name, j.input_type, j.input_value, j.input_region, j.status, j.attempt_count, j.last_error,
                     j.prompt_version, j.confidence_global, j.active_profile_id, j.created_at, j.updated_at
              FROM profile_ai_enrichment_jobs j
              LEFT JOIN wp_users u ON u.id = j.profile_id
@@ -253,6 +253,7 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
                 'retry_url' => $this->buildBackofficeJobRetryUrl($jobId),
                 'input_type' => (string) $row['input_type'],
                 'input_value' => (string) $row['input_value'],
+                'input_region' => $row['input_region'] !== null ? (string) $row['input_region'] : null,
                 'status' => $itemStatus,
                 'can_retry' => $this->canRetryStatus($itemStatus),
                 'attempt_count' => (int) $row['attempt_count'],
@@ -303,7 +304,7 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
 
         $conn = $this->em->getConnection();
         $job = $conn->fetchAssociative(
-            'SELECT j.id, j.profile_id, u.display_name AS profile_display_name, j.input_type, j.input_value, j.status, j.attempt_count, j.last_error, j.prompt_version,
+            'SELECT j.id, j.profile_id, u.display_name AS profile_display_name, j.input_type, j.input_value, j.input_region, j.status, j.attempt_count, j.last_error, j.prompt_version,
                     j.confidence_global, j.active_profile_id, j.created_at, j.updated_at
              FROM profile_ai_enrichment_jobs j
              LEFT JOIN wp_users u ON u.id = j.profile_id
@@ -375,6 +376,7 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
                 ],
                 'input_type' => (string) $job['input_type'],
                 'input_value' => (string) $job['input_value'],
+                'input_region' => $job['input_region'] !== null ? (string) $job['input_region'] : null,
                 'status' => (string) $job['status'],
                 'attempt_count' => (int) $job['attempt_count'],
                 'last_error' => $job['last_error'],
@@ -401,7 +403,7 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
 
         $conn = $this->em->getConnection();
         $sourceJob = $conn->fetchAssociative(
-            'SELECT id, profile_id, input_type, input_value, status, prompt_version
+            'SELECT id, profile_id, input_type, input_value, input_region, status, prompt_version
              FROM profile_ai_enrichment_jobs
              WHERE id = :id
              LIMIT 1',
@@ -462,6 +464,7 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
                 'profile_id' => $profileId,
                 'input_type' => (string) $sourceJob['input_type'],
                 'input_value' => (string) $sourceJob['input_value'],
+                'input_region' => $sourceJob['input_region'] !== null ? (string) $sourceJob['input_region'] : null,
                 'status' => self::JOB_STATUS_PENDING,
                 'attempt_count' => 0,
                 'last_error' => null,
@@ -496,6 +499,7 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
                 'profile_id' => $profileId,
                 'input_type' => (string) $sourceJob['input_type'],
                 'input_value' => (string) $sourceJob['input_value'],
+                'input_region' => $sourceJob['input_region'] !== null ? (string) $sourceJob['input_region'] : null,
                 'status' => self::JOB_STATUS_PENDING,
                 'prompt_version' => $sourceJob['prompt_version'],
                 'created_at' => $now,

@@ -296,6 +296,9 @@
                     const retryButton = canRetry
                         ? `<button type="button" class="tm-ai-btn tm-ai-btn-ghost tm-ai-btn-mini js-retry-job" data-job-id="${item.id}" data-retry-url="${safeRetryUrl}">Relancer</button>`
                         : '';
+                    const inputRegionLine = item.input_region
+                        ? `<div class="tm-ai-muted">region: ${truncate(item.input_region, 40)}</div>`
+                        : '';
 
                     const backofficeDetailUrl = item.backoffice_detail_url || detailUrl(item.id);
                     const inlineDetailUrl = new URL(backofficeDetailUrl, window.location.origin);
@@ -305,7 +308,7 @@
                     tr.innerHTML = `
                         <td>#${item.id}</td>
                         <td><a class="tm-ai-link" href="${profileHref}" target="_blank" rel="noopener">${profileLabel}</a></td>
-                        <td><div><strong>${item.input_type}</strong></div><div class="tm-ai-muted">${truncate(item.input_value, 60)}</div></td>
+                        <td><div><strong>${item.input_type}</strong></div><div class="tm-ai-muted">${truncate(item.input_value, 60)}</div>${inputRegionLine}</td>
                         <td><span class="${tagClass(item.status)}">${item.status}</span></td>
                         <td>${item.attempt_count ?? 0}</td>
                         <td>${item.confidence_global ?? '-'}</td>
@@ -348,6 +351,7 @@
                     ['Status', `<span class="${tagClass(job.status)}">${job.status || '-'}</span>`],
                     ['Profil', `<a class="tm-ai-link" href="${profileHref}" target="_blank" rel="noopener">${profileLabel}</a>`],
                     ['Input', `${job.input_type || '-'} | ${truncate(job.input_value || '-', 80)}`],
+                    ['Region', job.input_region || '-'],
                     ['Confidence', job.confidence_global ?? '-'],
                     ['Attempts', job.attempt_count ?? 0],
                     ['Prompt', job.prompt_version || '-'],

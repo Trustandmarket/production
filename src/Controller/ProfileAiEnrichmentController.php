@@ -52,7 +52,11 @@ class ProfileAiEnrichmentController extends AbstractController
 
         $inputType = trim((string) ($payload['input_type'] ?? ''));
         $inputValue = trim((string) ($payload['input_value'] ?? ''));
+        $inputRegion = trim((string) ($payload['input_region'] ?? ''));
         $promptVersion = trim((string) ($payload['prompt_version'] ?? ''));
+        if ($inputRegion === '') {
+            $inputRegion = null;
+        }
         if ($promptVersion === '') {
             $promptVersion = null;
         }
@@ -70,6 +74,14 @@ class ProfileAiEnrichmentController extends AbstractController
 
         if (mb_strlen($inputValue) > 500) {
             return new JsonResponse(['ok' => false, 'error' => 'input_value est trop long (max 500 caracteres).'], 400);
+        }
+
+        if ($inputType !== 'studio_name') {
+            $inputRegion = null;
+        }
+
+        if ($inputRegion !== null && mb_strlen($inputRegion) > 120) {
+            return new JsonResponse(['ok' => false, 'error' => 'input_region est trop long (max 120 caracteres).'], 400);
         }
 
         $profileId = (int) $user->getId();
@@ -99,6 +111,7 @@ class ProfileAiEnrichmentController extends AbstractController
             'profile_id' => $profileId,
             'input_type' => $inputType,
             'input_value' => $inputValue,
+            'input_region' => $inputRegion,
             'status' => self::JOB_STATUS_PENDING,
             'attempt_count' => 0,
             'last_error' => null,
@@ -118,6 +131,7 @@ class ProfileAiEnrichmentController extends AbstractController
                 'profile_id' => $profileId,
                 'input_type' => $inputType,
                 'input_value' => $inputValue,
+                'input_region' => $inputRegion,
                 'status' => self::JOB_STATUS_PENDING,
                 'prompt_version' => $promptVersion,
                 'created_at' => $now,
@@ -137,7 +151,7 @@ class ProfileAiEnrichmentController extends AbstractController
         $conn = $this->em->getConnection();
 
         $job = $conn->fetchAssociative(
-            'SELECT id, profile_id, input_type, input_value, status, attempt_count, last_error, prompt_version, confidence_global, created_at, updated_at
+            'SELECT id, profile_id, input_type, input_value, input_region, status, attempt_count, last_error, prompt_version, confidence_global, created_at, updated_at
              FROM profile_ai_enrichment_jobs
              WHERE id = :id AND profile_id = :profile_id
              LIMIT 1',
@@ -201,6 +215,7 @@ class ProfileAiEnrichmentController extends AbstractController
                 'profile_id' => (int) $job['profile_id'],
                 'input_type' => (string) $job['input_type'],
                 'input_value' => (string) $job['input_value'],
+                'input_region' => $job['input_region'] !== null ? (string) $job['input_region'] : null,
                 'status' => (string) $job['status'],
                 'attempt_count' => (int) $job['attempt_count'],
                 'last_error' => $job['last_error'],
@@ -226,7 +241,7 @@ class ProfileAiEnrichmentController extends AbstractController
         $conn = $this->em->getConnection();
 
         $job = $conn->fetchAssociative(
-            'SELECT id, profile_id, input_type, input_value, status, attempt_count, last_error, prompt_version, confidence_global, created_at, updated_at
+            'SELECT id, profile_id, input_type, input_value, input_region, status, attempt_count, last_error, prompt_version, confidence_global, created_at, updated_at
              FROM profile_ai_enrichment_jobs
              WHERE profile_id = :profile_id AND active_profile_id = :active_profile_id
              ORDER BY id DESC
@@ -251,6 +266,7 @@ class ProfileAiEnrichmentController extends AbstractController
                 'profile_id' => (int) $job['profile_id'],
                 'input_type' => (string) $job['input_type'],
                 'input_value' => (string) $job['input_value'],
+                'input_region' => $job['input_region'] !== null ? (string) $job['input_region'] : null,
                 'status' => (string) $job['status'],
                 'attempt_count' => (int) $job['attempt_count'],
                 'last_error' => $job['last_error'],
