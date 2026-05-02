@@ -482,28 +482,6 @@
             border-top: 1px solid #dddddd;
         }
 
-        .tm-ta-skill-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .tm-ta-skill-chip {
-            display: inline-flex;
-            align-items: center;
-            border: 1px solid #b7b9bc;
-            border-radius: 999px;
-            padding: 0.34rem 0.82rem;
-            background: #f8f8f7;
-            color: #2f2f2f;
-            font-size: 0.95rem;
-            line-height: 1.2;
-        }
-
-        .tm-ta-skill-chip.is-empty {
-            color: #6b7280;
-        }
-
         @media (max-width: 991.98px) {
             .tm-ta-grid {
                 grid-template-columns: 1fr;
@@ -2535,17 +2513,6 @@
                 };
             }
 
-            function buildSkillChipsHtml(editorValue) {
-                var items = parseCommaSeparatedList(editorValue);
-                if (!items.length) {
-                    return '<span class="tm-ta-skill-chip is-empty">À compléter manuellement</span>';
-                }
-
-                return items.map(function (item) {
-                    return '<span class="tm-ta-skill-chip">' + escapeHtml(item) + '</span>';
-                }).join('');
-            }
-
             function buildTrustAgentReviewModel(payload) {
                 var suggestions = Array.isArray(payload.suggestions) ? payload.suggestions : [];
                 var model = {
@@ -2603,10 +2570,7 @@
 
                     if (normalizedKey === 'skills') {
                         helper = '<div class="tm-ta-helper">Séparez les compétences avec des virgules.</div>';
-                        editor = `
-                            <div class="tm-ta-skill-chips">${buildSkillChipsHtml(entry.editorValue)}</div>
-                            <input type="text" id="${valueId}" class="form-control mt-2" value="${escapeHtml(entry.editorValue)}" placeholder="Enregistrement audio, Mixage">
-                        `;
+                        editor = '<input type="text" id="' + valueId + '" class="form-control" value="' + escapeHtml(entry.editorValue) + '" placeholder="Enregistrement audio, Mixage">';
                     } else if (entry.kind === 'array') {
                         helper = '<div class="tm-ta-helper">Format attendu : liste JSON.</div>';
                         editor = '<textarea id="' + valueId + '" class="form-control" rows="6">' + escapeHtml(entry.editorValue) + '</textarea>';
