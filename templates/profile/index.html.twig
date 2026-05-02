@@ -195,6 +195,79 @@
             margin-right: 0 !important;
         }
 
+        .tm-ta-entry-shell {
+            text-align: left;
+        }
+
+        .tm-ta-entry-kicker {
+            margin-bottom: 0.35rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #3f3f46;
+        }
+
+        .tm-ta-entry-heading {
+            margin: 0 0 0.45rem 0;
+            font-size: 2.05rem;
+            line-height: 1.15;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .tm-ta-entry-subtitle {
+            margin: 0 0 1.35rem 0;
+            max-width: 620px;
+            color: #3f3f46;
+            font-size: 1.02rem;
+            line-height: 1.32;
+        }
+
+        .tm-ta-entry-question {
+            margin-bottom: 0.75rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #343434;
+        }
+
+        .tm-ta-entry-source-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 1.15rem;
+        }
+
+        .tm-ta-source-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #bfc0c2;
+            border-radius: 12px;
+            padding: 0.78rem 0.9rem;
+            cursor: pointer;
+            background: #fff;
+            color: #222;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+
+        .tm-ta-source-card input[type="radio"] {
+            margin: 0;
+            transform: translateY(1px);
+            accent-color: #1c7f96;
+        }
+
+        .tm-ta-source-card.is-selected {
+            border-color: #2c2c2c;
+            box-shadow: inset 0 0 0 1px #2c2c2c;
+        }
+
+        .tm-ta-source-card span {
+            font-size: 1.08rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
         .swal2-actions.tm-ta-entry-actions {
             gap: 14px;
         }
@@ -206,6 +279,7 @@
             padding: 0.65rem 1rem;
             color: #ffffff;
             font-weight: 600;
+            min-width: 180px;
         }
 
         .swal2-actions .tm-ta-entry-confirm-btn {
@@ -223,6 +297,21 @@
 
         .pac-container {
             z-index: 20000 !important;
+        }
+
+        @media (max-width: 767.98px) {
+            .tm-ta-entry-heading {
+                font-size: 1.7rem;
+            }
+
+            .tm-ta-entry-source-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .swal2-actions .tm-ta-entry-confirm-btn,
+            .swal2-actions .tm-ta-entry-cancel-btn {
+                min-width: 0;
+            }
         }
 
         .tm-ta-grid {
@@ -1695,51 +1784,57 @@
                 var defaultInput = ($('#nom_commercial').val() || trustAgentDefaultInput || '').trim();
 
                 return Swal.fire({
-                    title: 'Trouver mes informations automatiquement avec TrustAgent',
-                    width: 720,
+                    title: '',
+                    width: 760,
                     focusConfirm: false,
                     showCancelButton: true,
                     confirmButtonText: 'Trouver mes informations',
                     cancelButtonText: 'Annuler',
+                    reverseButtons: true,
                     buttonsStyling: false,
                     customClass: {
-                        title: 'tm-ta-entry-title-left',
                         actions: 'tm-ta-entry-actions',
                         confirmButton: 'tm-ta-entry-confirm-btn',
                         cancelButton: 'tm-ta-entry-cancel-btn'
                     },
                     html: `
-                        <div class="text-left">
-                            <p class="tm-ta-entry-note">
-                                Renseignez soit le nom de votre studio, soit votre site web.
+                        <div class="tm-ta-entry-shell">
+                            <div class="tm-ta-entry-kicker">TRUSTAGENT</div>
+                            <h3 class="tm-ta-entry-heading">Completer mon profil automatiquement</h3>
+                            <p class="tm-ta-entry-subtitle">
+                                Renseignez le nom de votre studio ou votre site web, nous recuperons le reste.
                             </p>
-                            <div class="form-group text-left">
-                                <label class="d-block mb-2 font-weight-bold">Source a analyser</label>
-                                <div class="custom-control custom-radio mb-2">
-                                    <input class="custom-control-input" type="radio" name="trustAgentInputType" id="trustAgentInputStudio" value="studio_name" checked>
-                                    <label class="custom-control-label" for="trustAgentInputStudio">Nom du studio</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input class="custom-control-input" type="radio" name="trustAgentInputType" id="trustAgentInputWebsite" value="website">
-                                    <label class="custom-control-label" for="trustAgentInputWebsite">Site web</label>
-                                </div>
+
+                            <div class="tm-ta-entry-question">Comment souhaitez-vous etre trouve ?</div>
+                            <div class="tm-ta-entry-source-grid">
+                                <label class="tm-ta-source-card is-selected" id="trustAgentSourceCardStudio" for="trustAgentInputStudio">
+                                    <input type="radio" name="trustAgentInputType" id="trustAgentInputStudio" value="studio_name" checked>
+                                    <span>Nom du studio</span>
+                                </label>
+                                <label class="tm-ta-source-card" id="trustAgentSourceCardWebsite" for="trustAgentInputWebsite">
+                                    <input type="radio" name="trustAgentInputType" id="trustAgentInputWebsite" value="website">
+                                    <span>Site web</span>
+                                </label>
                             </div>
                             <div class="form-group text-left mb-0">
-                                <label for="trustAgentInputValue" class="font-weight-bold">Valeur a rechercher</label>
-                                <input type="text" id="trustAgentInputValue" class="form-control" value="${escapeHtml(defaultInput)}" placeholder="Ex : Studio Rivoli">
+                                <label for="trustAgentInputValue" id="trustAgentInputValueLabel" class="font-weight-bold">Nom de votre studio</label>
+                                <input type="text" id="trustAgentInputValue" class="form-control" value="${escapeHtml(defaultInput)}" placeholder="Ex : Studio 110">
                             </div>
                             <div class="form-group text-left mt-3 mb-0" id="trustAgentRegionGroup">
-                                <label for="trustAgentInputRegion" class="font-weight-bold">Ville/Region</label>
-                                <input type="text" id="trustAgentInputRegion" class="form-control" placeholder="Ex : Ile-de-France">
+                                <label for="trustAgentInputRegion" class="font-weight-bold">Ville / Region</label>
+                                <input type="text" id="trustAgentInputRegion" class="form-control" placeholder="Paris, Lyon, Marseille...">
                             </div>
                         </div>
                     `,
                     didOpen: function () {
                         var input = document.getElementById('trustAgentInputValue');
+                        var inputLabel = document.getElementById('trustAgentInputValueLabel');
                         var regionInput = document.getElementById('trustAgentInputRegion');
                         var regionGroup = document.getElementById('trustAgentRegionGroup');
                         var studioRadio = document.getElementById('trustAgentInputStudio');
                         var websiteRadio = document.getElementById('trustAgentInputWebsite');
+                        var sourceCardStudio = document.getElementById('trustAgentSourceCardStudio');
+                        var sourceCardWebsite = document.getElementById('trustAgentSourceCardWebsite');
                         var confirmButton = Swal.getConfirmButton();
 
                         function getAddressComponent(place, acceptedTypes, useShortName) {
@@ -1862,11 +1957,16 @@
                         }
 
                         function refreshPlaceholder() {
-                            if (!input || !studioRadio || !websiteRadio || !regionGroup) {
+                            if (!input || !studioRadio || !websiteRadio || !regionGroup || !sourceCardStudio || !sourceCardWebsite) {
                                 return;
                             }
 
-                            input.placeholder = studioRadio.checked ? 'Ex : Studio Rivoli' : 'Ex : https://www.monsite.fr';
+                            sourceCardStudio.classList.toggle('is-selected', studioRadio.checked);
+                            sourceCardWebsite.classList.toggle('is-selected', websiteRadio.checked);
+                            if (inputLabel) {
+                                inputLabel.textContent = studioRadio.checked ? 'Nom de votre studio' : 'Adresse de votre site web';
+                            }
+                            input.placeholder = studioRadio.checked ? 'Ex : Studio 110' : 'Ex : https://www.monsite.fr';
                             regionGroup.style.display = studioRadio.checked ? 'block' : 'none';
                             if (!studioRadio.checked && regionInput) {
                                 regionInput.value = '';
