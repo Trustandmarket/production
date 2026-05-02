@@ -252,9 +252,31 @@
         }
 
         .tm-ta-source-card input[type="radio"] {
+            -webkit-appearance: none;
+            appearance: none;
             margin: 0;
+            width: 18px;
+            height: 18px;
+            border: 1.8px solid #ff7e10;
+            border-radius: 50%;
+            background: #fff;
+            display: inline-grid;
+            place-content: center;
             transform: translateY(1px);
-            accent-color: #1c7f96;
+        }
+
+        .tm-ta-source-card input[type="radio"]::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff7e10;
+            transform: scale(0);
+            transition: transform .12s ease-in-out;
+        }
+
+        .tm-ta-source-card input[type="radio"]:checked::before {
+            transform: scale(1);
         }
 
         .tm-ta-source-card.is-selected {
