@@ -334,6 +334,27 @@
             cursor: not-allowed;
         }
 
+        .swal2-actions.tm-ta-review-actions {
+            gap: 12px;
+        }
+
+        .swal2-actions .tm-ta-review-confirm-btn,
+        .swal2-actions .tm-ta-review-cancel-btn {
+            border: 0;
+            border-radius: 10px;
+            padding: 0.7rem 1.05rem;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .swal2-actions .tm-ta-review-confirm-btn {
+            background: #ff7e10;
+        }
+
+        .swal2-actions .tm-ta-review-cancel-btn {
+            background: #000000;
+        }
+
         .pac-container {
             z-index: 20000 !important;
         }
@@ -2482,6 +2503,12 @@
                     showCancelButton: true,
                     confirmButtonText: 'Appliquer les suggestions',
                     cancelButtonText: 'Fermer',
+                    buttonsStyling: false,
+                    customClass: {
+                        actions: 'tm-ta-review-actions',
+                        confirmButton: 'tm-ta-review-confirm-btn',
+                        cancelButton: 'tm-ta-review-cancel-btn'
+                    },
                     focusConfirm: false,
                     allowOutsideClick: function () {
                         return !Swal.isLoading();
