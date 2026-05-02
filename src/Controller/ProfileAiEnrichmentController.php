@@ -643,7 +643,12 @@ class ProfileAiEnrichmentController extends AbstractController
                     $warnings[] = 'Valeur vide, non appliquee.';
                     break;
                 }
-                $this->serviceManager->updateUserMeta($profileId, 'activite_principale', $activity);
+                $activityTaxonomyId = $this->resolveMainActivityTaxonomyId($activity);
+                if ($activityTaxonomyId === null) {
+                    $warnings[] = sprintf('Activite principale "%s" non reconnue dans le referentiel.', $activity);
+                    break;
+                }
+                $this->serviceManager->updateUserMeta($profileId, 'activite_principale', (string) $activityTaxonomyId);
                 $metaKeys = ['activite_principale'];
                 break;
 
@@ -750,6 +755,160 @@ class ProfileAiEnrichmentController extends AbstractController
         }
 
         return '';
+    }
+
+    private function resolveMainActivityTaxonomyId(string $activity): ?int
+    {
+        $candidate = trim($activity);
+        if ($candidate === '') {
+            return null;
+        }
+
+        $activities = $this->serviceManager->postCategorie1('product_activity');
+        if (!is_array($activities) || empty($activities)) {
+            return null;
+        }
+
+        if (ctype_digit($candidate)) {
+            $numericCandidate = (int) $candidate;
+            if ($numericCandidate > 0) {
+                foreach ($activities as $entry) {
+                    $taxonomyId = $this->toPositiveInt($this->extractActivityCatalogValue($entry, 'termTaxonomyId'));
+                    $termId = $this->toPositiveInt($this->extractActivityCatalogValue($entry, 'termId'));
+                    if ($taxonomyId !== null && ($numericCandidate === $taxonomyId || $numericCandidate === $termId)) {
+                        return $taxonomyId;
+                    }
+                }
+            }
+        }
+
+        $normalizedCandidate = $this->normalizeMainActivityText($candidate);
+        if ($normalizedCandidate === '') {
+            return null;
+        }
+
+        $bestTaxonomyId = null;
+        $bestScore = 0.0;
+
+        foreach ($activities as $entry) {
+            $taxonomyId = $this->toPositiveInt($this->extractActivityCatalogValue($entry, 'termTaxonomyId'));
+            if ($taxonomyId === null) {
+                continue;
+            }
+
+            $name = trim((string) $this->extractActivityCatalogValue($entry, 'name'));
+            if ($name === '') {
+                continue;
+            }
+
+            $normalizedName = $this->normalizeMainActivityText($name);
+            if ($normalizedName === '') {
+                continue;
+            }
+
+            if ($normalizedName === $normalizedCandidate) {
+                return $taxonomyId;
+            }
+
+            $score = $this->computeMainActivityMatchScore($normalizedCandidate, $normalizedName);
+            if ($score > $bestScore) {
+                $bestScore = $score;
+                $bestTaxonomyId = $taxonomyId;
+            }
+        }
+
+        if ($bestTaxonomyId !== null && $bestScore >= 0.66) {
+            return $bestTaxonomyId;
+        }
+
+        return null;
+    }
+
+    private function extractActivityCatalogValue(mixed $entry, string $key): mixed
+    {
+        if (is_array($entry)) {
+            return $entry[$key] ?? null;
+        }
+
+        if (is_object($entry) && isset($entry->{$key})) {
+            return $entry->{$key};
+        }
+
+        return null;
+    }
+
+    private function toPositiveInt(mixed $value): ?int
+    {
+        if (is_int($value)) {
+            return $value > 0 ? $value : null;
+        }
+
+        if (is_numeric($value)) {
+            $number = (int) $value;
+            return $number > 0 ? $number : null;
+        }
+
+        return null;
+    }
+
+    private function normalizeMainActivityText(string $value): string
+    {
+        $normalized = trim($value);
+        if ($normalized === '') {
+            return '';
+        }
+
+        if (function_exists('mb_strtolower')) {
+            $normalized = mb_strtolower($normalized, 'UTF-8');
+        } else {
+            $normalized = strtolower($normalized);
+        }
+
+        $transliterated = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $normalized);
+        if (is_string($transliterated) && $transliterated !== '') {
+            $normalized = $transliterated;
+        }
+
+        $normalized = preg_replace('/[^a-z0-9]+/i', ' ', $normalized);
+        if (!is_string($normalized)) {
+            return '';
+        }
+
+        $normalized = preg_replace('/\s+/', ' ', trim($normalized));
+        if (!is_string($normalized)) {
+            return '';
+        }
+
+        return $normalized;
+    }
+
+    private function computeMainActivityMatchScore(string $needle, string $candidate): float
+    {
+        if ($needle === '' || $candidate === '') {
+            return 0.0;
+        }
+
+        if (str_contains($candidate, $needle) || str_contains($needle, $candidate)) {
+            $short = min(strlen($needle), strlen($candidate));
+            $long = max(strlen($needle), strlen($candidate));
+            if ($long > 0) {
+                $ratio = $short / $long;
+                return 0.72 + (0.28 * $ratio);
+            }
+        }
+
+        $percent = 0.0;
+        similar_text($needle, $candidate, $percent);
+        $score = $percent / 100;
+
+        if ($score < 0.0) {
+            return 0.0;
+        }
+        if ($score > 1.0) {
+            return 1.0;
+        }
+
+        return $score;
     }
 
     private function applyAddressSuggestion(int $profileId, mixed $value): array
