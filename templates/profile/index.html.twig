@@ -393,6 +393,16 @@
             text-align: left;
         }
 
+        .tm-ta-review-header-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            background: #ffffff;
+            padding-bottom: 10px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #ececec;
+        }
+
         .tm-ta-review-title {
             margin: 0;
             color: #1f2937;
@@ -2609,8 +2619,10 @@
 
                 return `
                     <div class="tm-ta-review-shell">
-                        <h3 class="tm-ta-review-title">Vérifiez et confirmez vos informations</h3>
-                        <p class="tm-ta-review-subtitle">Complété par TrustAgent — décochez les champs que vous souhaitez ignorer.</p>
+                        <div class="tm-ta-review-header-sticky">
+                            <h3 class="tm-ta-review-title">Vérifiez et confirmez vos informations</h3>
+                            <p class="tm-ta-review-subtitle">Complété par TrustAgent — décochez les champs que vous souhaitez ignorer.</p>
+                        </div>
                         <div class="tm-ta-grid">${cards}</div>
                         <div class="tm-ta-review-divider"></div>
                     </div>
