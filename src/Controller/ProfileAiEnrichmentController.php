@@ -28,6 +28,7 @@ class ProfileAiEnrichmentController extends AbstractController
     private const SUGGESTION_STATUS_ACCEPTED = 'accepted';
     private const SUGGESTION_STATUS_EDITED = 'edited';
     private const SUGGESTION_STATUS_REJECTED = 'rejected';
+    private const EXCLUDED_SUGGESTION_FIELDS = ['photos', 'videos', 'avatar_url'];
 
     public function __construct(
         private readonly EntityManagerInterface $em,
@@ -170,6 +171,11 @@ class ProfileAiEnrichmentController extends AbstractController
 
         $payloadSuggestions = [];
         foreach ($suggestions as $suggestion) {
+            $fieldName = (string) ($suggestion['field_name'] ?? '');
+            if ($this->isExcludedSuggestionField($fieldName)) {
+                continue;
+            }
+
             $status = (string) $suggestion['status'];
             if (array_key_exists($status, $summary)) {
                 $summary[$status]++;
@@ -177,7 +183,7 @@ class ProfileAiEnrichmentController extends AbstractController
 
             $payloadSuggestions[] = [
                 'id' => (int) $suggestion['id'],
-                'field_name' => (string) $suggestion['field_name'],
+                'field_name' => $fieldName,
                 'suggested_value' => $this->decodeStoredValue($suggestion['suggested_value'] ?? null),
                 'confidence_score' => $suggestion['confidence_score'] !== null ? (float) $suggestion['confidence_score'] : null,
                 'source_type' => $suggestion['source_type'],
@@ -418,7 +424,10 @@ class ProfileAiEnrichmentController extends AbstractController
         $suggestions = $conn->fetchAllAssociative(
             'SELECT id, field_name, suggested_value, final_value, status
              FROM profile_ai_suggestions
-             WHERE enrichment_job_id = :job_id AND profile_id = :profile_id AND status IN (:accepted, :edited)
+             WHERE enrichment_job_id = :job_id
+               AND profile_id = :profile_id
+               AND status IN (:accepted, :edited)
+               AND field_name NOT IN (\'photos\', \'videos\', \'avatar_url\')
              ORDER BY id ASC',
             [
                 'job_id' => $id,
@@ -691,66 +700,6 @@ class ProfileAiEnrichmentController extends AbstractController
                 $metaKeys = ['reference'];
                 break;
 
-            case 'photos':
-                $photos = $this->normalizeList($value);
-                if (empty($photos)) {
-                    $warnings[] = 'Aucune photo exploitable.';
-                    break;
-                }
-
-                $allNumeric = true;
-                foreach ($photos as $photo) {
-                    if (!ctype_digit($photo)) {
-                        $allNumeric = false;
-                        break;
-                    }
-                }
-
-                if ($allNumeric) {
-                    $this->serviceManager->updateUserMeta($profileId, 'portfolio', implode(',', $photos));
-                    $metaKeys = ['portfolio'];
-                } else {
-                    $this->serviceManager->updateUserMeta(
-                        $profileId,
-                        'ai_portfolio_urls',
-                        json_encode($photos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
-                    );
-                    $metaKeys = ['ai_portfolio_urls'];
-                    $warnings[] = 'Photos stockees dans ai_portfolio_urls (URLs) en attendant import media.';
-                }
-                break;
-
-            case 'videos':
-                $videos = $this->normalizeList($value);
-                if (empty($videos)) {
-                    $warnings[] = 'Aucune video exploitable.';
-                    break;
-                }
-                $this->serviceManager->updateUserMeta($profileId, 'video', serialize($videos));
-                $metaKeys = ['video'];
-                break;
-
-            case 'avatar_url':
-                $avatarUrl = $this->toSingleString($value);
-                if ($avatarUrl === '') {
-                    $warnings[] = 'Valeur vide, non appliquee.';
-                    break;
-                }
-                $avatars = [];
-                $avatarsMeta = $this->serviceManager->readUserMeta($profileId, 'basic_user_avatar');
-                if ($avatarsMeta && $avatarsMeta->getMetaValue()) {
-                    $decoded = @unserialize($avatarsMeta->getMetaValue(), ['allowed_classes' => false]);
-                    if (is_array($decoded)) {
-                        $avatars = $decoded;
-                    }
-                }
-                if (!in_array($avatarUrl, $avatars, true)) {
-                    $avatars[] = $avatarUrl;
-                }
-                $this->serviceManager->updateUserMeta($profileId, 'basic_user_avatar', serialize($avatars));
-                $metaKeys = ['basic_user_avatar'];
-                break;
-
             default:
                 $warnings[] = 'Champ non mappe en MVP, aucune mise a jour appliquee.';
                 break;
@@ -914,5 +863,10 @@ class ProfileAiEnrichmentController extends AbstractController
         }
 
         return array_keys($array) !== range(0, count($array) - 1);
+    }
+
+    private function isExcludedSuggestionField(string $fieldName): bool
+    {
+        return in_array(trim($fieldName), self::EXCLUDED_SUGGESTION_FIELDS, true);
     }
 }

@@ -30,9 +30,6 @@ class ProfileAiEnrichmentWorkerCommand extends Command
     private const FIELD_ADDRESSES = 'addresses';
     private const FIELD_EXPERIENCES_TEXT = 'experiences_text';
     private const FIELD_PROJECT_REFERENCES_TEXT = 'project_references_text';
-    private const FIELD_PHOTOS = 'photos';
-    private const FIELD_VIDEOS = 'videos';
-    private const FIELD_AVATAR_URL = 'avatar_url';
     private const FIELD_SIRET = 'siret';
     private const FIELD_TVA_NUMBER = 'tva_number';
     private const LIVE_PROMPT_VERSION = 'live-v1';
@@ -45,9 +42,6 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         self::FIELD_ADDRESSES,
         self::FIELD_EXPERIENCES_TEXT,
         self::FIELD_PROJECT_REFERENCES_TEXT,
-        self::FIELD_PHOTOS,
-        self::FIELD_VIDEOS,
-        self::FIELD_AVATAR_URL,
         self::FIELD_SIRET,
         self::FIELD_TVA_NUMBER,
     ];
@@ -507,8 +501,6 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         $og = $this->extractOpenGraph($html);
         $phones = $this->extractPhoneNumbers($html);
         $socialLinks = $this->extractSocialLinks($html);
-        $imageCandidates = $this->extractImageCandidates($html, $url);
-        $videoCandidates = $this->extractVideoCandidates($html);
         $addressHint = $this->extractAddressHint($html);
         $siret = $this->extractSiretFromHtml($html);
         $tvaNumber = $this->extractTvaNumberFromHtml($html);
@@ -518,12 +510,9 @@ class ProfileAiEnrichmentWorkerCommand extends Command
             'title' => $title,
             'og_title' => $og['og:title'] ?? null,
             'og_description' => $og['og:description'] ?? null,
-            'og_image' => $og['og:image'] ?? null,
             'og_url' => $og['og:url'] ?? null,
             'phones_found' => $phones,
             'social_links' => $socialLinks,
-            'image_candidates' => $imageCandidates,
-            'video_candidates' => $videoCandidates,
             'address_hint' => $addressHint,
             'siret' => $siret,
             'tva_number' => $tvaNumber,
@@ -651,7 +640,6 @@ class ProfileAiEnrichmentWorkerCommand extends Command
             case self::FIELD_BUSINESS_NAME:
             case self::FIELD_EXPERIENCES_TEXT:
             case self::FIELD_PROJECT_REFERENCES_TEXT:
-            case self::FIELD_AVATAR_URL:
                 $text = trim((string) $value);
                 return $text !== '' ? $text : null;
 
@@ -662,8 +650,6 @@ class ProfileAiEnrichmentWorkerCommand extends Command
                 return $this->normalizeTvaNumberValue($value);
 
             case self::FIELD_SKILLS:
-            case self::FIELD_PHOTOS:
-            case self::FIELD_VIDEOS:
                 $items = $this->normalizeStringList($value);
                 return !empty($items) ? $items : null;
 
@@ -748,26 +734,6 @@ class ProfileAiEnrichmentWorkerCommand extends Command
             ];
         }
 
-        $photos = $this->normalizeStringList($merged['image_candidates'] ?? []);
-        if (!empty($photos)) {
-            $suggestions[] = [
-                'field_name' => self::FIELD_PHOTOS,
-                'suggested_value' => array_slice($photos, 0, 5),
-                'confidence_score' => 0.65,
-                'source_type' => 'website_scraping',
-            ];
-        }
-
-        $videos = $this->normalizeStringList($merged['video_candidates'] ?? []);
-        if (!empty($videos)) {
-            $suggestions[] = [
-                'field_name' => self::FIELD_VIDEOS,
-                'suggested_value' => array_slice($videos, 0, 5),
-                'confidence_score' => 0.65,
-                'source_type' => 'website_scraping',
-            ];
-        }
-
         return $suggestions;
     }
 
@@ -847,10 +813,10 @@ Tu es un agent d enrichissement de profil professionnel.
 Tu dois repondre UNIQUEMENT en JSON valide.
 Regles:
 - N invente aucune information qui n est pas presente dans les preuves.
-- Propose seulement des champs parmi: phone, main_activity, business_name, skills, addresses, experiences_text, project_references_text, photos, videos, avatar_url, siret, tva_number.
+- Propose seulement des champs parmi: phone, main_activity, business_name, skills, addresses, experiences_text, project_references_text, siret, tva_number.
 - Pour chaque suggestion, fournis: field_name, suggested_value, confidence_score (0..1), source_type.
 - Si une valeur est incertaine, baisse confidence_score.
-- Utilise un tableau JSON pour skills/photos/videos.
+- Utilise un tableau JSON pour skills.
 - Tu peux renvoyer une adresse soit en string, soit en objet {address, city, postal_code, country, state}.
 - Format final attendu:
 {
@@ -1223,36 +1189,6 @@ TXT;
         return array_values(array_unique($links));
     }
 
-    private function extractImageCandidates(string $html, string $baseUrl): array
-    {
-        $urls = [];
-        if (preg_match_all('/<img[^>]+src\s*=\s*["\']([^"\']+)["\']/i', $html, $matches)) {
-            foreach ($matches[1] as $src) {
-                $resolved = $this->resolveUrl($baseUrl, (string) $src);
-                if ($resolved !== '') {
-                    $urls[] = $resolved;
-                }
-            }
-        }
-
-        return array_values(array_unique(array_slice($urls, 0, 10)));
-    }
-
-    private function extractVideoCandidates(string $html): array
-    {
-        $urls = [];
-        if (preg_match_all('/https?:\/\/(?:www\.)?(?:youtube\.com|youtu\.be|vimeo\.com)\/[^\s"\']+/i', $html, $matches)) {
-            foreach ($matches[0] as $url) {
-                $url = trim((string) $url);
-                if ($url !== '') {
-                    $urls[] = $url;
-                }
-            }
-        }
-
-        return array_values(array_unique($urls));
-    }
-
     private function extractAddressHint(string $html): string
     {
         $text = strip_tags($html);
@@ -1297,39 +1233,6 @@ TXT;
         }
 
         return $this->normalizeTvaNumberValue((string) ($matches[0] ?? ''));
-    }
-
-    private function resolveUrl(string $baseUrl, string $candidate): string
-    {
-        $candidate = trim($candidate);
-        if ($candidate === '') {
-            return '';
-        }
-
-        if (preg_match('~^https?://~i', $candidate)) {
-            return $candidate;
-        }
-
-        if (str_starts_with($candidate, '//')) {
-            $scheme = parse_url($baseUrl, PHP_URL_SCHEME);
-            if (!is_string($scheme) || $scheme === '') {
-                $scheme = 'https';
-            }
-            return $scheme . ':' . $candidate;
-        }
-
-        $base = parse_url($baseUrl);
-        if (!is_array($base) || empty($base['host'])) {
-            return '';
-        }
-        $scheme = isset($base['scheme']) ? (string) $base['scheme'] : 'https';
-        $host = (string) $base['host'];
-
-        if (str_starts_with($candidate, '/')) {
-            return $scheme . '://' . $host . $candidate;
-        }
-
-        return rtrim($scheme . '://' . $host, '/') . '/' . ltrim($candidate, '/');
     }
 
     private function httpRequest(string $method, string $url, array $headers, ?string $body, int $timeout): array
@@ -1486,20 +1389,6 @@ TXT;
             'state' => $city,
         ];
 
-        $domainSlug = $this->slugify($businessName);
-        $website = sprintf('https://%s.example.com', $domainSlug);
-
-        $photoUrls = [
-            $website . '/media/portfolio-1.jpg',
-            $website . '/media/portfolio-2.jpg',
-            $website . '/media/portfolio-3.jpg',
-        ];
-
-        $videoUrls = [
-            'https://www.youtube.com/watch?v=' . $this->randomYouTubeId($seed + 101),
-            'https://www.youtube.com/watch?v=' . $this->randomYouTubeId($seed + 202),
-        ];
-
         $phone = '+33' . str_pad((string) (($seed % 900000000) + 100000000), 9, '0', STR_PAD_LEFT);
         $siren = str_pad((string) (($seed % 900000000) + 100000000), 9, '0', STR_PAD_LEFT);
         $nic = str_pad((string) (($seed % 99999) + 1), 5, '0', STR_PAD_LEFT);
@@ -1555,24 +1444,6 @@ TXT;
                 ),
                 'confidence_score' => 0.71,
                 'source_type' => 'llm',
-            ],
-            [
-                'field_name' => self::FIELD_PHOTOS,
-                'suggested_value' => $photoUrls,
-                'confidence_score' => 0.83,
-                'source_type' => 'website_scraping',
-            ],
-            [
-                'field_name' => self::FIELD_VIDEOS,
-                'suggested_value' => $videoUrls,
-                'confidence_score' => 0.86,
-                'source_type' => 'website_scraping',
-            ],
-            [
-                'field_name' => self::FIELD_AVATAR_URL,
-                'suggested_value' => $website . '/media/avatar.jpg',
-                'confidence_score' => 0.80,
-                'source_type' => 'website_scraping',
             ],
             [
                 'field_name' => self::FIELD_SIRET,
@@ -1641,32 +1512,6 @@ TXT;
         }
 
         return array_values(array_unique($result));
-    }
-
-    private function randomYouTubeId(int $seed): string
-    {
-        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';
-        $id = '';
-        $localSeed = max(1, $seed);
-
-        for ($i = 0; $i < 11; $i++) {
-            $localSeed = (int) (($localSeed * 1103515245 + 12345) & 0x7fffffff);
-            $id .= $chars[$localSeed % strlen($chars)];
-        }
-
-        return $id;
-    }
-
-    private function slugify(string $value): string
-    {
-        $value = strtolower(trim($value));
-        $value = preg_replace('/[^a-z0-9]+/i', '-', $value);
-        $value = trim((string) $value, '-');
-        if ($value === '') {
-            return 'studio-demo';
-        }
-
-        return $value;
     }
 
     private function encodeSuggestionValue(mixed $value): string

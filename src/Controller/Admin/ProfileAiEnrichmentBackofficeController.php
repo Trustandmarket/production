@@ -38,6 +38,8 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
         'website',
     ];
 
+    private const EXCLUDED_SUGGESTION_FIELDS = ['photos', 'videos', 'avatar_url'];
+
     private const SORT_MAP = [
         'id' => 'j.id',
         'profile_id' => 'j.profile_id',
@@ -334,6 +336,11 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
 
         $suggestions = [];
         foreach ($suggestionsRows as $row) {
+            $fieldName = (string) ($row['field_name'] ?? '');
+            if ($this->isExcludedSuggestionField($fieldName)) {
+                continue;
+            }
+
             $status = (string) ($row['status'] ?? '');
             if (array_key_exists($status, $suggestionsSummary)) {
                 $suggestionsSummary[$status]++;
@@ -342,7 +349,7 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
             $suggestions[] = [
                 'id' => (int) $row['id'],
                 'profile_id' => (int) $row['profile_id'],
-                'field_name' => (string) $row['field_name'],
+                'field_name' => $fieldName,
                 'suggested_value' => $this->decodeStoredValue($row['suggested_value'] ?? null),
                 'confidence_score' => $row['confidence_score'] !== null ? (float) $row['confidence_score'] : null,
                 'source_type' => $row['source_type'],
@@ -871,5 +878,10 @@ class ProfileAiEnrichmentBackofficeController extends AbstractController
         }
 
         return $value;
+    }
+
+    private function isExcludedSuggestionField(string $fieldName): bool
+    {
+        return in_array(trim($fieldName), self::EXCLUDED_SUGGESTION_FIELDS, true);
     }
 }
