@@ -1824,7 +1824,7 @@
                     }
 
                     setTrustAgentButtonsState('searching');
-                    setTrustAgentStatus('Recherche en cours (job #' + jobId + ')', 'info');
+                    setTrustAgentStatus('Recherche de vos informations en cours.', 'info');
                     await sleep(2500);
                 }
 
@@ -1857,7 +1857,7 @@
 
                     if (status === 'pending' || status === 'processing') {
                         setTrustAgentButtonsState('searching');
-                        setTrustAgentStatus('Recherche en cours (job #' + jobId + ')', 'info');
+                        setTrustAgentStatus('Recherche de vos informations en cours.', 'info');
                         trustAgentPollToken += 1;
                         await monitorTrustAgentJob(jobId, trustAgentPollToken);
                         return;
@@ -2074,7 +2074,7 @@
 
                 var entryPayload = entryModal.value;
                 setTrustAgentButtonsState('searching');
-                setTrustAgentStatus('Recherche en cours', 'info');
+                setTrustAgentStatus('Recherche de vos informations en cours.', 'info');
                 trustAgentLatestPayload = null;
                 trustAgentActiveJobId = null;
 
@@ -2134,7 +2134,7 @@
 
                     if (status === 'pending' || status === 'processing') {
                         setTrustAgentButtonsState('searching');
-                        setTrustAgentStatus('Recherche en cours', 'info');
+                        setTrustAgentStatus('Recherche de vos informations en cours.', 'info');
                         trustAgentPollToken += 1;
                         await monitorTrustAgentJob(jobId, trustAgentPollToken);
                         return;
