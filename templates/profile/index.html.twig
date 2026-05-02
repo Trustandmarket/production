@@ -295,6 +295,18 @@
             line-height: 1.2;
         }
 
+        .tm-ta-entry-field-error {
+            display: none;
+            margin-top: 0.45rem;
+            color: #dc2626;
+            font-size: 0.9rem;
+            line-height: 1.2;
+        }
+
+        .tm-ta-entry-field-error.is-visible {
+            display: block;
+        }
+
         .swal2-actions.tm-ta-entry-actions {
             gap: 14px;
         }
@@ -1732,7 +1744,16 @@
                     return false;
                 }
 
-                return /^https?:\/\//i.test(trimmed) || /^[^\s]+\.[^\s]{2,}$/i.test(trimmed);
+                if (!/^https?:\/\//i.test(trimmed)) {
+                    return false;
+                }
+
+                try {
+                    var parsed = new URL(trimmed);
+                    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+                } catch (error) {
+                    return false;
+                }
             }
 
             function getSuggestionWorkingValue(suggestion) {
@@ -1846,6 +1867,7 @@
                             <div class="form-group text-left mb-0">
                                 <label for="trustAgentInputValue" id="trustAgentInputValueLabel" class="font-weight-bold">Nom de votre studio</label>
                                 <input type="text" id="trustAgentInputValue" class="form-control" value="${escapeHtml(defaultInput)}" placeholder="Ex : Studio 110">
+                                <div id="trustAgentInputValueError" class="tm-ta-entry-field-error">Veuillez saisir une URL valide.</div>
                             </div>
                             <div class="form-group text-left mt-3 mb-0" id="trustAgentRegionGroup">
                                 <label for="trustAgentInputRegion" class="font-weight-bold">Ville / Région</label>
@@ -1856,6 +1878,7 @@
                     didOpen: function () {
                         var input = document.getElementById('trustAgentInputValue');
                         var inputLabel = document.getElementById('trustAgentInputValueLabel');
+                        var inputValueError = document.getElementById('trustAgentInputValueError');
                         var regionInput = document.getElementById('trustAgentInputRegion');
                         var regionGroup = document.getElementById('trustAgentRegionGroup');
                         var studioRadio = document.getElementById('trustAgentInputStudio');
@@ -1980,6 +2003,10 @@
                             var inputType = getCurrentInputType();
                             var inputValue = input.value.trim();
                             var inputRegion = regionInput.value.trim();
+                            var showWebsiteError = inputType === 'website' && inputValue !== '' && !isLikelyWebsite(inputValue);
+                            if (inputValueError) {
+                                inputValueError.classList.toggle('is-visible', showWebsiteError);
+                            }
                             confirmButton.disabled = !isEntryFormValid(inputType, inputValue, inputRegion);
                         }
 
@@ -2039,7 +2066,7 @@
                         }
 
                         if (inputType === 'website' && !isLikelyWebsite(inputValue)) {
-                            Swal.showValidationMessage('Le site web semble invalide.');
+                            Swal.showValidationMessage('Veuillez saisir une URL valide.');
                             return false;
                         }
 
