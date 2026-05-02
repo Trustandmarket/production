@@ -200,6 +200,7 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         $jobId = (int) $job['id'];
         $profileId = (int) $job['profile_id'];
         $suggestions = $this->buildMockSuggestions($jobId, (string) $job['input_type'], (string) $job['input_value']);
+        $suggestions = $this->appendMissingFieldPlaceholders($suggestions);
 
         if (empty($suggestions)) {
             throw new \RuntimeException('Aucune suggestion generee en mode mock.');
@@ -276,6 +277,7 @@ class ProfileAiEnrichmentWorkerCommand extends Command
 
         $suggestions = $this->appendNarrativeSuggestionsIfMissing($suggestions, $inputValue, $evidence);
         $suggestions = $this->upgradeNarrativeSuggestionsQuality($suggestions, $inputValue, $evidence);
+        $suggestions = $this->appendMissingFieldPlaceholders($suggestions);
 
         if (empty($suggestions)) {
             throw new \RuntimeException('Aucune suggestion generee apres traitement LLM.');
@@ -1334,6 +1336,38 @@ TXT;
         }
 
         return null;
+    }
+
+    private function appendMissingFieldPlaceholders(array $suggestions): array
+    {
+        $existingByField = [];
+        foreach ($suggestions as $suggestion) {
+            if (!is_array($suggestion)) {
+                continue;
+            }
+
+            $fieldName = trim((string) ($suggestion['field_name'] ?? ''));
+            if ($fieldName === '') {
+                continue;
+            }
+
+            $existingByField[$fieldName] = true;
+        }
+
+        foreach (self::ALLOWED_FIELDS as $fieldName) {
+            if (isset($existingByField[$fieldName])) {
+                continue;
+            }
+
+            $suggestions[] = [
+                'field_name' => $fieldName,
+                'suggested_value' => '',
+                'confidence_score' => 0.0,
+                'source_type' => 'not_found',
+            ];
+        }
+
+        return $suggestions;
     }
 
     private function extractSiretCandidate(array $merged): ?string
