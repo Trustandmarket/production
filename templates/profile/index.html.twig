@@ -97,9 +97,7 @@
             border-radius: 18px;
             padding: 1.5rem;
             margin: 1.25rem 0 1.75rem;
-            background:
-                radial-gradient(circle at top right, rgba(255, 194, 120, 0.35), transparent 36%),
-                linear-gradient(135deg, #1f2937 0%, #111827 55%, #0f172a 100%);
+            background: #262626;
             color: #fff;
             box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
         }
@@ -142,8 +140,8 @@
             border-radius: 999px;
             padding: 0.95rem 1.35rem;
             font-weight: 700;
-            color: #111827;
-            background: linear-gradient(135deg, #ffd79c 0%, #ff7e10 100%);
+            color: #ffffff;
+            background: #ff7e10;
             box-shadow: 0 10px 24px rgba(255, 126, 16, 0.32);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -151,6 +149,19 @@
         .trust-agent-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 14px 28px rgba(255, 126, 16, 0.38);
+        }
+
+        .trust-agent-btn.is-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: none;
+        }
+
+        .trust-agent-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .trust-agent-status {
@@ -711,7 +722,9 @@
                             <button type="button" id="trustAgentLaunchBtn" class="trust-agent-btn">
                                 Lancer TrustAgent
                             </button>
-                            <span>La modale affiche toutes les suggestions du profil avant validation.</span>
+                            <button type="button" id="trustAgentReviewBtn" class="trust-agent-btn is-secondary" disabled>
+                                V&eacute;rifier les suggestions
+                            </button>
                         </div>
                         <div id="trustAgentStatus" class="trust-agent-status"></div>
                     </div>
@@ -1454,7 +1467,11 @@
             let docWidth = document.documentElement.offsetWidth;
             var trustAgentStatus = document.getElementById('trustAgentStatus');
             var trustAgentLaunchBtn = document.getElementById('trustAgentLaunchBtn');
+            var trustAgentReviewBtn = document.getElementById('trustAgentReviewBtn');
             var trustAgentDefaultInput = '{{ nom_commercial|default('')|e('js') }}';
+            var trustAgentLatestPayload = null;
+            var trustAgentActiveJobId = null;
+            var trustAgentPollToken = 0;
             if (!trustAgentDefaultInput) {
                 trustAgentDefaultInput = '{{ first_name|default('')|e('js') }}';
             }
@@ -1502,6 +1519,51 @@
 
                 trustAgentStatus.classList.remove('is-visible');
                 trustAgentStatus.innerHTML = '';
+            }
+
+            function setTrustAgentButtonsState(state) {
+                if (!trustAgentLaunchBtn || !trustAgentReviewBtn) {
+                    return;
+                }
+
+                if (state === 'searching') {
+                    trustAgentLaunchBtn.disabled = true;
+                    trustAgentReviewBtn.disabled = true;
+                    return;
+                }
+
+                if (state === 'review_ready') {
+                    trustAgentLaunchBtn.disabled = true;
+                    trustAgentReviewBtn.disabled = false;
+                    return;
+                }
+
+                if (state === 'applying') {
+                    trustAgentLaunchBtn.disabled = true;
+                    trustAgentReviewBtn.disabled = true;
+                    return;
+                }
+
+                if (state === 'failed') {
+                    trustAgentLaunchBtn.disabled = false;
+                    trustAgentReviewBtn.disabled = true;
+                    return;
+                }
+
+                if (state === 'applied') {
+                    trustAgentLaunchBtn.disabled = false;
+                    trustAgentReviewBtn.disabled = true;
+                    return;
+                }
+
+                trustAgentLaunchBtn.disabled = false;
+                trustAgentReviewBtn.disabled = true;
+            }
+
+            function sleep(ms) {
+                return new Promise(function (resolve) {
+                    window.setTimeout(resolve, ms);
+                });
             }
 
             function formatConfidence(value) {
@@ -1720,37 +1782,46 @@
                 return data;
             }
 
-            async function pollJobUntilReview(jobId, timeoutMs, intervalMs) {
-                var startedAt = Date.now();
-
-                while ((Date.now() - startedAt) < timeoutMs) {
+            async function monitorTrustAgentJob(jobId, token) {
+                while (token === trustAgentPollToken) {
                     var payload = await fetchEnrichmentJob(jobId);
                     var job = payload.job || {};
                     var status = String(job.status || '');
 
-                    setTrustAgentStatus(
-                        'Job #' + jobId + ' en cours : <strong>' + escapeHtml(status || 'pending') + '</strong>',
-                        'info'
-                    );
-
                     if (status === 'awaiting_user') {
+                        trustAgentLatestPayload = payload;
+                        setTrustAgentButtonsState('review_ready');
+                        setTrustAgentStatus('Recherche terminee. Vous pouvez verifier les suggestions.', 'success');
+                        toastr.success('Les suggestions sont pretes a etre verifiees.');
                         return payload;
                     }
 
                     if (status === 'failed') {
-                        throw new Error(job.last_error || 'Le traitement a echoue.');
+                        setTrustAgentButtonsState('failed');
+                        setTrustAgentStatus(escapeHtml(job.last_error || 'Le traitement a echoue.'), 'error');
+                        toastr.error(job.last_error || 'Le traitement a echoue.');
+                        return null;
+                    }
+
+                    if (status === 'applying') {
+                        setTrustAgentButtonsState('applying');
+                        setTrustAgentStatus('Application en cours. Merci de patienter.', 'info');
+                        await sleep(2500);
+                        continue;
                     }
 
                     if (status === 'success') {
-                        throw new Error('Ce job a deja ete applique.');
+                        setTrustAgentButtonsState('applied');
+                        setTrustAgentStatus('Les informations ont deja ete appliquees.', 'success');
+                        return payload;
                     }
 
-                    await new Promise(function (resolve) {
-                        window.setTimeout(resolve, intervalMs);
-                    });
+                    setTrustAgentButtonsState('searching');
+                    setTrustAgentStatus('Recherche en cours (job #' + jobId + ')', 'info');
+                    await sleep(2500);
                 }
 
-                throw new Error('La recherche prend plus de temps que prevu. Le job continue en arriere-plan.');
+                return null;
             }
 
             function buildTrustAgentReviewModel(payload) {
@@ -1952,56 +2023,114 @@
                 }
 
                 var entryPayload = entryModal.value;
-
-                Swal.fire({
-                    title: 'TrustAgent recherche vos informations',
-                    html: 'Creation du job en cours...',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    didOpen: function () {
-                        Swal.showLoading();
-                    }
-                });
+                setTrustAgentButtonsState('searching');
+                setTrustAgentStatus('Recherche en cours', 'info');
+                trustAgentLatestPayload = null;
+                trustAgentActiveJobId = null;
 
                 try {
                     var job = await createOrReuseEnrichmentJob(entryPayload);
                     var jobId = Number(job.id || 0);
                     var jobStatus = String(job.status || 'pending');
+                    trustAgentActiveJobId = jobId;
 
-                    setTrustAgentStatus('Job #' + jobId + ' cree. Analyse en cours...', 'info');
-                    Swal.update({
-                        html: 'Job #' + jobId + ' cree. Recherche des donnees publiques en cours...'
-                    });
-
-                    var payload;
                     if (jobStatus === 'awaiting_user') {
-                        payload = await fetchEnrichmentJob(jobId);
-                    } else if (jobStatus === 'pending' || jobStatus === 'processing') {
-                        payload = await pollJobUntilReview(jobId, 45000, 2500);
-                    } else if (jobStatus === 'applying') {
-                        throw new Error('Un traitement est deja en cours sur ce profil. Merci de patienter.');
-                    } else {
-                        payload = await fetchEnrichmentJob(jobId);
+                        trustAgentLatestPayload = await fetchEnrichmentJob(jobId);
+                        setTrustAgentButtonsState('review_ready');
+                        setTrustAgentStatus('Recherche terminee. Vous pouvez verifier les suggestions.', 'success');
+                        return;
                     }
 
-                    Swal.close();
-
-                    var reviewResult = await openTrustAgentReviewModal(payload);
-                    if (reviewResult.isConfirmed) {
-                        setTrustAgentStatus('Les informations ont ete appliquees avec succes.', 'success');
-                        toastr.success('Les suggestions TrustAgent ont ete appliquees.');
-                        window.location.reload();
+                    if (jobStatus === 'failed') {
+                        setTrustAgentButtonsState('failed');
+                        setTrustAgentStatus(escapeHtml(job.last_error || 'Le traitement a echoue.'), 'error');
+                        return;
                     }
+
+                    trustAgentPollToken += 1;
+                    await monitorTrustAgentJob(jobId, trustAgentPollToken);
                 } catch (error) {
-                    Swal.close();
+                    setTrustAgentButtonsState('failed');
                     setTrustAgentStatus(escapeHtml(error.message || 'Une erreur est survenue.'), 'error');
                     toastr.error(error.message || 'Une erreur est survenue.');
                 }
             }
 
+            async function openTrustAgentSuggestionsWorkflow() {
+                if (!trustAgentReviewBtn) {
+                    return;
+                }
+
+                var jobId = trustAgentActiveJobId;
+                if (!jobId && trustAgentLatestPayload && trustAgentLatestPayload.job) {
+                    jobId = Number(trustAgentLatestPayload.job.id || 0);
+                }
+
+                if (!jobId) {
+                    setTrustAgentStatus('Aucune suggestion disponible pour le moment.', 'info');
+                    return;
+                }
+
+                setTrustAgentButtonsState('applying');
+                try {
+                    var payload = await fetchEnrichmentJob(jobId);
+                    var status = String((payload.job && payload.job.status) || '');
+
+                    if (status === 'failed') {
+                        setTrustAgentButtonsState('failed');
+                        setTrustAgentStatus(escapeHtml(payload.job.last_error || 'Le traitement a echoue.'), 'error');
+                        return;
+                    }
+
+                    if (status === 'pending' || status === 'processing') {
+                        setTrustAgentButtonsState('searching');
+                        setTrustAgentStatus('Recherche en cours', 'info');
+                        trustAgentPollToken += 1;
+                        await monitorTrustAgentJob(jobId, trustAgentPollToken);
+                        return;
+                    }
+
+                    if (status === 'applying') {
+                        setTrustAgentButtonsState('applying');
+                        setTrustAgentStatus('Application en cours. Merci de patienter.', 'info');
+                        return;
+                    }
+
+                    if (status === 'success') {
+                        setTrustAgentButtonsState('applied');
+                        setTrustAgentStatus('Les informations ont deja ete appliquees.', 'success');
+                        return;
+                    }
+
+                    trustAgentLatestPayload = payload;
+                    setTrustAgentButtonsState('review_ready');
+                    var reviewResult = await openTrustAgentReviewModal(payload);
+                    if (reviewResult.isConfirmed) {
+                        setTrustAgentButtonsState('applied');
+                        setTrustAgentStatus('Les informations ont ete appliquees avec succes.', 'success');
+                        toastr.success('Les suggestions TrustAgent ont ete appliquees.');
+                        window.location.reload();
+                        return;
+                    }
+
+                    setTrustAgentButtonsState('review_ready');
+                } catch (error) {
+                    setTrustAgentButtonsState('review_ready');
+                    setTrustAgentStatus(escapeHtml(error.message || 'Une erreur est survenue.'), 'error');
+                    toastr.error(error.message || 'Une erreur est survenue.');
+                }
+            }
+
+            setTrustAgentButtonsState('idle');
             if (trustAgentLaunchBtn) {
                 trustAgentLaunchBtn.addEventListener('click', function () {
                     runTrustAgentWorkflow();
+                });
+            }
+
+            if (trustAgentReviewBtn) {
+                trustAgentReviewBtn.addEventListener('click', function () {
+                    openTrustAgentSuggestionsWorkflow();
                 });
             }
 
