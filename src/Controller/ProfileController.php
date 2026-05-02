@@ -253,9 +253,15 @@ class ProfileController extends AbstractController
         $video = array();
         $imgid = array();
         if ($vid != '') {
-            $video = @unserialize($vid);
-            for ($i = 0; $i < sizeof($video); $i++) {
-                $imgid[$i] = $this->service_manager->getYouTubeId($video[$i]);
+            $video = $this->normalizeStoredVideos($vid);
+            foreach ($video as $videoItem) {
+                $youtubeId = $this->service_manager->getYouTubeId($videoItem);
+                if (!is_string($youtubeId) || trim($youtubeId) === '') {
+                    $youtubeId = trim((string) $videoItem);
+                }
+                if (trim((string) $youtubeId) !== '') {
+                    $imgid[] = trim((string) $youtubeId);
+                }
             }
         }
         //Departement
@@ -439,27 +445,11 @@ class ProfileController extends AbstractController
         //VIDEO
         if (!in_array('ROLE_ABONNE', $this->getUser()->getRoles())) {
             $video = $this->service_manager->getUserStringDataValue($userId, 'video');
-            if ($video != '' && $request->get('new_vid')[0] != '') {
-                if (sizeof(@unserialize($video)) > 0) {
-                    $tabeauVideos = @unserialize($video);
-                    $tabeauVideos = $this->trierTableau($tabeauVideos);
-                    $this->service_manager->updateUserMeta(
-                        $userId,
-                        'video',
-                        @serialize(
-                            $this->trierTableau(
-                                array_merge(
-                                    $tabeauVideos,
-                                    $this->trierTableau($request->get('new_vid'))
-                                )
-                            )
-                        )
-                    );
-                } else {
-                    $this->service_manager->updateUserMeta($userId, 'video', @serialize($this->trierTableau($request->get('new_vid'))));
-                }
-            } elseif ($request->get('new_vid')[0] != '') {
-                $this->service_manager->updateUserMeta($userId, 'video', @serialize($this->trierTableau($request->get('new_vid'))));
+            $newVideos = $this->normalizeVideoArray($request->get('new_vid'));
+            if (!empty($newVideos)) {
+                $existingVideos = $this->normalizeStoredVideos($video);
+                $mergedVideos = $this->trierTableau(array_merge($existingVideos, $newVideos));
+                $this->service_manager->updateUserMeta($userId, 'video', @serialize($mergedVideos));
             }
         }
         //portfolio
@@ -565,9 +555,58 @@ class ProfileController extends AbstractController
     }
     public function trierTableau($tabeauVideos)
     {
+        if (!is_array($tabeauVideos)) {
+            return [];
+        }
         $tab = array_unique($tabeauVideos);
         $tab = array_filter($tab);
-        return $tab;
+        return array_values($tab);
+    }
+
+    private function normalizeStoredVideos($value)
+    {
+        if (!is_string($value)) {
+            return [];
+        }
+
+        $trimmed = trim($value);
+        if ($trimmed === '') {
+            return [];
+        }
+
+        $decoded = @unserialize($trimmed);
+        if (is_array($decoded)) {
+            return $this->normalizeVideoArray($decoded);
+        }
+
+        $json = json_decode($trimmed, true);
+        if (is_array($json)) {
+            return $this->normalizeVideoArray($json);
+        }
+
+        if (preg_match('/[\r\n,]/', $trimmed) === 1) {
+            $parts = preg_split('/[\r\n,]+/', $trimmed) ?: [];
+            return $this->normalizeVideoArray($parts);
+        }
+
+        return $this->normalizeVideoArray([$trimmed]);
+    }
+
+    private function normalizeVideoArray($items)
+    {
+        if (!is_array($items)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($items as $item) {
+            $item = trim((string) $item);
+            if ($item !== '') {
+                $normalized[] = $item;
+            }
+        }
+
+        return array_values(array_unique($normalized));
     }
 
     /**
