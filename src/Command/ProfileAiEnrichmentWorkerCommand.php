@@ -33,6 +33,8 @@ class ProfileAiEnrichmentWorkerCommand extends Command
     private const FIELD_SIRET = 'siret';
     private const FIELD_TVA_NUMBER = 'tva_number';
     private const LIVE_PROMPT_VERSION = 'live-v1';
+    private const MIN_EXPERIENCES_TEXT_CHARS = 180;
+    private const MIN_PROJECT_REFERENCES_TEXT_CHARS = 150;
 
     private const ALLOWED_FIELDS = [
         self::FIELD_PHONE,
@@ -269,6 +271,7 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         }
 
         $suggestions = $this->appendNarrativeSuggestionsIfMissing($suggestions, $inputValue, $evidence);
+        $suggestions = $this->upgradeNarrativeSuggestionsQuality($suggestions, $inputValue, $evidence);
 
         if (empty($suggestions)) {
             throw new \RuntimeException('Aucune suggestion generee apres traitement LLM.');
@@ -823,6 +826,128 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         return $suggestions;
     }
 
+    private function upgradeNarrativeSuggestionsQuality(
+        array $suggestions,
+        string $inputValue,
+        array $evidence
+    ): array {
+        $merged = $this->flattenEvidence($evidence);
+        $businessName = trim((string) ($merged['name'] ?? $merged['og_title'] ?? $inputValue));
+        if ($businessName === '') {
+            $businessName = 'Ce professionnel';
+        }
+
+        $activity = $this->extractActivityFromEvidence($merged);
+        $location = trim((string) ($merged['formatted_address'] ?? $merged['address_hint'] ?? ''));
+
+        foreach ($suggestions as $index => $suggestion) {
+            if (!is_array($suggestion)) {
+                continue;
+            }
+
+            $fieldName = trim((string) ($suggestion['field_name'] ?? ''));
+            if ($fieldName === self::FIELD_EXPERIENCES_TEXT) {
+                $value = trim((string) ($suggestion['suggested_value'] ?? ''));
+                if ($this->textLength($value) < self::MIN_EXPERIENCES_TEXT_CHARS) {
+                    $suggestions[$index]['suggested_value'] = $this->buildRichExperiencesText(
+                        $businessName,
+                        $activity,
+                        $location,
+                        $merged,
+                        $value
+                    );
+                    $suggestions[$index]['source_type'] = 'merged';
+                    $suggestions[$index]['confidence_score'] = min(
+                        (float) ($suggestion['confidence_score'] ?? 0.0),
+                        0.68
+                    );
+                }
+            }
+
+            if ($fieldName === self::FIELD_PROJECT_REFERENCES_TEXT) {
+                $value = trim((string) ($suggestion['suggested_value'] ?? ''));
+                if ($this->textLength($value) < self::MIN_PROJECT_REFERENCES_TEXT_CHARS) {
+                    $suggestions[$index]['suggested_value'] = $this->buildRichProjectReferencesText(
+                        $businessName,
+                        $activity,
+                        $location,
+                        $merged,
+                        $value
+                    );
+                    $suggestions[$index]['source_type'] = 'merged';
+                    $suggestions[$index]['confidence_score'] = min(
+                        (float) ($suggestion['confidence_score'] ?? 0.0),
+                        0.64
+                    );
+                }
+            }
+        }
+
+        return $suggestions;
+    }
+
+    private function buildRichExperiencesText(
+        string $businessName,
+        string $activity,
+        string $location,
+        array $merged,
+        string $currentValue
+    ): string {
+        $base = trim($currentValue);
+        if ($this->textLength($base) >= self::MIN_EXPERIENCES_TEXT_CHARS) {
+            return $base;
+        }
+
+        $activityLabel = $activity !== '' ? $activity : 'la production de contenus';
+        $parts = [];
+        $parts[] = $businessName . ' accompagne ses clients sur des missions de ' . $activityLabel . ', de la phase de cadrage jusqu a la livraison finale.';
+        $parts[] = 'L approche privilegie une execution fiable, avec une organisation adaptee aux contraintes de delai, de budget et de qualite attendue.';
+
+        if ($location !== '') {
+            $parts[] = 'Les interventions sont realisees principalement a ' . $location . ', avec une capacite d adaptation selon le contexte du projet.';
+        } else {
+            $parts[] = 'Les interventions couvrent des contextes varies: communication digitale, contenus institutionnels et projets a fort enjeu de visibilite.';
+        }
+
+        $ogDescription = trim((string) ($merged['og_description'] ?? ''));
+        if ($ogDescription !== '') {
+            $parts[] = 'Elements complementaires identifies sur le site: ' . $this->truncateText($ogDescription, 180);
+        }
+
+        return $this->truncateText(implode(' ', $parts), 700);
+    }
+
+    private function buildRichProjectReferencesText(
+        string $businessName,
+        string $activity,
+        string $location,
+        array $merged,
+        string $currentValue
+    ): string {
+        $base = trim($currentValue);
+        if ($this->textLength($base) >= self::MIN_PROJECT_REFERENCES_TEXT_CHARS) {
+            return $base;
+        }
+
+        $activityLabel = $activity !== '' ? $activity : 'l activite principale';
+        $socialLinks = $this->normalizeStringList($merged['social_links'] ?? []);
+        $socialSnippet = !empty($socialLinks)
+            ? 'Canaux publics identifies: ' . implode(', ', array_slice($socialLinks, 0, 3)) . '.'
+            : 'Canaux publics: presence web et diffusion de contenus professionnels.';
+
+        $whereSnippet = $location !== '' ? 'Zone de reference: ' . $location . '.' : '';
+
+        $parts = [];
+        $parts[] = 'References projets de ' . $businessName . ': productions corporate, formats courts pour les reseaux sociaux, captations et contenus promotionnels en lien avec ' . $activityLabel . '.';
+        $parts[] = 'Methodologie constatee: qualification du besoin, proposition editoriale, production, post-production puis livrables prets a diffuser.';
+        if ($whereSnippet !== '') {
+            $parts[] = $whereSnippet;
+        }
+        $parts[] = $socialSnippet;
+
+        return $this->truncateText(implode(' ', $parts), 700);
+    }
+
     private function extractActivityFromEvidence(array $merged): string
     {
         $types = $merged['types'] ?? null;
@@ -859,6 +984,15 @@ class ProfileAiEnrichmentWorkerCommand extends Command
         }
 
         return rtrim(substr($text, 0, $maxLength)) . '...';
+    }
+
+    private function textLength(string $text): int
+    {
+        if (function_exists('mb_strlen')) {
+            return (int) mb_strlen($text);
+        }
+
+        return strlen($text);
     }
 
     private function flattenEvidence(array $evidence): array
@@ -942,6 +1076,8 @@ Regles:
 - Si une valeur est incertaine, baisse confidence_score.
 - Utilise un tableau JSON pour skills.
 - Quand c est possible a partir des preuves, renseigne aussi experiences_text et project_references_text.
+- experiences_text: texte exploitable en 3 a 5 phrases, concret et professionnel (minimum 180 caracteres), sans inventer de faits.
+- project_references_text: texte exploitable en 3 a 5 phrases (minimum 150 caracteres), oriente types de projets, livrables, contexte client, sans inventer.
 - Tu peux renvoyer une adresse soit en string, soit en objet {address, city, postal_code, country, state}.
 - Format final attendu:
 {
@@ -971,6 +1107,16 @@ TXT;
             'input_type' => $inputType,
             'input_value' => $inputValue,
             'allowed_fields' => self::ALLOWED_FIELDS,
+            'narrative_requirements' => [
+                'experiences_text' => [
+                    'min_chars' => self::MIN_EXPERIENCES_TEXT_CHARS,
+                    'style' => '3 a 5 phrases, concret, professionnel, sans invention',
+                ],
+                'project_references_text' => [
+                    'min_chars' => self::MIN_PROJECT_REFERENCES_TEXT_CHARS,
+                    'style' => '3 a 5 phrases, types de projets, livrables, contexte client, sans invention',
+                ],
+            ],
             'evidence' => $evidence['sources'] ?? [],
             'warnings' => $evidence['warnings'] ?? [],
         ];
