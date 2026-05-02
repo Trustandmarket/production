@@ -2019,6 +2019,42 @@
                 return normalized.replace(/\s+/g, ' ');
             }
 
+            function buildMainActivityTokenSet(text) {
+                var rawTokens = String(text || '').split(' ').filter(function (token) {
+                    return token !== '';
+                });
+                var tokenSet = {};
+                var synonymGroups = [
+                    ['studio', 'enregistrement', 'recording'],
+                    ['musique', 'musicale', 'musicien', 'musiciens'],
+                    ['photo', 'photographie', 'photographe'],
+                    ['video', 'videographie', 'videaste', 'film', 'captation'],
+                    ['mixage', 'mixing'],
+                    ['mastering', 'master'],
+                    ['dj', 'discjockey']
+                ];
+
+                rawTokens.forEach(function (token) {
+                    tokenSet[token] = true;
+                });
+
+                rawTokens.forEach(function (token) {
+                    synonymGroups.forEach(function (group) {
+                        if (group.indexOf(token) !== -1) {
+                            group.forEach(function (groupToken) {
+                                tokenSet[groupToken] = true;
+                            });
+                        }
+                    });
+                });
+
+                return tokenSet;
+            }
+
+            function hasMainActivityToken(tokenSet, token) {
+                return !!(tokenSet && tokenSet[token]);
+            }
+
             function computeMainActivityMatchScore(left, right) {
                 if (!left || !right) {
                     return 0;
@@ -2036,20 +2072,13 @@
                     }
                 }
 
-                var leftTokens = left.split(' ').filter(function (token) {
-                    return token !== '';
-                });
-                var rightTokens = right.split(' ').filter(function (token) {
-                    return token !== '';
-                });
+                var leftSet = buildMainActivityTokenSet(left);
+                var rightSet = buildMainActivityTokenSet(right);
+                var leftTokens = Object.keys(leftSet);
+                var rightTokens = Object.keys(rightSet);
                 if (!leftTokens.length || !rightTokens.length) {
                     return 0;
                 }
-
-                var rightSet = {};
-                rightTokens.forEach(function (token) {
-                    rightSet[token] = true;
-                });
 
                 var intersection = 0;
                 leftTokens.forEach(function (token) {
@@ -2063,7 +2092,26 @@
                     return 0;
                 }
 
-                return intersection / union;
+                var score = intersection / union;
+
+                // Boost metier: "studio" doit matcher facilement "studio d enregistrement".
+                if (hasMainActivityToken(leftSet, 'studio') && (hasMainActivityToken(rightSet, 'studio') || hasMainActivityToken(rightSet, 'enregistrement'))) {
+                    score = Math.max(score, 0.72);
+                }
+
+                if (hasMainActivityToken(leftSet, 'video') && (hasMainActivityToken(rightSet, 'video') || hasMainActivityToken(rightSet, 'videographie') || hasMainActivityToken(rightSet, 'captation'))) {
+                    score = Math.max(score, 0.66);
+                }
+
+                if (hasMainActivityToken(leftSet, 'photo') && (hasMainActivityToken(rightSet, 'photo') || hasMainActivityToken(rightSet, 'photographie') || hasMainActivityToken(rightSet, 'photographe'))) {
+                    score = Math.max(score, 0.66);
+                }
+
+                if (score > 1) {
+                    return 1;
+                }
+
+                return score;
             }
 
             function resolveMainActivitySelectValue(value) {
@@ -2106,7 +2154,7 @@
                     }
                 }
 
-                return bestScore >= 0.66 ? bestTaxonomyId : '';
+                return bestScore >= 0.52 ? bestTaxonomyId : '';
             }
 
             function buildMainActivityOptionsHtml(selectedValue) {
