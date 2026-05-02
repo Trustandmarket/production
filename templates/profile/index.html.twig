@@ -355,6 +355,21 @@
             background: #000000;
         }
 
+        .tm-ta-review-html {
+            max-height: 68vh;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .tm-ta-review-html::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .tm-ta-review-html::-webkit-scrollbar-thumb {
+            background: #c9c9c9;
+            border-radius: 999px;
+        }
+
         .pac-container {
             z-index: 20000 !important;
         }
@@ -2709,6 +2724,7 @@
                     buttonsStyling: false,
                     customClass: {
                         actions: 'tm-ta-review-actions',
+                        htmlContainer: 'tm-ta-review-html',
                         confirmButton: 'tm-ta-review-confirm-btn',
                         cancelButton: 'tm-ta-review-cancel-btn'
                     },
