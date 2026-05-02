@@ -1772,6 +1772,23 @@
                 return data;
             }
 
+            async function fetchActiveEnrichmentJob() {
+                var response = await fetch('/enrichment-jobs/active', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                var data = await response.json().catch(function () {
+                    return { ok: false, error: 'Reponse JSON invalide.' };
+                });
+
+                if (!response.ok || !data.ok) {
+                    throw new Error(data.error || 'Impossible de charger le job actif.');
+                }
+
+                return data;
+            }
+
             async function monitorTrustAgentJob(jobId, token) {
                 while (token === trustAgentPollToken) {
                     var payload = await fetchEnrichmentJob(jobId);
@@ -1812,6 +1829,49 @@
                 }
 
                 return null;
+            }
+
+            async function initializeTrustAgentStateOnPageLoad() {
+                if (!trustAgentLaunchBtn || !trustAgentReviewBtn) {
+                    return;
+                }
+
+                try {
+                    var payload = await fetchActiveEnrichmentJob();
+                    var activeJob = payload.job || null;
+                    if (!activeJob) {
+                        return;
+                    }
+
+                    var jobId = Number(activeJob.id || 0);
+                    var status = String(activeJob.status || '');
+                    if (jobId > 0) {
+                        trustAgentActiveJobId = jobId;
+                    }
+
+                    if (status === 'awaiting_user') {
+                        setTrustAgentButtonsState('review_ready');
+                        setTrustAgentStatus('Recherche terminee. Vous pouvez verifier les informations.', 'success');
+                        return;
+                    }
+
+                    if (status === 'pending' || status === 'processing') {
+                        setTrustAgentButtonsState('searching');
+                        setTrustAgentStatus('Recherche en cours (job #' + jobId + ')', 'info');
+                        trustAgentPollToken += 1;
+                        await monitorTrustAgentJob(jobId, trustAgentPollToken);
+                        return;
+                    }
+
+                    if (status === 'applying') {
+                        setTrustAgentButtonsState('applying');
+                        setTrustAgentStatus('Application en cours. Merci de patienter.', 'info');
+                        trustAgentPollToken += 1;
+                        await monitorTrustAgentJob(jobId, trustAgentPollToken);
+                    }
+                } catch (error) {
+                    // silently keep default state when active-job bootstrap is unavailable
+                }
             }
 
             function buildTrustAgentReviewModel(payload) {
@@ -2123,6 +2183,8 @@
                     openTrustAgentSuggestionsWorkflow();
                 });
             }
+
+            initializeTrustAgentStateOnPageLoad();
 
             tinymce.init({
                 selector: 'textarea#description',

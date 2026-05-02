@@ -208,6 +208,54 @@ class ProfileAiEnrichmentController extends AbstractController
         ]);
     }
 
+    #[Route('/enrichment-jobs/active', name: 'profile_ai_enrichment_jobs_active', methods: ['GET'])]
+    public function getActiveJob(): JsonResponse
+    {
+        $user = $this->requireAuthenticatedUser();
+        if ($user === null) {
+            return new JsonResponse(['ok' => false, 'error' => 'Utilisateur non authentifie.'], 401);
+        }
+
+        $profileId = (int) $user->getId();
+        $conn = $this->em->getConnection();
+
+        $job = $conn->fetchAssociative(
+            'SELECT id, profile_id, input_type, input_value, status, attempt_count, last_error, prompt_version, confidence_global, created_at, updated_at
+             FROM profile_ai_enrichment_jobs
+             WHERE profile_id = :profile_id AND active_profile_id = :active_profile_id
+             ORDER BY id DESC
+             LIMIT 1',
+            [
+                'profile_id' => $profileId,
+                'active_profile_id' => $profileId,
+            ]
+        );
+
+        if (!$job) {
+            return new JsonResponse([
+                'ok' => true,
+                'job' => null,
+            ]);
+        }
+
+        return new JsonResponse([
+            'ok' => true,
+            'job' => [
+                'id' => (int) $job['id'],
+                'profile_id' => (int) $job['profile_id'],
+                'input_type' => (string) $job['input_type'],
+                'input_value' => (string) $job['input_value'],
+                'status' => (string) $job['status'],
+                'attempt_count' => (int) $job['attempt_count'],
+                'last_error' => $job['last_error'],
+                'prompt_version' => $job['prompt_version'],
+                'confidence_global' => $job['confidence_global'] !== null ? (float) $job['confidence_global'] : null,
+                'created_at' => $job['created_at'],
+                'updated_at' => $job['updated_at'],
+            ],
+        ]);
+    }
+
     #[Route('/enrichment-jobs/{id<\d+>}/decisions', name: 'profile_ai_enrichment_jobs_decisions', methods: ['POST'])]
     public function saveDecisions(int $id, Request $request): JsonResponse
     {
