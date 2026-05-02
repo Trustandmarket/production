@@ -539,23 +539,11 @@
                 }
 
                 var city = getAddressComponent(place, ['locality', 'postal_town', 'administrative_area_level_3'], false);
-                var postcode = getAddressComponent(place, ['postal_code'], false);
-                var region = getAddressComponent(place, ['administrative_area_level_1'], false);
-                var parts = [];
-
-                if (postcode !== '') {
-                    parts.push(postcode);
-                }
                 if (city !== '') {
-                    parts.push(city);
-                } else if (place.name) {
-                    parts.push(String(place.name));
-                }
-                if (region !== '' && region !== city) {
-                    parts.push(region);
+                    return city.trim();
                 }
 
-                return parts.join(' ').trim();
+                return place.name ? String(place.name).trim() : '';
             }
 
             function initializeCityAutocomplete(selector) {
