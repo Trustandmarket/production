@@ -129,13 +129,30 @@ class ProfileMediaController extends AbstractController
         $u = $this->getUser();
         $port = $this->service_manager->readUserMeta($u->getId(), 'video');
         $vid = [];
-        if ($port && $port->getMetaValue() != '') {
-            $ids = @unserialize($port->getMetaValue());
+        $requestVideo = trim((string) $request->get('id', ''));
+        $requestVideoId = $this->service_manager->getYouTubeId($requestVideo);
+        if (!is_string($requestVideoId) || trim($requestVideoId) === '') {
+            $requestVideoId = $requestVideo;
+        }
+        $requestVideoId = trim((string) $requestVideoId);
 
-            for ($i = 0; $i < sizeof($ids); $i++) {
-                $id = $this->service_manager->getYouTubeId($ids[$i]);
-                if (trim($id) != trim($request->get('id'))) {
-                    $vid[$i] = $ids[$i];
+        if ($port && $port->getMetaValue() != '') {
+            $ids = $this->normalizeStoredVideos($port->getMetaValue());
+
+            foreach ($ids as $item) {
+                $videoRaw = trim((string) $item);
+                if ($videoRaw === '') {
+                    continue;
+                }
+
+                $videoId = $this->service_manager->getYouTubeId($videoRaw);
+                if (!is_string($videoId) || trim($videoId) === '') {
+                    $videoId = $videoRaw;
+                }
+                $videoId = trim((string) $videoId);
+
+                if ($videoId !== $requestVideoId) {
+                    $vid[] = $videoRaw;
                 }
             }
         }
@@ -144,5 +161,34 @@ class ProfileMediaController extends AbstractController
         return $this->render('admin/resultat.html.twig', [
             'result' => 1,
         ]);
+    }
+
+    private function normalizeStoredVideos($value): array
+    {
+        if (!is_string($value)) {
+            return [];
+        }
+
+        $trimmed = trim($value);
+        if ($trimmed === '') {
+            return [];
+        }
+
+        $decoded = @unserialize($trimmed, ['allowed_classes' => false]);
+        if (is_array($decoded)) {
+            return array_values(array_filter($decoded, static fn ($item) => trim((string) $item) !== ''));
+        }
+
+        $json = json_decode($trimmed, true);
+        if (is_array($json)) {
+            return array_values(array_filter($json, static fn ($item) => trim((string) $item) !== ''));
+        }
+
+        if (preg_match('/[\r\n,]/', $trimmed) === 1) {
+            $parts = preg_split('/[\r\n,]+/', $trimmed) ?: [];
+            return array_values(array_filter(array_map('trim', $parts), static fn ($item) => $item !== ''));
+        }
+
+        return [$trimmed];
     }
 }
