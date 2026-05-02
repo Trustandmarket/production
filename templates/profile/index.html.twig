@@ -1867,7 +1867,7 @@
                             <div class="form-group text-left mb-0">
                                 <label for="trustAgentInputValue" id="trustAgentInputValueLabel" class="font-weight-bold">Nom de votre studio</label>
                                 <input type="text" id="trustAgentInputValue" class="form-control" value="${escapeHtml(defaultInput)}" placeholder="Ex : Studio 110">
-                                <div id="trustAgentInputValueError" class="tm-ta-entry-field-error">Veuillez saisir une URL valide.</div>
+                                <div id="trustAgentInputValueError" class="tm-ta-entry-field-error">Format invalide. Exemple : https://monstudio.fr</div>
                             </div>
                             <div class="form-group text-left mt-3 mb-0" id="trustAgentRegionGroup">
                                 <label for="trustAgentInputRegion" class="font-weight-bold">Ville / Région</label>
@@ -2066,7 +2066,7 @@
                         }
 
                         if (inputType === 'website' && !isLikelyWebsite(inputValue)) {
-                            Swal.showValidationMessage('Veuillez saisir une URL valide.');
+                            Swal.showValidationMessage('Format invalide. Exemple : https://monstudio.fr');
                             return false;
                         }
 
