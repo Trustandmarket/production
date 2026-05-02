@@ -713,7 +713,7 @@
                                 Lancer TrustAgent
                             </button>
                             <button type="button" id="trustAgentReviewBtn" class="trust-agent-btn is-secondary" disabled>
-                                V&eacute;rifier les suggestions
+                                V&eacute;rifier les informations
                             </button>
                         </div>
                         <div id="trustAgentStatus" class="trust-agent-status"></div>
@@ -1781,8 +1781,8 @@
                     if (status === 'awaiting_user') {
                         trustAgentLatestPayload = payload;
                         setTrustAgentButtonsState('review_ready');
-                        setTrustAgentStatus('Recherche terminee. Vous pouvez verifier les suggestions.', 'success');
-                        toastr.success('Les suggestions sont pretes a etre verifiees.');
+                        setTrustAgentStatus('Recherche terminee. Vous pouvez verifier les informations.', 'success');
+                        toastr.success('Les informations sont pretes a etre verifiees.');
                         return payload;
                     }
 
@@ -2027,7 +2027,7 @@
                     if (jobStatus === 'awaiting_user') {
                         trustAgentLatestPayload = await fetchEnrichmentJob(jobId);
                         setTrustAgentButtonsState('review_ready');
-                        setTrustAgentStatus('Recherche terminee. Vous pouvez verifier les suggestions.', 'success');
+                        setTrustAgentStatus('Recherche terminee. Vous pouvez verifier les informations.', 'success');
                         return;
                     }
 
