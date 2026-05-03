@@ -301,9 +301,6 @@
                         : '';
 
                     const backofficeDetailUrl = item.backoffice_detail_url || detailUrl(item.id);
-                    const inlineDetailUrl = new URL(backofficeDetailUrl, window.location.origin);
-                    inlineDetailUrl.searchParams.set('selected_job', String(item.id));
-                    inlineDetailUrl.searchParams.set('page', String(currentPage));
 
                     tr.innerHTML = `
                         <td>#${item.id}</td>
@@ -317,7 +314,7 @@
                         <td title="${safeErrorTitle}">${errorText || '-'}</td>
                         <td>
                             <div class="tm-ai-action-group">
-                                <a class="tm-ai-link" href="${inlineDetailUrl.toString()}">Voir</a>
+                                <a class="tm-ai-link" href="${backofficeDetailUrl}" target="_blank" rel="noopener">Voir</a>
                                 ${retryButton}
                             </div>
                         </td>

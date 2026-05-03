@@ -33,7 +33,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -101,13 +100,14 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route('/{_locale}/admin/ai-enrichment/jobs/{id<\d+>}', name: 'admin_ai_enrichment_job_detail', methods: ['GET'])]
-    public function aiEnrichmentJobDetail(string $_locale, int $id): RedirectResponse
+    public function aiEnrichmentJobDetail(string $_locale, int $id): Response
     {
         $this->denyAiEnrichmentAccess();
 
-        return $this->redirectToRoute('admin_ai_enrichment_jobs', [
-            '_locale' => $_locale,
-            'selected_job' => $id,
+        return $this->render('admin/ai_enrichment/detail.html.twig', [
+            'locale' => $_locale,
+            'job_id' => $id,
+            'jobs_url' => $this->generateUrl('admin_ai_enrichment_jobs', ['_locale' => $_locale]),
         ]);
     }
 
