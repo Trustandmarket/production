@@ -258,6 +258,11 @@ API BO:
 - `GET /bo/enrichment-jobs/{id}`
 - `POST /bo/enrichment-jobs/{id}/retry`
 
+Navigation UI:
+1. Depuis `Jobs IA`, l action `Voir` ouvre une page detail job dediee.
+2. L ouverture se fait dans l onglet courant.
+3. La page detail expose un lien `Retour liste jobs`.
+
 Retry:
 - limite aux jobs `failed`;
 - cree un nouveau job `pending` avec la meme entree.
