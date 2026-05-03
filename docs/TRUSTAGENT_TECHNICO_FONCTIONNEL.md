@@ -1,23 +1,23 @@
 # TrustAgent IA
-## Documentation technico-fonctionnelle (version de travail)
+## Documentation technico-fonctionnelle (etat implemente)
 
-Date: 2026-05-03  
+Date de mise a jour: 2026-05-03  
 Perimetre: Back-end, Worker, BO, Front profil pro
 
 ---
 
 ## 1. Objectif produit
-TrustAgent aide un professionnel a completer automatiquement son profil a partir de donnees publiques.
+TrustAgent aide un professionnel a completer son profil a partir de donnees publiques, avec validation humaine avant ecriture finale.
 
-Flux utilisateur cible:
-1. L utilisateur clique sur le CTA `Trouver mes informations automatiquement avec TrustAgent`.
-2. Une modale demande une source.
-3. Soit `Nom du studio` (+ `Ville / Region`).
-4. Soit `Site web`.
-5. TrustAgent lance un job d enrichissement.
-6. Les suggestions sont affichees dans une modale de revue.
-7. L utilisateur accepte, edite ou rejette.
-8. Les suggestions validees sont appliquees sur le profil.
+Flux utilisateur:
+1. Clic sur le CTA `Trouver mes informations automatiquement avec TrustAgent`.
+2. Ouverture de la modale 1 (entree source).
+3. Creation d un job d enrichissement (`pending`).
+4. Traitement asynchrone par le worker.
+5. Passage du job en `awaiting_user` + creation des suggestions.
+6. Ouverture de la modale 2 (revue suggestions).
+7. L utilisateur accepte, edite ou rejette champ par champ.
+8. Application en base profil (`apply`), puis fin technique (`success`).
 
 ---
 
@@ -33,33 +33,28 @@ Champs enrichis/suggeres:
 - `siret`
 - `tva_number`
 
-Champs explicitement exclus du MVP:
+Champs exclus volontairement du MVP:
 - `photos`
 - `videos`
 - `avatar_url`
 
-Remarque:
-Ces 3 champs sont exclus dans les traitements et filtres cote API/BO.
+Ces champs exclus ne sont plus collectes, ni affines par le LLM, ni proposes en suggestions.
 
 ---
 
 ## 3. Architecture logique
 Composants:
-1. Front profil pro (CTA + modale entree + modale revue).
-2. API metier `ProfileAiEnrichmentController`.
-3. Worker asynchrone `ProfileAiEnrichmentWorkerCommand`.
-4. Persistance SQL (`profile_ai_enrichment_jobs`, `profile_ai_suggestions`).
-5. Backoffice de supervision (`ProfileAiEnrichmentBackofficeController` + ecrans EasyAdmin).
-6. Services externes en mode live:
-7. Google Places API
-8. Scraping site web
-9. OpenAI (LLM)
+1. Front profil pro: `templates/profile/index.html.twig`
+2. API metier: `src/Controller/ProfileAiEnrichmentController.php`
+3. Worker asynchrone: `src/Command/ProfileAiEnrichmentWorkerCommand.php`
+4. Persistance SQL: `profile_ai_enrichment_jobs`, `profile_ai_suggestions`
+5. BO supervision: `src/Controller/Admin/ProfileAiEnrichmentBackofficeController.php`
+6. Services externes (live): Google Places, scraping website/OpenGraph, OpenAI
 
 Principe:
-- Le front ne fait pas l enrichissement en direct.
-- Le front cree un job.
-- Le worker traite le job.
-- Le front lit l etat et affiche la revue.
+- le front ne fait pas l enrichissement directement;
+- il cree un job puis lit son etat;
+- le worker traite et alimente les suggestions.
 
 ---
 
@@ -71,17 +66,17 @@ Colonnes cles:
 - `profile_id`
 - `input_type` (`studio_name` ou `website`)
 - `input_value`
-- `input_region` (optionnel)
+- `input_region` (champ region/ville saisi en modale 1)
 - `status`
-- `attempt_count` (observabilite)
-- `last_error` (observabilite)
-- `prompt_version` (observabilite)
+- `attempt_count`
+- `last_error`
+- `prompt_version`
 - `confidence_global`
-- `active_profile_id` (verrou "un job actif par profil")
+- `active_profile_id` (verrou un job actif par profil)
 - `created_at`
 - `updated_at`
 
-Index/contrainte importants:
+Indexes/contraintes:
 - `UNIQ_PAEJ_ONE_ACTIVE_PROFILE (active_profile_id)`
 - `IDX_PAEJ_PROFILE_STATUS_CREATED (profile_id, status, created_at)`
 - `IDX_PAEJ_STATUS_CREATED (status, created_at)`
@@ -92,7 +87,7 @@ Colonnes cles:
 - `enrichment_job_id`
 - `profile_id`
 - `field_name`
-- `suggested_value` (JSON/string)
+- `suggested_value` (string/JSON)
 - `confidence_score`
 - `source_type`
 - `status` (`suggested`, `accepted`, `edited`, `rejected`)
@@ -100,12 +95,12 @@ Colonnes cles:
 - `created_at`
 - `updated_at`
 
-Index/contrainte importants:
+Indexes/contraintes:
 - `UNIQ_PAS_JOB_FIELD (enrichment_job_id, field_name)`
 - `IDX_PAS_JOB_ID (enrichment_job_id)`
 - `IDX_PAS_PROFILE_STATUS (profile_id, status)`
 
-Scripts SQL de reference:
+Scripts SQL:
 - `sql/create_profile_ai_enrichment_tables.sql`
 - `sql/alter_profile_ai_enrichment_jobs_add_input_region.sql`
 - `sql/mock_test_profile_ai_worker.sql`
@@ -115,69 +110,59 @@ Scripts SQL de reference:
 ## 5. Machine d etats
 
 ### 5.1 Etats job
-- `pending`: job cree, en attente de worker
+- `pending`: job cree
 - `processing`: pris par le worker
-- `awaiting_user`: enrichissement technique termine, attente de decision utilisateur
+- `awaiting_user`: enrichissement technique fini, attente des decisions user
 - `applying`: application des decisions en cours
-- `success`: application terminee (succes technique)
+- `success`: fin technique du workflow
 - `failed`: echec technique
 
 ### 5.2 Etats suggestion
-- `suggested`: suggestion generee, non arbitree
-- `accepted`: acceptee sans modification
-- `edited`: acceptee avec modification (`final_value`)
-- `rejected`: refusee
+- `suggested`
+- `accepted`
+- `edited`
+- `rejected`
 
-Point metier important:
-- `success` represente la fin technique du workflow (pas la qualite des suggestions).
+Important:
+- `success` = succes technique, pas garantie de qualite metier.
 
 ---
 
 ## 6. API Front TrustAgent
 Controller: `src/Controller/ProfileAiEnrichmentController.php`
 
-### 6.1 `POST /enrichment-jobs`
-Role:
-- cree un job pour l utilisateur connecte.
+Endpoints:
+1. `POST /enrichment-jobs`
+2. `GET /enrichment-jobs/{id}`
+3. `GET /enrichment-jobs/active`
+4. `POST /enrichment-jobs/{id}/decisions`
+5. `POST /enrichment-jobs/{id}/apply`
 
+### 6.1 POST /enrichment-jobs
 Entree JSON:
 - `input_type`: `studio_name` ou `website`
 - `input_value`: obligatoire
-- `input_region`: utilise pour `studio_name`
+- `input_region`: attendu quand `studio_name`
 - `prompt_version`: optionnel
 
 Regles:
-- verifie qu il n existe pas deja de job actif sur le profil.
-- statut initial: `pending`.
+- bloque si un job actif existe deja pour le profil;
+- cree le job en `pending`.
 
-### 6.2 `GET /enrichment-jobs/{id}`
-Role:
-- retourne le job et ses suggestions pour le profil connecte.
-
-### 6.3 `GET /enrichment-jobs/active`
-Role:
-- retourne le job actif du profil connecte (si present).
-
-### 6.4 `POST /enrichment-jobs/{id}/decisions`
-Role:
-- enregistre les decisions utilisateur champ par champ.
-
+### 6.2 POST /enrichment-jobs/{id}/decisions
 Entree JSON:
 - `decisions[]`
 - `suggestion_id`
 - `status`: `accepted` / `edited` / `rejected`
-- `final_value` requis fonctionnellement pour `edited`
+- `final_value` attendu si `edited`
 
 Precondition:
-- job en statut `awaiting_user`.
+- job en `awaiting_user`.
 
-### 6.5 `POST /enrichment-jobs/{id}/apply`
+### 6.3 POST /enrichment-jobs/{id}/apply
 Role:
-- applique en base profil les suggestions `accepted` + `edited`.
-- passe le job en `success` si l application technique se termine.
-
-Precondition:
-- job en statut `awaiting_user`.
+- applique les champs `accepted` + `edited`;
+- passe le job en `success` si l application technique termine.
 
 Reponse:
 - `applied_count`
@@ -189,43 +174,44 @@ Reponse:
 ## 7. Worker d enrichissement
 Commande:
 - `app:profile-ai:worker`
-- Fichier: `src/Command/ProfileAiEnrichmentWorkerCommand.php`
+- fichier: `src/Command/ProfileAiEnrichmentWorkerCommand.php`
 
 Options:
 - `--mode=mock|live`
 - `--limit=<n>`
-- `--job-id=<id>` (ciblage d un job)
+- `--job-id=<id>`
 
 ### 7.1 Mode mock
 Usage:
-- tests locaux et integration front/BO sans dependances externes.
+- tests fonctionnels API/BO/FO sans dependances externes.
 
 ### 7.2 Mode live
 Pipeline:
-1. Collecte des preuves (Google Places, scraping, OpenGraph).
-2. Construction du prompt.
-3. Appel LLM.
-4. Nettoyage/sanitation des suggestions.
-5. Ajout de placeholders pour champs manquants.
-6. Persistance suggestions + passage job en `awaiting_user`.
+1. collecte preuves (Google Places + scraping/OpenGraph)
+2. construction prompt
+3. appel LLM
+4. normalisation/sanitation
+5. placeholders pour champs manquants
+6. persistance suggestions
+7. job -> `awaiting_user`
 
-Sources selon l input:
-- `studio_name`: Google Find Place -> Google Details -> Scraping website (si site trouve).
-- `website`: Scraping website -> tentative Google Places via requete deduite du site.
+Strategie par input:
+- `studio_name`: Google Places puis scraping site detecte si disponible
+- `website`: scraping site puis tentative Google Places deduite
 
-### 7.3 Variables d environnement live
+### 7.3 Variables d environnement
 Obligatoires:
 - `GOOGLE_PLACES_API_KEY`
 - `OPENAI_API_KEY`
 
 Optionnelles:
-- `OPENAI_BASE_URL` (defaut `https://api.openai.com/v1`)
-- `OPENAI_MODEL` (defaut `gpt-4o-mini`)
+- `OPENAI_BASE_URL` (defaut: `https://api.openai.com/v1`)
+- `OPENAI_MODEL` (defaut code actuel: `gpt-4o-mini`)
 - `AI_WORKER_REQUEST_TIMEOUT`
 - `AI_WORKER_USER_AGENT`
 
-### 7.4 Execution planifiee
-Le worker est asynchrone et prevu pour cron.
+### 7.4 Planification (cron)
+Le worker est asynchrone et doit etre execute periodiquement.
 
 Exemple:
 ```bash
@@ -235,20 +221,20 @@ php bin/console app:profile-ai:worker --mode=live --limit=1
 ---
 
 ## 8. Mapping apply vers profil
-Mapping actuel (coeur MVP):
+Mapping principal:
 - `phone` -> `billing_phone`, `telephone`
 - `business_name` -> `billing_company`, `nom_commercial`
-- `siret` -> `siret`
-- `tva_number` -> `tva`
-- `skills` -> `competence` (CSV)
-- `addresses` -> `billing_address_1`, `billing_city`, `billing_postcode`, `billing_country`, `billing_state`, + champs domicile
+- `addresses` -> `billing_address_1`, `billing_city`, `billing_postcode`, `billing_country`, `billing_state` (+ champs domicile associes)
+- `skills` -> `competence` (string CSV)
 - `experiences_text` -> `description`
 - `project_references_text` -> `reference`
-- `main_activity` -> `activite_principale` (ID referentiel, pas texte libre)
+- `siret` -> `siret`
+- `tva_number` / `tva` -> `tva`
+- `main_activity` -> `activite_principale` (ID referentiel)
 
-Point cle `main_activity`:
-- resolution texte/ID vers le referentiel `product_activity`.
-- persistance finale en ID taxonomy attendu par les ecrans profil.
+Point `main_activity`:
+- pre-selection FO par matching tolerant;
+- persistance finale en ID taxonomy attendu par le profil.
 
 ---
 
@@ -273,7 +259,7 @@ API BO:
 - `POST /bo/enrichment-jobs/{id}/retry`
 
 Retry:
-- uniquement sur job `failed`.
+- limite aux jobs `failed`;
 - cree un nouveau job `pending` avec la meme entree.
 
 ---
@@ -284,35 +270,68 @@ Template principal:
 
 ### 10.1 Encart CTA
 Comportement:
-- visible sur profil pro.
-- bouton `Lancer TrustAgent`.
-- bouton `Verifier les suggestions` active quand job `awaiting_user`.
+- visible pour les profils pro;
+- bouton `Lancer TrustAgent`;
+- bouton `Verifier les suggestions` active uniquement en `awaiting_user`.
 
-Messages d etat:
+Messages:
 - `Recherche de vos informations en cours.`
 - `Recherche terminee. Vous pouvez verifier les informations.`
-- message affiche aussi au rechargement si job toujours `awaiting_user`.
+- message restaure au rechargement si job actif en `awaiting_user`.
 
 ### 10.2 Modale 1 (entree)
-Regles:
-- source `Nom du studio` ou `Site web`.
-- champ principal obligatoire.
-- si source `website`, URL strictement `http://` ou `https://`.
-- erreur front: `Format invalide. Exemple : https://monstudio.fr`.
-- champ `Ville / Region` present.
-- Google Places autocomplete active sur ce champ.
+Design:
+1. titre et structure custom
+2. bouton `Trouver mes informations` (fond `#ff7e10`)
+3. bouton `Annuler` (fond `#262626`)
+
+Regles fonctionnelles:
+- choix source: `Nom du studio` ou `Site web`
+- champ principal obligatoire
+- si source `website`: URL obligatoire en `http://` ou `https://`
+- erreur URL: `Format invalide. Exemple : https://monstudio.fr`
+- si source `studio_name`: `Ville / Region` obligatoire
+- validation FR renforcee sur ville/region
+- message: `Veuillez saisir une ville ou une region Francaise.`
+- bouton de confirmation desactive tant que invalide
+
+Google Places:
+- autocomplete sur `Ville / Region`
+- restriction `country=fr`
+- support mobile modale
+- `pac-container` z-index eleve + pointer-events
+- blocage fermeture externe de la modale pour fiabiliser la selection
+
+Note fallback:
+- si Google Places indisponible (script absent/cle non chargee), la validation repasse sur controle local non vide.
 
 ### 10.3 Modale 2 (revue suggestions)
 Regles:
-- affiche tous les champs metiers (y compris non trouves, editables).
-- utilisateur coche/decoche par champ.
-- `main_activity` rendu en `select` depuis le referentiel BO.
-- pre-selection automatique par matching tolerant sur suggestion IA.
-- application via `decisions` puis `apply`.
+- affiche tous les champs du MVP, y compris non trouves (placeholders editables)
+- checkbox par champ pour accepter/rejeter
+- edition directe des valeurs
+- `main_activity` en select base sur referentiel BO
+- matching tolerant pour preselection activite principale
+- sequence d action:
+1. `decisions`
+2. `apply`
+
+### 10.4 Responsive modales (implante)
+Modale 1:
+- popup responsive dediee
+- radios empiles en mobile
+- boutons full-width en mobile
+
+Modale 2:
+- popup responsive dediee
+- scroll interne
+- header sticky (titre + sous-titre)
+- cards compressees en mobile
+- boutons full-width en mobile
 
 ---
 
-## 11. Observabilite et exploitation
+## 11. Observabilite et KPIs
 Niveau job:
 - `attempt_count`
 - `last_error`
@@ -325,45 +344,56 @@ Niveau suggestion:
 - `status`
 - `final_value`
 
-Exploitation recommandee:
-1. mesurer taux `accepted/edited/rejected` par champ/source.
-2. analyser ecarts `suggested_value` vs `final_value`.
-3. ajuster regles/mapping/seuils, puis prompt.
-
-Important:
-- pas d auto-apprentissage implicite.
-- amelioration via boucle batch pilotee (analyse + decisions produit/tech).
+KPI metier conseille:
+1. taux `accepted/edited/rejected` par champ
+2. taux d application (`applied_count`)
+3. ecarts `suggested_value` vs `final_value`
+4. suivi des erreurs live (Google/scraping/LLM)
 
 ---
 
-## 12. Known issues / points de vigilance
-1. En mode live, `main_activity` peut rester `not_found` si le LLM ne renvoie pas de valeur exploitable ou trop eloignee du referentiel.
-2. Les resultats Google Places dependent fortement des restrictions de cle API (IP, APIs activees).
-3. `success` est un statut technique. La qualite metier doit etre lue via les decisions utilisateur.
+## 12. Securite et acces
+- FO: endpoints lies au profil connecte (isolation par `profile_id`).
+- BO: acces strict `ROLE_SUPER_ADMIN` ou `ROLE_COMMERCE`.
+- Cles API: via variables d environnement (pas en dur dans le code).
 
 ---
 
-## 13. Commandes utiles
-Worker mock:
+## 13. Runbook tests et exploitation
+Tests mock:
 ```bash
 php bin/console app:profile-ai:worker --mode=mock --limit=1
 ```
 
-Worker live:
+Tests live:
 ```bash
 php bin/console app:profile-ai:worker --mode=live --limit=1
 ```
 
-Worker sur job precis:
+Job cible:
 ```bash
 php bin/console app:profile-ai:worker --mode=live --job-id=123 --limit=1
 ```
 
+Verification BO:
+1. creer job
+2. lancer worker
+3. verifier passage `pending -> processing -> awaiting_user`
+4. verifier suggestions et details job
+5. appliquer et verifier passage en `success`
+
 ---
 
-## 14. A completer demain
-1. Section responsive detaillee des deux modales front.
-2. Captures d ecran BO/FO.
-3. Jeux de tests E2E (mock + live) pas-a-pas.
-4. Catalogue KPI officiel (version 1) pour boucle d amelioration.
+## 14. Points de vigilance
+1. Les resultats Google Places dependent fortement de la configuration de cle (APIs activees, restrictions IP).
+2. `Aucune source exploitable` signifie que Google/scraping n ont pas fourni de preuve exploitable.
+3. `success` reste un statut technique. La qualite metier se lit via les decisions utilisateur.
+4. Il n y a pas d auto-apprentissage implicite du modele a partir des tables SQL.
 
+---
+
+## 15. Boucle d amelioration continue (recommandee)
+1. Batch d analyse des retours `accepted/edited/rejected`.
+2. Ajustement mapping, seuils et normalisation.
+3. Ajustement prompt/pipeline.
+4. Re-mesure sur les KPIs.
