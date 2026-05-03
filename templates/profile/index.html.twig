@@ -2181,6 +2181,29 @@
 
             function openTrustAgentEntryModal() {
                 var defaultInput = ($('#nom_commercial').val() || trustAgentDefaultInput || '').trim();
+                function isFrenchRegionFieldValid(regionElement, inputType, inputRegion) {
+                    if (inputType !== 'studio_name') {
+                        return true;
+                    }
+
+                    if (inputRegion === '' || inputRegion.length > 120) {
+                        return false;
+                    }
+
+                    if (!regionElement) {
+                        return false;
+                    }
+
+                    var googleReady = regionElement.getAttribute('data-google-ready') === '1';
+                    if (!googleReady) {
+                        return true;
+                    }
+
+                    var isValid = regionElement.getAttribute('data-fr-location-valid') === '1';
+                    var validatedValue = String(regionElement.getAttribute('data-fr-location-value') || '').trim();
+
+                    return isValid && validatedValue !== '' && validatedValue === inputRegion;
+                }
 
                 return Swal.fire({
                     title: '',
@@ -2223,6 +2246,7 @@
                             <div class="form-group text-left mt-3 mb-0" id="trustAgentRegionGroup">
                                 <label for="trustAgentInputRegion" class="font-weight-bold">Ville / Région</label>
                                 <input type="text" id="trustAgentInputRegion" class="form-control" placeholder="Paris, Lyon, Marseille...">
+                                <div id="trustAgentInputRegionError" class="tm-ta-entry-field-error">Veuillez saisir une ville ou une région Française.</div>
                             </div>
                         </div>
                     `,
@@ -2231,12 +2255,23 @@
                         var inputLabel = document.getElementById('trustAgentInputValueLabel');
                         var inputValueError = document.getElementById('trustAgentInputValueError');
                         var regionInput = document.getElementById('trustAgentInputRegion');
+                        var regionInputError = document.getElementById('trustAgentInputRegionError');
                         var regionGroup = document.getElementById('trustAgentRegionGroup');
                         var studioRadio = document.getElementById('trustAgentInputStudio');
                         var websiteRadio = document.getElementById('trustAgentInputWebsite');
                         var sourceCardStudio = document.getElementById('trustAgentSourceCardStudio');
                         var sourceCardWebsite = document.getElementById('trustAgentSourceCardWebsite');
                         var confirmButton = Swal.getConfirmButton();
+                        var regionValidationState = {
+                            googleReady: false,
+                            isValidFrenchLocation: false,
+                            lastValidatedValue: ''
+                        };
+                        if (regionInput) {
+                            regionInput.setAttribute('data-google-ready', '0');
+                            regionInput.setAttribute('data-fr-location-valid', '0');
+                            regionInput.setAttribute('data-fr-location-value', '');
+                        }
 
                         function getAddressComponent(place, acceptedTypes, useShortName) {
                             if (!place || !Array.isArray(place.address_components)) {
@@ -2256,6 +2291,54 @@
                             }
 
                             return '';
+                        }
+
+                        function hasAddressComponentType(place, acceptedTypes) {
+                            if (!place || !Array.isArray(place.address_components)) {
+                                return false;
+                            }
+
+                            for (var i = 0; i < place.address_components.length; i += 1) {
+                                var component = place.address_components[i];
+                                if (!component || !Array.isArray(component.types)) {
+                                    continue;
+                                }
+                                for (var t = 0; t < component.types.length; t += 1) {
+                                    if (acceptedTypes.indexOf(component.types[t]) !== -1) {
+                                        return true;
+                                    }
+                                }
+                            }
+
+                            return false;
+                        }
+
+                        function setRegionValidation(isValid, sourceValue) {
+                            regionValidationState.isValidFrenchLocation = !!isValid;
+                            regionValidationState.lastValidatedValue = String(sourceValue || '').trim();
+                            if (regionInput) {
+                                regionInput.setAttribute('data-fr-location-valid', regionValidationState.isValidFrenchLocation ? '1' : '0');
+                                regionInput.setAttribute('data-fr-location-value', regionValidationState.lastValidatedValue);
+                            }
+                        }
+
+                        function isFrenchCityOrRegionPlace(place) {
+                            if (!place || typeof place !== 'object') {
+                                return false;
+                            }
+
+                            var country = String(getAddressComponent(place, ['country'], true) || '').toUpperCase();
+                            if (country !== 'FR') {
+                                return false;
+                            }
+
+                            return hasAddressComponentType(place, [
+                                'locality',
+                                'postal_town',
+                                'administrative_area_level_1',
+                                'administrative_area_level_2',
+                                'administrative_area_level_3'
+                            ]);
                         }
 
                         function resolveRegionLabelFromPlace(place, fallbackValue) {
@@ -2301,14 +2384,18 @@
                                 return;
                             }
                             if (!window.google || !window.google.maps || !window.google.maps.places || typeof window.google.maps.places.Autocomplete !== 'function') {
+                                regionValidationState.googleReady = false;
+                                regionInput.setAttribute('data-google-ready', '0');
                                 return;
                             }
+                            regionValidationState.googleReady = true;
+                            regionInput.setAttribute('data-google-ready', '1');
 
                             regionInput.setAttribute('autocomplete', 'off');
                             var autocomplete = new google.maps.places.Autocomplete(regionInput, {
                                 types: ['(regions)'],
                                 componentRestrictions: { country: 'fr' },
-                                fields: ['name', 'formatted_address', 'address_components']
+                                fields: ['name', 'formatted_address', 'address_components', 'types']
                             });
 
                             autocomplete.addListener('place_changed', function () {
@@ -2317,6 +2404,7 @@
                                 if (nextValue !== '') {
                                     regionInput.value = nextValue;
                                 }
+                                setRegionValidation(isFrenchCityOrRegionPlace(place), regionInput.value);
                                 refreshConfirmState();
                             });
                         }
@@ -2341,6 +2429,9 @@
                                 if (inputRegion.length > 120) {
                                     return false;
                                 }
+                                if (!isFrenchRegionFieldValid(regionInput, inputType, inputRegion)) {
+                                    return false;
+                                }
                             }
 
                             return true;
@@ -2355,8 +2446,15 @@
                             var inputValue = input.value.trim();
                             var inputRegion = regionInput.value.trim();
                             var showWebsiteError = inputType === 'website' && inputValue !== '' && !isLikelyWebsite(inputValue);
+                            var showRegionError = inputType === 'studio_name'
+                                && inputRegion !== ''
+                                && inputRegion.length <= 120
+                                && !isFrenchRegionFieldValid(regionInput, inputType, inputRegion);
                             if (inputValueError) {
                                 inputValueError.classList.toggle('is-visible', showWebsiteError);
+                            }
+                            if (regionInputError) {
+                                regionInputError.classList.toggle('is-visible', showRegionError);
                             }
                             confirmButton.disabled = !isEntryFormValid(inputType, inputValue, inputRegion);
                         }
@@ -2375,6 +2473,7 @@
                             regionGroup.style.display = studioRadio.checked ? 'block' : 'none';
                             if (!studioRadio.checked && regionInput) {
                                 regionInput.value = '';
+                                setRegionValidation(false, '');
                             }
                             if (websiteRadio.checked && input.value.trim() === defaultInput) {
                                 input.value = '';
@@ -2393,7 +2492,10 @@
                             input.addEventListener('input', refreshConfirmState);
                         }
                         if (regionInput) {
-                            regionInput.addEventListener('input', refreshConfirmState);
+                            regionInput.addEventListener('input', function () {
+                                setRegionValidation(false, '');
+                                refreshConfirmState();
+                            });
                         }
                         initRegionAutocomplete();
                         refreshPlaceholder();
@@ -2428,6 +2530,11 @@
 
                         if (inputType === 'studio_name' && inputRegion.length > 120) {
                             Swal.showValidationMessage('Le champ ville/region est trop long (max 120 caracteres).');
+                            return false;
+                        }
+
+                        if (inputType === 'studio_name' && !isFrenchRegionFieldValid(regionInput, inputType, inputRegion)) {
+                            Swal.showValidationMessage('Veuillez saisir une ville ou une région Française.');
                             return false;
                         }
 
