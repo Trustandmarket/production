@@ -381,7 +381,12 @@
         }
 
         .pac-container {
-            z-index: 20000 !important;
+            z-index: 2147483647 !important;
+            pointer-events: auto !important;
+        }
+
+        .swal2-container.tm-ta-entry-container {
+            zoom: 1 !important;
         }
 
         @media (max-width: 767.98px) {
@@ -2251,12 +2256,14 @@
                     title: '',
                     width: 760,
                     focusConfirm: false,
+                    allowOutsideClick: false,
                     showCancelButton: true,
                     confirmButtonText: 'Trouver mes informations',
                     cancelButtonText: 'Annuler',
                     reverseButtons: true,
                     buttonsStyling: false,
                     customClass: {
+                        container: 'tm-ta-entry-container',
                         popup: 'tm-ta-entry-popup',
                         actions: 'tm-ta-entry-actions',
                         confirmButton: 'tm-ta-entry-confirm-btn',
