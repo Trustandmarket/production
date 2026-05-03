@@ -371,6 +371,16 @@
             padding-right: 6px;
         }
 
+        .tm-ta-review-popup {
+            width: min(980px, calc(100vw - 24px));
+            padding: 1.1rem 1.15rem 1rem;
+        }
+
+        .tm-ta-review-popup .swal2-html-container {
+            margin: 0.4rem 0 0;
+            padding: 0;
+        }
+
         .tm-ta-review-html::-webkit-scrollbar {
             width: 8px;
         }
@@ -386,6 +396,10 @@
         }
 
         .swal2-container.tm-ta-entry-container {
+            zoom: 1 !important;
+        }
+
+        .swal2-container.tm-ta-review-container {
             zoom: 1 !important;
         }
 
@@ -433,6 +447,74 @@
                 width: 100%;
                 min-width: 0;
                 padding: 0.65rem 0.8rem;
+            }
+
+            .tm-ta-review-popup {
+                width: calc(100vw - 12px) !important;
+                padding: 0.85rem 0.7rem 0.8rem !important;
+            }
+
+            .tm-ta-review-html {
+                max-height: 66vh;
+                padding-right: 2px;
+            }
+
+            .tm-ta-review-title {
+                font-size: 1.42rem;
+                line-height: 1.2;
+            }
+
+            .tm-ta-review-subtitle {
+                margin: 0.35rem 0 0.85rem 0;
+                font-size: 0.92rem;
+                line-height: 1.28;
+            }
+
+            .tm-ta-review-header-sticky {
+                padding-bottom: 8px;
+                margin-bottom: 6px;
+            }
+
+            .tm-ta-card {
+                border-radius: 12px;
+                padding: 10px;
+            }
+
+            .tm-ta-head {
+                flex-wrap: wrap;
+                margin-bottom: 8px;
+            }
+
+            .tm-ta-head label {
+                font-size: 0.98rem;
+                line-height: 1.2;
+            }
+
+            .tm-ta-meta {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+
+            .tm-ta-card .form-control,
+            .tm-ta-card .custom-select {
+                min-height: 42px;
+            }
+
+            .tm-ta-card textarea.form-control {
+                min-height: 112px;
+            }
+
+            .swal2-actions.tm-ta-review-actions {
+                width: 100%;
+                margin-top: 0.8rem;
+                gap: 9px;
+            }
+
+            .swal2-actions .tm-ta-review-confirm-btn,
+            .swal2-actions .tm-ta-review-cancel-btn {
+                width: 100%;
+                min-width: 0;
+                padding: 0.7rem 0.85rem;
             }
         }
 
@@ -3089,6 +3171,8 @@
                     reverseButtons: true,
                     buttonsStyling: false,
                     customClass: {
+                        container: 'tm-ta-review-container',
+                        popup: 'tm-ta-review-popup',
                         actions: 'tm-ta-review-actions',
                         htmlContainer: 'tm-ta-review-html',
                         confirmButton: 'tm-ta-review-confirm-btn',
