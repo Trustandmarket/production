@@ -44,6 +44,11 @@ class AnnouncementModerationContext
         return (string) $this->announcement->getPostStatus();
     }
 
+    public function getSlug(): string
+    {
+        return trim((string) ($this->announcement->getPostName() ?? ''));
+    }
+
     public function getTitle(): string
     {
         return trim((string) ($this->announcement->getPostTitle() ?? ''));

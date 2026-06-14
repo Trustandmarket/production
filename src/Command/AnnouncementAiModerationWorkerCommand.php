@@ -6,7 +6,9 @@ use App\Service\AnnouncementModeration\AnnouncementModerationAiService;
 use App\Service\AnnouncementModeration\AnnouncementModerationContextBuilder;
 use App\Service\AnnouncementModeration\AnnouncementModerationDecisionService;
 use App\Service\AnnouncementModeration\AnnouncementModerationJobManager;
+use App\Service\AnnouncementModeration\AnnouncementModerationNotificationService;
 use App\Service\AnnouncementModeration\AnnouncementModerationPrecheckService;
+use App\Service\AnnouncementModeration\AnnouncementModerationStatusApplier;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,7 +27,9 @@ class AnnouncementAiModerationWorkerCommand extends Command
         private readonly AnnouncementModerationContextBuilder $contextBuilder,
         private readonly AnnouncementModerationPrecheckService $precheckService,
         private readonly AnnouncementModerationAiService $aiService,
-        private readonly AnnouncementModerationDecisionService $decisionService
+        private readonly AnnouncementModerationDecisionService $decisionService,
+        private readonly AnnouncementModerationStatusApplier $statusApplier,
+        private readonly AnnouncementModerationNotificationService $notificationService
     ) {
         parent::__construct();
     }
@@ -64,6 +68,8 @@ class AnnouncementAiModerationWorkerCommand extends Command
         $succeeded = 0;
         $failed = 0;
         $skipped = 0;
+        $notificationErrors = 0;
+        $manualReviewDigestItems = [];
 
         while ($processed < $limit) {
             $candidate = $this->jobManager->findNextPendingJob($targetJobId);
@@ -100,13 +106,36 @@ class AnnouncementAiModerationWorkerCommand extends Command
 
                 $decision = $this->decisionService->decide($prechecks['passed'], $aiEvaluation);
                 $this->jobManager->completeJob($jobId, $decision, $checks, $context->toArray());
+                $statusResult = $this->statusApplier->apply($context, $decision);
+
+                if ($decision->getOutcome() === 'publish') {
+                    $notificationResult = $this->notificationService->sendAutoPublishNotification($context);
+                    if (!$notificationResult['ok']) {
+                        $notificationErrors++;
+                        $io->warning(sprintf(
+                            'Notification auto publish non envoyee pour job #%d: %s',
+                            $jobId,
+                            $notificationResult['error']
+                        ));
+                    }
+                }
+
+                if ($decision->getOutcome() === 'manual_review') {
+                    $manualReviewDigestItems[] = $this->notificationService->buildManualReviewDigestItem(
+                        $jobId,
+                        $context,
+                        $decision
+                    );
+                }
 
                 $succeeded++;
                 $io->text(sprintf(
-                    'Job #%d -> %s (%s)',
+                    'Job #%d -> %s (%s) annonce=%s changed=%s',
                     $jobId,
                     $decision->getJobStatus(),
-                    $decision->getDecisionCode()
+                    $decision->getDecisionCode(),
+                    $statusResult['target_status'],
+                    $statusResult['changed'] ? 'yes' : 'no'
                 ));
             } catch (\Throwable $exception) {
                 $failed++;
@@ -125,17 +154,31 @@ class AnnouncementAiModerationWorkerCommand extends Command
             }
         }
 
+        if ($manualReviewDigestItems !== []) {
+            $digestResult = $this->notificationService->sendManualReviewDigest($manualReviewDigestItems);
+            if (!$digestResult['ok']) {
+                $notificationErrors++;
+                $io->warning('Echec envoi digest admin Trust: ' . $digestResult['error']);
+            } else {
+                $io->text(sprintf(
+                    'Digest admin Trust envoye pour %d annonce(s) en revue manuelle.',
+                    count($manualReviewDigestItems)
+                ));
+            }
+        }
+
         $io->success(sprintf(
-            'Worker termine. mode=%s processed=%d success=%d failed=%d skipped=%d limit=%d%s',
+            'Worker termine. mode=%s processed=%d success=%d failed=%d skipped=%d notification_errors=%d limit=%d%s',
             $mode,
             $processed,
             $succeeded,
             $failed,
             $skipped,
+            $notificationErrors,
             $limit,
             $targetJobId !== null ? sprintf(' target_job_id=%d', $targetJobId) : ''
         ));
 
-        return $failed > 0 ? Command::FAILURE : Command::SUCCESS;
+        return ($failed > 0 || $notificationErrors > 0) ? Command::FAILURE : Command::SUCCESS;
     }
 }
