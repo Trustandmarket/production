@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -60,8 +59,7 @@ class AnnouncementAiModerationBackofficeController extends AbstractController
 
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly AdminUrlGenerator $adminUrlGenerator,
-        private readonly ParameterBagInterface $parameterBag
+        private readonly AdminUrlGenerator $adminUrlGenerator
     ) {
     }
 
@@ -821,21 +819,7 @@ class AnnouncementAiModerationBackofficeController extends AbstractController
             return '';
         }
 
-        return sprintf('%s/fr/annonces/details/%s', $this->getBaseUrl(), rawurlencode($slug));
-    }
-
-    private function getBaseUrl(): string
-    {
-        $environment = (string) $this->parameterBag->get('environnement');
-
-        if ($environment === 'prod') {
-            return 'https://trustandmarket.com';
-        }
-        if ($environment === 'rec') {
-            return 'https://rec.trustandmarket.com';
-        }
-
-        return 'http://localhost';
+        return sprintf('/fr/annonces/details/%s', rawurlencode($slug));
     }
 
     private function resolveAdminLocale(?string $locale): string
