@@ -23,6 +23,16 @@ class AnnouncementModerationCheckResult
         return $this->result === 'pass';
     }
 
+    public function getResult(): string
+    {
+        return $this->result;
+    }
+
+    public function getCriterionCode(): string
+    {
+        return $this->criterionCode;
+    }
+
     /**
      * @return array<string, mixed>
      */

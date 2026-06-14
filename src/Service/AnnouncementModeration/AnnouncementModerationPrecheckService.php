@@ -38,7 +38,7 @@ class AnnouncementModerationPrecheckService
         $checks[] = $this->buildCheck(
             'title_min_length',
             'Longueur minimale du titre',
-            mb_strlen($title) >= $this->getTitleMinLength(),
+            $this->textLength($title) >= $this->getTitleMinLength(),
             sprintf('Le titre doit contenir au moins %d caracteres.', $this->getTitleMinLength()),
             $title
         );
@@ -54,7 +54,7 @@ class AnnouncementModerationPrecheckService
         $checks[] = $this->buildCheck(
             'description_min_length',
             'Longueur minimale de la description',
-            mb_strlen($description) >= $this->getDescriptionMinLength(),
+            $this->textLength($description) >= $this->getDescriptionMinLength(),
             sprintf('La description doit contenir au moins %d caracteres.', $this->getDescriptionMinLength()),
             $description
         );
@@ -65,26 +65,6 @@ class AnnouncementModerationPrecheckService
             $context->hasMainPhoto(),
             'Au moins une photo est requise.',
             $context->getGalleryIds()
-        );
-
-        $checks[] = $this->buildCheck(
-            'has_location_core_fields',
-            'Localisation minimale',
-            $context->hasLocationCoreFields(),
-            'Les champs pays, ville et adresse doivent etre renseignes.',
-            [
-                'country' => $context->getCountry(),
-                'city' => $context->getCity(),
-                'address' => $context->getAddress(),
-            ]
-        );
-
-        $checks[] = $this->buildCheck(
-            'has_category',
-            'Categorie renseignee',
-            $context->hasCategory(),
-            'Une categorie ou sous-categorie doit etre associee a l annonce.',
-            $context->toArray()['aggregate_data']['IdSousCategorie'] ?? null
         );
 
         $passed = true;
@@ -138,17 +118,17 @@ class AnnouncementModerationPrecheckService
 
     private function getMinPrice(): float
     {
-        return $this->readFloatEnv('ANNOUNCEMENT_AI_MIN_PRICE_DEFAULT', 1.0);
+        return $this->readFloatEnv('ANNOUNCEMENT_AI_MIN_PRICE_DEFAULT', 50.0);
     }
 
     private function getTitleMinLength(): int
     {
-        return $this->readIntEnv('ANNOUNCEMENT_AI_TITLE_MIN_LENGTH', 8);
+        return $this->readIntEnv('ANNOUNCEMENT_AI_TITLE_MIN_LENGTH', 30);
     }
 
     private function getDescriptionMinLength(): int
     {
-        return $this->readIntEnv('ANNOUNCEMENT_AI_DESCRIPTION_MIN_LENGTH', 30);
+        return $this->readIntEnv('ANNOUNCEMENT_AI_DESCRIPTION_MIN_LENGTH', 300);
     }
 
     private function readIntEnv(string $name, int $default): int
@@ -180,5 +160,14 @@ class AnnouncementModerationPrecheckService
         }
 
         return (string) $value;
+    }
+
+    private function textLength(string $value): int
+    {
+        if (function_exists('mb_strlen')) {
+            return (int) mb_strlen($value);
+        }
+
+        return strlen($value);
     }
 }
