@@ -145,13 +145,13 @@ class AnnouncementModerationJobManager
 
                 $conn->insert('announcement_ai_moderation_checks', [
                     'moderation_job_id' => $jobId,
-                    'criterion_code' => $data['criterion_code'],
-                    'criterion_label' => $data['criterion_label'],
-                    'source_type' => $data['source_type'],
-                    'result' => $data['result'],
-                    'score' => $data['score'],
-                    'reason' => $data['reason'],
-                    'raw_value' => $this->encodeJson($data['raw_value']),
+                    'criterion_code' => $this->normalizeDbText($data['criterion_code'], 80),
+                    'criterion_label' => $this->normalizeDbText($data['criterion_label'], 120),
+                    'source_type' => $this->normalizeDbText($data['source_type'], 30),
+                    'result' => $this->normalizeDbText($data['result'], 20),
+                    'score' => $this->normalizeDbScore($data['score']),
+                    'reason' => $this->normalizeDbLongText($data['reason']),
+                    'raw_value' => $this->normalizeDbLongText($data['raw_value']),
                     'created_at' => $this->now(),
                     'updated_at' => $this->now(),
                 ]);
@@ -274,5 +274,68 @@ class AnnouncementModerationJobManager
         }
 
         return substr($value, 0, $maxLength);
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private function normalizeDbText($value, int $maxLength): string
+    {
+        return $this->truncate($this->stringifyValue($value), $maxLength);
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private function normalizeDbLongText($value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return $this->stringifyValue($value);
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private function normalizeDbScore($value): ?float
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        if (is_numeric($value)) {
+            $score = (float) $value;
+
+            return max(0.0, min(1.0, round($score, 4)));
+        }
+
+        return null;
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private function stringifyValue($value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        if (is_string($value)) {
+            return $value;
+        }
+
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+        $json = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($json !== false) {
+            return $json;
+        }
+
+        return '[unserializable-value]';
     }
 }

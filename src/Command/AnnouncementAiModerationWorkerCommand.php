@@ -110,8 +110,14 @@ class AnnouncementAiModerationWorkerCommand extends Command
                 ));
             } catch (\Throwable $exception) {
                 $failed++;
-                $this->jobManager->markJobAsFailed($jobId, $exception->getMessage());
-                $io->warning(sprintf('Job #%d en echec: %s', $jobId, $exception->getMessage()));
+                $errorMessage = sprintf(
+                    '%s in %s:%d',
+                    $exception->getMessage(),
+                    $exception->getFile(),
+                    $exception->getLine()
+                );
+                $this->jobManager->markJobAsFailed($jobId, $errorMessage);
+                $io->warning(sprintf('Job #%d en echec: %s', $jobId, $errorMessage));
             }
 
             if ($targetJobId !== null) {
