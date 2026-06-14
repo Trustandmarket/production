@@ -1,0 +1,28 @@
+{% set job = entity.instance %}
+{% set checks = job.checks %}
+
+{% if checks is empty %}
+    <span>Aucun check persiste.</span>
+{% else %}
+    <div style="display:flex; flex-direction:column; gap:12px;">
+        {% for check in checks %}
+            {% set color = check.result == 'pass' ? '#198754' : (check.result == 'fail' ? '#dc3545' : '#fd7e14') %}
+            <div style="border:1px solid #dee2e6; border-radius:8px; padding:12px; background:#fff;">
+                <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:8px;">
+                    <div>
+                        <strong>{{ check.criterionLabel }}</strong>
+                        <div style="font-size:12px; color:#6c757d;">{{ check.criterionCode }} | {{ check.sourceType }}</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="display:inline-block; padding:4px 8px; border-radius:999px; background:{{ color }}; color:#fff; font-size:12px; font-weight:600;">{{ check.result }}</span>
+                        <span style="font-size:12px; color:#6c757d;">score: {{ check.scoreDisplay }}</span>
+                    </div>
+                </div>
+                {% if check.reason %}
+                    <div style="margin-bottom:8px;"><strong>Reason:</strong> {{ check.reason }}</div>
+                {% endif %}
+                <pre style="white-space:pre-wrap; overflow-wrap:anywhere; font-size:12px; background:#f8f9fa; border:1px solid #dee2e6; border-radius:6px; padding:12px; margin:0;">{{ check.rawValuePretty }}</pre>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

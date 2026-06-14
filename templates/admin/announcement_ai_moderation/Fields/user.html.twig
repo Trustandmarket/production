@@ -1,0 +1,16 @@
+{% set job = entity.instance %}
+{% set user = job.user %}
+
+<div style="display:flex; flex-direction:column; gap:4px; min-width:220px;">
+    <strong>{{ job.userLabel }}</strong>
+    {% if user %}
+        {% set detailUrl = ea_url()
+            .setController('App\\Controller\\Admin\\UserCrudController')
+            .setAction('detail')
+            .setEntityId(user.id)
+        %}
+        <a href="{{ detailUrl }}">{{ user.emailCanonical ?: 'Voir utilisateur' }}</a>
+    {% else %}
+        <span style="color:#6c757d;">Utilisateur supprime</span>
+    {% endif %}
+</div>

@@ -24,9 +24,10 @@ use App\Controller\Admin\ParcoursUtilisateur\Experiences\WpPostsCrudController a
 use App\Controller\Admin\ParcoursUtilisateur\UniversTrust\WpPostsCrudController as UniversTrustCrudController;
 use App\Controller\Admin\ToutesCategories\WpTermTaxonomyCrudController as ToutesCategoriesCrudController;
 use App\Controller\Admin\Activities\WpTermTaxonomyCrudController as ActivitiesCrudController;
+use App\Controller\Admin\AnnouncementAiModerationJobCrudController;
 use App\Controller\Admin\Configurations\{DepartementCrudController, OffreInterneCrudController, MusicUniverseCrudController};
 use App\Controller\Admin\Paiements\{AbonnementCrudController};
-use App\Entity\{OffreInterne, ReminderLog, User, WpComments, WpPosts, Departement, WpTerms, WpTermTaxonomy, Abonnement, MusicUniverse};
+use App\Entity\{OffreInterne, ReminderLog, User, WpComments, WpPosts, Departement, WpTerms, WpTermTaxonomy, Abonnement, MusicUniverse, AnnouncementAiModerationJob};
 use App\Service\Payment;
 use App\Service\ServiceManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -189,6 +190,7 @@ class DashboardController extends AbstractDashboardController
             yield MenuItem::subMenu('Trust Agentique IA', 'fa fa-robot')->setSubItems([
                 MenuItem::linkToRoute('Dashboard IA', 'fa fa-chart-line', 'admin_ai_enrichment_dashboard'),
                 MenuItem::linkToRoute('Jobs IA', 'fa fa-list', 'admin_ai_enrichment_jobs'),
+                MenuItem::linkToCrud('Moderation annonces IA', 'fa fa-shield', AnnouncementAiModerationJob::class)->setController(AnnouncementAiModerationJobCrudController::class),
             ]);
         }
 
