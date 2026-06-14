@@ -34,46 +34,46 @@ class AnnouncementAiModerationJob
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true)]
     private ?User $user = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(name: 'post_status_snapshot', length: 20)]
     private string $postStatusSnapshot = 'moderation';
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(name: 'source_transition', length: 50)]
     private string $sourceTransition;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(name: 'status', length: 30)]
     private string $status = self::STATUS_PENDING;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'attempt_count')]
     private int $attemptCount = 0;
 
-    #[ORM\Column(length: 30, nullable: true)]
+    #[ORM\Column(name: 'decision_source', length: 30, nullable: true)]
     private ?string $decisionSource = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
+    #[ORM\Column(name: 'decision_code', length: 50, nullable: true)]
     private ?string $decisionCode = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(name: 'decision_summary', length: 255, nullable: true)]
     private ?string $decisionSummary = null;
 
-    #[ORM\Column(length: 100, nullable: true)]
+    #[ORM\Column(name: 'ai_model', length: 100, nullable: true)]
     private ?string $aiModel = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 4, nullable: true)]
+    #[ORM\Column(name: 'ai_confidence', type: Types::DECIMAL, precision: 5, scale: 4, nullable: true)]
     private ?string $aiConfidence = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(name: 'payload_snapshot', type: Types::TEXT, nullable: true)]
     private ?string $payloadSnapshot = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'hard_rules_pass', nullable: true)]
     private ?bool $hardRulesPass = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'ai_pass', nullable: true)]
     private ?bool $aiPass = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(name: 'last_error', type: Types::TEXT, nullable: true)]
     private ?string $lastError = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(name: 'processed_at', type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $processedAt = null;
 
     /**

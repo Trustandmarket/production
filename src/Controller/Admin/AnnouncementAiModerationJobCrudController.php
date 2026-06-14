@@ -69,10 +69,6 @@ class AnnouncementAiModerationJobCrudController extends AbstractCrudController
                 'status',
                 'decisionCode',
                 'decisionSummary',
-                'announcement.postTitle',
-                'announcement.postName',
-                'user.displayName',
-                'user.email_canonical',
             ]);
     }
 

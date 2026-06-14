@@ -21,25 +21,25 @@ class AnnouncementAiModerationCheck
     #[ORM\JoinColumn(name: 'moderation_job_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private ?AnnouncementAiModerationJob $moderationJob = null;
 
-    #[ORM\Column(length: 80)]
+    #[ORM\Column(name: 'criterion_code', length: 80)]
     private string $criterionCode;
 
-    #[ORM\Column(length: 120)]
+    #[ORM\Column(name: 'criterion_label', length: 120)]
     private string $criterionLabel;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(name: 'source_type', length: 30)]
     private string $sourceType;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(name: 'result', length: 20)]
     private string $result;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 4, nullable: true)]
+    #[ORM\Column(name: 'score', type: Types::DECIMAL, precision: 5, scale: 4, nullable: true)]
     private ?string $score = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(name: 'reason', type: Types::TEXT, nullable: true)]
     private ?string $reason = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(name: 'raw_value', type: Types::TEXT, nullable: true)]
     private ?string $rawValue = null;
 
     public function getId(): ?int
