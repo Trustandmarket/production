@@ -39,6 +39,8 @@ class AnnouncementAiModerationWorkerCommand extends Command
         $this
             ->addOption('mode', null, InputOption::VALUE_REQUIRED, 'Mode IA (mock|live)', 'mock')
             ->addOption('limit', null, InputOption::VALUE_REQUIRED, 'Nombre max de jobs a traiter sur ce run', '10')
+            ->addOption('no-notify', null, InputOption::VALUE_NONE, 'Traite les jobs sans envoyer les notifications.')
+            ->addOption('dry-run-side-effects', null, InputOption::VALUE_NONE, 'Persiste la decision du job mais n applique ni statut annonce ni notifications.')
             ->addOption('job-id', null, InputOption::VALUE_REQUIRED, 'Traiter un job specifique (ID)', null);
     }
 
@@ -47,6 +49,8 @@ class AnnouncementAiModerationWorkerCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $mode = strtolower(trim((string) $input->getOption('mode')));
         $limit = max(1, (int) $input->getOption('limit'));
+        $noNotify = (bool) $input->getOption('no-notify');
+        $dryRunSideEffects = (bool) $input->getOption('dry-run-side-effects');
         $jobIdOption = $input->getOption('job-id');
         $targetJobId = $jobIdOption !== null ? max(0, (int) $jobIdOption) : null;
 
@@ -106,9 +110,16 @@ class AnnouncementAiModerationWorkerCommand extends Command
 
                 $decision = $this->decisionService->decide($prechecks['passed'], $aiEvaluation);
                 $this->jobManager->completeJob($jobId, $decision, $checks, $context->toArray());
-                $statusResult = $this->statusApplier->apply($context, $decision);
+                $statusResult = [
+                    'target_status' => $decision->getOutcome() === 'publish' ? 'publish' : 'moderation',
+                    'changed' => false,
+                ];
 
-                if ($decision->getOutcome() === 'publish') {
+                if (!$dryRunSideEffects) {
+                    $statusResult = $this->statusApplier->apply($context, $decision);
+                }
+
+                if (!$dryRunSideEffects && !$noNotify && $decision->getOutcome() === 'publish') {
                     $notificationResult = $this->notificationService->sendAutoPublishNotification($context);
                     if (!$notificationResult['ok']) {
                         $notificationErrors++;
@@ -154,7 +165,7 @@ class AnnouncementAiModerationWorkerCommand extends Command
             }
         }
 
-        if ($manualReviewDigestItems !== []) {
+        if (!$dryRunSideEffects && !$noNotify && $manualReviewDigestItems !== []) {
             $digestResult = $this->notificationService->sendManualReviewDigest($manualReviewDigestItems);
             if (!$digestResult['ok']) {
                 $notificationErrors++;
@@ -168,13 +179,15 @@ class AnnouncementAiModerationWorkerCommand extends Command
         }
 
         $io->success(sprintf(
-            'Worker termine. mode=%s processed=%d success=%d failed=%d skipped=%d notification_errors=%d limit=%d%s',
+            'Worker termine. mode=%s processed=%d success=%d failed=%d skipped=%d notification_errors=%d dry_run_side_effects=%s no_notify=%s limit=%d%s',
             $mode,
             $processed,
             $succeeded,
             $failed,
             $skipped,
             $notificationErrors,
+            $dryRunSideEffects ? 'yes' : 'no',
+            $noNotify ? 'yes' : 'no',
             $limit,
             $targetJobId !== null ? sprintf(' target_job_id=%d', $targetJobId) : ''
         ));
