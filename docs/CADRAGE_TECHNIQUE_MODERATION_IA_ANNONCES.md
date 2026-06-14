@@ -360,6 +360,7 @@ Responsabilites:
 - envoyer les emails metier
 - reutiliser `BrevoMailer`
 - centraliser les IDs de templates et la construction du payload
+- envoyer un recap admin Trust des annonces a traiter manuellement
 
 ### `AnnouncementAiModerationWorkerCommand`
 
@@ -494,10 +495,54 @@ Notifications a garder en V1:
 
 - email de soumission en moderation
 - email de publication automatique
+- email admin Trust avec la liste des annonces basculees en `manual_review`
 
 Notification a ne pas activer en V1:
 
 - rejet automatique
+
+### 4 bis. Notification admin Trust de revue manuelle
+
+Besoin ajoute:
+
+- a chaque traitement du worker, envoyer a l'admin Trust la liste des annonces qui restent a traiter manuellement
+
+Recommendation technique:
+
+- ne pas envoyer un email par annonce
+- envoyer un email recapitulatif par run du worker
+- inclure uniquement les annonces qui viennent d'etre basculees en `manual_review` pendant ce run
+
+Pourquoi:
+
+- evite le bruit si plusieurs annonces sont traitees sur un meme passage cron
+- donne une liste exploitable directement par l'equipe Trust
+- reste coherent avec une execution toutes les 30 minutes
+
+Contenu recommande de la notification:
+
+- identifiant du job
+- identifiant de l'annonce
+- titre de l'annonce
+- proprietaire de l'annonce
+- raison courte de la revue manuelle
+- lien BO vers l'annonce
+- lien BO vers le detail du job IA
+
+Implementation recommandee:
+
+- `AnnouncementAiModerationWorkerCommand` accumule les annonces passees en `manual_review` pendant le run
+- en fin d'execution, il appelle `AnnouncementModerationNotificationService::sendManualReviewDigest(array $items)`
+- le service envoie un template Brevo dedie a une liste admin
+
+Template cible a prevoir:
+
+- nouveau template Brevo dedie aux operations internes Trust
+
+Destinataires recommandes:
+
+- boite exploitation Trust
+- eventuellement copie a `commerce@trustandmarket.com`
 
 ### 5. Worker et claim atomique
 
@@ -622,6 +667,11 @@ Frequence:
 - `manual_review` si revue humaine necessaire
 - `failed` si erreur technique
 
+### Etape 9 - envoyer le digest admin Trust
+
+- si au moins une annonce du run est en `manual_review`
+- envoyer un recapitulatif unique a l'admin Trust
+
 ## Shadow mode recommande
 
 Avant activation automatique en production, je recommande une phase de shadow mode:
@@ -690,6 +740,7 @@ Parade:
 - creer `AnnouncementModerationStatusApplier`
 - creer `AnnouncementModerationNotificationService`
 - activer la publication auto des cas verts
+- ajouter le digest admin Trust des annonces a revoir manuellement
 
 ### Lot 4 - operabilite
 
