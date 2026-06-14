@@ -1,0 +1,367 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block page_title %}
+    Moderation annonces IA
+{% endblock %}
+
+{% block main %}
+    <style>
+        .tm-mod-head { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
+        .tm-mod-filters { border:1px solid #e2e8f0; border-radius:10px; padding:12px; background:#fff; margin-bottom:14px; }
+        .tm-mod-filters form { display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); }
+        .tm-mod-filters label { font-size:12px; color:#334155; display:flex; flex-direction:column; gap:4px; }
+        .tm-mod-filters input, .tm-mod-filters select { border:1px solid #cbd5e1; border-radius:8px; padding:6px 8px; }
+        .tm-mod-actions { display:flex; gap:8px; align-items:end; }
+        .tm-mod-btn { border:0; border-radius:8px; background:#1d4ed8; color:#fff; padding:8px 12px; cursor:pointer; }
+        .tm-mod-btn-ghost { background:#475569; }
+        .tm-mod-btn-mini { padding:5px 8px; font-size:12px; line-height:1.2; }
+        .tm-mod-table-wrap { overflow:auto; border:1px solid #e2e8f0; border-radius:10px; background:#fff; }
+        .tm-mod-table { width:100%; border-collapse:collapse; min-width:1280px; }
+        .tm-mod-table th, .tm-mod-table td { padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; vertical-align:top; font-size:13px; }
+        .tm-mod-table th { background:#f8fafc; color:#334155; position:sticky; top:0; }
+        .tm-mod-tag { display:inline-block; border-radius:999px; padding:3px 8px; font-size:11px; font-weight:700; text-transform:uppercase; }
+        .tm-mod-tag-pending { background:#fff7ed; color:#c2410c; }
+        .tm-mod-tag-processing { background:#eff6ff; color:#1d4ed8; }
+        .tm-mod-tag-approved { background:#ecfdf5; color:#166534; }
+        .tm-mod-tag-manual_review { background:#fff7ed; color:#c2410c; }
+        .tm-mod-tag-failed { background:#fef2f2; color:#b91c1c; }
+        .tm-mod-tag-cancelled { background:#f1f5f9; color:#334155; }
+        .tm-mod-link { color:#1d4ed8; text-decoration:none; font-weight:600; }
+        .tm-mod-muted { color:#64748b; }
+        .tm-mod-error { margin:10px 0; color:#b91c1c; font-weight:600; }
+        .tm-mod-pagination { margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+        .tm-mod-row-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    </style>
+
+    <div class="tm-mod-head">
+        <h2 style="margin:0;">Moderation annonces IA</h2>
+    </div>
+
+    <div class="tm-mod-filters">
+        <form id="filtersForm">
+            <label>Statut
+                <select id="fStatus" name="status">
+                    <option value="">Tous</option>
+                    <option value="pending">pending</option>
+                    <option value="processing">processing</option>
+                    <option value="approved">approved</option>
+                    <option value="manual_review">manual_review</option>
+                    <option value="failed">failed</option>
+                    <option value="cancelled">cancelled</option>
+                </select>
+            </label>
+            <label>Source decision
+                <select id="fDecisionSource" name="decision_source">
+                    <option value="">Toutes</option>
+                    <option value="rules_only">rules_only</option>
+                    <option value="rules_and_ai">rules_and_ai</option>
+                    <option value="technical_failure">technical_failure</option>
+                </select>
+            </label>
+            <label>Annonce ID
+                <input id="fAnnouncementId" name="announcement_id" type="number" min="1" placeholder="ex: 10108">
+            </label>
+            <label>User ID
+                <input id="fUserId" name="user_id" type="number" min="1" placeholder="ex: 42">
+            </label>
+            <label>Has error
+                <select id="fHasError" name="has_error">
+                    <option value="">Tous</option>
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                </select>
+            </label>
+            <label>Date debut
+                <input id="fFrom" name="from" type="date">
+            </label>
+            <label>Date fin
+                <input id="fTo" name="to" type="date">
+            </label>
+            <label>Per page
+                <select id="fPerPage" name="per_page">
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </label>
+            <label>Sort
+                <select id="fSort" name="sort">
+                    <option value="created_at">created_at</option>
+                    <option value="processed_at">processed_at</option>
+                    <option value="updated_at">updated_at</option>
+                    <option value="status">status</option>
+                    <option value="decision_source">decision_source</option>
+                    <option value="decision_code">decision_code</option>
+                    <option value="attempt_count">attempt_count</option>
+                    <option value="announcement_id">announcement_id</option>
+                    <option value="user_id">user_id</option>
+                    <option value="id">id</option>
+                </select>
+            </label>
+            <label>Order
+                <select id="fOrder" name="order">
+                    <option value="DESC">DESC</option>
+                    <option value="ASC">ASC</option>
+                </select>
+            </label>
+            <div class="tm-mod-actions">
+                <button class="tm-mod-btn" type="submit">Appliquer</button>
+                <button class="tm-mod-btn tm-mod-btn-ghost" id="resetFilters" type="button">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="jobsError" class="tm-mod-error" style="display:none;"></div>
+    <div id="jobsSummary" class="tm-mod-muted" style="margin-bottom:8px;"></div>
+
+    <div class="tm-mod-table-wrap">
+        <table class="tm-mod-table">
+            <thead>
+            <tr>
+                <th>Job</th>
+                <th>Annonce</th>
+                <th>Utilisateur</th>
+                <th>Statut</th>
+                <th>Decision</th>
+                <th>Checks</th>
+                <th>Tentatives</th>
+                <th>Traite le</th>
+                <th>Erreur</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="jobsTbody">
+            <tr><td colspan="10" class="tm-mod-muted">Chargement...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tm-mod-pagination">
+        <button id="prevPage" class="tm-mod-btn tm-mod-btn-ghost" type="button">Page precedente</button>
+        <button id="nextPage" class="tm-mod-btn tm-mod-btn-ghost" type="button">Page suivante</button>
+        <span id="paginationInfo" class="tm-mod-muted"></span>
+    </div>
+
+    <script>
+        (() => {
+            const detailTemplate = '{{ detail_url_template }}';
+            const form = document.getElementById('filtersForm');
+            const jobsTbody = document.getElementById('jobsTbody');
+            const jobsError = document.getElementById('jobsError');
+            const jobsSummary = document.getElementById('jobsSummary');
+            const paginationInfo = document.getElementById('paginationInfo');
+            const prevPageBtn = document.getElementById('prevPage');
+            const nextPageBtn = document.getElementById('nextPage');
+            const resetBtn = document.getElementById('resetFilters');
+
+            let currentPage = 1;
+            let totalPages = 0;
+
+            const fields = ['status', 'decision_source', 'announcement_id', 'user_id', 'has_error', 'from', 'to', 'per_page', 'sort', 'order', 'page'];
+
+            const tagClass = (status) => `tm-mod-tag tm-mod-tag-${String(status || '').replace(/[^a-z_]/g, '')}`;
+            const detailUrl = (id) => detailTemplate.replace(/0$/, String(id));
+
+            const truncate = (text, max = 90) => {
+                const value = String(text || '');
+                return value.length <= max ? value : value.slice(0, max) + '...';
+            };
+
+            const escapeAttr = (value) => String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            const readFiltersFromUrl = () => {
+                const params = new URLSearchParams(window.location.search);
+                fields.forEach((name) => {
+                    const el = form.elements.namedItem(name);
+                    if (!el) return;
+                    if (params.has(name)) {
+                        el.value = params.get(name) || '';
+                    }
+                });
+                if (!params.has('per_page')) form.elements.namedItem('per_page').value = '20';
+                if (!params.has('sort')) form.elements.namedItem('sort').value = 'created_at';
+                if (!params.has('order')) form.elements.namedItem('order').value = 'DESC';
+                currentPage = Math.max(1, Number(params.get('page') || '1'));
+            };
+
+            const buildParamsFromForm = () => {
+                const params = new URLSearchParams();
+                fields.forEach((name) => {
+                    const el = form.elements.namedItem(name);
+                    if (!el) return;
+                    const value = String(el.value || '').trim();
+                    if (value !== '') params.set(name, value);
+                });
+                return params;
+            };
+
+            const pushUrl = (params) => {
+                const query = params.toString();
+                const url = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+                window.history.replaceState({}, '', url);
+            };
+
+            const showError = (message) => {
+                jobsError.style.display = 'block';
+                jobsError.textContent = message;
+            };
+
+            const clearError = () => {
+                jobsError.style.display = 'none';
+                jobsError.textContent = '';
+            };
+
+            const renderRows = (items) => {
+                jobsTbody.innerHTML = '';
+                if (!Array.isArray(items) || items.length === 0) {
+                    jobsTbody.innerHTML = '<tr><td colspan="10" class="tm-mod-muted">Aucun job.</td></tr>';
+                    return;
+                }
+
+                items.forEach((item) => {
+                    const announcement = item.announcement || {};
+                    const user = item.user || {};
+                    const canRetry = item.can_retry === true;
+                    const retryButton = canRetry
+                        ? `<button type="button" class="tm-mod-btn tm-mod-btn-ghost tm-mod-btn-mini js-retry-job" data-job-id="${item.id}" data-retry-url="${escapeAttr(item.retry_url || '')}">Retry</button>`
+                        : '';
+                    const announcementLabel = announcement.title
+                        ? `#${item.announcement_id} - ${truncate(announcement.title, 60)}`
+                        : `#${item.announcement_id}`;
+                    const userLabel = user.display_name
+                        ? `#${user.id} - ${truncate(user.display_name, 50)}`
+                        : `#${user.id || '-'}${user.email ? ' - ' + truncate(user.email, 40) : ''}`;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>#${item.id}</td>
+                        <td>
+                            <div>${announcement.admin_edit_url ? `<a class="tm-mod-link" href="${announcement.admin_edit_url}" target="_blank" rel="noopener">${announcementLabel}</a>` : announcementLabel}</div>
+                            <div class="tm-mod-muted">${announcement.front_detail_url ? `<a class="tm-mod-link" href="${announcement.front_detail_url}" target="_blank" rel="noopener">Voir front</a>` : '-'}</div>
+                        </td>
+                        <td>
+                            <div>${user.admin_detail_url ? `<a class="tm-mod-link" href="${user.admin_detail_url}" target="_blank" rel="noopener">${userLabel}</a>` : userLabel}</div>
+                            <div class="tm-mod-muted">${user.email || '-'}</div>
+                        </td>
+                        <td><span class="${tagClass(item.status)}">${item.status}</span></td>
+                        <td>
+                            <div>${item.decision_code || '-'}</div>
+                            <div class="tm-mod-muted">${truncate(item.decision_summary || item.decision_source || '-', 70)}</div>
+                        </td>
+                        <td>
+                            <div>Hard rules: ${item.hard_rules_pass === null ? '-' : (item.hard_rules_pass ? 'OK' : 'KO')}</div>
+                            <div class="tm-mod-muted">IA: ${item.ai_pass === null ? '-' : (item.ai_pass ? 'OK' : 'KO')}</div>
+                        </td>
+                        <td>${item.attempt_count ?? 0}</td>
+                        <td>${item.processed_at || '-'}</td>
+                        <td title="${escapeAttr(item.last_error || '')}">${item.last_error ? truncate(item.last_error, 80) : '-'}</td>
+                        <td>
+                            <div class="tm-mod-row-actions">
+                                <a class="tm-mod-link" href="${detailUrl(item.id)}">Voir</a>
+                                ${retryButton}
+                            </div>
+                        </td>
+                    `;
+                    jobsTbody.appendChild(tr);
+                });
+            };
+
+            const loadJobs = async () => {
+                const params = buildParamsFromForm();
+                params.set('page', String(currentPage));
+                pushUrl(params);
+                clearError();
+                jobsTbody.innerHTML = '<tr><td colspan="10" class="tm-mod-muted">Chargement...</td></tr>';
+
+                try {
+                    const response = await fetch(`/bo/announcement-ai-jobs?${params.toString()}`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    const payload = await response.json();
+                    if (!response.ok || !payload.ok) {
+                        throw new Error(payload.error || 'Erreur chargement jobs');
+                    }
+
+                    renderRows(payload.items || []);
+                    const pagination = payload.pagination || {};
+                    currentPage = pagination.page || 1;
+                    totalPages = pagination.total_pages || 0;
+                    jobsSummary.textContent = `${pagination.total || 0} job(s) | page ${currentPage}/${Math.max(totalPages, 1)}`;
+                    paginationInfo.textContent = `${pagination.total || 0} total`;
+                    prevPageBtn.disabled = currentPage <= 1;
+                    nextPageBtn.disabled = totalPages === 0 || currentPage >= totalPages;
+                } catch (error) {
+                    showError(error.message || 'Erreur inconnue');
+                    jobsTbody.innerHTML = '<tr><td colspan="10" class="tm-mod-muted">Echec de chargement.</td></tr>';
+                }
+            };
+
+            document.addEventListener('click', async (event) => {
+                const retryButton = event.target.closest('.js-retry-job');
+                if (!retryButton) return;
+
+                event.preventDefault();
+                const retryUrl = retryButton.getAttribute('data-retry-url');
+                const jobId = retryButton.getAttribute('data-job-id');
+                if (!retryUrl) return;
+
+                retryButton.disabled = true;
+                const original = retryButton.textContent;
+                retryButton.textContent = 'Retry...';
+
+                try {
+                    const response = await fetch(retryUrl, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const payload = await response.json();
+                    if (!response.ok || !payload.ok) {
+                        throw new Error(payload.error || `Erreur retry job #${jobId}`);
+                    }
+                    await loadJobs();
+                } catch (error) {
+                    showError(error.message || 'Erreur retry');
+                } finally {
+                    retryButton.disabled = false;
+                    retryButton.textContent = original;
+                }
+            });
+
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                currentPage = 1;
+                loadJobs();
+            });
+
+            resetBtn.addEventListener('click', () => {
+                form.reset();
+                form.elements.namedItem('per_page').value = '20';
+                form.elements.namedItem('sort').value = 'created_at';
+                form.elements.namedItem('order').value = 'DESC';
+                currentPage = 1;
+                loadJobs();
+            });
+
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage <= 1) return;
+                currentPage -= 1;
+                loadJobs();
+            });
+
+            nextPageBtn.addEventListener('click', () => {
+                if (totalPages !== 0 && currentPage >= totalPages) return;
+                currentPage += 1;
+                loadJobs();
+            });
+
+            readFiltersFromUrl();
+            loadJobs();
+        })();
+    </script>
+{% endblock %}

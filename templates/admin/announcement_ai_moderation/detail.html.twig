@@ -1,0 +1,219 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block page_title %}
+    Moderation annonces IA - Job #{{ job_id }}
+{% endblock %}
+
+{% block main %}
+    <style>
+        .tm-mod-head { display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+        .tm-mod-head a { color:#1d4ed8; text-decoration:none; font-weight:600; }
+        .tm-mod-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); margin-bottom:12px; }
+        .tm-mod-card { border:1px solid #e2e8f0; border-radius:10px; background:#fff; padding:12px; }
+        .tm-mod-label { font-size:12px; color:#64748b; text-transform:uppercase; }
+        .tm-mod-value { margin-top:6px; font-size:14px; color:#0f172a; word-break:break-word; }
+        .tm-mod-tag { display:inline-block; border-radius:999px; padding:3px 8px; font-size:11px; font-weight:700; text-transform:uppercase; }
+        .tm-mod-tag-pending { background:#fff7ed; color:#c2410c; }
+        .tm-mod-tag-processing { background:#eff6ff; color:#1d4ed8; }
+        .tm-mod-tag-approved { background:#ecfdf5; color:#166534; }
+        .tm-mod-tag-manual_review { background:#fff7ed; color:#c2410c; }
+        .tm-mod-tag-failed { background:#fef2f2; color:#b91c1c; }
+        .tm-mod-tag-cancelled { background:#f1f5f9; color:#334155; }
+        .tm-mod-muted { color:#64748b; }
+        .tm-mod-table-wrap { overflow:auto; border:1px solid #e2e8f0; border-radius:10px; background:#fff; margin-bottom:12px; }
+        .tm-mod-table { width:100%; border-collapse:collapse; min-width:1100px; }
+        .tm-mod-table th, .tm-mod-table td { padding:10px; border-bottom:1px solid #e2e8f0; text-align:left; vertical-align:top; font-size:13px; }
+        .tm-mod-table th { background:#f8fafc; color:#334155; }
+        .tm-mod-error { margin:10px 0; color:#b91c1c; font-weight:600; }
+        .tm-mod-btn { border:0; border-radius:8px; background:#1d4ed8; color:#fff; padding:8px 12px; cursor:pointer; }
+        .tm-mod-btn-warning { background:#c2410c; }
+        pre.tm-mod-json { white-space:pre-wrap; margin:0; font-size:12px; color:#1f2937; }
+    </style>
+
+    <div class="tm-mod-head">
+        <h2 style="margin:0;">Moderation annonces IA - Job #{{ job_id }}</h2>
+        <a href="{{ jobs_url }}">Retour liste jobs</a>
+    </div>
+
+    <div id="jobError" class="tm-mod-error" style="display:none;"></div>
+
+    <div class="tm-mod-head" style="margin-top:0;">
+        <div class="tm-mod-muted" id="jobSummary">Chargement...</div>
+        <button id="retryButton" class="tm-mod-btn tm-mod-btn-warning" type="button" style="display:none;">Retry job</button>
+    </div>
+
+    <div id="jobMeta" class="tm-mod-grid"></div>
+
+    <div class="tm-mod-card" style="margin-bottom:12px;">
+        <div class="tm-mod-label">Payload snapshot</div>
+        <div class="tm-mod-value">
+            <pre id="payloadSnapshot" class="tm-mod-json">-</pre>
+        </div>
+    </div>
+
+    <div class="tm-mod-table-wrap">
+        <table class="tm-mod-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Critere</th>
+                <th>Resultat</th>
+                <th>Score</th>
+                <th>Source</th>
+                <th>Reason</th>
+                <th>Valeur brute</th>
+            </tr>
+            </thead>
+            <tbody id="checksTbody">
+            <tr><td colspan="7" class="tm-mod-muted">Chargement...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        (() => {
+            const jobId = {{ job_id }};
+            const errorBox = document.getElementById('jobError');
+            const summaryBox = document.getElementById('jobSummary');
+            const metaBox = document.getElementById('jobMeta');
+            const payloadSnapshot = document.getElementById('payloadSnapshot');
+            const checksTbody = document.getElementById('checksTbody');
+            const retryButton = document.getElementById('retryButton');
+            let retryUrl = null;
+
+            const showError = (message) => {
+                errorBox.style.display = 'block';
+                errorBox.textContent = message;
+            };
+
+            const clearError = () => {
+                errorBox.style.display = 'none';
+                errorBox.textContent = '';
+            };
+
+            const statusTag = (status) => {
+                const safe = String(status || '').replace(/[^a-z_]/g, '');
+                return `<span class="tm-mod-tag tm-mod-tag-${safe}">${status || '-'}</span>`;
+            };
+
+            const toJson = (value) => {
+                if (value === null || value === undefined) return '-';
+                if (typeof value === 'string') return value;
+                try {
+                    return JSON.stringify(value, null, 2);
+                } catch (e) {
+                    return String(value);
+                }
+            };
+
+            const renderMeta = (job) => {
+                const announcement = job.announcement || {};
+                const user = job.user || {};
+
+                const blocks = [
+                    ['Statut', statusTag(job.status)],
+                    ['Annonce', announcement.admin_edit_url ? `<a href="${announcement.admin_edit_url}" target="_blank" rel="noopener">#${announcement.id || '-'} - ${announcement.title || '-'}</a>` : `#${announcement.id || '-'} - ${announcement.title || '-'}`],
+                    ['Front annonce', announcement.front_detail_url ? `<a href="${announcement.front_detail_url}" target="_blank" rel="noopener">Voir front</a>` : '-'],
+                    ['Utilisateur', user.admin_detail_url ? `<a href="${user.admin_detail_url}" target="_blank" rel="noopener">#${user.id || '-'} - ${user.display_name || user.email || '-'}</a>` : `#${user.id || '-'} - ${user.display_name || user.email || '-'}`],
+                    ['Email', user.email || '-'],
+                    ['Transition source', job.source_transition || '-'],
+                    ['Statut snapshot', job.post_status_snapshot || '-'],
+                    ['Decision source', job.decision_source || '-'],
+                    ['Decision code', job.decision_code || '-'],
+                    ['Resume', job.decision_summary || '-'],
+                    ['Hard rules', job.hard_rules_pass === null ? '-' : (job.hard_rules_pass ? 'OK' : 'KO')],
+                    ['IA', job.ai_pass === null ? '-' : (job.ai_pass ? 'OK' : 'KO')],
+                    ['Modele IA', job.ai_model || '-'],
+                    ['Confiance IA', job.ai_confidence === null ? '-' : job.ai_confidence],
+                    ['Tentatives', job.attempt_count ?? 0],
+                    ['Created at', job.created_at || '-'],
+                    ['Processed at', job.processed_at || '-'],
+                    ['Erreur', job.last_error || '-']
+                ];
+
+                metaBox.innerHTML = blocks.map(([label, value]) => `
+                    <div class="tm-mod-card">
+                        <div class="tm-mod-label">${label}</div>
+                        <div class="tm-mod-value">${value}</div>
+                    </div>
+                `).join('');
+            };
+
+            const renderChecks = (checks) => {
+                checksTbody.innerHTML = '';
+                if (!Array.isArray(checks) || checks.length === 0) {
+                    checksTbody.innerHTML = '<tr><td colspan="7" class="tm-mod-muted">Aucun check.</td></tr>';
+                    return;
+                }
+
+                checks.forEach((check) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>#${check.id}</td>
+                        <td><strong>${check.criterion_label || '-'}</strong><div class="tm-mod-muted">${check.criterion_code || '-'}</div></td>
+                        <td>${statusTag(check.result)}</td>
+                        <td>${check.score === null ? '-' : check.score}</td>
+                        <td>${check.source_type || '-'}</td>
+                        <td>${check.reason || '-'}</td>
+                        <td><pre class="tm-mod-json">${toJson(check.raw_value)}</pre></td>
+                    `;
+                    checksTbody.appendChild(tr);
+                });
+            };
+
+            const load = async () => {
+                clearError();
+                try {
+                    const response = await fetch(`/bo/announcement-ai-jobs/${jobId}`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    const payload = await response.json();
+                    if (!response.ok || !payload.ok) {
+                        throw new Error(payload.error || 'Erreur chargement detail job');
+                    }
+
+                    const job = payload.job || {};
+                    const checksSummary = payload.checks_summary || {};
+                    summaryBox.textContent = `checks pass: ${checksSummary.pass || 0} | fail: ${checksSummary.fail || 0} | warning: ${checksSummary.warning || 0}`;
+                    renderMeta(job);
+                    renderChecks(payload.checks || []);
+                    payloadSnapshot.textContent = toJson(job.payload_snapshot);
+                    retryUrl = job.retry_url || null;
+                    retryButton.style.display = job.can_retry ? 'inline-block' : 'none';
+                } catch (error) {
+                    showError(error.message || 'Erreur inconnue');
+                    checksTbody.innerHTML = '<tr><td colspan="7" class="tm-mod-muted">Echec de chargement.</td></tr>';
+                }
+            };
+
+            retryButton.addEventListener('click', async () => {
+                if (!retryUrl) return;
+
+                retryButton.disabled = true;
+                const original = retryButton.textContent;
+                retryButton.textContent = 'Retry...';
+
+                try {
+                    const response = await fetch(retryUrl, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const payload = await response.json();
+                    if (!response.ok || !payload.ok) {
+                        throw new Error(payload.error || 'Erreur retry');
+                    }
+                    await load();
+                } catch (error) {
+                    showError(error.message || 'Erreur retry');
+                } finally {
+                    retryButton.disabled = false;
+                    retryButton.textContent = original;
+                }
+            });
+
+            load();
+        })();
+    </script>
+{% endblock %}

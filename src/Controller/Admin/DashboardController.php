@@ -24,10 +24,9 @@ use App\Controller\Admin\ParcoursUtilisateur\Experiences\WpPostsCrudController a
 use App\Controller\Admin\ParcoursUtilisateur\UniversTrust\WpPostsCrudController as UniversTrustCrudController;
 use App\Controller\Admin\ToutesCategories\WpTermTaxonomyCrudController as ToutesCategoriesCrudController;
 use App\Controller\Admin\Activities\WpTermTaxonomyCrudController as ActivitiesCrudController;
-use App\Controller\Admin\AnnouncementAiModerationJobCrudController;
 use App\Controller\Admin\Configurations\{DepartementCrudController, OffreInterneCrudController, MusicUniverseCrudController};
 use App\Controller\Admin\Paiements\{AbonnementCrudController};
-use App\Entity\{OffreInterne, ReminderLog, User, WpComments, WpPosts, Departement, WpTerms, WpTermTaxonomy, Abonnement, MusicUniverse, AnnouncementAiModerationJob};
+use App\Entity\{OffreInterne, ReminderLog, User, WpComments, WpPosts, Departement, WpTerms, WpTermTaxonomy, Abonnement, MusicUniverse};
 use App\Service\Payment;
 use App\Service\ServiceManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -112,6 +111,29 @@ class DashboardController extends AbstractDashboardController
         ]);
     }
 
+    #[Route('/{_locale}/admin/announcement-ai/jobs', name: 'admin_announcement_ai_jobs', methods: ['GET'])]
+    public function announcementAiJobs(string $_locale): Response
+    {
+        $this->denyAiEnrichmentAccess();
+
+        return $this->render('admin/announcement_ai_moderation/jobs.html.twig', [
+            'locale' => $_locale,
+            'detail_url_template' => $this->generateUrl('admin_announcement_ai_job_detail', ['_locale' => $_locale, 'id' => 0]),
+        ]);
+    }
+
+    #[Route('/{_locale}/admin/announcement-ai/jobs/{id<\d+>}', name: 'admin_announcement_ai_job_detail', methods: ['GET'])]
+    public function announcementAiJobDetail(string $_locale, int $id): Response
+    {
+        $this->denyAiEnrichmentAccess();
+
+        return $this->render('admin/announcement_ai_moderation/detail.html.twig', [
+            'locale' => $_locale,
+            'job_id' => $id,
+            'jobs_url' => $this->generateUrl('admin_announcement_ai_jobs', ['_locale' => $_locale]),
+        ]);
+    }
+
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()->setTitle('Trust&Market')->disableUrlSignatures();
@@ -190,7 +212,7 @@ class DashboardController extends AbstractDashboardController
             yield MenuItem::subMenu('Trust Agentique IA', 'fa fa-robot')->setSubItems([
                 MenuItem::linkToRoute('Dashboard IA', 'fa fa-chart-line', 'admin_ai_enrichment_dashboard'),
                 MenuItem::linkToRoute('Jobs IA', 'fa fa-list', 'admin_ai_enrichment_jobs'),
-                MenuItem::linkToCrud('Moderation annonces IA', 'fa fa-shield', AnnouncementAiModerationJob::class)->setController(AnnouncementAiModerationJobCrudController::class),
+                MenuItem::linkToRoute('Moderation annonces IA', 'fa fa-shield', 'admin_announcement_ai_jobs'),
             ]);
         }
 
