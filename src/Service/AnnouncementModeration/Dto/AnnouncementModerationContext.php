@@ -56,7 +56,7 @@ class AnnouncementModerationContext
 
     public function getMeta(string $key): string
     {
-        return trim((string) ($this->meta[$key] ?? ''));
+        return $this->normalizeTextValue($this->meta[$key] ?? '');
     }
 
     public function getPrice(): string
@@ -66,7 +66,7 @@ class AnnouncementModerationContext
             return $price;
         }
 
-        return trim((string) ($this->aggregateData['prix'] ?? ''));
+        return $this->normalizeTextValue($this->aggregateData['prix'] ?? '');
     }
 
     public function hasCategory(): bool
@@ -89,26 +89,10 @@ class AnnouncementModerationContext
      */
     public function getGalleryIds(): array
     {
-        $values = [
-            $this->getMeta('_product_image_gallery'),
-            $this->getMeta('images_annonces'),
-            trim((string) ($this->aggregateData['gallery'] ?? '')),
-        ];
-
         $ids = [];
-
-        foreach ($values as $value) {
-            if ($value === '') {
-                continue;
-            }
-
-            foreach (explode(',', $value) as $part) {
-                $part = trim($part);
-                if ($part !== '') {
-                    $ids[] = $part;
-                }
-            }
-        }
+        $ids = array_merge($ids, $this->extractCommaSeparatedIds($this->meta['_product_image_gallery'] ?? ''));
+        $ids = array_merge($ids, $this->extractCommaSeparatedIds($this->meta['images_annonces'] ?? ''));
+        $ids = array_merge($ids, $this->extractCommaSeparatedIds($this->aggregateData['gallery'] ?? ''));
 
         return array_values(array_unique($ids));
     }
@@ -127,7 +111,7 @@ class AnnouncementModerationContext
             return $country;
         }
 
-        return trim((string) ($this->aggregateData['pays'] ?? ''));
+        return $this->normalizeTextValue($this->aggregateData['pays'] ?? '');
     }
 
     public function getCity(): string
@@ -137,7 +121,7 @@ class AnnouncementModerationContext
             return $city;
         }
 
-        return trim((string) ($this->aggregateData['ville'] ?? ''));
+        return $this->normalizeTextValue($this->aggregateData['ville'] ?? '');
     }
 
     public function getAddress(): string
@@ -147,7 +131,7 @@ class AnnouncementModerationContext
             return $address;
         }
 
-        return trim((string) ($this->aggregateData['etat'] ?? ''));
+        return $this->normalizeTextValue($this->aggregateData['etat'] ?? '');
     }
 
     /**
@@ -173,5 +157,63 @@ class AnnouncementModerationContext
             'aggregate_data' => $this->aggregateData,
             'meta' => $this->meta,
         ];
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private function normalizeTextValue($value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        if (is_string($value)) {
+            return trim($value);
+        }
+
+        if (is_scalar($value)) {
+            return trim((string) $value);
+        }
+
+        if (is_array($value)) {
+            $parts = [];
+
+            foreach ($value as $item) {
+                if (is_scalar($item)) {
+                    $item = trim((string) $item);
+                    if ($item !== '') {
+                        $parts[] = $item;
+                    }
+                }
+            }
+
+            return implode(',', $parts);
+        }
+
+        return '';
+    }
+
+    /**
+     * @param mixed $value
+     * @return string[]
+     */
+    private function extractCommaSeparatedIds($value): array
+    {
+        $normalized = $this->normalizeTextValue($value);
+        if ($normalized === '') {
+            return [];
+        }
+
+        $ids = [];
+
+        foreach (explode(',', $normalized) as $part) {
+            $part = trim($part);
+            if ($part !== '') {
+                $ids[] = $part;
+            }
+        }
+
+        return $ids;
     }
 }
