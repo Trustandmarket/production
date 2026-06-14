@@ -7,6 +7,7 @@ use App\Entity\WpOptions;
 use App\Entity\WpPosts;
 use App\Entity\WpTermRelationships;
 use App\Repository\WpPostsRepository;
+use App\Service\AnnouncementModeration\AnnouncementModerationJobManager;
 use App\Service\BrevoContactService;
 use App\Service\DataAccessLayer\Annonces;
 use App\Service\ServiceManager;
@@ -29,19 +30,22 @@ class ProfileAnnouncementController extends AbstractController
     private $em;
     private $wpPostsRepository;
     private $brevoContactService;
+    private $announcementModerationJobManager;
 
     public function __construct(
         ServiceManager $service_manager,
         Annonces $annonces_access_layer,
         EntityManagerInterface $em,
         WpPostsRepository $wpPostsRepository,
-        BrevoContactService $brevoContactService
+        BrevoContactService $brevoContactService,
+        AnnouncementModerationJobManager $announcementModerationJobManager
     ) {
         $this->service_manager = $service_manager;
         $this->annonces_access_layer = $annonces_access_layer;
         $this->em = $em;
         $this->wpPostsRepository = $wpPostsRepository;
         $this->brevoContactService = $brevoContactService;
+        $this->announcementModerationJobManager = $announcementModerationJobManager;
     }
 
     public function trierTableau($tabeauVideos)
@@ -1644,6 +1648,14 @@ class ProfileAnnouncementController extends AbstractController
         }
         //Notifiations Emails
         $detailsAnnonce = $this->em->getRepository(WpPosts::class)->find($id);
+        if ($detailsAnnonce instanceof WpPosts && $detailsAnnonce->getPostStatus() == 'moderation') {
+            $this->enqueueAnnouncementModerationJobSafely(
+                (int) $detailsAnnonce->getId(),
+                (int) $detailsAnnonce->getPostAuthor(),
+                (string) $state,
+                (string) $request->get('sender')
+            );
+        }
         if ($detailsAnnonce->getPostStatus() == 'moderation' || $detailsAnnonce->getPostStatus() == 'publish' || $detailsAnnonce->getPostStatus() == 'draft' ||
             $detailsAnnonce->getPostStatus() == 'trash') {
             $setEmailSubject = '';
@@ -1936,6 +1948,15 @@ class ProfileAnnouncementController extends AbstractController
             }
         }
 
+        if ($annonce instanceof WpPosts && $annonce->getPostStatus() == 'moderation') {
+            $this->enqueueAnnouncementModerationJobSafely(
+                (int) $annonce->getId(),
+                (int) $annonce->getPostAuthor(),
+                (string) $state,
+                (string) $request->get('sender')
+            );
+        }
+
         //Notifiations Emails
         $statut_annonce = '';
         $email_code = '';
@@ -1991,6 +2012,40 @@ class ProfileAnnouncementController extends AbstractController
         return $this->render('admin/resultat.html.twig', [
             'result' => $id,
         ]);
+    }
+
+    private function enqueueAnnouncementModerationJobSafely(
+        int $announcementId,
+        int $userId,
+        string $state,
+        ?string $sender
+    ): void {
+        try {
+            $this->announcementModerationJobManager->enqueueForModeration(
+                $announcementId,
+                $userId,
+                $this->resolveModerationSourceTransition($state, $sender)
+            );
+        } catch (\Throwable $exception) {
+            error_log(sprintf(
+                '[announcement-ai-moderation] enqueue failed for announcement %d: %s',
+                $announcementId,
+                $exception->getMessage()
+            ));
+        }
+    }
+
+    private function resolveModerationSourceTransition(string $state, ?string $sender): string
+    {
+        if ($state === 'creation') {
+            return 'front_create';
+        }
+
+        if ($state === 'edition_admin' || $sender === 'admin') {
+            return 'admin_resubmit';
+        }
+
+        return 'front_resubmit';
     }
 
 }
