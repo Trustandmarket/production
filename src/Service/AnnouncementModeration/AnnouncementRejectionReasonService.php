@@ -115,12 +115,12 @@ class AnnouncementRejectionReasonService
             return '';
         }
 
-        $items = '';
+        $items = [];
         foreach ($reasons as $reason) {
-            $items .= '<li>' . $this->escapeHtml($reason['message']) . '</li>';
+            $items[] = '- ' . $this->escapeHtml($reason['message']);
         }
 
-        return '<ul>' . $items . '</ul>';
+        return implode('<br>', $items);
     }
 
     /**
