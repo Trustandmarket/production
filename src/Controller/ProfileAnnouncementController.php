@@ -8,6 +8,7 @@ use App\Entity\WpPosts;
 use App\Entity\WpTermRelationships;
 use App\Repository\WpPostsRepository;
 use App\Service\AnnouncementModeration\AnnouncementModerationJobManager;
+use App\Service\AnnouncementModeration\AnnouncementRejectionReasonService;
 use App\Service\BrevoContactService;
 use App\Service\DataAccessLayer\Annonces;
 use App\Service\ServiceManager;
@@ -31,6 +32,7 @@ class ProfileAnnouncementController extends AbstractController
     private $wpPostsRepository;
     private $brevoContactService;
     private $announcementModerationJobManager;
+    private $announcementRejectionReasonService;
 
     public function __construct(
         ServiceManager $service_manager,
@@ -38,7 +40,8 @@ class ProfileAnnouncementController extends AbstractController
         EntityManagerInterface $em,
         WpPostsRepository $wpPostsRepository,
         BrevoContactService $brevoContactService,
-        AnnouncementModerationJobManager $announcementModerationJobManager
+        AnnouncementModerationJobManager $announcementModerationJobManager,
+        AnnouncementRejectionReasonService $announcementRejectionReasonService
     ) {
         $this->service_manager = $service_manager;
         $this->annonces_access_layer = $annonces_access_layer;
@@ -46,6 +49,7 @@ class ProfileAnnouncementController extends AbstractController
         $this->wpPostsRepository = $wpPostsRepository;
         $this->brevoContactService = $brevoContactService;
         $this->announcementModerationJobManager = $announcementModerationJobManager;
+        $this->announcementRejectionReasonService = $announcementRejectionReasonService;
     }
 
     public function trierTableau($tabeauVideos)
@@ -1699,6 +1703,13 @@ class ProfileAnnouncementController extends AbstractController
                 ]
             ];
 
+            if ((int) $email_code === 29) {
+                $data['params'] = array_merge(
+                    $data['params'],
+                    $this->buildRejectedAnnouncementTemplateParams((int) $detailsAnnonce->getId())
+                );
+            }
+
             // Initialize cURL
             $ch = curl_init();
 
@@ -2033,6 +2044,21 @@ class ProfileAnnouncementController extends AbstractController
                 $exception->getMessage()
             ));
         }
+    }
+
+    /**
+     * @return array<string, string|int>
+     */
+    private function buildRejectedAnnouncementTemplateParams(int $announcementId): array
+    {
+        $payload = $this->announcementRejectionReasonService->buildForAnnouncement($announcementId);
+
+        return [
+            'nb_raisons' => (int) ($payload['nb_raisons'] ?? 0),
+            'decision_summary_ai' => (string) ($payload['decision_summary_ai'] ?? ''),
+            'raisons_rejet_html' => (string) ($payload['raisons_rejet_html'] ?? ''),
+            'raisons_rejet_text' => (string) ($payload['raisons_rejet_text'] ?? ''),
+        ];
     }
 
     private function resolveModerationSourceTransition(string $state, ?string $sender): string
