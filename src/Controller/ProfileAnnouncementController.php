@@ -7,6 +7,7 @@ use App\Entity\WpOptions;
 use App\Entity\WpPosts;
 use App\Entity\WpTermRelationships;
 use App\Repository\WpPostsRepository;
+use App\Service\AnnouncementDescription\AnnouncementDescriptionSuggestionAiService;
 use App\Service\AnnouncementModeration\AnnouncementModerationJobManager;
 use App\Service\AnnouncementModeration\AnnouncementRejectionReasonService;
 use App\Service\BrevoContactService;
@@ -33,6 +34,7 @@ class ProfileAnnouncementController extends AbstractController
     private $brevoContactService;
     private $announcementModerationJobManager;
     private $announcementRejectionReasonService;
+    private $announcementDescriptionSuggestionAiService;
 
     public function __construct(
         ServiceManager $service_manager,
@@ -41,7 +43,8 @@ class ProfileAnnouncementController extends AbstractController
         WpPostsRepository $wpPostsRepository,
         BrevoContactService $brevoContactService,
         AnnouncementModerationJobManager $announcementModerationJobManager,
-        AnnouncementRejectionReasonService $announcementRejectionReasonService
+        AnnouncementRejectionReasonService $announcementRejectionReasonService,
+        AnnouncementDescriptionSuggestionAiService $announcementDescriptionSuggestionAiService
     ) {
         $this->service_manager = $service_manager;
         $this->annonces_access_layer = $annonces_access_layer;
@@ -50,6 +53,7 @@ class ProfileAnnouncementController extends AbstractController
         $this->brevoContactService = $brevoContactService;
         $this->announcementModerationJobManager = $announcementModerationJobManager;
         $this->announcementRejectionReasonService = $announcementRejectionReasonService;
+        $this->announcementDescriptionSuggestionAiService = $announcementDescriptionSuggestionAiService;
     }
 
     public function trierTableau($tabeauVideos)
@@ -1114,6 +1118,78 @@ class ProfileAnnouncementController extends AbstractController
     }
 
     /**
+     * @Route("/{_locale}/profil-utilisateur/annonces/generer-description", name="generate_announcement_description", methods={"POST"})
+     */
+    public function generateAnnouncementDescription(Request $request): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $categoryParentId = trim((string) $request->request->get('category_parent_id', ''));
+        $categoryParentLabel = trim((string) $request->request->get('category_parent_label', ''));
+        $subcategoryId = trim((string) $request->request->get('subcategory_id', ''));
+        $subcategoryLabel = trim((string) $request->request->get('subcategory_label', ''));
+        $title = trim((string) $request->request->get('title', ''));
+
+        if ($this->textLength($title) < 30) {
+            return new JsonResponse([
+                'ok' => false,
+                'error' => 'Le titre doit contenir au moins 30 caracteres.',
+            ], 422);
+        }
+
+        if ($categoryParentLabel === '' || $subcategoryLabel === '') {
+            return new JsonResponse([
+                'ok' => false,
+                'error' => 'La categorie et la sous-categorie sont obligatoires.',
+            ], 422);
+        }
+
+        try {
+            $result = $this->announcementDescriptionSuggestionAiService->generateDescription(
+                (string) $request->getLocale(),
+                $categoryParentLabel,
+                $subcategoryLabel,
+                $title
+            );
+
+            $this->storeAnnouncementDescriptionSuggestionHistory([
+                'user_id' => (int) $this->getUser()->getId(),
+                'locale' => (string) $request->getLocale(),
+                'category_parent_id' => $categoryParentId !== '' ? $categoryParentId : null,
+                'category_parent_label' => $categoryParentLabel,
+                'subcategory_id' => $subcategoryId !== '' ? $subcategoryId : null,
+                'subcategory_label' => $subcategoryLabel,
+                'title' => $title,
+                'generated_description' => (string) $result['description'],
+                'prompt_version' => (string) ($result['prompt_version'] ?? ''),
+                'model_name' => (string) ($result['model'] ?? ''),
+                'request_payload' => $result['request_payload'] ?? null,
+                'response_payload' => $result['response_payload'] ?? null,
+            ]);
+
+            return new JsonResponse([
+                'ok' => true,
+                'description' => (string) $result['description'],
+                'meta' => [
+                    'model' => (string) ($result['model'] ?? ''),
+                    'prompt_version' => (string) ($result['prompt_version'] ?? ''),
+                ],
+            ]);
+        } catch (\Throwable $exception) {
+            error_log(sprintf(
+                '[announcement-description-ai] generation failed for user %d: %s',
+                (int) $this->getUser()->getId(),
+                $exception->getMessage()
+            ));
+
+            return new JsonResponse([
+                'ok' => false,
+                'error' => 'La proposition de description est indisponible pour le moment.',
+            ], 503);
+        }
+    }
+
+    /**
      * @Route("/profil-utilisateur/{_locale}/annonces/publier_annonce", name="ajouter_annonce",methods={"POST"})
      * @param Request $request
      */
@@ -2074,6 +2150,64 @@ class ProfileAnnouncementController extends AbstractController
         }
 
         return 'front_resubmit';
+    }
+
+    /**
+     * @param array<string, mixed> $history
+     */
+    private function storeAnnouncementDescriptionSuggestionHistory(array $history): void
+    {
+        try {
+            $now = (new DateTime())->format('Y-m-d H:i:s');
+            $this->em->getConnection()->insert('announcement_ai_description_suggestions', [
+                'user_id' => (int) ($history['user_id'] ?? 0),
+                'locale' => (string) ($history['locale'] ?? ''),
+                'category_parent_id' => $history['category_parent_id'],
+                'category_parent_label' => (string) ($history['category_parent_label'] ?? ''),
+                'subcategory_id' => $history['subcategory_id'],
+                'subcategory_label' => (string) ($history['subcategory_label'] ?? ''),
+                'title' => (string) ($history['title'] ?? ''),
+                'generated_description' => (string) ($history['generated_description'] ?? ''),
+                'prompt_version' => (string) ($history['prompt_version'] ?? ''),
+                'model_name' => (string) ($history['model_name'] ?? ''),
+                'request_payload' => $this->encodeJsonValue($history['request_payload'] ?? null),
+                'response_payload' => $this->encodeJsonValue($history['response_payload'] ?? null),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        } catch (\Throwable $exception) {
+            error_log('[announcement-description-ai] history insert failed: ' . $exception->getMessage());
+        }
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private function encodeJsonValue($value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if (is_string($value)) {
+            return $value;
+        }
+
+        $json = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($json === false) {
+            return null;
+        }
+
+        return $json;
+    }
+
+    private function textLength(string $value): int
+    {
+        if (function_exists('mb_strlen')) {
+            return (int) mb_strlen($value);
+        }
+
+        return strlen($value);
     }
 
     private function getGoogleMapsApiKey(): string

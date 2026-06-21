@@ -72,6 +72,18 @@
     background-color: #eb6918 !important;
   }
 
+  .btn-description-ai {
+    background-color: #262626 !important;
+    border-color: #262626 !important;
+    color: #fff !important;
+    font-size: 0.875rem !important;
+  }
+
+  .btn-description-ai[disabled] {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+
   /* preload*/
   .lds-ring {
     height: 10px;
@@ -363,6 +375,13 @@
                       Veuillez saisir un titre clair d'au moins 30 caractères.
                     </div>
                   </div>
+                  <div class="text-left mb-3">
+                    <button type="button" id="generate-description-button" class="btn btn-description-ai"
+                      data-url="{{ path('profile_generate_announcement_description') }}"
+                      {% if editedData is defined and editedData.post_title|length >= 30 %}{% else %}disabled{% endif %}>
+                      Me proposer une description
+                    </button>
+                  </div>
                   <h2 class="fs-title text-left">
                     {{'profil-utilisateur.formulaire-creer-annonce-3.entete-description-service'|trans}}*</h2>
                   <!-- <h3 class="fs-subtitle">Brève description de vos techniques, votre matériel, vos compétences...</h3> -->
@@ -538,6 +557,7 @@
 
 <script>
   var verify_images = 0;
+  var isGeneratingAnnouncementDescription = false;
   $(document).ready(function () {
 
     tinymce.init({
@@ -848,6 +868,70 @@
     return $('#description').val().trim();
   }
 
+  function getCheckedAnnouncementCategoryInput() {
+    return $('input[name="categorieParent"]:checked');
+  }
+
+  function getCheckedAnnouncementSubcategoryInput() {
+    return $('input[name="souscategorie"]:checked, input[name="categorie"]:checked').first();
+  }
+
+  function getAnnouncementRadioLabelText($input) {
+    if (!$input.length) {
+      return '';
+    }
+
+    var inputId = $input.attr('id');
+    if (!inputId) {
+      return '';
+    }
+
+    return $.trim($('label[for="' + inputId + '"]').text());
+  }
+
+  function setGenerateDescriptionButtonLoadingState(isLoading) {
+    var $button = $('#generate-description-button');
+    if (!$button.length) {
+      return;
+    }
+
+    if (isLoading) {
+      $button.text('Generation en cours...');
+      $button.attr('disabled', 'disabled');
+      return;
+    }
+
+    $button.text('Me proposer une description');
+    updateDescriptionSuggestionButtonState();
+  }
+
+  function updateDescriptionSuggestionButtonState() {
+    var $button = $('#generate-description-button');
+    if (!$button.length) {
+      return;
+    }
+
+    if (isGeneratingAnnouncementDescription) {
+      $button.attr('disabled', 'disabled');
+      return;
+    }
+
+    if ($('#nom').val().length >= 30) {
+      $button.removeAttr('disabled');
+    } else {
+      $button.attr('disabled', 'disabled');
+    }
+  }
+
+  function formatGeneratedDescriptionForEditor(text) {
+    var escaped = $('<div>').text(text).html();
+    escaped = escaped.replace(/\r\n/g, '\n');
+    escaped = escaped.replace(/\n{2,}/g, '</p><p>');
+    escaped = escaped.replace(/\n/g, '<br>');
+
+    return '<p>' + escaped + '</p>';
+  }
+
   function updateServiceTitleStepState() {
     var isTitleValid = $('#nom').val().length >= 30;
     var isDescriptionValid = getDescriptionStepValue() !== '';
@@ -865,6 +949,8 @@
       $('.nom').attr('disabled', "disabled");
       $('.nom').attr('name', "previous");
     }
+
+    updateDescriptionSuggestionButtonState();
   }
 
   updateServiceTitleStepState();
@@ -875,6 +961,82 @@
 
   $(document).on('input blur', '#description', function () {
     updateServiceTitleStepState();
+  });
+
+  $(document).on('click', '#generate-description-button', function (e) {
+    e.preventDefault();
+
+    if (isGeneratingAnnouncementDescription) {
+      return;
+    }
+
+    var title = $.trim($('#nom').val());
+    var $categoryInput = getCheckedAnnouncementCategoryInput();
+    var $subcategoryInput = getCheckedAnnouncementSubcategoryInput();
+    var categoryParentId = $categoryInput.val() || '';
+    var subcategoryId = $subcategoryInput.val() || '';
+    var categoryParentLabel = getAnnouncementRadioLabelText($categoryInput);
+    var subcategoryLabel = getAnnouncementRadioLabelText($subcategoryInput);
+
+    if (title.length < 30) {
+      toastr.warning('Veuillez saisir un titre clair d\'au moins 30 caracteres.');
+      updateDescriptionSuggestionButtonState();
+      return;
+    }
+
+    if (categoryParentLabel === '' || subcategoryLabel === '') {
+      toastr.warning('Veuillez selectionner une categorie et une sous-categorie avant de generer la description.');
+      return;
+    }
+
+    isGeneratingAnnouncementDescription = true;
+    setGenerateDescriptionButtonLoadingState(true);
+    toastr.clear();
+    toastr.info('Generation de la description en cours...');
+
+    $.ajax({
+      url: $(this).data('url'),
+      type: 'POST',
+      dataType: 'json',
+      data: {
+        category_parent_id: categoryParentId,
+        category_parent_label: categoryParentLabel,
+        subcategory_id: subcategoryId,
+        subcategory_label: subcategoryLabel,
+        title: title
+      },
+      success: function (response) {
+        if (!response || response.ok !== true || !response.description) {
+          toastr.clear();
+          toastr.error('La description proposee n a pas pu etre generee.');
+          return;
+        }
+
+        var editor = tinymce.get('description');
+        if (editor) {
+          editor.setContent(formatGeneratedDescriptionForEditor(response.description));
+        }
+
+        $('#description').val(response.description);
+        updateServiceTitleStepState();
+        toastr.clear();
+        toastr.success('La description proposee a ete generee.');
+      },
+      error: function (xhr) {
+        var errorMessage = 'La proposition de description est indisponible pour le moment.';
+
+        if (xhr.responseJSON && xhr.responseJSON.error) {
+          errorMessage = xhr.responseJSON.error;
+        }
+
+        toastr.clear();
+        toastr.error(errorMessage);
+      },
+      complete: function () {
+        isGeneratingAnnouncementDescription = false;
+        setGenerateDescriptionButtonLoadingState(false);
+      }
+    });
   });
 
   $(document).on('change', '#photos', function (e) {

@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS announcement_ai_description_suggestions (
+    id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    locale VARCHAR(10) DEFAULT NULL,
+    category_parent_id VARCHAR(50) DEFAULT NULL,
+    category_parent_label VARCHAR(255) NOT NULL,
+    subcategory_id VARCHAR(50) DEFAULT NULL,
+    subcategory_label VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    generated_description LONGTEXT NOT NULL,
+    prompt_version VARCHAR(50) DEFAULT NULL,
+    model_name VARCHAR(100) DEFAULT NULL,
+    request_payload LONGTEXT DEFAULT NULL,
+    response_payload LONGTEXT DEFAULT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME DEFAULT NULL,
+    INDEX IDX_AAIDS_USER_CREATED (user_id, created_at),
+    INDEX IDX_AAIDS_CREATED (created_at),
+    PRIMARY KEY(id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
