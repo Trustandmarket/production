@@ -549,7 +549,12 @@
       toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
       browser_spellcheck: true,
       contextmenu: false,
-      language: 'fr_FR'
+      language: 'fr_FR',
+      setup: function (editor) {
+        editor.on('keyup change input SetContent', function () {
+          updateServiceTitleStepState();
+        });
+      }
     });
 
     var docWidth = document.documentElement.offsetWidth;
@@ -744,13 +749,29 @@
 
   });
 
+  function getDescriptionStepValue() {
+    var editor = tinymce.get('description');
+    if (editor) {
+      return editor.getContent({ format: 'text' }).trim();
+    }
+
+    return $('#description').val().trim();
+  }
+
   function updateServiceTitleStepState() {
-    if ($('#nom').val().length >= 30) {
+    var isTitleValid = $('#nom').val().length >= 30;
+    var isDescriptionValid = getDescriptionStepValue() !== '';
+
+    if (isTitleValid) {
       $('#nom-error').hide();
+    } else {
+      $('#nom-error').show();
+    }
+
+    if (isTitleValid && isDescriptionValid) {
       $('.nom').attr('name', "next");
       $('.nom').removeAttr('disabled');
     } else {
-      $('#nom-error').show();
       $('.nom').attr('disabled', "disabled");
       $('.nom').attr('name', "previous");
     }
@@ -759,6 +780,10 @@
   updateServiceTitleStepState();
 
   $(document).on('input blur', '#nom', function () {
+    updateServiceTitleStepState();
+  });
+
+  $(document).on('input blur', '#description', function () {
     updateServiceTitleStepState();
   });
 
