@@ -73,15 +73,33 @@
   }
 
   .btn-description-ai {
-    background-color: #262626 !important;
-    border-color: #262626 !important;
+    align-items: center;
+    background-color: #ff7e10 !important;
+    border-color: #ff7e10 !important;
+    border-radius: 32px;
+    box-shadow: 0 10px 24px rgba(255, 126, 16, 0.2);
     color: #fff !important;
-    font-size: 0.875rem !important;
+    display: inline-flex;
+    font-size: 1rem !important;
+    font-weight: 700;
+    justify-content: center;
+    min-height: 84px;
+    padding: 1.1rem 1.75rem;
+    text-transform: uppercase;
+    width: 100%;
   }
 
   .btn-description-ai[disabled] {
     cursor: not-allowed;
     opacity: 0.65;
+  }
+
+  .btn-description-ai:hover,
+  .btn-description-ai:focus,
+  .btn-description-ai:not([disabled]):not(.disabled):active {
+    background-color: #ff7e10 !important;
+    border-color: #ff7e10 !important;
+    color: #fff !important;
   }
 
   /* preload*/
@@ -375,16 +393,15 @@
                       Veuillez saisir un titre clair d'au moins 30 caractères.
                     </div>
                   </div>
-                  <div class="text-left mb-3">
+                  <h2 class="fs-title text-left">
+                    {{'profil-utilisateur.formulaire-creer-annonce-3.entete-description-service'|trans}}*</h2>
+                  <div class="text-left mt-3 mb-3">
                     <button type="button" id="generate-description-button" class="btn btn-description-ai"
                       data-url="{{ path('profile_generate_announcement_description') }}"
                       {% if editedData is defined and editedData.post_title|length >= 30 %}{% else %}disabled{% endif %}>
                       Me proposer une description
                     </button>
                   </div>
-                  <h2 class="fs-title text-left">
-                    {{'profil-utilisateur.formulaire-creer-annonce-3.entete-description-service'|trans}}*</h2>
-                  <!-- <h3 class="fs-subtitle">Brève description de vos techniques, votre matériel, vos compétences...</h3> -->
                   <div class="form-group text-left">
                     <label
                       for="briefDesc">{{'profil-utilisateur.formulaire-creer-annonce-3.champs-description-service'|trans}}</label>
