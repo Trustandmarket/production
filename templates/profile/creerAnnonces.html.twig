@@ -89,7 +89,7 @@
     position: relative;
     text-transform: uppercase;
     white-space: nowrap;
-    width: 335px;
+    width: 100%;
     max-width: 100%;
   }
 
@@ -135,6 +135,18 @@
       padding: 0.5rem 2.4rem 0.5rem 2.7rem;
       width: 100%;
     }
+  }
+
+  .description-ai-block {
+    align-items: stretch;
+    display: inline-flex;
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .description-ai-block .fs-title {
+    display: inline-block;
+    margin-bottom: 1rem;
   }
 
   /* preload*/
@@ -428,14 +440,16 @@
                       Veuillez saisir un titre clair d'au moins 30 caractères.
                     </div>
                   </div>
-                  <h2 class="fs-title text-left">
-                    {{'profil-utilisateur.formulaire-creer-annonce-3.entete-description-service'|trans}}*</h2>
-                  <div class="text-left mt-3 mb-3">
-                    <button type="button" id="generate-description-button" class="btn btn-description-ai"
-                      data-url="{{ path('profile_generate_announcement_description') }}"
-                      {% if editedData is defined and editedData.post_title|length >= 30 %}{% else %}disabled{% endif %}>
-                      Me proposer une description
-                    </button>
+                  <div class="description-ai-block text-left">
+                    <h2 class="fs-title text-left">
+                      {{'profil-utilisateur.formulaire-creer-annonce-3.entete-description-service'|trans}}*</h2>
+                    <div class="text-left mt-3 mb-3">
+                      <button type="button" id="generate-description-button" class="btn btn-description-ai"
+                        data-url="{{ path('profile_generate_announcement_description') }}"
+                        {% if editedData is defined and editedData.post_title|length >= 30 %}{% else %}disabled{% endif %}>
+                        Me proposer une description
+                      </button>
+                    </div>
                   </div>
                   <div class="form-group text-left">
                     <textarea class="form-control" name="description" id="description" rows="5">{% if editedData is defined and editedData.post_content != '' %}{{editedData.post_content|raw}}{% else %}{% endif %}</textarea>
