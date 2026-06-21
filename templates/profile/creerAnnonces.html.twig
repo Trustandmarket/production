@@ -359,6 +359,9 @@
                       editedData.post_title !='' %}value="{{editedData.post_title}}" {% else %}value="" {% endif %}
                       name="titre"
                       placeholder="{{'profil-utilisateur.formulaire-creer-annonce-3.champs-titre-service'|trans}}" />
+                    <div id="nom-error" class="text-danger mt-2" style="display:none;">
+                      Veuillez saisir un titre clair d'au moins 30 caractères.
+                    </div>
                   </div>
                   <h2 class="fs-title text-left">
                     {{'profil-utilisateur.formulaire-creer-annonce-3.entete-description-service'|trans}}*</h2>
@@ -370,7 +373,7 @@
                   </div>
 
                   <input type="button" name="previous" class="previous action-button"  value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-precedent'|trans}}" />
-                  <input type="button" {% if editedData is defined and editedData.post_title !='' and editedData.post_content !='' %}{% else %}disabled{% endif %} name="next" class="next action-button nom"
+                  <input type="button" {% if editedData is defined and editedData.post_title|length >= 30 and editedData.post_content !='' %}{% else %}disabled{% endif %} name="next" class="next action-button nom"
                     value="{{'profil-utilisateur.formulaire-creer-annonce.bouton-suivant'|trans}}" />
                 </fieldset>
                 <fieldset>
@@ -741,15 +744,22 @@
 
   });
 
-  $(document).on('blur', '#nom', function (e) {
-    if ($('#nom').val() != '') {
+  function updateServiceTitleStepState() {
+    if ($('#nom').val().length >= 30) {
+      $('#nom-error').hide();
       $('.nom').attr('name', "next");
       $('.nom').removeAttr('disabled');
     } else {
+      $('#nom-error').show();
       $('.nom').attr('disabled', "disabled");
       $('.nom').attr('name', "previous");
     }
+  }
 
+  updateServiceTitleStepState();
+
+  $(document).on('input blur', '#nom', function () {
+    updateServiceTitleStepState();
   });
 
   $(document).on('change', '#photos', function (e) {
