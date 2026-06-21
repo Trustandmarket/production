@@ -194,6 +194,7 @@ class ProfileAnnouncementController extends AbstractController
             'reservationsAnnuleesCount' => $reservationsAnnuleesCount,
             'reservationsDevisEnAttenteCount' => $reservationsDevisEnAttenteCount,
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
+            'google_maps_api_key' => $this->getGoogleMapsApiKey(),
             'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'page_name' => 'Publier une annonce'
         ]);
@@ -385,6 +386,7 @@ class ProfileAnnouncementController extends AbstractController
                 'client' => $client,
                 'imagesSecondaires' => $imagesSecondaires,
                 'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
+                'google_maps_api_key' => $this->getGoogleMapsApiKey(),
                 'youtube_url' => $this->em->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
                 'page_name' => 'Editer une annonce'
             ]);
@@ -2072,6 +2074,26 @@ class ProfileAnnouncementController extends AbstractController
         }
 
         return 'front_resubmit';
+    }
+
+    private function getGoogleMapsApiKey(): string
+    {
+        $fromEnv = $_ENV['GOOGLE_MAPS_API_KEY'] ?? null;
+        if (is_string($fromEnv) && trim($fromEnv) !== '') {
+            return trim($fromEnv);
+        }
+
+        $fromServer = $_SERVER['GOOGLE_MAPS_API_KEY'] ?? null;
+        if (is_string($fromServer) && trim($fromServer) !== '') {
+            return trim($fromServer);
+        }
+
+        $fromGetEnv = getenv('GOOGLE_MAPS_API_KEY');
+        if (is_string($fromGetEnv) && trim($fromGetEnv) !== '') {
+            return trim($fromGetEnv);
+        }
+
+        return '';
     }
 
 }

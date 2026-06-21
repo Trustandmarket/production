@@ -532,6 +532,9 @@
 
 <script src="{{ asset('admin/assets/sweetalert/sweetalert.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+{% if google_maps_api_key is defined and google_maps_api_key != '' %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key|url_encode }}&libraries=places"></script>
+{% endif %}
 
 <script>
   var verify_images = 0;
@@ -578,6 +581,99 @@
       $("#searchMenu").toggle("slide");
     });
 
+    window.getAddressComponent = function (place, types, useShortName) {
+      if (!place || !Array.isArray(place.address_components)) {
+        return '';
+      }
+
+      for (var i = 0; i < place.address_components.length; i += 1) {
+        var component = place.address_components[i];
+        var componentTypes = component.types || [];
+
+        for (var j = 0; j < types.length; j += 1) {
+          if (componentTypes.indexOf(types[j]) !== -1) {
+            return useShortName ? (component.short_name || '') : (component.long_name || '');
+          }
+        }
+      }
+
+      return '';
+    };
+
+    window.getSelectedAnnouncementCountry = function () {
+      var countryValue = $('select[name="pays"]').val();
+      if (typeof countryValue !== 'string') {
+        return '';
+      }
+
+      return countryValue.trim().toLowerCase();
+    };
+
+    window.updateAddressStepState = function () {
+      if (
+        $('#addressePostale').val().trim() !== '' &&
+        $('#codePostale').val().trim() !== '' &&
+        $('#ville').val().trim() !== ''
+      ) {
+        $('.adresse').attr('name', "next");
+        $('.adresse').removeAttr('disabled');
+        $('.brouillon').removeAttr('disabled');
+      } else {
+        $('.adresse').attr('disabled', "disabled");
+        $('.adresse').attr('name', "previous");
+        $('.brouillon').attr('disabled', "disabled");
+      }
+    };
+
+    window.initAnnouncementAddressAutocomplete = function () {
+      var input = document.getElementById('addressePostale');
+      if (!input) {
+        return;
+      }
+
+      if (!window.google || !window.google.maps || !window.google.maps.places || typeof window.google.maps.places.Autocomplete !== 'function') {
+        return;
+      }
+
+      input.setAttribute('autocomplete', 'off');
+
+      var autocomplete = new google.maps.places.Autocomplete(input, {
+        types: ['address'],
+        fields: ['address_components', 'formatted_address']
+      });
+
+      function applyCountryRestriction() {
+        var selectedCountry = window.getSelectedAnnouncementCountry();
+        if (selectedCountry !== '') {
+          autocomplete.setComponentRestrictions({
+            country: [selectedCountry]
+          });
+        }
+      }
+
+      autocomplete.addListener('place_changed', function () {
+        var place = autocomplete.getPlace();
+        var postalCode = window.getAddressComponent(place, ['postal_code'], false);
+        var city = window.getAddressComponent(place, ['locality', 'postal_town', 'administrative_area_level_3'], false);
+
+        if (postalCode !== '') {
+          $('#codePostale').val(postalCode);
+        }
+
+        if (city !== '') {
+          $('#ville').val(city);
+        }
+
+        window.updateAddressStepState();
+      });
+
+      applyCountryRestriction();
+
+      $(document).on('change', 'select[name="pays"]', function () {
+        applyCountryRestriction();
+      });
+    };
+
     // Initialize the object
     $("#photos").imagepicker();
     $("#videos").imagepicker();
@@ -590,6 +686,9 @@
       multidate: true,
       format: 'dd-mm-yyyy'
     });
+
+    window.initAnnouncementAddressAutocomplete();
+    window.updateAddressStepState();
 
 
     //jQuery time
@@ -736,17 +835,8 @@
     }
   });
 
-  $(document).on('blur', '#addressePostale, #codePostale, #ville', function (e) {
-    if ($('#addressePostale').val() != '' && $('#codePostale').val() != '' && $('#ville').val() != '') {
-      $('.adresse').attr('name', "next");
-      $('.adresse').removeAttr('disabled');
-      $('.brouillon').removeAttr('disabled');
-    } else {
-      $('.adresse').attr('disabled', "disabled");
-      $('.adresse').attr('name', "previous");
-      $('.brouillon').attr('disabled', "disabled");
-    }
-
+  $(document).on('input change blur', '#addressePostale, #codePostale, #ville', function () {
+    window.updateAddressStepState();
   });
 
   function getDescriptionStepValue() {
