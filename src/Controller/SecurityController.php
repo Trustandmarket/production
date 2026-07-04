@@ -29,15 +29,17 @@ class SecurityController extends AbstractController
 
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
+        $session = $requestStack->getSession();
         $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
         $recaptchaMode = 'v3';
         if (
             $recaptchaEnabled
             && $recaptcha->isV2FallbackEnabled()
-            && $requestStack->getSession()
-            && $requestStack->getSession()->get('recaptcha_login_mode') === 'v2'
+            && $session
+            && $session->get('recaptcha_login_mode') === 'v2'
         ) {
             $recaptchaMode = 'v2';
+            $session->remove('recaptcha_login_mode');
         }
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error,
