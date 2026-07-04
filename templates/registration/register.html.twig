@@ -1406,8 +1406,7 @@
         'attr': {
             'id': 'registration-form',
             'class': 'tm-register-form',
-            'data-initial-step': app.request.method == 'POST' ? '2' : '1',
-            'onsubmit': 'return gtagSendEvent(this);'
+            'data-initial-step': app.request.method == 'POST' ? '2' : '1'
         }
     }) }}
 
@@ -1704,6 +1703,15 @@
             const actionName = {{ recaptcha_action|json_encode|raw }};
             let isSubmittingWithToken = false;
 
+            function submitRegistrationForm() {
+                if (typeof gtagSendEvent === 'function') {
+                    gtagSendEvent(form);
+                    return;
+                }
+
+                form.submit();
+            }
+
             if (!form || !recaptchaEnabled || !tokenField || !siteKey) {
                 return;
             }
@@ -1737,7 +1745,7 @@
 
                         tokenField.value = token;
                         isSubmittingWithToken = true;
-                        form.submit();
+                        submitRegistrationForm();
                     } catch (error) {
                         if (errorBox) {
                             errorBox.style.display = 'block';
