@@ -158,6 +158,12 @@ class Recaptcha
         }
 
         if (trim((string) $token) === '') {
+            if ($mode === self::MODE_CHECKBOX_V2) {
+                return $this->challenge('Verification de securite requise. Merci de reessayer.', [
+                    'error_type' => 'missing_token',
+                ]);
+            }
+
             return $this->buildTechnicalOutcome($mode, $action, 'Verification de securite indisponible. Merci de reessayer.', 'missing_token');
         }
 

@@ -56,6 +56,7 @@ class RegistrationController extends AbstractController
         $selectedRole = $request->get('role_user');
         $selectedActivity = $request->get('activite');
         $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
+        $recaptchaMode = $request->request->get('recaptcha_mode') === 'v2' && $recaptcha->isV2FallbackEnabled() ? 'v2' : 'v3';
 
         if ($form->isSubmitted() && $form->isValid()) {
             $captchaResult = [
@@ -64,10 +65,15 @@ class RegistrationController extends AbstractController
             ];
 
             if ($recaptchaEnabled) {
-                $captchaResult = $recaptcha->assess(
-                    Recaptcha::ACTION_REGISTER,
-                    (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
-                );
+                $captchaResult = $recaptchaMode === 'v2'
+                    ? $recaptcha->assessFallbackV2(
+                        Recaptcha::ACTION_REGISTER,
+                        (string) $request->request->get('g-recaptcha-response', $request->get('g-recaptcha-response', ''))
+                    )
+                    : $recaptcha->assessPrimary(
+                        Recaptcha::ACTION_REGISTER,
+                        (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
+                    );
             }
 
                 if ($captchaResult['state'] === Recaptcha::STATE_ALLOW) {
@@ -263,6 +269,9 @@ class RegistrationController extends AbstractController
                 }
 
                 return $this->redirectToRoute('app_registration_confirmation_email');
+            } elseif ($captchaResult['state'] === Recaptcha::STATE_FALLBACK_V2_REQUIRED) {
+                $recaptchaMode = 'v2';
+                $this->addFlash('register_recaptcha_error', 'Verification renforcee requise. Merci de confirmer le controle de securite.');
             } else {
                 $this->addFlash('register_recaptcha_error', $captchaResult['message']);
             }
@@ -272,8 +281,10 @@ class RegistrationController extends AbstractController
             'registrationForm' => $form->createView(),
             'environnement' => $this->getParameter('environnement'),
             'recaptcha_site_key' => $recaptcha->getSiteKey(),
+            'recaptcha_v2_site_key' => $recaptcha->getV2SiteKey(),
             'recaptcha_enabled' => $recaptchaEnabled,
             'recaptcha_action' => Recaptcha::ACTION_REGISTER,
+            'recaptcha_mode' => $recaptchaMode,
             'activities' => $this->service_manager->postCategorie1('product_activity'),
             'selected_role' => $selectedRole,
             'selected_activity' => $selectedActivity,

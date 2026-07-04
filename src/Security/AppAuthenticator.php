@@ -51,13 +51,22 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
     public function authenticate(Request $request): Passport
     {
         $emailCanonical = $request->request->get('email_canonical', '');
+        $session = $this->requestStack->getSession();
         if ($this->recaptcha->shouldEnforce((string) $this->params->get('environnement'))) {
-            $recaptcha = $this->recaptcha->assess(
-                Recaptcha::ACTION_LOGIN,
-                (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
-            );
-            $this->requestStack->getSession()->set(Security::LAST_USERNAME, $emailCanonical);
+            $recaptchaMode = $request->request->get('recaptcha_mode') === 'v2' && $this->recaptcha->isV2FallbackEnabled() ? 'v2' : 'v3';
+            $token = $recaptchaMode === 'v2'
+                ? (string) $request->request->get('g-recaptcha-response', $request->get('g-recaptcha-response', ''))
+                : (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''));
+            $recaptcha = $recaptchaMode === 'v2'
+                ? $this->recaptcha->assessFallbackV2(Recaptcha::ACTION_LOGIN, $token)
+                : $this->recaptcha->assessPrimary(Recaptcha::ACTION_LOGIN, $token);
+            $session->set(Security::LAST_USERNAME, $emailCanonical);
             if ($recaptcha['state'] === Recaptcha::STATE_ALLOW) {
+                if ($recaptchaMode === 'v2') {
+                    $session->set('recaptcha_login_mode', 'v2');
+                } else {
+                    $session->remove('recaptcha_login_mode');
+                }
                 return new Passport(
                     new UserBadge($emailCanonical),
                     new PasswordCredentials($request->request->get('password', '')),
@@ -66,10 +75,17 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
                         new RememberMeBadge(),
                     ]
                 );
+            } elseif ($recaptcha['state'] === Recaptcha::STATE_FALLBACK_V2_REQUIRED) {
+                $session->set('recaptcha_login_mode', 'v2');
+                throw new CustomUserMessageAccountStatusException('Verification renforcee requise. Merci de confirmer le controle de securite.');
             } else {
+                if ($recaptchaMode === 'v2') {
+                    $session->set('recaptcha_login_mode', 'v2');
+                }
                 throw new CustomUserMessageAccountStatusException($recaptcha['message']);
             }
         } else {
+            $session->remove('recaptcha_login_mode');
             return new Passport(
                 new UserBadge($emailCanonical),
                 new PasswordCredentials($request->request->get('password', '')),
@@ -83,6 +99,7 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $this->requestStack->getSession()->remove('recaptcha_login_mode');
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email_canonical' => $request->request->get('email_canonical', '')]);
         $avatar = '';
         $avatars = null;

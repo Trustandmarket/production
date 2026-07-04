@@ -5,8 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'request'}) }}">
-    {% if recaptcha_enabled and recaptcha_site_key %}
-        <script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+    {% if recaptcha_enabled %}
+        {% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
+            <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+        {% elseif recaptcha_site_key %}
+            <script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+        {% endif %}
     {% endif %}
 {% endblock %}
 
@@ -414,6 +418,15 @@
                         {% endif %}
                     {% endfor %}
 
+                    {% for flashMessage in app.session.flashbag.get('reset_recaptcha_error') %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ flashMessage }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+
                     <div class="tm-reset-request-header">
                         <h1 class="tm-reset-request-heading">{{ 'passe-oublier.titre'|trans }}</h1>
                         <p class="tm-reset-request-subheading">{{ 'passe-oublier.description'|trans }}</p>
@@ -431,11 +444,17 @@
                         {{ form_errors(requestForm.email_canonical) }}
                     </div>
 
-                    {% if recaptcha_enabled and recaptcha_site_key %}
+                    {% if recaptcha_enabled %}
                         <div class="tm-reset-request-recaptcha">
-                            <input type="hidden" name="recaptcha_token" id="tm-reset-recaptcha-token">
+                            <input type="hidden" name="recaptcha_mode" value="{{ recaptcha_mode|default('v3') }}">
                             <input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
-                            <div class="alert alert-danger" id="tm-reset-recaptcha-error" style="display:none;">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
+                            {% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
+                                <div class="alert alert-warning">Verification renforcee requise. Merci de confirmer le controle de securite.</div>
+                                <div class="g-recaptcha" data-sitekey="{{ recaptcha_v2_site_key }}" data-action="{{ recaptcha_action }}"></div>
+                            {% elseif recaptcha_site_key %}
+                                <input type="hidden" name="recaptcha_token" id="tm-reset-recaptcha-token">
+                                <div class="alert alert-danger" id="tm-reset-recaptcha-error" style="display:none;">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
+                            {% endif %}
                         </div>
                     {% endif %}
 
@@ -463,11 +482,12 @@
             const tokenField = document.querySelector('#tm-reset-recaptcha-token');
             const errorBox = document.querySelector('#tm-reset-recaptcha-error');
             const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
+            const recaptchaMode = {{ (recaptcha_mode|default('v3'))|json_encode|raw }};
             const siteKey = {{ recaptcha_site_key|json_encode|raw }};
             const actionName = {{ recaptcha_action|json_encode|raw }};
             let isSubmittingWithToken = false;
 
-            if (!form || !recaptchaEnabled || !tokenField || !siteKey) {
+            if (!form || !recaptchaEnabled || recaptchaMode !== 'v3' || !tokenField || !siteKey) {
                 return;
             }
 

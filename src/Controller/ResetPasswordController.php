@@ -18,7 +18,6 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGenerator;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
@@ -57,6 +56,7 @@ class ResetPasswordController extends AbstractController
         $form->handleRequest($request);
         $locale = (string) ($request->attributes->get('_locale') ?? $request->getLocale() ?? 'fr');
         $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
+        $recaptchaMode = $request->request->get('recaptcha_mode') === 'v2' && $recaptcha->isV2FallbackEnabled() ? 'v2' : 'v3';
         if ($locale === '') {
             $locale = 'fr';
         }
@@ -68,10 +68,15 @@ class ResetPasswordController extends AbstractController
             ];
 
             if ($recaptchaEnabled) {
-                $captchaResult = $recaptcha->assess(
-                    Recaptcha::ACTION_RESET_PASSWORD,
-                    (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
-                );
+                $captchaResult = $recaptchaMode === 'v2'
+                    ? $recaptcha->assessFallbackV2(
+                        Recaptcha::ACTION_RESET_PASSWORD,
+                        (string) $request->request->get('g-recaptcha-response', $request->get('g-recaptcha-response', ''))
+                    )
+                    : $recaptcha->assessPrimary(
+                        Recaptcha::ACTION_RESET_PASSWORD,
+                        (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
+                    );
             }
 
             if ($captchaResult['state'] === Recaptcha::STATE_ALLOW) {
@@ -81,16 +86,21 @@ class ResetPasswordController extends AbstractController
                     $translator,
                     $locale
                 );
+            } elseif ($captchaResult['state'] === Recaptcha::STATE_FALLBACK_V2_REQUIRED) {
+                $recaptchaMode = 'v2';
+                $this->addFlash('reset_recaptcha_error', 'Verification renforcee requise. Merci de confirmer le controle de securite.');
+            } else {
+                $this->addFlash('reset_recaptcha_error', $captchaResult['message']);
             }
-
-            throw new CustomUserMessageAccountStatusException($captchaResult['message']);
         }
 
         return $this->render('reset_password/request.html.twig', [
             'requestForm' => $form->createView(),
             'recaptcha_site_key' => $recaptcha->getSiteKey(),
+            'recaptcha_v2_site_key' => $recaptcha->getV2SiteKey(),
             'recaptcha_enabled' => $recaptchaEnabled,
             'recaptcha_action' => Recaptcha::ACTION_RESET_PASSWORD,
+            'recaptcha_mode' => $recaptchaMode,
         ]);
     }
 

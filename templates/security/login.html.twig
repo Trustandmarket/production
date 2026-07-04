@@ -38,8 +38,12 @@
 	</script>
 	{# END JSON LD #}
 
-	{% if recaptcha_enabled and recaptcha_site_key %}
-		<script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+	{% if recaptcha_enabled %}
+		{% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
+			<script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+		{% elseif recaptcha_site_key %}
+			<script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+		{% endif %}
 	{% endif %}
 {% endblock %}
 
@@ -575,12 +579,20 @@
 							<input name="password" type="password" id="inputPassword" class="form-control input-custom" required>
 						</div>
 
-						{% if recaptcha_enabled and recaptcha_site_key %}
-							<input type="hidden" name="recaptcha_token" id="tm-login-recaptcha-token">
+						{% if recaptcha_enabled %}
+							<input type="hidden" name="recaptcha_mode" value="{{ recaptcha_mode|default('v3') }}">
 							<input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
-							<div class="tm-login-recaptcha" id="tm-login-recaptcha-error" style="display:none;">
-								<div class="alert alert-danger mb-0">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
-							</div>
+							{% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
+								<div class="tm-login-recaptcha">
+									<div class="alert alert-warning mb-3">Verification renforcee requise. Merci de confirmer le controle de securite.</div>
+									<div class="g-recaptcha" data-sitekey="{{ recaptcha_v2_site_key }}" data-action="{{ recaptcha_action }}"></div>
+								</div>
+							{% elseif recaptcha_site_key %}
+								<input type="hidden" name="recaptcha_token" id="tm-login-recaptcha-token">
+								<div class="tm-login-recaptcha" id="tm-login-recaptcha-error" style="display:none;">
+									<div class="alert alert-danger mb-0">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
+								</div>
+							{% endif %}
 						{% endif %}
 
 						<div class="tm-login-helpers">
@@ -641,20 +653,16 @@ $(document).ready(function() {
 })
 
 window.addEventListener('load', () => {
-	const $recaptcha = document.querySelector('#g-recaptcha-response');
-	if ($recaptcha) {
-		$recaptcha.setAttribute('required', 'required');
-	}
-
 	const form = document.querySelector('.tm-login-form');
 	const tokenField = document.querySelector('#tm-login-recaptcha-token');
 	const errorBox = document.querySelector('#tm-login-recaptcha-error');
 	const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
+	const recaptchaMode = {{ (recaptcha_mode|default('v3'))|json_encode|raw }};
 	const siteKey = {{ recaptcha_site_key|json_encode|raw }};
 	const actionName = {{ recaptcha_action|json_encode|raw }};
 	let isSubmittingWithToken = false;
 
-	if (!form || !recaptchaEnabled || !tokenField || !siteKey) {
+	if (!form || !recaptchaEnabled || recaptchaMode !== 'v3' || !tokenField || !siteKey) {
 		return;
 	}
 

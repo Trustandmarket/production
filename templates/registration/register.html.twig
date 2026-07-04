@@ -33,8 +33,12 @@
     }
     </script>
 
-    {% if recaptcha_enabled and recaptcha_site_key %}
-        <script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+    {% if recaptcha_enabled %}
+        {% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
+            <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+        {% elseif recaptcha_site_key %}
+            <script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+        {% endif %}
     {% endif %}
 {% endblock %}
 
@@ -1571,11 +1575,17 @@
                             </label>
                         </div>
 
-                        {% if recaptcha_enabled and recaptcha_site_key %}
+                        {% if recaptcha_enabled %}
                             <div class="tm-field-block tm-recaptcha-block">
-                                <input type="hidden" name="recaptcha_token" id="tm-register-recaptcha-token">
+                                <input type="hidden" name="recaptcha_mode" value="{{ recaptcha_mode|default('v3') }}">
                                 <input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
-                                <div class="alert alert-danger tm-register-alert" id="tm-register-recaptcha-error" style="display:none;">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
+                                {% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
+                                    <div class="alert alert-warning tm-register-alert">Verification renforcee requise. Merci de confirmer le controle de securite.</div>
+                                    <div class="g-recaptcha" data-sitekey="{{ recaptcha_v2_site_key }}" data-action="{{ recaptcha_action }}"></div>
+                                {% elseif recaptcha_site_key %}
+                                    <input type="hidden" name="recaptcha_token" id="tm-register-recaptcha-token">
+                                    <div class="alert alert-danger tm-register-alert" id="tm-register-recaptcha-error" style="display:none;">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
+                                {% endif %}
                             </div>
                         {% endif %}
 
@@ -1690,15 +1700,11 @@
         });
 
         window.addEventListener('load', function () {
-            const recaptchaField = document.querySelector('#g-recaptcha-response');
-            if (recaptchaField) {
-                recaptchaField.setAttribute('required', 'required');
-            }
-
             const form = document.querySelector('#registration-form');
             const tokenField = document.querySelector('#tm-register-recaptcha-token');
             const errorBox = document.querySelector('#tm-register-recaptcha-error');
             const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
+            const recaptchaMode = {{ (recaptcha_mode|default('v3'))|json_encode|raw }};
             const siteKey = {{ recaptcha_site_key|json_encode|raw }};
             const actionName = {{ recaptcha_action|json_encode|raw }};
             let isSubmittingWithToken = false;
@@ -1712,7 +1718,7 @@
                 form.submit();
             }
 
-            if (!form || !recaptchaEnabled || !tokenField || !siteKey) {
+            if (!form || !recaptchaEnabled || recaptchaMode !== 'v3' || !tokenField || !siteKey) {
                 return;
             }
 

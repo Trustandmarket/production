@@ -19,7 +19,7 @@ class SecurityController extends AbstractController
      * @param AuthenticationUtils $authenticationUtils
      * @return Response
      */
-    public function login(AuthenticationUtils $authenticationUtils, Recaptcha $recaptcha): Response
+    public function login(AuthenticationUtils $authenticationUtils, Recaptcha $recaptcha, RequestStack $requestStack): Response
     {
         if ($this->getUser()) {
             return $this->redirectToRoute('home');
@@ -29,12 +29,24 @@ class SecurityController extends AbstractController
 
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
+        $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
+        $recaptchaMode = 'v3';
+        if (
+            $recaptchaEnabled
+            && $recaptcha->isV2FallbackEnabled()
+            && $requestStack->getSession()
+            && $requestStack->getSession()->get('recaptcha_login_mode') === 'v2'
+        ) {
+            $recaptchaMode = 'v2';
+        }
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error,
             'environnement' => $this->getParameter('environnement'),
             'recaptcha_site_key' => $recaptcha->getSiteKey(),
-            'recaptcha_enabled' => $recaptcha->shouldEnforce((string) $this->getParameter('environnement')),
+            'recaptcha_v2_site_key' => $recaptcha->getV2SiteKey(),
+            'recaptcha_enabled' => $recaptchaEnabled,
             'recaptcha_action' => Recaptcha::ACTION_LOGIN,
+            'recaptcha_mode' => $recaptchaMode,
         ]);
     }
 
