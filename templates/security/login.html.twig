@@ -584,7 +584,6 @@
 							<input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
 							{% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
 								<div class="tm-login-recaptcha">
-									<div class="alert alert-warning mb-3">Verification renforcee requise. Merci de confirmer le controle de securite.</div>
 									<div class="g-recaptcha" data-sitekey="{{ recaptcha_v2_site_key }}" data-action="{{ recaptcha_action }}"></div>
 								</div>
 							{% elseif recaptcha_site_key %}
