@@ -202,18 +202,20 @@ class Recaptcha
                 ]);
             }
 
+            $hostname = (string) $tokenProps->getHostname();
             $risk = $response->getRiskAnalysis();
-            if ($risk === null) {
+            $score = null;
+            $reasons = [];
+
+            if ($risk !== null) {
+                $score = (float) $risk->getScore();
+                foreach ($risk->getReasons() as $reason) {
+                    $reasons[] = (string) $reason;
+                }
+            } elseif ($mode !== self::MODE_CHECKBOX_V2) {
                 return $this->buildTechnicalOutcome($mode, $action, 'Verification de securite indisponible. Merci de reessayer.', 'missing_risk_analysis');
             }
 
-            $score = (float) $risk->getScore();
-            $reasons = [];
-            foreach ($risk->getReasons() as $reason) {
-                $reasons[] = (string) $reason;
-            }
-
-            $hostname = (string) $tokenProps->getHostname();
             if ($this->mustValidateAction($mode) && $tokenProps->getAction() !== $action) {
                 return $this->challenge('Verification de securite requise. Merci de reessayer.', [
                     'score' => $score,
@@ -242,7 +244,7 @@ class Recaptcha
                 ]);
             }
 
-            if ($this->mustBlockByRiskReason($risk->getReasons(), $score)) {
+            if ($risk !== null && $this->mustBlockByRiskReason($risk->getReasons(), (float) $score)) {
                 return $this->challenge('Verification de securite requise. Merci de reessayer.', [
                     'score' => $score,
                     'hostname' => $hostname,
@@ -351,7 +353,7 @@ class Recaptcha
             || stripos($userAgent, 'Puppeteer') !== false;
     }
 
-    private function allow(float $score, string $hostname, array $reasons): array
+    private function allow(?float $score, string $hostname, array $reasons): array
     {
         return [
             'response' => true,
