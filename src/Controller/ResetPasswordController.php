@@ -56,19 +56,25 @@ class ResetPasswordController extends AbstractController
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
         $locale = (string) ($request->attributes->get('_locale') ?? $request->getLocale() ?? 'fr');
+        $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
         if ($locale === '') {
             $locale = 'fr';
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $recaptcha = $recaptcha->create_assessment(
-                '6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O',
-                $request->get('g-recaptcha-response'),
-                'sym-trust-adresse',
-                'TRUST_RESET_PASSWORD'
-            );
+            $captchaResult = [
+                'state' => Recaptcha::STATE_ALLOW,
+                'message' => 'OK',
+            ];
 
-            if ($recaptcha['response']) {
+            if ($recaptchaEnabled) {
+                $captchaResult = $recaptcha->assess(
+                    Recaptcha::ACTION_RESET_PASSWORD,
+                    (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
+                );
+            }
+
+            if ($captchaResult['state'] === Recaptcha::STATE_ALLOW) {
                 return $this->processSendingPasswordResetEmail(
                     $form->get('email_canonical')->getData(),
                     $mailer,
@@ -77,11 +83,14 @@ class ResetPasswordController extends AbstractController
                 );
             }
 
-            throw new CustomUserMessageAccountStatusException($recaptcha['message']);
+            throw new CustomUserMessageAccountStatusException($captchaResult['message']);
         }
 
         return $this->render('reset_password/request.html.twig', [
             'requestForm' => $form->createView(),
+            'recaptcha_site_key' => $recaptcha->getSiteKey(),
+            'recaptcha_enabled' => $recaptchaEnabled,
+            'recaptcha_action' => Recaptcha::ACTION_RESET_PASSWORD,
         ]);
     }
 

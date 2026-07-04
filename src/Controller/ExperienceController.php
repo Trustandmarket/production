@@ -33,7 +33,7 @@ class ExperienceController extends AbstractController
     /**
      * @Route("/{_locale}/a-propos/nous-contacter", name="index")
      */
-    public function index()
+    public function index(Recaptcha $recaptcha)
     {
         $sousMenu = $this->service_manager->naveMenuItem(40);
         $contenu = $this->entityManager
@@ -50,13 +50,17 @@ class ExperienceController extends AbstractController
             'footer' => $this->service_manager->naveMenuItem(18),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
+            'recaptcha_site_key' => $recaptcha->getSiteKey(),
+            'recaptcha_enabled' => $recaptcha->shouldEnforce((string) $this->getParameter('environnement')),
+            'recaptcha_action' => Recaptcha::ACTION_CONTACT_US,
+            'disable_legacy_recaptcha' => true,
         ]);
     }
 
     /**
      * @Route("/{_locale}/aide/envoyez-nous-vos-commentaires", name="envoyez_commentaires")
      */
-    public function envoyez_commentaires()
+    public function envoyez_commentaires(Recaptcha $recaptcha)
     {
         $sousMenu = $this->service_manager->naveMenuItem(141);
         $contenu = $this->entityManager
@@ -73,6 +77,10 @@ class ExperienceController extends AbstractController
             'footer' => $this->service_manager->naveMenuItem(18),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
+            'recaptcha_site_key' => $recaptcha->getSiteKey(),
+            'recaptcha_enabled' => $recaptcha->shouldEnforce((string) $this->getParameter('environnement')),
+            'recaptcha_action' => Recaptcha::ACTION_FEEDBACKS,
+            'disable_legacy_recaptcha' => true,
         ]);
     }
 
@@ -84,8 +92,20 @@ class ExperienceController extends AbstractController
      */
     public function sendCommentsEmails(Request $request, Recaptcha $recaptcha)
     {
-        $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O',$request->get('g-recaptcha-response'),'sym-trust-adresse','TRUST_CONTACT_US');
-        if($recaptcha['response']){
+        $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
+        $captchaResult = [
+            'state' => Recaptcha::STATE_ALLOW,
+            'message' => 'OK',
+        ];
+
+        if ($recaptchaEnabled) {
+            $captchaResult = $recaptcha->assess(
+                Recaptcha::ACTION_CONTACT_US,
+                (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
+            );
+        }
+
+        if($captchaResult['state'] === Recaptcha::STATE_ALLOW){
             $date = new DateTime();
             $response = "";
             //Email Admin
@@ -180,8 +200,20 @@ class ExperienceController extends AbstractController
      */
     public function feedbacks(Request $request, Recaptcha $recaptcha)
     {
-        $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O',$request->get('g-recaptcha-response'),'sym-trust-adresse','TRUST_FEEDBACKS');
-        if($recaptcha['response']){
+        $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
+        $captchaResult = [
+            'state' => Recaptcha::STATE_ALLOW,
+            'message' => 'OK',
+        ];
+
+        if ($recaptchaEnabled) {
+            $captchaResult = $recaptcha->assess(
+                Recaptcha::ACTION_FEEDBACKS,
+                (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
+            );
+        }
+
+        if($captchaResult['state'] === Recaptcha::STATE_ALLOW){
             // Prepare the data
             $data = [
                 'to' => [

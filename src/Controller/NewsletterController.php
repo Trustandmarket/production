@@ -40,7 +40,7 @@ class NewsletterController extends AbstractController
     }
 
     #[Route('/{_locale}/newsletter', name: 'app_newsletter')]
-    public function index(): Response
+    public function index(Recaptcha $recaptcha): Response
     {
         return $this->render('newsletter/subscribe.html.twig', [
             'header' => $this->service_manager->naveMenuItem(10),
@@ -48,6 +48,10 @@ class NewsletterController extends AbstractController
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'pageName' => 'Newsletter',
+            'recaptcha_site_key' => $recaptcha->getSiteKey(),
+            'recaptcha_enabled' => $recaptcha->shouldEnforce((string) $this->getParameter('environnement')),
+            'recaptcha_action' => Recaptcha::ACTION_NEWSLETTER,
+            'disable_legacy_recaptcha' => true,
         ]);
     }
 
@@ -71,8 +75,20 @@ class NewsletterController extends AbstractController
     #[Route('/{_locale}/newsletter/ajouter',name: 'newsletterUser', requirements: ['_locale' => 'fr'])]
     public function newsletterUser(Request $request, Recaptcha $recaptcha)
     {
-        $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_NEWSLETTER');
-        if ($recaptcha['response']) {
+        $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
+        $captchaResult = [
+            'state' => Recaptcha::STATE_ALLOW,
+            'message' => 'OK',
+        ];
+
+        if ($recaptchaEnabled) {
+            $captchaResult = $recaptcha->assess(
+                Recaptcha::ACTION_NEWSLETTER,
+                (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
+            );
+        }
+
+        if ($captchaResult['state'] === Recaptcha::STATE_ALLOW) {
 
             $email_exist = $this->entityManager->getRepository(Newsletter::class)->findOneBy(['email' => $request->get('email')]);
             $result = 0;

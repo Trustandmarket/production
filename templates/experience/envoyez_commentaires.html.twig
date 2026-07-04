@@ -46,7 +46,9 @@
 
     </script>
     {# END JSON LD #}
-    <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+    {% if recaptcha_enabled and recaptcha_site_key %}
+        <script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+    {% endif %}
 {% endblock %}
 {% block title %}Trust &amp; Market |{{ include('Seo/Meta/title.html.twig', {code: 'retours-experience'}) }}{% endblock %}
 
@@ -164,8 +166,11 @@
                                               class="form-control mb-3" placeholder="..." required=""></textarea>
 
 
-                                    <div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O"
-                                         data-action="TRUST_FEEDBACKS"></div>
+                                    {% if recaptcha_enabled and recaptcha_site_key %}
+                                        <input type="hidden" name="recaptcha_token" id="tm-feedback-recaptcha-token">
+                                        <input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
+                                        <div class="alert alert-danger mt-3" id="tm-feedback-recaptcha-error" style="display:none;">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
+                                    {% endif %}
                                 </div>
 
                                 <div class="row below-form px-4">
@@ -242,6 +247,12 @@
                     $("#autresBesoins").toggle("slide");
                 });
 
+                const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
+                const siteKey = {{ recaptcha_site_key|json_encode|raw }};
+                const actionName = {{ recaptcha_action|json_encode|raw }};
+                const tokenField = document.querySelector('#tm-feedback-recaptcha-token');
+                const errorBox = document.querySelector('#tm-feedback-recaptcha-error');
+
 
 // For comments add
 
@@ -284,13 +295,83 @@
 
                 });
 
+                $('#sendCommentEmail').off('submit').on('submit', async function (e) {
+                    e.preventDefault();
+
+                    if (errorBox) {
+                        errorBox.style.display = 'none';
+                    }
+
+                    if (recaptchaEnabled) {
+                        if (!tokenField || !siteKey || typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                            if (errorBox) {
+                                errorBox.style.display = 'block';
+                            }
+                            return false;
+                        }
+
+                        try {
+                            const token = await new Promise(function (resolve, reject) {
+                                grecaptcha.enterprise.ready(async function () {
+                                    try {
+                                        resolve(await grecaptcha.enterprise.execute(siteKey, {action: actionName}));
+                                    } catch (error) {
+                                        reject(error);
+                                    }
+                                });
+                            });
+                            if (!token) {
+                                if (errorBox) {
+                                    errorBox.style.display = 'block';
+                                }
+                                return false;
+                            }
+
+                            tokenField.value = token;
+                        } catch (error) {
+                            if (errorBox) {
+                                errorBox.style.display = 'block';
+                            }
+                            return false;
+                        }
+                    }
+
+                    $('#contacterNousButton').addClass('running');
+                    toastr.info("{{ 'systeme.email.requete-en-cours'|trans }}");
+
+                    let $form = $(this);
+                    let formdata = (window.FormData) ? new FormData($form[0]) : null;
+                    let data = (formdata !== null) ? formdata : $form.serialize();
+
+                    $.ajax({
+                        url: $form.attr('action'),
+                        type: $form.attr('method'),
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: function (response) {
+                            console.log(response)
+                            if (response == 1) {
+                                toastr.clear();
+                                toastr.success('{{ 'systeme.email.succes'|trans }}');
+                                window.location = "";
+                            } else if (response == 0) {
+                                $('#contacterNousButton').removeClass('running');
+                                toastr.clear();
+                                toastr.error('{{ 'systeme.email.erreur'|trans }}');
+                            }
+                        },
+                        error: function () {
+                            $('#contacterNousButton').removeClass('running');
+                            toastr.clear();
+                            toastr.error('{{ 'systeme.email.erreur'|trans }}');
+                        }
+                    });
+
+                    return false;
+                });
+
             });
-            window.addEventListener('load', () => {
-                const $recaptcha = document.querySelector('#g-recaptcha-response');
-                if ($recaptcha) {
-                    $recaptcha.setAttribute('required', 'required');
-                }
-            })
 
             toastr.options = {
                 "closeButton": true,

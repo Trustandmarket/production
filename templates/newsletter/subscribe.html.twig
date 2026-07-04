@@ -24,7 +24,9 @@
     <meta property="og:image"
           content="{{ asset('assets/img/favicon/cropped-cropped-logo-trust-and-market-270x270.png') }}">
     <meta propery="og:type" content="website">
-    <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+    {% if recaptcha_enabled and recaptcha_site_key %}
+        <script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+    {% endif %}
     {# END OG CONTENT #}
 {% endblock %}
 
@@ -264,8 +266,10 @@
                                 mon inscription.</label>
                         </div>
 
-                        <div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O"
-                             data-action="TRUST_NEWSLETTER"></div>
+                        {% if recaptcha_enabled and recaptcha_site_key %}
+                            <input type="hidden" name="recaptcha_token" id="tm-newsletter-recaptcha-token">
+                            <input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
+                        {% endif %}
                         <br/>
                         <div class="d-flex justify-content-center mt-3">
                             <button type="submit" id="submit-button" class="btn btn-primary btn-round px-5">Valider
@@ -307,11 +311,13 @@
 
     <script>
         $(document).ready(function () {
-            // Script to create user for newsletter
-            $('#newsletterForm').on('submit', function (e) {
-                e.preventDefault();
+            const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
+            const siteKey = {{ recaptcha_site_key|json_encode|raw }};
+            const actionName = {{ recaptcha_action|json_encode|raw }};
+            const tokenField = document.querySelector('#tm-newsletter-recaptcha-token');
+
+            function submitNewsletterForm($form) {
                 toastr.info("{{ 'newsletter.attente'|trans }}");
-                let $form = $(this);
                 $.ajax({
                     url: $form.attr('action'),
                     type: $form.attr('method'),
@@ -339,16 +345,49 @@
                         toastr.clear();
                         $('#send').removeClass('running');
                         toastr.error('{{ 'newsletter.echec'|trans }}');
+                    },
+                    complete: function () {
+                        if (tokenField) {
+                            tokenField.value = '';
+                        }
                     }
                 });
-            });
+            }
 
-            window.addEventListener('load', () => {
-                const $recaptcha = document.querySelector('#g-recaptcha-response');
-                if ($recaptcha) {
-                    $recaptcha.setAttribute('required', 'required');
+            $('#newsletterForm').on('submit', async function (e) {
+                e.preventDefault();
+                let $form = $(this);
+
+                if (recaptchaEnabled) {
+                    if (!tokenField || !siteKey || typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                        toastr.error('La vérification de sécurité est indisponible. Merci de réessayer.');
+                        return;
+                    }
+
+                    try {
+                        const token = await new Promise(function (resolve, reject) {
+                            grecaptcha.enterprise.ready(async function () {
+                                try {
+                                    resolve(await grecaptcha.enterprise.execute(siteKey, {action: actionName}));
+                                } catch (error) {
+                                    reject(error);
+                                }
+                            });
+                        });
+                        if (!token) {
+                            toastr.error('La vérification de sécurité est indisponible. Merci de réessayer.');
+                            return;
+                        }
+
+                        tokenField.value = token;
+                    } catch (error) {
+                        toastr.error('La vérification de sécurité est indisponible. Merci de réessayer.');
+                        return;
+                    }
                 }
-            })
+
+                submitNewsletterForm($form);
+            });
         });
     </script>
 

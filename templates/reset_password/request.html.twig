@@ -5,7 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="{{ include('Seo/Meta/description.html.twig', {code: 'request'}) }}">
-    <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+    {% if recaptcha_enabled and recaptcha_site_key %}
+        <script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+    {% endif %}
 {% endblock %}
 
 {% block title %}Trust &amp; Market | {{ include('Seo/Meta/title.html.twig', {code: 'request'}) }}{% endblock %}
@@ -390,7 +392,7 @@
 
             <section class="tm-reset-request-panel">
                 <div class="tm-reset-request-panel-content">
-                    {{ form_start(requestForm, {'attr': {'class': 'tm-reset-request-form'}}) }}
+                    {{ form_start(requestForm, {'attr': {'class': 'tm-reset-request-form', 'id': 'reset-password-request-form'}}) }}
 
                     {% for flashMessage in app.session.flashbag.get('success') %}
                         <div class="alert alert-primary alert-dismissible fade show" role="alert">
@@ -429,9 +431,13 @@
                         {{ form_errors(requestForm.email_canonical) }}
                     </div>
 
-                    <div class="tm-reset-request-recaptcha">
-                        <div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O" data-action="TRUST_RESET_PASSWORD"></div>
-                    </div>
+                    {% if recaptcha_enabled and recaptcha_site_key %}
+                        <div class="tm-reset-request-recaptcha">
+                            <input type="hidden" name="recaptcha_token" id="tm-reset-recaptcha-token">
+                            <input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
+                            <div class="alert alert-danger" id="tm-reset-recaptcha-error" style="display:none;">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
+                        </div>
+                    {% endif %}
 
                     <div class="tm-reset-request-actions">
                         <button class="btn btn-lg btn-primary btn-md tm-reset-request-btn" type="submit">{{ 'passe-oublier.valider'|trans }}</button>
@@ -453,10 +459,55 @@
     {{ parent() }}
     <script>
         window.addEventListener('load', function () {
-            var recaptchaResponse = document.querySelector('#g-recaptcha-response');
-            if (recaptchaResponse) {
-                recaptchaResponse.setAttribute('required', 'required');
+            const form = document.querySelector('#reset-password-request-form');
+            const tokenField = document.querySelector('#tm-reset-recaptcha-token');
+            const errorBox = document.querySelector('#tm-reset-recaptcha-error');
+            const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
+            const siteKey = {{ recaptcha_site_key|json_encode|raw }};
+            const actionName = {{ recaptcha_action|json_encode|raw }};
+            let isSubmittingWithToken = false;
+
+            if (!form || !recaptchaEnabled || !tokenField || !siteKey) {
+                return;
             }
+
+            form.addEventListener('submit', function (event) {
+                if (isSubmittingWithToken) {
+                    return;
+                }
+
+                event.preventDefault();
+                if (errorBox) {
+                    errorBox.style.display = 'none';
+                }
+
+                if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                    if (errorBox) {
+                        errorBox.style.display = 'block';
+                    }
+                    return;
+                }
+
+                grecaptcha.enterprise.ready(async function () {
+                    try {
+                        const token = await grecaptcha.enterprise.execute(siteKey, {action: actionName});
+                        if (!token) {
+                            if (errorBox) {
+                                errorBox.style.display = 'block';
+                            }
+                            return;
+                        }
+
+                        tokenField.value = token;
+                        isSubmittingWithToken = true;
+                        form.submit();
+                    } catch (error) {
+                        if (errorBox) {
+                            errorBox.style.display = 'block';
+                        }
+                    }
+                });
+            });
         });
     </script>
 {% endblock %}

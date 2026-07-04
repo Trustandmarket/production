@@ -198,7 +198,9 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="{{ asset('toastr/toastr.min.js') }}" async></script>
     <script src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}" async></script>
-    <script src="https://www.google.com/recaptcha/api.js?render=6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO"></script>
+    {% if not disable_legacy_recaptcha|default(false) %}
+        <script src="https://www.google.com/recaptcha/api.js?render=6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO"></script>
+    {% endif %}
     {% include "partials/js/top_button.html.twig" %}
 
     <!-- Latest compiled and minified JavaScript -->
@@ -244,54 +246,61 @@
             }
         });
 
-        grecaptcha.ready(function () {
-            grecaptcha.execute('6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO', {action: 'homepage'}).then(function (token) {
-                document.getElementById("recaptchaResponse").value = token;
-            });
-        });
-        // Script to create user for newsletter
+        {% if not disable_legacy_recaptcha|default(false) %}
+            grecaptcha.ready(function () {
+                const recaptchaResponseField = document.getElementById("recaptchaResponse");
+                if (!recaptchaResponseField) {
+                    return;
+                }
 
-        $('#newsletterForm').on('submit', function (e) {
-            e.preventDefault();
-            console.log($('#recaptchaResponse').val());
-
-
-            if ($('#recaptchaResponse').val()) {
-
-                toastr.info('{{ 'newsletter.attente'|trans }}');
-                var $form = $(this);
-                $.ajax({
-                    url: $form.attr('action'),
-                    type: $form.attr('method'),
-                    data: $form.serialize(),
-                    success: function (reponse) {
-
-                        if (reponse == 1) {
-                            toastr.clear();
-                            $('#body').hide();
-                            $('#succes').show();
-                            $('html,body').scrollTop(0);
-                            $('#send').removeClass('running');
-                            toastr.success('{{ 'newsletter.succes'|trans }}');
-                            $('#newsletterModal').modal('toggle');
-                        } else if (reponse == 0) {
-                            toastr.clear();
-                            $('#send').removeClass('running');
-                            toastr.warning('{{ 'newsletter.email_occupe'|trans }}');
-                        }
-                    },
-                    error: function (reponse) {
-                        toastr.clear();
-                        $('#send').removeClass('running');
-                        toastr.error('{{ 'newsletter.echec'|trans }}');
-                    }
+                grecaptcha.execute('6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO', {action: 'homepage'}).then(function (token) {
+                    recaptchaResponseField.value = token;
                 });
-                return false;
+            });
+            // Script to create user for newsletter
 
-            } else {
-                toastr.warning('robot');
-            }
-        });
+            $('#newsletterForm').on('submit', function (e) {
+                e.preventDefault();
+                console.log($('#recaptchaResponse').val());
+
+
+                if ($('#recaptchaResponse').val()) {
+
+                    toastr.info('{{ 'newsletter.attente'|trans }}');
+                    var $form = $(this);
+                    $.ajax({
+                        url: $form.attr('action'),
+                        type: $form.attr('method'),
+                        data: $form.serialize(),
+                        success: function (reponse) {
+
+                            if (reponse == 1) {
+                                toastr.clear();
+                                $('#body').hide();
+                                $('#succes').show();
+                                $('html,body').scrollTop(0);
+                                $('#send').removeClass('running');
+                                toastr.success('{{ 'newsletter.succes'|trans }}');
+                                $('#newsletterModal').modal('toggle');
+                            } else if (reponse == 0) {
+                                toastr.clear();
+                                $('#send').removeClass('running');
+                                toastr.warning('{{ 'newsletter.email_occupe'|trans }}');
+                            }
+                        },
+                        error: function (reponse) {
+                            toastr.clear();
+                            $('#send').removeClass('running');
+                            toastr.error('{{ 'newsletter.echec'|trans }}');
+                        }
+                    });
+                    return false;
+
+                } else {
+                    toastr.warning('robot');
+                }
+            });
+        {% endif %}
     </script>
     <script>
         $(document).ready(function () {
