@@ -581,6 +581,7 @@
 
 						{% if recaptcha_enabled %}
 							<input type="hidden" name="recaptcha_mode" value="{{ recaptcha_mode|default('v3') }}">
+							<input type="hidden" name="recaptcha_force_v2" value="0">
 							<input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
 							{% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
 								<div class="tm-login-recaptcha">
@@ -655,13 +656,33 @@ window.addEventListener('load', () => {
 	const form = document.querySelector('.tm-login-form');
 	const tokenField = document.querySelector('#tm-login-recaptcha-token');
 	const errorBox = document.querySelector('#tm-login-recaptcha-error');
+	const modeField = form ? form.querySelector('input[name="recaptcha_mode"]') : null;
+	const forceV2Field = form ? form.querySelector('input[name="recaptcha_force_v2"]') : null;
 	const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
+	const fallbackAvailable = {{ recaptcha_v2_fallback_available ? 'true' : 'false' }};
 	const recaptchaMode = {{ (recaptcha_mode|default('v3'))|json_encode|raw }};
 	const siteKey = {{ recaptcha_site_key|json_encode|raw }};
 	const v2SiteKey = {{ recaptcha_v2_site_key|json_encode|raw }};
 	const actionName = {{ recaptcha_action|json_encode|raw }};
 	const v2ContainerId = 'tm-login-recaptcha-v2';
 	let isSubmittingWithToken = false;
+	let isSwitchingToV2 = false;
+
+	const switchToV2Fallback = () => {
+		if (!form || !fallbackAvailable || !modeField || isSwitchingToV2) {
+			if (errorBox) {
+				errorBox.style.display = 'flex';
+			}
+			return;
+		}
+
+		isSwitchingToV2 = true;
+		modeField.value = 'v2';
+		if (forceV2Field) {
+			forceV2Field.value = '1';
+		}
+		form.submit();
+	};
 
 	if (form && recaptchaEnabled && recaptchaMode === 'v2' && v2SiteKey) {
 		let renderAttempts = 0;
@@ -707,6 +728,10 @@ window.addEventListener('load', () => {
 		errorBox.style.display = 'none';
 
 		if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+			if (fallbackAvailable) {
+				switchToV2Fallback();
+				return;
+			}
 			errorBox.style.display = 'flex';
 			return;
 		}
@@ -715,6 +740,10 @@ window.addEventListener('load', () => {
 			try {
 				const token = await grecaptcha.enterprise.execute(siteKey, {action: actionName});
 				if (!token) {
+					if (fallbackAvailable) {
+						switchToV2Fallback();
+						return;
+					}
 					errorBox.style.display = 'flex';
 					return;
 				}
@@ -723,6 +752,10 @@ window.addEventListener('load', () => {
 				isSubmittingWithToken = true;
 				form.submit();
 			} catch (error) {
+				if (fallbackAvailable) {
+					switchToV2Fallback();
+					return;
+				}
 				errorBox.style.display = 'flex';
 			}
 		});

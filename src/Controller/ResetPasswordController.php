@@ -66,8 +66,14 @@ class ResetPasswordController extends AbstractController
                 'state' => Recaptcha::STATE_ALLOW,
                 'message' => 'OK',
             ];
+            $forceV2Fallback = $request->request->get('recaptcha_force_v2') === '1';
 
-            if ($recaptchaEnabled) {
+            if ($recaptchaEnabled && $forceV2Fallback && $recaptcha->isV2FallbackAvailableForAction(Recaptcha::ACTION_RESET_PASSWORD)) {
+                $captchaResult = [
+                    'state' => Recaptcha::STATE_FALLBACK_V2_REQUIRED,
+                    'message' => 'Verification renforcee requise. Merci de confirmer le controle de securite.',
+                ];
+            } elseif ($recaptchaEnabled) {
                 $captchaResult = $recaptchaMode === 'v2'
                     ? $recaptcha->assessFallbackV2(
                         Recaptcha::ACTION_RESET_PASSWORD,
@@ -99,6 +105,7 @@ class ResetPasswordController extends AbstractController
             'recaptcha_site_key' => $recaptcha->getSiteKey(),
             'recaptcha_v2_site_key' => $recaptcha->getV2SiteKey(),
             'recaptcha_enabled' => $recaptchaEnabled,
+            'recaptcha_v2_fallback_available' => $recaptchaEnabled && $recaptcha->isV2FallbackAvailableForAction(Recaptcha::ACTION_RESET_PASSWORD),
             'recaptcha_action' => Recaptcha::ACTION_RESET_PASSWORD,
             'recaptcha_mode' => $recaptchaMode,
         ]);

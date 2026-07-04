@@ -53,6 +53,12 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
         $emailCanonical = $request->request->get('email_canonical', '');
         $session = $this->requestStack->getSession();
         if ($this->recaptcha->shouldEnforce((string) $this->params->get('environnement'))) {
+            $forceV2Fallback = $request->request->get('recaptcha_force_v2') === '1';
+            if ($forceV2Fallback && $this->recaptcha->isV2FallbackAvailableForAction(Recaptcha::ACTION_LOGIN)) {
+                $session->set('recaptcha_login_mode', 'v2');
+                throw new CustomUserMessageAccountStatusException('Verification renforcee requise. Merci de confirmer le controle de securite.');
+            }
+
             $recaptchaMode = $request->request->get('recaptcha_mode') === 'v2' && $this->recaptcha->isV2FallbackEnabled() ? 'v2' : 'v3';
             $token = $recaptchaMode === 'v2'
                 ? (string) $request->request->get('g-recaptcha-response', $request->get('g-recaptcha-response', ''))

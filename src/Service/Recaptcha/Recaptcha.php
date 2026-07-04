@@ -82,11 +82,25 @@ class Recaptcha
 
     public function shouldUseV2Fallback(string $action, string $errorType): bool
     {
-        if (!$this->isSupportedAction($action) || !$this->isV2FallbackEnabled()) {
+        if (!$this->isV2FallbackAvailableForAction($action)) {
             return false;
         }
 
         if (!in_array($errorType, self::V2_FALLBACK_ERROR_TYPES, true)) {
+            return false;
+        }
+
+        $configuredActions = $this->getV2FallbackActions();
+        if ($configuredActions === []) {
+            return true;
+        }
+
+        return in_array($action, $configuredActions, true);
+    }
+
+    public function isV2FallbackAvailableForAction(string $action): bool
+    {
+        if (!$this->isSupportedAction($action) || !$this->isV2FallbackEnabled()) {
             return false;
         }
 

@@ -1578,6 +1578,7 @@
                         {% if recaptcha_enabled %}
                             <div class="tm-field-block tm-recaptcha-block">
                                 <input type="hidden" name="recaptcha_mode" value="{{ recaptcha_mode|default('v3') }}">
+                                <input type="hidden" name="recaptcha_force_v2" value="0">
                                 <input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
                                 {% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
                                     <div id="tm-register-recaptcha-v2"></div>
@@ -1702,13 +1703,17 @@
             const form = document.querySelector('#registration-form');
             const tokenField = document.querySelector('#tm-register-recaptcha-token');
             const errorBox = document.querySelector('#tm-register-recaptcha-error');
+            const modeField = form ? form.querySelector('input[name="recaptcha_mode"]') : null;
+            const forceV2Field = form ? form.querySelector('input[name="recaptcha_force_v2"]') : null;
             const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
+            const fallbackAvailable = {{ recaptcha_v2_fallback_available ? 'true' : 'false' }};
             const recaptchaMode = {{ (recaptcha_mode|default('v3'))|json_encode|raw }};
             const siteKey = {{ recaptcha_site_key|json_encode|raw }};
             const v2SiteKey = {{ recaptcha_v2_site_key|json_encode|raw }};
             const actionName = {{ recaptcha_action|json_encode|raw }};
             const v2ContainerId = 'tm-register-recaptcha-v2';
             let isSubmittingWithToken = false;
+            let isSwitchingToV2 = false;
 
             function submitRegistrationForm() {
                 if (typeof gtagSendEvent === 'function') {
@@ -1717,6 +1722,23 @@
                 }
 
                 form.submit();
+            }
+
+            function switchToV2Fallback() {
+                if (!form || !fallbackAvailable || !modeField || isSwitchingToV2) {
+                    if (errorBox) {
+                        errorBox.style.display = 'block';
+                    }
+                    return;
+                }
+
+                isSwitchingToV2 = true;
+                isSubmittingWithToken = true;
+                modeField.value = 'v2';
+                if (forceV2Field) {
+                    forceV2Field.value = '1';
+                }
+                submitRegistrationForm();
             }
 
             if (form && recaptchaEnabled && recaptchaMode === 'v2' && v2SiteKey) {
@@ -1765,6 +1787,10 @@
                 }
 
                 if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                    if (fallbackAvailable) {
+                        switchToV2Fallback();
+                        return;
+                    }
                     if (errorBox) {
                         errorBox.style.display = 'block';
                     }
@@ -1775,6 +1801,10 @@
                     try {
                         const token = await grecaptcha.enterprise.execute(siteKey, {action: actionName});
                         if (!token) {
+                            if (fallbackAvailable) {
+                                switchToV2Fallback();
+                                return;
+                            }
                             if (errorBox) {
                                 errorBox.style.display = 'block';
                             }
@@ -1785,6 +1815,10 @@
                         isSubmittingWithToken = true;
                         submitRegistrationForm();
                     } catch (error) {
+                        if (fallbackAvailable) {
+                            switchToV2Fallback();
+                            return;
+                        }
                         if (errorBox) {
                             errorBox.style.display = 'block';
                         }
