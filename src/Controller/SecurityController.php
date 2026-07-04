@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use LogicException;
+use App\Service\Recaptcha\Recaptcha;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,7 @@ class SecurityController extends AbstractController
      * @param AuthenticationUtils $authenticationUtils
      * @return Response
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, Recaptcha $recaptcha): Response
     {
         if ($this->getUser()) {
             return $this->redirectToRoute('home');
@@ -30,7 +31,11 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error,
-            'environnement' => $this->getParameter('environnement')]);
+            'environnement' => $this->getParameter('environnement'),
+            'recaptcha_site_key' => $recaptcha->getSiteKey(),
+            'recaptcha_enabled' => $recaptcha->shouldEnforce((string) $this->getParameter('environnement')),
+            'recaptcha_action' => Recaptcha::ACTION_LOGIN,
+        ]);
     }
 
     //Redirection for old login urls

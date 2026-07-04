@@ -55,10 +55,22 @@ class RegistrationController extends AbstractController
         $registrationData = (array) $request->get('registration_form', []);
         $selectedRole = $request->get('role_user');
         $selectedActivity = $request->get('activite');
+        $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $recaptcha = $recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_REGISTER');
-                if ($recaptcha['response']) {
+            $captchaResult = [
+                'state' => Recaptcha::STATE_ALLOW,
+                'message' => 'OK',
+            ];
+
+            if ($recaptchaEnabled) {
+                $captchaResult = $recaptcha->assess(
+                    Recaptcha::ACTION_REGISTER,
+                    (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
+                );
+            }
+
+                if ($captchaResult['state'] === Recaptcha::STATE_ALLOW) {
                     $firstName = trim((string) ($registrationData['first_name'] ?? ''));
                     $lastName = trim((string) ($registrationData['last_name'] ?? ''));
                     $dateNaissance = trim((string) ($registrationData['dateNaissance'] ?? ''));
@@ -252,13 +264,16 @@ class RegistrationController extends AbstractController
 
                 return $this->redirectToRoute('app_registration_confirmation_email');
             } else {
-                $this->addFlash('register_recaptcha_error', '');
+                $this->addFlash('register_recaptcha_error', $captchaResult['message']);
             }
         }
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
             'environnement' => $this->getParameter('environnement'),
+            'recaptcha_site_key' => $recaptcha->getSiteKey(),
+            'recaptcha_enabled' => $recaptchaEnabled,
+            'recaptcha_action' => Recaptcha::ACTION_REGISTER,
             'activities' => $this->service_manager->postCategorie1('product_activity'),
             'selected_role' => $selectedRole,
             'selected_activity' => $selectedActivity,

@@ -33,7 +33,9 @@
     }
     </script>
 
-    <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+    {% if recaptcha_enabled and recaptcha_site_key %}
+        <script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+    {% endif %}
 {% endblock %}
 
 {% block title %}Trust & Market | {{ include('Seo/Meta/title.html.twig', {code: 'creer-un-compte'}) }}{% endblock %}
@@ -1570,9 +1572,13 @@
                             </label>
                         </div>
 
-                        <div class="tm-field-block tm-recaptcha-block">
-                            <div class="g-recaptcha" data-sitekey="6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O" data-action="TRUST_REGISTER"></div>
-                        </div>
+                        {% if recaptcha_enabled and recaptcha_site_key %}
+                            <div class="tm-field-block tm-recaptcha-block">
+                                <input type="hidden" name="recaptcha_token" id="tm-register-recaptcha-token">
+                                <input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
+                                <div class="alert alert-danger tm-register-alert" id="tm-register-recaptcha-error" style="display:none;">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
+                            </div>
+                        {% endif %}
 
                         <div class="tm-step-actions">
                             <div class="tm-step-actions-row">
@@ -1689,6 +1695,56 @@
             if (recaptchaField) {
                 recaptchaField.setAttribute('required', 'required');
             }
+
+            const form = document.querySelector('#registration-form');
+            const tokenField = document.querySelector('#tm-register-recaptcha-token');
+            const errorBox = document.querySelector('#tm-register-recaptcha-error');
+            const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
+            const siteKey = {{ recaptcha_site_key|json_encode|raw }};
+            const actionName = {{ recaptcha_action|json_encode|raw }};
+            let isSubmittingWithToken = false;
+
+            if (!form || !recaptchaEnabled || !tokenField || !siteKey) {
+                return;
+            }
+
+            form.addEventListener('submit', function (event) {
+                if (isSubmittingWithToken) {
+                    return;
+                }
+
+                event.preventDefault();
+                if (errorBox) {
+                    errorBox.style.display = 'none';
+                }
+
+                if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                    if (errorBox) {
+                        errorBox.style.display = 'block';
+                    }
+                    return;
+                }
+
+                grecaptcha.enterprise.ready(async function () {
+                    try {
+                        const token = await grecaptcha.enterprise.execute(siteKey, {action: actionName});
+                        if (!token) {
+                            if (errorBox) {
+                                errorBox.style.display = 'block';
+                            }
+                            return;
+                        }
+
+                        tokenField.value = token;
+                        isSubmittingWithToken = true;
+                        form.submit();
+                    } catch (error) {
+                        if (errorBox) {
+                            errorBox.style.display = 'block';
+                        }
+                    }
+                });
+            });
         });
     </script>
 {% endblock %}

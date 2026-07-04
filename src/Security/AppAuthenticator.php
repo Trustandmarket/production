@@ -51,10 +51,13 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
     public function authenticate(Request $request): Passport
     {
         $emailCanonical = $request->request->get('email_canonical', '');
-        if($this->params->get('environnement') == 'rec' || $this->params->get('environnement') == 'prod'){
-            $recaptcha = $this->recaptcha->create_assessment('6LfD3E0sAAAAAFdCdtu0HNIQuMJ1a47UjTEdwB6O', $request->get('g-recaptcha-response'), 'sym-trust-adresse', 'TRUST_LOGIN');
+        if ($this->recaptcha->shouldEnforce((string) $this->params->get('environnement'))) {
+            $recaptcha = $this->recaptcha->assess(
+                Recaptcha::ACTION_LOGIN,
+                (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
+            );
             $this->requestStack->getSession()->set(Security::LAST_USERNAME, $emailCanonical);
-            if($recaptcha['response']){
+            if ($recaptcha['state'] === Recaptcha::STATE_ALLOW) {
                 return new Passport(
                     new UserBadge($emailCanonical),
                     new PasswordCredentials($request->request->get('password', '')),
@@ -63,10 +66,10 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
                         new RememberMeBadge(),
                     ]
                 );
-            }else{
+            } else {
                 throw new CustomUserMessageAccountStatusException($recaptcha['message']);
             }
-        }else{
+        } else {
             return new Passport(
                 new UserBadge($emailCanonical),
                 new PasswordCredentials($request->request->get('password', '')),
