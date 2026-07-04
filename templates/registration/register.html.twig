@@ -1580,7 +1580,7 @@
                                 <input type="hidden" name="recaptcha_mode" value="{{ recaptcha_mode|default('v3') }}">
                                 <input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
                                 {% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
-                                    <div class="g-recaptcha" data-sitekey="{{ recaptcha_v2_site_key }}" data-action="{{ recaptcha_action }}"></div>
+                                    <div id="tm-register-recaptcha-v2"></div>
                                 {% elseif recaptcha_site_key %}
                                     <input type="hidden" name="recaptcha_token" id="tm-register-recaptcha-token">
                                     <div class="alert alert-danger tm-register-alert" id="tm-register-recaptcha-error" style="display:none;">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
@@ -1705,7 +1705,9 @@
             const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
             const recaptchaMode = {{ (recaptcha_mode|default('v3'))|json_encode|raw }};
             const siteKey = {{ recaptcha_site_key|json_encode|raw }};
+            const v2SiteKey = {{ recaptcha_v2_site_key|json_encode|raw }};
             const actionName = {{ recaptcha_action|json_encode|raw }};
+            const v2ContainerId = 'tm-register-recaptcha-v2';
             let isSubmittingWithToken = false;
 
             function submitRegistrationForm() {
@@ -1715,6 +1717,37 @@
                 }
 
                 form.submit();
+            }
+
+            if (form && recaptchaEnabled && recaptchaMode === 'v2' && v2SiteKey) {
+                let renderAttempts = 0;
+                const renderV2Widget = () => {
+                    const container = document.getElementById(v2ContainerId);
+                    if (!container) {
+                        return;
+                    }
+
+                    if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                        renderAttempts += 1;
+                        if (renderAttempts < 20) {
+                            window.setTimeout(renderV2Widget, 250);
+                        }
+                        return;
+                    }
+
+                    grecaptcha.enterprise.ready(function () {
+                        if (container.childElementCount > 0) {
+                            return;
+                        }
+
+                        grecaptcha.enterprise.render(v2ContainerId, {
+                            sitekey: v2SiteKey
+                        });
+                    });
+                };
+
+                renderV2Widget();
+                return;
             }
 
             if (!form || !recaptchaEnabled || recaptchaMode !== 'v3' || !tokenField || !siteKey) {
