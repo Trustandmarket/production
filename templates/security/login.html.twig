@@ -40,7 +40,7 @@
 
 	{% if recaptcha_enabled %}
 		{% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
-			<script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+			<script src="https://www.google.com/recaptcha/enterprise.js?render=explicit" async defer></script>
 		{% elseif recaptcha_site_key %}
 			<script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
 		{% endif %}

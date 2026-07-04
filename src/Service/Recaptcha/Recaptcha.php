@@ -255,7 +255,12 @@ class Recaptcha
 
             return $this->allow($score, $hostname, $reasons);
         } catch (\Throwable $e) {
-            error_log('reCAPTCHA error: ' . $e->getMessage());
+            error_log(sprintf(
+                'reCAPTCHA error [mode=%s, action=%s, error=%s]',
+                $mode,
+                $action,
+                $e->getMessage()
+            ));
 
             return $this->buildTechnicalOutcome($mode, $action, 'Verification de securite indisponible. Merci de reessayer.', 'assessment_exception');
         } finally {
