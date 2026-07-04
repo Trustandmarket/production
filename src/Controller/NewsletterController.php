@@ -104,6 +104,7 @@ class NewsletterController extends AbstractController
             if ($session) {
                 $session->set('recaptcha_newsletter_mode', 'v2');
             }
+            $this->addFlash('newsletter_recaptcha_error', 'Verification renforcee requise. Merci de confirmer le controle de securite.');
 
             return $this->json([
                 'success' => false,
@@ -256,6 +257,7 @@ class NewsletterController extends AbstractController
             if ($session) {
                 $session->set('recaptcha_newsletter_mode', 'v2');
             }
+            $this->addFlash('newsletter_recaptcha_error', 'Verification renforcee requise. Merci de confirmer le controle de securite.');
 
             return $this->json([
                 'success' => false,

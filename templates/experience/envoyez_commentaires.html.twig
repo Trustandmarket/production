@@ -147,6 +147,11 @@
                             <form method="POST" class="form" id="sendCommentEmail"
                                   action="{{ path('experience_sendFeedbacks') }}">
                                 <div class="feedback-box p-4">
+                                    {% for flashMessage in app.session.flashbag.get('feedback_recaptcha_error') %}
+                                        <div class="alert alert-danger mt-3" role="alert">
+                                            {{ flashMessage }}
+                                        </div>
+                                    {% endfor %}
                                     <h5 style="font-size: 1.2rem; color: #333">{{ 'feedback.label-menu-deroulant'|trans }}
                                         *</h5>
                                     <select required name="sujet" id="remarkObject"

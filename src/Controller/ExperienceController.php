@@ -137,6 +137,7 @@ class ExperienceController extends AbstractController
             if ($session) {
                 $session->set('recaptcha_contact_mode', 'v2');
             }
+            $this->addFlash('contact_recaptcha_error', 'Verification renforcee requise. Merci de confirmer le controle de securite.');
 
             return $this->json([
                 'success' => false,
@@ -244,6 +245,7 @@ class ExperienceController extends AbstractController
             if ($session) {
                 $session->set('recaptcha_contact_mode', 'v2');
             }
+            $this->addFlash('contact_recaptcha_error', 'Verification renforcee requise. Merci de confirmer le controle de securite.');
 
             return $this->json([
                 'success' => false,
@@ -282,6 +284,7 @@ class ExperienceController extends AbstractController
             if ($session) {
                 $session->set('recaptcha_feedback_mode', 'v2');
             }
+            $this->addFlash('feedback_recaptcha_error', 'Verification renforcee requise. Merci de confirmer le controle de securite.');
 
             return $this->json([
                 'success' => false,
@@ -350,6 +353,7 @@ class ExperienceController extends AbstractController
             if ($session) {
                 $session->set('recaptcha_feedback_mode', 'v2');
             }
+            $this->addFlash('feedback_recaptcha_error', 'Verification renforcee requise. Merci de confirmer le controle de securite.');
 
             return $this->json([
                 'success' => false,

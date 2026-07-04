@@ -131,6 +131,11 @@
                         <!-- Default horizontal form -->
                         <form class="mt-1" id="sendCommentEmail" action="{{ path('experience_sendComment') }}" method="POST">
                             <h2 class="desc-proj">{{ 'nous-contacter.titre-formulaire'|trans }}</h2>
+                            {% for flashMessage in app.session.flashbag.get('contact_recaptcha_error') %}
+                                <div class="alert alert-danger mt-3" role="alert">
+                                    {{ flashMessage }}
+                                </div>
+                            {% endfor %}
                             <div class="form-group">
                                 <label for="" class="col-sm-2 col-form-label">{{ 'nous-contacter.nom'|trans }}*</label>
                                 <div class="col-sm-10">

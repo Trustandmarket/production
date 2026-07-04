@@ -254,6 +254,11 @@
                 <div class="row d-flex justify-content-center m-auto">
                     <form class="mt-5 newsletter-form" id="newsletterForm" action="{{ path('newsletterUser') }}"
                           method="post">
+                        {% for flashMessage in app.session.flashbag.get('newsletter_recaptcha_error') %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ flashMessage }}
+                            </div>
+                        {% endfor %}
                         <div class="form-group">
                             <label for="email">E-mail*</label>
                             <input type="email" class="form-control" id="email" name="email"
