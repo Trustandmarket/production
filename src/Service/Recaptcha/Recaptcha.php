@@ -19,25 +19,41 @@ class Recaptcha
     public const STATE_ALLOW = 'allow';
     public const STATE_CHALLENGE = 'challenge';
     public const STATE_TECHNICAL_ERROR = 'technical_error';
+    public const STATE_FALLBACK_V2_REQUIRED = 'fallback_v2_required';
+
+    private const MODE_POLICY_V3 = 'policy_v3';
+    private const MODE_CHECKBOX_V2 = 'checkbox_v2';
 
     private const DEFAULT_ALLOWED_HOSTS = [
         'trustandmarket.com',
         'rec.trustandmarket.com',
     ];
 
-    private const ACTION_SCORE_MIN = [
-        self::ACTION_LOGIN => 0.7,
-        self::ACTION_REGISTER => 0.75,
-        'TRUST_RESETPASSWORD' => 0.8,
-        self::ACTION_RESET_PASSWORD => 0.8,
-        self::ACTION_CONTACT_US => 0.6,
-        self::ACTION_FEEDBACKS => 0.6,
-        self::ACTION_NEWSLETTER => 0.6,
+    private const SUPPORTED_ACTIONS = [
+        self::ACTION_LOGIN,
+        self::ACTION_REGISTER,
+        self::ACTION_RESET_PASSWORD,
+        self::ACTION_CONTACT_US,
+        self::ACTION_FEEDBACKS,
+        self::ACTION_NEWSLETTER,
+    ];
+
+    private const V2_FALLBACK_ERROR_TYPES = [
+        'missing_configuration',
+        'missing_token',
+        'missing_user_agent',
+        'missing_risk_analysis',
+        'assessment_exception',
     ];
 
     public function getSiteKey(): string
     {
         return $this->readEnv('RECAPTCHA_SITE_KEY');
+    }
+
+    public function getV2SiteKey(): string
+    {
+        return $this->readEnv('RECAPTCHA_V2_SITE_KEY');
     }
 
     public function getProjectId(): string
@@ -55,14 +71,52 @@ class Recaptcha
         return $this->isConfigured() && in_array((string) $environment, ['prod', 'rec'], true);
     }
 
+    public function isV2FallbackEnabled(): bool
+    {
+        if ($this->getProjectId() === '' || $this->getV2SiteKey() === '') {
+            return false;
+        }
+
+        return $this->readBooleanEnv('RECAPTCHA_V2_FALLBACK_ENABLED');
+    }
+
+    public function shouldUseV2Fallback(string $action, string $errorType): bool
+    {
+        if (!$this->isSupportedAction($action) || !$this->isV2FallbackEnabled()) {
+            return false;
+        }
+
+        if (!in_array($errorType, self::V2_FALLBACK_ERROR_TYPES, true)) {
+            return false;
+        }
+
+        $configuredActions = $this->getV2FallbackActions();
+        if ($configuredActions === []) {
+            return true;
+        }
+
+        return in_array($action, $configuredActions, true);
+    }
+
     public function assess(string $action, ?string $token): array
     {
-        return $this->evaluate($this->getSiteKey(), $token, $this->getProjectId(), $action);
+        return $this->assessPrimary($action, $token);
+    }
+
+    public function assessPrimary(string $action, ?string $token): array
+    {
+        return $this->evaluate($this->getSiteKey(), $token, $this->getProjectId(), $action, self::MODE_POLICY_V3);
+    }
+
+    public function assessFallbackV2(string $action, ?string $token): array
+    {
+        return $this->evaluate($this->getV2SiteKey(), $token, $this->getProjectId(), $action, self::MODE_CHECKBOX_V2);
     }
 
     public function create_assessment(string $recaptchaKey, string $token, string $project, string $action): array
     {
-        $result = $this->evaluate($recaptchaKey, $token, $project, $action);
+        $mode = $recaptchaKey === $this->getV2SiteKey() ? self::MODE_CHECKBOX_V2 : self::MODE_POLICY_V3;
+        $result = $this->evaluate($recaptchaKey, $token, $project, $action, $mode);
 
         return [
             'response' => $result['state'] === self::STATE_ALLOW,
@@ -91,20 +145,24 @@ class Recaptcha
         return '0.0.0.0';
     }
 
-    private function evaluate(string $recaptchaKey, ?string $token, string $project, string $action): array
+    private function evaluate(string $recaptchaKey, ?string $token, string $project, string $action, string $mode): array
     {
         $this->configureGoogleCredentials();
 
+        if (!$this->isSupportedAction($action)) {
+            return $this->technicalError('Action reCAPTCHA non configuree.', 'unknown_action');
+        }
+
         if ($recaptchaKey === '' || $project === '') {
-            return $this->technicalError('Configuration reCAPTCHA incomplete.', 'missing_configuration');
+            return $this->buildTechnicalOutcome($mode, $action, 'Configuration reCAPTCHA incomplete.', 'missing_configuration');
         }
 
         if (trim((string) $token) === '') {
-            return $this->technicalError('Verification de securite indisponible. Merci de reessayer.', 'missing_token');
+            return $this->buildTechnicalOutcome($mode, $action, 'Verification de securite indisponible. Merci de reessayer.', 'missing_token');
         }
 
         if (empty($_SERVER['HTTP_USER_AGENT'])) {
-            return $this->technicalError('Verification de securite indisponible. Merci de reessayer.', 'missing_user_agent');
+            return $this->buildTechnicalOutcome($mode, $action, 'Verification de securite indisponible. Merci de reessayer.', 'missing_user_agent');
         }
 
         $ua = (string) $_SERVER['HTTP_USER_AGENT'];
@@ -140,7 +198,7 @@ class Recaptcha
 
             $risk = $response->getRiskAnalysis();
             if ($risk === null) {
-                return $this->technicalError('Verification de securite indisponible. Merci de reessayer.', 'missing_risk_analysis');
+                return $this->buildTechnicalOutcome($mode, $action, 'Verification de securite indisponible. Merci de reessayer.', 'missing_risk_analysis');
             }
 
             $score = (float) $risk->getScore();
@@ -149,16 +207,16 @@ class Recaptcha
                 $reasons[] = (string) $reason;
             }
 
-            if ($tokenProps->getAction() !== $action) {
+            $hostname = (string) $tokenProps->getHostname();
+            if ($this->mustValidateAction($mode) && $tokenProps->getAction() !== $action) {
                 return $this->challenge('Verification de securite requise. Merci de reessayer.', [
                     'score' => $score,
-                    'hostname' => (string) $tokenProps->getHostname(),
+                    'hostname' => $hostname,
                     'reasons' => $reasons,
                     'error_type' => 'unexpected_action',
                 ]);
             }
 
-            $hostname = (string) $tokenProps->getHostname();
             if (!in_array($hostname, $this->getAllowedHosts(), true)) {
                 return $this->challenge('Verification de securite requise. Merci de reessayer.', [
                     'score' => $score,
@@ -187,34 +245,11 @@ class Recaptcha
                 ]);
             }
 
-            $minScore = self::ACTION_SCORE_MIN[$action] ?? null;
-            if ($minScore === null) {
-                return $this->technicalError('Action reCAPTCHA non configuree.', 'unknown_action');
-            }
-
-            if ($score < $minScore) {
-                return $this->challenge('Verification de securite requise. Merci de reessayer.', [
-                    'score' => $score,
-                    'hostname' => $hostname,
-                    'reasons' => $reasons,
-                    'error_type' => 'score_below_threshold',
-                ]);
-            }
-
-            return [
-                'response' => true,
-                'state' => self::STATE_ALLOW,
-                'message' => 'OK',
-                'code' => 200,
-                'score' => $score,
-                'hostname' => $hostname,
-                'reasons' => $reasons,
-                'error_type' => null,
-            ];
+            return $this->allow($score, $hostname, $reasons);
         } catch (\Throwable $e) {
             error_log('reCAPTCHA error: ' . $e->getMessage());
 
-            return $this->technicalError('Verification de securite indisponible. Merci de reessayer.', 'assessment_exception');
+            return $this->buildTechnicalOutcome($mode, $action, 'Verification de securite indisponible. Merci de reessayer.', 'assessment_exception');
         } finally {
             if ($client !== null) {
                 $client->close();
@@ -247,6 +282,13 @@ class Recaptcha
         return is_string($value) ? trim($value) : '';
     }
 
+    private function readBooleanEnv(string $name): bool
+    {
+        $value = strtolower($this->readEnv($name));
+
+        return in_array($value, ['1', 'true', 'yes', 'on'], true);
+    }
+
     private function getAllowedHosts(): array
     {
         $configured = $this->readEnv('RECAPTCHA_ALLOWED_HOSTS');
@@ -257,6 +299,28 @@ class Recaptcha
         $hosts = array_filter(array_map('trim', explode(',', $configured)));
 
         return $hosts === [] ? self::DEFAULT_ALLOWED_HOSTS : array_values($hosts);
+    }
+
+    private function getV2FallbackActions(): array
+    {
+        $configured = $this->readEnv('RECAPTCHA_V2_FALLBACK_ACTIONS');
+        if ($configured === '') {
+            return [];
+        }
+
+        $actions = array_filter(array_map('trim', explode(',', $configured)));
+
+        return array_values(array_intersect($actions, self::SUPPORTED_ACTIONS));
+    }
+
+    private function isSupportedAction(string $action): bool
+    {
+        return in_array($action, self::SUPPORTED_ACTIONS, true);
+    }
+
+    private function mustValidateAction(string $mode): bool
+    {
+        return $mode === self::MODE_POLICY_V3;
     }
 
     private function mustBlockByRiskReason(iterable $reasons, float $score): bool
@@ -281,6 +345,20 @@ class Recaptcha
             || stripos($userAgent, 'Puppeteer') !== false;
     }
 
+    private function allow(float $score, string $hostname, array $reasons): array
+    {
+        return [
+            'response' => true,
+            'state' => self::STATE_ALLOW,
+            'message' => 'OK',
+            'code' => 200,
+            'score' => $score,
+            'hostname' => $hostname,
+            'reasons' => $reasons,
+            'error_type' => null,
+        ];
+    }
+
     private function challenge(string $message, array $context = []): array
     {
         return array_merge([
@@ -295,6 +373,20 @@ class Recaptcha
         ], $context);
     }
 
+    private function fallbackRequired(string $message, string $errorType): array
+    {
+        return [
+            'response' => false,
+            'state' => self::STATE_FALLBACK_V2_REQUIRED,
+            'message' => $message,
+            'code' => 503,
+            'score' => null,
+            'hostname' => '',
+            'reasons' => [],
+            'error_type' => $errorType,
+        ];
+    }
+
     private function technicalError(string $message, string $errorType): array
     {
         return [
@@ -307,5 +399,14 @@ class Recaptcha
             'reasons' => [],
             'error_type' => $errorType,
         ];
+    }
+
+    private function buildTechnicalOutcome(string $mode, string $action, string $message, string $errorType): array
+    {
+        if ($mode === self::MODE_POLICY_V3 && $this->shouldUseV2Fallback($action, $errorType)) {
+            return $this->fallbackRequired($message, $errorType);
+        }
+
+        return $this->technicalError($message, $errorType);
     }
 }
