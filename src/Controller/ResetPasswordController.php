@@ -54,9 +54,21 @@ class ResetPasswordController extends AbstractController
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
+        $session = $request->getSession();
         $locale = (string) ($request->attributes->get('_locale') ?? $request->getLocale() ?? 'fr');
         $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
-        $recaptchaMode = $request->request->get('recaptcha_mode') === 'v2' && $recaptcha->isV2FallbackEnabled() ? 'v2' : 'v3';
+        $recaptchaMode = 'v3';
+        if (
+            $recaptchaEnabled
+            && $recaptcha->isV2FallbackEnabled()
+            && $session
+            && $session->get('recaptcha_reset_password_mode') === 'v2'
+        ) {
+            $recaptchaMode = 'v2';
+            $session->remove('recaptcha_reset_password_mode');
+        } elseif ($request->request->get('recaptcha_mode') === 'v2' && $recaptcha->isV2FallbackEnabled()) {
+            $recaptchaMode = 'v2';
+        }
         if ($locale === '') {
             $locale = 'fr';
         }
@@ -93,8 +105,11 @@ class ResetPasswordController extends AbstractController
                     $locale
                 );
             } elseif ($captchaResult['state'] === Recaptcha::STATE_FALLBACK_V2_REQUIRED) {
-                $recaptchaMode = 'v2';
+                if ($session) {
+                    $session->set('recaptcha_reset_password_mode', 'v2');
+                }
                 $this->addFlash('reset_recaptcha_error', 'Verification renforcee requise. Merci de confirmer le controle de securite.');
+                return $this->redirectToRoute('app_forgot_password_request', ['_locale' => $locale]);
             } else {
                 $this->addFlash('reset_recaptcha_error', $captchaResult['message']);
             }

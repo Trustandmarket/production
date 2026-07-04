@@ -52,11 +52,23 @@ class RegistrationController extends AbstractController
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
+        $session = $request->getSession();
         $registrationData = (array) $request->get('registration_form', []);
         $selectedRole = $request->get('role_user');
         $selectedActivity = $request->get('activite');
         $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
-        $recaptchaMode = $request->request->get('recaptcha_mode') === 'v2' && $recaptcha->isV2FallbackEnabled() ? 'v2' : 'v3';
+        $recaptchaMode = 'v3';
+        if (
+            $recaptchaEnabled
+            && $recaptcha->isV2FallbackEnabled()
+            && $session
+            && $session->get('recaptcha_register_mode') === 'v2'
+        ) {
+            $recaptchaMode = 'v2';
+            $session->remove('recaptcha_register_mode');
+        } elseif ($request->request->get('recaptcha_mode') === 'v2' && $recaptcha->isV2FallbackEnabled()) {
+            $recaptchaMode = 'v2';
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $captchaResult = [
@@ -276,8 +288,11 @@ class RegistrationController extends AbstractController
 
                 return $this->redirectToRoute('app_registration_confirmation_email');
             } elseif ($captchaResult['state'] === Recaptcha::STATE_FALLBACK_V2_REQUIRED) {
-                $recaptchaMode = 'v2';
+                if ($session) {
+                    $session->set('recaptcha_register_mode', 'v2');
+                }
                 $this->addFlash('register_recaptcha_error', 'Verification renforcee requise. Merci de confirmer le controle de securite.');
+                return $this->redirectToRoute('app_register', ['_locale' => $request->getLocale()]);
             } else {
                 $this->addFlash('register_recaptcha_error', $captchaResult['message']);
             }
