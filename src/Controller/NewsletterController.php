@@ -40,8 +40,21 @@ class NewsletterController extends AbstractController
     }
 
     #[Route('/{_locale}/newsletter', name: 'app_newsletter')]
-    public function index(Recaptcha $recaptcha): Response
+    public function index(Request $request, Recaptcha $recaptcha): Response
     {
+        $session = $request->getSession();
+        $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
+        $recaptchaMode = 'v3';
+        if (
+            $recaptchaEnabled
+            && $recaptcha->isV2FallbackEnabled()
+            && $session
+            && $session->get('recaptcha_newsletter_mode') === 'v2'
+        ) {
+            $recaptchaMode = 'v2';
+            $session->remove('recaptcha_newsletter_mode');
+        }
+
         return $this->render('newsletter/subscribe.html.twig', [
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
@@ -49,8 +62,11 @@ class NewsletterController extends AbstractController
             'youtube_url' => $this->entityManager->getRepository(WpOptions::class)->findOneByOptionName('home-youtube'),
             'pageName' => 'Newsletter',
             'recaptcha_site_key' => $recaptcha->getSiteKey(),
-            'recaptcha_enabled' => $recaptcha->shouldEnforce((string) $this->getParameter('environnement')),
+            'recaptcha_v2_site_key' => $recaptcha->getV2SiteKey(),
+            'recaptcha_enabled' => $recaptchaEnabled,
+            'recaptcha_v2_fallback_available' => $recaptchaEnabled && $recaptcha->isV2FallbackAvailableForAction(Recaptcha::ACTION_NEWSLETTER),
             'recaptcha_action' => Recaptcha::ACTION_NEWSLETTER,
+            'recaptcha_mode' => $recaptchaMode,
             'disable_legacy_recaptcha' => true,
         ]);
     }
@@ -75,17 +91,38 @@ class NewsletterController extends AbstractController
     #[Route('/{_locale}/newsletter/ajouter',name: 'newsletterUser', requirements: ['_locale' => 'fr'])]
     public function newsletterUser(Request $request, Recaptcha $recaptcha)
     {
+        $session = $request->getSession();
         $recaptchaEnabled = $recaptcha->shouldEnforce((string) $this->getParameter('environnement'));
+        $recaptchaMode = $request->request->get('recaptcha_mode') === 'v2' && $recaptcha->isV2FallbackEnabled() ? 'v2' : 'v3';
         $captchaResult = [
             'state' => Recaptcha::STATE_ALLOW,
             'message' => 'OK',
         ];
+        $forceV2Fallback = $request->request->get('recaptcha_force_v2') === '1';
+
+        if ($recaptchaEnabled && $forceV2Fallback && $recaptcha->isV2FallbackAvailableForAction(Recaptcha::ACTION_NEWSLETTER)) {
+            if ($session) {
+                $session->set('recaptcha_newsletter_mode', 'v2');
+            }
+
+            return $this->json([
+                'success' => false,
+                'state' => Recaptcha::STATE_FALLBACK_V2_REQUIRED,
+                'message' => 'Verification renforcee requise. Merci de confirmer le controle de securite.',
+                'reload_url' => $this->generateUrl('app_newsletter', ['_locale' => $request->getLocale()]),
+            ]);
+        }
 
         if ($recaptchaEnabled) {
-            $captchaResult = $recaptcha->assess(
-                Recaptcha::ACTION_NEWSLETTER,
-                (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
-            );
+            $captchaResult = $recaptchaMode === 'v2'
+                ? $recaptcha->assessFallbackV2(
+                    Recaptcha::ACTION_NEWSLETTER,
+                    (string) $request->request->get('g-recaptcha-response', $request->get('g-recaptcha-response', ''))
+                )
+                : $recaptcha->assessPrimary(
+                    Recaptcha::ACTION_NEWSLETTER,
+                    (string) $request->request->get('recaptcha_token', $request->get('g-recaptcha-response', ''))
+                );
         }
 
         if ($captchaResult['state'] === Recaptcha::STATE_ALLOW) {
@@ -199,14 +236,40 @@ class NewsletterController extends AbstractController
                 $result = 1;
             }
 
-            return $this->render('admin/resultat.html.twig', [
-                'result' => $result,
-            ]);
-        } else {
-            return $this->render('admin/resultat.html.twig', [
-                'result' => 0,
+            if ($result === 2) {
+                return $this->json([
+                    'success' => false,
+                    'state' => 'duplicate',
+                    'message' => 'Cette adresse email est deja inscrite a la newsletter.',
+                ]);
+            }
+
+            return $this->json([
+                'success' => true,
+                'state' => Recaptcha::STATE_ALLOW,
+                'message' => 'OK',
+                'redirect_url' => $this->generateUrl('app_newsletter_success', ['_locale' => $request->getLocale()]),
             ]);
         }
+
+        if ($captchaResult['state'] === Recaptcha::STATE_FALLBACK_V2_REQUIRED) {
+            if ($session) {
+                $session->set('recaptcha_newsletter_mode', 'v2');
+            }
+
+            return $this->json([
+                'success' => false,
+                'state' => Recaptcha::STATE_FALLBACK_V2_REQUIRED,
+                'message' => 'Verification renforcee requise. Merci de confirmer le controle de securite.',
+                'reload_url' => $this->generateUrl('app_newsletter', ['_locale' => $request->getLocale()]),
+            ]);
+        }
+
+        return $this->json([
+            'success' => false,
+            'state' => $captchaResult['state'],
+            'message' => $captchaResult['message'],
+        ]);
 
     }
 }

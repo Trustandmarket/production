@@ -46,8 +46,12 @@
 
     </script>
     {# END JSON LD #}
-    {% if recaptcha_enabled and recaptcha_site_key %}
-        <script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+    {% if recaptcha_enabled %}
+        {% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
+            <script src="https://www.google.com/recaptcha/enterprise.js?render=explicit" async defer></script>
+        {% elseif recaptcha_site_key %}
+            <script src="https://www.google.com/recaptcha/enterprise.js?render={{ recaptcha_site_key|url_encode }}" async defer></script>
+        {% endif %}
     {% endif %}
 {% endblock %}
 	{% block title %}Trust &amp; Market |{{ include('Seo/Meta/title.html.twig', {code: 'nous-contacter'}) }}{% endblock %}
@@ -152,10 +156,16 @@
                                 </div>
                             </div>
                             
-                            {% if recaptcha_enabled and recaptcha_site_key %}
-                                <input type="hidden" name="recaptcha_token" id="tm-contact-recaptcha-token">
+                            {% if recaptcha_enabled %}
+                                <input type="hidden" name="recaptcha_mode" value="{{ recaptcha_mode|default('v3') }}">
+                                <input type="hidden" name="recaptcha_force_v2" value="0">
                                 <input type="hidden" name="recaptcha_action" value="{{ recaptcha_action }}">
-                                <div class="alert alert-danger mt-3" id="tm-contact-recaptcha-error" style="display:none;">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
+                                {% if recaptcha_mode == 'v2' and recaptcha_v2_site_key %}
+                                    <div class="mt-3" id="tm-contact-recaptcha-v2"></div>
+                                {% elseif recaptcha_site_key %}
+                                    <input type="hidden" name="recaptcha_token" id="tm-contact-recaptcha-token">
+                                    <div class="alert alert-danger mt-3" id="tm-contact-recaptcha-error" style="display:none;">La v&eacute;rification de s&eacute;curit&eacute; est indisponible. Merci de r&eacute;essayer.</div>
+                                {% endif %}
                             {% endif %}
                             
                             <br/>
@@ -355,6 +365,186 @@
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            const form = document.querySelector('#sendCommentEmail');
+            const tokenField = document.querySelector('#tm-contact-recaptcha-token');
+            const errorBox = document.querySelector('#tm-contact-recaptcha-error');
+            const modeField = form ? form.querySelector('input[name="recaptcha_mode"]') : null;
+            const forceV2Field = form ? form.querySelector('input[name="recaptcha_force_v2"]') : null;
+            const recaptchaEnabled = {{ recaptcha_enabled ? 'true' : 'false' }};
+            const fallbackAvailable = {{ recaptcha_v2_fallback_available ? 'true' : 'false' }};
+            const recaptchaMode = {{ (recaptcha_mode|default('v3'))|json_encode|raw }};
+            const siteKey = {{ recaptcha_site_key|json_encode|raw }};
+            const v2SiteKey = {{ recaptcha_v2_site_key|json_encode|raw }};
+            const actionName = {{ recaptcha_action|json_encode|raw }};
+            const v2ContainerId = 'tm-contact-recaptcha-v2';
+            let isSwitchingToV2 = false;
+
+            function toggleError(show) {
+                if (errorBox) {
+                    errorBox.style.display = show ? 'block' : 'none';
+                }
+            }
+
+            function submitContactForm($form) {
+                $('#contacterNousButton').addClass('running');
+                toastr.info("{{ 'systeme.email.requete-en-cours'|trans }}");
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    data: $form.serialize(),
+                    success: function (response) {
+                        if (response && response.success) {
+                            toastr.clear();
+                            toastr.success("{{ 'systeme.email.succes'|trans }}");
+                            window.location = "";
+                            return;
+                        }
+
+                        if (response && response.state === 'fallback_v2_required' && response.reload_url) {
+                            window.location.replace(response.reload_url);
+                            return;
+                        }
+
+                        $('#contacterNousButton').removeClass('running');
+                        toastr.clear();
+                        toastr.error((response && response.message) || "{{ 'systeme.email.erreur'|trans }}");
+                    },
+                    error: function () {
+                        $('#contacterNousButton').removeClass('running');
+                        toastr.clear();
+                        toastr.error("{{ 'systeme.email.erreur'|trans }}");
+                    }
+                });
+            }
+
+            function requestV2Fallback($form) {
+                if (!$form || !fallbackAvailable || isSwitchingToV2) {
+                    toggleError(true);
+                    return;
+                }
+
+                isSwitchingToV2 = true;
+                if (modeField) {
+                    modeField.value = 'v2';
+                }
+                if (forceV2Field) {
+                    forceV2Field.value = '1';
+                }
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    data: $form.serialize(),
+                    success: function (response) {
+                        if (response && response.state === 'fallback_v2_required' && response.reload_url) {
+                            window.location.replace(response.reload_url);
+                            return;
+                        }
+
+                        isSwitchingToV2 = false;
+                        if (forceV2Field) {
+                            forceV2Field.value = '0';
+                        }
+                        toggleError(true);
+                    },
+                    error: function () {
+                        isSwitchingToV2 = false;
+                        if (forceV2Field) {
+                            forceV2Field.value = '0';
+                        }
+                        toggleError(true);
+                    }
+                });
+            }
+
+            if (form && recaptchaEnabled && recaptchaMode === 'v2' && v2SiteKey) {
+                let renderAttempts = 0;
+                const renderV2Widget = () => {
+                    const container = document.getElementById(v2ContainerId);
+                    if (!container) {
+                        return;
+                    }
+
+                    if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                        renderAttempts += 1;
+                        if (renderAttempts < 20) {
+                            window.setTimeout(renderV2Widget, 250);
+                        }
+                        return;
+                    }
+
+                    grecaptcha.enterprise.ready(function () {
+                        if (container.childElementCount > 0) {
+                            return;
+                        }
+
+                        grecaptcha.enterprise.render(v2ContainerId, {
+                            sitekey: v2SiteKey
+                        });
+                    });
+                };
+
+                renderV2Widget();
+            }
+
+            $('#sendCommentEmail').off('submit').on('submit', async function (e) {
+                e.preventDefault();
+                const $form = $(this);
+                toggleError(false);
+
+                if (recaptchaEnabled && recaptchaMode === 'v3') {
+                    if (!tokenField || !siteKey || typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+                        if (fallbackAvailable) {
+                            requestV2Fallback($form);
+                            return false;
+                        }
+
+                        toggleError(true);
+                        return false;
+                    }
+
+                    try {
+                        const token = await new Promise(function (resolve, reject) {
+                            grecaptcha.enterprise.ready(async function () {
+                                try {
+                                    resolve(await grecaptcha.enterprise.execute(siteKey, {action: actionName}));
+                                } catch (error) {
+                                    reject(error);
+                                }
+                            });
+                        });
+
+                        if (!token) {
+                            if (fallbackAvailable) {
+                                requestV2Fallback($form);
+                                return false;
+                            }
+
+                            toggleError(true);
+                            return false;
+                        }
+
+                        tokenField.value = token;
+                    } catch (error) {
+                        if (fallbackAvailable) {
+                            requestV2Fallback($form);
+                            return false;
+                        }
+
+                        toggleError(true);
+                        return false;
+                    }
+                }
+
+                submitContactForm($form);
+                return false;
+            });
+        });
     </script>
 
 {% endblock %}
