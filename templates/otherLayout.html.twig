@@ -93,8 +93,9 @@
     {# <script src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}"></script> #}
     <script src="{{ asset('assets/js/lazysizes.min.js') }}" async></script>
     <!-- Images End -->
-    {% if not disable_legacy_recaptcha|default(false) %}
-        <script src="https://www.google.com/recaptcha/api.js?render=6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO"></script>
+    {% set legacy_recaptcha_site_key = app.request.server.get('RECAPTCHA_SITE_KEY') %}
+    {% if not disable_legacy_recaptcha|default(false) and legacy_recaptcha_site_key %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ legacy_recaptcha_site_key|url_encode }}"></script>
     {% endif %}
     {% include "partials/js/top_button.html.twig" %}
     <!-- Latest compiled and minified JavaScript -->

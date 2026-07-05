@@ -198,8 +198,9 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="{{ asset('toastr/toastr.min.js') }}" async></script>
     <script src="{{ asset('assets/js/gijgo-js/gijgo.min.2.js') }}" async></script>
-    {% if not disable_legacy_recaptcha|default(false) %}
-        <script src="https://www.google.com/recaptcha/api.js?render=6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO"></script>
+    {% set legacy_recaptcha_site_key = app.request.server.get('RECAPTCHA_SITE_KEY') %}
+    {% if not disable_legacy_recaptcha|default(false) and legacy_recaptcha_site_key %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ legacy_recaptcha_site_key|url_encode }}"></script>
     {% endif %}
     {% include "partials/js/top_button.html.twig" %}
 
@@ -246,14 +247,14 @@
             }
         });
 
-        {% if not disable_legacy_recaptcha|default(false) %}
+        {% if not disable_legacy_recaptcha|default(false) and legacy_recaptcha_site_key %}
             grecaptcha.ready(function () {
                 const recaptchaResponseField = document.getElementById("recaptchaResponse");
                 if (!recaptchaResponseField) {
                     return;
                 }
 
-                grecaptcha.execute('6LeRlQksAAAAAFt9_q00DZ6vljxITuuQ0spjIuAO', {action: 'homepage'}).then(function (token) {
+                grecaptcha.execute('{{ legacy_recaptcha_site_key|e('js') }}', {action: 'homepage'}).then(function (token) {
                     recaptchaResponseField.value = token;
                 });
             });
