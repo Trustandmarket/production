@@ -972,9 +972,10 @@ class AdminController extends AbstractController
                 $request->get('parent'),
                 $request->getLocale()
             );
-            if ($request->get('menu_order') == 1) {
+            $uploadedFileId = $this->requestStack->getSession()->get('file');
+            if (!empty($uploadedFileId)) {
                 $r2 = $this->sm->updatePostParent(
-                    $this->requestStack->getSession()->get('file'),
+                    $uploadedFileId,
                     $idpost
                 );
                 if ($r2 > 0) {
