@@ -140,7 +140,9 @@
                 processData: false,
                 data: data,
                 success: function (response) {
-                    if (response > 0) {
+                    var result = parseInt($.trim(response), 10);
+
+                    if (!isNaN(result) && result > 0) {
                         toastr.clear();
                         toastr.success('Page ajoutee avec succes');
                         $('#send').removeClass('running');
@@ -148,7 +150,7 @@
                         $('#annonce').hide();
                         $('html,body').scrollTop(0);
                         window.location = document.referrer;
-                    } else if (response == 0) {
+                    } else {
                         $('#send').removeClass('running');
                         toastr.clear();
                         toastr.error('{{ 'erreur'|trans }}');

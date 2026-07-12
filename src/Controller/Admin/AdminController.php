@@ -972,15 +972,34 @@ class AdminController extends AbstractController
                 $request->get('parent'),
                 $request->getLocale()
             );
-            $uploadedFileId = $this->requestStack->getSession()->get('file');
-            if (!empty($uploadedFileId)) {
-                $r2 = $this->sm->updatePostParent(
-                    $uploadedFileId,
-                    $idpost
+            $uploadedFilePath = $this->requestStack->getSession()->get('file');
+            if (!empty($uploadedFilePath)) {
+                $this->sm->createPosts(
+                    $u->getId(),
+                    $date,
+                    $date,
+                    $request->get('description'),
+                    $request->get('titre'),
+                    $request->get('titre'),
+                    'publish',
+                    'open',
+                    'open',
+                    $name,
+                    $name,
+                    $name,
+                    $name,
+                    $date,
+                    $date,
+                    $request->get('description'),
+                    $idpost,
+                    $uploadedFilePath,
+                    0,
+                    'attachment',
+                    'menu',
+                    0,
+                    0
                 );
-                if ($r2 > 0) {
-                    $this->requestStack->getSession()->set('file', '');
-                }
+                $this->requestStack->getSession()->set('file', '');
             }
         }
         return $this->render('admin/resultat.html.twig', [
