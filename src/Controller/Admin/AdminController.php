@@ -897,6 +897,33 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/page/upload", name="admin_page_upload")
+     * @param Request $request
+     * @return Response
+     */
+    public function uploadPageImage(Request $request)
+    {
+        $file = $request->files->get('file');
+        $user = $this->getUser();
+
+        if (!$file || !$user) {
+            return $this->render('admin/resultat.html.twig', ['result' => 0]);
+        }
+
+        $uploadedImage = (string) $this->sm->upload1(
+            is_array($file) ? $file : [$file],
+            $this->getParameter('product_directory'),
+            $user->getId()
+        );
+
+        $this->requestStack->getSession()->set('file', $uploadedImage);
+
+        return $this->render('admin/resultat.html.twig', [
+            'result' => $uploadedImage !== '' ? 1 : 0,
+        ]);
+    }
+
+    /**
      * @Route("/admin/submit_page", name="admin_submit_page")
      * @param Request $request
      * @return Response
