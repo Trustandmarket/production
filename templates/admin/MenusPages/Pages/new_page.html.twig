@@ -45,7 +45,7 @@
                     <div class="card-body card-block">
                         <div class="sufee-alert alert with-close alert-success alert-dismissible fade show" id="success"
                              style="display:none">
-                            <i class="fa fa-check"></i><i class="fa fa-check"></i> Page ajoutée avec succès<br>
+                            <i class="fa fa-check"></i><i class="fa fa-check"></i> Page ajoutee avec succes<br>
                         </div>
 
                         <form action="{{ path('admin_submit_page') }}" method="post" class="" id="annonce">
@@ -116,100 +116,78 @@
 
         var myDropzone = new Dropzone("div.dropzone",
             {
-                url: "upload",
-                paramName: "file", // The name that will be used to transfer the file
-                maxFilesize: 2, // MB
+                url: "{{ path('upload') }}",
+                paramName: "file",
+                maxFilesize: 2,
                 uploadMultiple: true,
-                parallelUploads: 1, // use it with uploadMultiple
+                parallelUploads: 1,
                 maxFiles: 1,
                 autoProcessQueue: false,
                 addRemoveLinks: true,
                 acceptedFiles: "image/*",
                 dictDefaultMessage: "Image d'entete de page",
                 dictRemoveFile: "{{ 'admin.annonce.remove'|trans }}",
-                success: function (file, response) {
+                success: function () {
                     suc = 1;
                 }
             });
 
+        function submitPageForm($form, data) {
+            $.ajax({
+                url: $form.attr('action'),
+                type: $form.attr('method'),
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (response) {
+                    if (response > 0) {
+                        toastr.clear();
+                        toastr.success('Page ajoutee avec succes');
+                        $('#send').removeClass('running');
+                        $('#success').show();
+                        $('#annonce').hide();
+                        $('html,body').scrollTop(0);
+                        window.location = document.referrer;
+                    } else if (response == 0) {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error('{{ 'erreur'|trans }}');
+                    }
+                },
+                error: function () {
+                    $('#send').removeClass('running');
+                    toastr.clear();
+                    toastr.error('{{ 'erreur'|trans }}');
+                }
+            });
+        }
+
         $('#annonce').on('submit', function (e) {
-            // On emp�che le navigateur de soumettre le formulaire
             e.preventDefault();
             let temp = tinymce.activeEditor.getContent();
             $('#article').val(temp);
             if ($('#libelle').val() != '') {
                 $('#send').addClass('running');
-                toastr.info('Envoie des données en cours...');
+                toastr.info('Envoi des donnees en cours...');
+
                 let $form = $(this);
                 let formdata = (window.FormData) ? new FormData($form[0]) : null;
                 let data = (formdata !== null) ? formdata : $form.serialize() + '&description=' + temp;
 
-                if (myDropzone.files != "") {
+                if (myDropzone.getAcceptedFiles().length > 0) {
+                    myDropzone.off("success");
+                    myDropzone.off("error");
+                    myDropzone.on("success", function () {
+                        submitPageForm($form, data);
+                    });
+                    myDropzone.on("error", function () {
+                        $('#send').removeClass('running');
+                        toastr.clear();
+                        toastr.error('{{ 'erreur'|trans }}');
+                    });
                     myDropzone.processQueue();
-                    myDropzone.on("successmultiple", function (file, response) {
-                        $.ajax({
-                            url: $form.attr('action'),
-                            type: $form.attr('method'),
-                            contentType: false,
-                            processData: false,
-                            data: data,
-                            success: function (response) {
-                                if (response > 0) {
-                                    toastr.clear();
-                                    toastr.success('Page ajoutée avec succès');
-                                    //$('#annonce').hide();
-                                    $('#send').removeClass('running');
-                                    $('#success').show();
-                                    $('#annonce').hide();
-                                    $('html,body').scrollTop(0);
-                                    if ($('#statut').val() == 'publish') {
-                                        document.referrer;
-                                    } else {
-                                        document.referrer;
-                                    }
-                                } else if (response == 0) {
-                                    $('#send').removeClass('running');
-                                    toastr.clear();
-                                    toastr.error('{{ 'erreur'|trans }}');
-                                }
-                            },
-                            error: function (response) {
-                                $('#send').removeClass('running');
-                                toastr.clear();
-                                toastr.error('{{ 'erreur'|trans }}');
-                            }
-                        });
-
-                    });
                 } else {
-                    $.ajax({
-                        url: $form.attr('action'),
-                        type: $form.attr('method'),
-                        contentType: false,
-                        processData: false,
-                        data: data,
-                        success: function (response) {
-                            if (response > 0) {
-                                toastr.clear();
-                                toastr.success('Page ajoutée avec succès');
-                                //$('#annonce').hide();
-                                $('#send').removeClass('running');
-                                $('#success').show();
-                                $('#annonce').hide();
-                                $('html,body').scrollTop(0);
-                                window.location = document.referrer;
-                            } else if (response == 0) {
-                                $('#send').removeClass('running');
-                                toastr.clear();
-                                toastr.error('{{ 'erreur'|trans }}');
-                            }
-                        },
-                        error: function (response) {
-                            $('#send').removeClass('running');
-                            toastr.clear();
-                            toastr.error('{{ 'erreur'|trans }}');
-                        }
-                    });
+                    submitPageForm($form, data);
                 }
             }
             return false;
