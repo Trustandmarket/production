@@ -74,7 +74,11 @@ class DashboardController extends AbstractDashboardController
         ]);
 
         return $this->render('admin/dashboard.html.twig', [
-            'users' => $this->sm->totalUser(),
+            'users' => $this->countUsersByRoles([
+                'ROLE_ABONNE',
+                'ROLE_SOCIETE',
+                'ROLE_AUTO_ENTREPRENEUR',
+            ]),
             'subscribers' => $this->countUsersByRole('ROLE_ABONNE'),
             'verified_subscribers' => $this->countUsersByRole('ROLE_ABONNE', true),
             'professionals' => $this->countUsersByRoles([
