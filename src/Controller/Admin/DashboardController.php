@@ -68,12 +68,73 @@ class DashboardController extends AbstractDashboardController
             $img = @unserialize($avatars->getMetaValue());
             $requestStack->getSession()->set('avatar', $img[sizeof($img) - 1]);
         }
+
+        $announcementTotal = (int) $this->entityManager->getRepository(WpPosts::class)->count([
+            'postType' => 'product',
+        ]);
+
         return $this->render('admin/dashboard.html.twig', [
             'users' => $this->sm->totalUser(),
+            'subscribers' => $this->countUsersByRole('ROLE_ABONNE'),
+            'verified_subscribers' => $this->countUsersByRole('ROLE_ABONNE', true),
+            'professionals' => $this->countUsersByRoles([
+                'ROLE_SOCIETE',
+                'ROLE_AUTO_ENTREPRENEUR',
+            ]),
+            'verified_professionals' => $this->countUsersByRoles([
+                'ROLE_SOCIETE',
+                'ROLE_AUTO_ENTREPRENEUR',
+            ], true),
+            'announcement_total' => $announcementTotal,
+            'announcement_rejected' => $this->countPostsByStatus('product', 'trash'),
+            'announcement_draft' => $this->countPostsByStatus('product', 'draft'),
+            'announcement_moderation' => $this->countPostsByStatus('product', 'moderation'),
+            'announcement_published' => $this->countPostsByStatus('product', 'publish'),
             'post' => $this->sm->totalPost('product'),
             'order' => $this->sm->totalPost('shop_order'),
             'article' => $this->sm->totalPost('post'),
         ]);
+    }
+
+    private function countUsersByRole(string $role, ?bool $isVerified = null): int
+    {
+        return $this->countUsersByRoles([$role], $isVerified);
+    }
+
+    private function countUsersByRoles(array $roles, ?bool $isVerified = null): int
+    {
+        $qb = $this->entityManager->createQueryBuilder()
+            ->select('COUNT(u.id)')
+            ->from(User::class, 'u');
+
+        $roleConditions = $qb->expr()->orX();
+        foreach ($roles as $index => $role) {
+            $param = 'role_' . $index;
+            $roleConditions->add($qb->expr()->like('u.roles', ':' . $param));
+            $qb->setParameter($param, '%"' . $role . '"%');
+        }
+
+        $qb->andWhere($roleConditions);
+
+        if ($isVerified !== null) {
+            $qb->andWhere('u.isVerified = :isVerified')
+                ->setParameter('isVerified', $isVerified);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    private function countPostsByStatus(string $postType, string $postStatus): int
+    {
+        return (int) $this->entityManager->createQueryBuilder()
+            ->select('COUNT(p.id)')
+            ->from(WpPosts::class, 'p')
+            ->andWhere('p.postType = :postType')
+            ->andWhere('p.postStatus = :postStatus')
+            ->setParameter('postType', $postType)
+            ->setParameter('postStatus', $postStatus)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     #[Route('/{_locale}/admin/ai-enrichment/dashboard', name: 'admin_ai_enrichment_dashboard', methods: ['GET'])]

@@ -18,73 +18,231 @@
 <link href="{{ asset('admin/assets/css/style_admin.css') }}" rel="stylesheet" />
 <style>
 .menu {font-size: 14px;}
+.dashboard-metrics-section {
+    margin-bottom: 24px;
+}
+
+.dashboard-metrics-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.dashboard-metric-item {
+    width: 20%;
+    padding: 0 10px 20px;
+}
+
+.dashboard-metric-card {
+    height: 100%;
+    border: 1px solid #e6ebf1;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+}
+
+.dashboard-metric-card .card-body {
+    display: flex;
+    align-items: center;
+    min-height: 112px;
+}
+
+.dashboard-metric-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #fff;
+    margin-right: 16px;
+    flex: 0 0 auto;
+}
+
+.dashboard-metric-icon.users { background: #3b82f6; }
+.dashboard-metric-icon.subscribers { background: #14b8a6; }
+.dashboard-metric-icon.subscribers-verified { background: #0f766e; }
+.dashboard-metric-icon.professionals { background: #8b5cf6; }
+.dashboard-metric-icon.professionals-verified { background: #6d28d9; }
+.dashboard-metric-icon.announcements { background: #f59e0b; }
+.dashboard-metric-icon.announcements-rejected { background: #ef4444; }
+.dashboard-metric-icon.announcements-draft { background: #64748b; }
+.dashboard-metric-icon.announcements-moderation { background: #f97316; }
+.dashboard-metric-icon.announcements-published { background: #22c55e; }
+
+.dashboard-metric-label {
+    margin: 0 0 6px;
+    color: #667085;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.dashboard-metric-value {
+    margin: 0;
+    color: #101828;
+    font-size: 30px;
+    line-height: 1;
+    font-weight: 700;
+}
+
+@media (max-width: 1199.98px) {
+    .dashboard-metric-item {
+        width: 33.3333%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .dashboard-metric-item {
+        width: 50%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .dashboard-metric-item {
+        width: 100%;
+    }
+}
 </style>
 <div class="content">
-    <div class="row">
-        <div class="col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="stat-widget-five">
-                        <div class="stat-icon dib flat-color-4">
+    <div class="dashboard-metrics-section">
+        <div class="dashboard-metrics-grid">
+            <div class="dashboard-metric-item">
+                <div class="card dashboard-metric-card">
+                    <div class="card-body">
+                        <div class="dashboard-metric-icon users">
                             <i class="pe-7f-users"></i>
                         </div>
-                        <div class="stat-content">
-                            <div class="text-left dib">
-                                <div class="stat-text"><span class="count">{{users}}</span></div>
-                                <div class="stat-heading">{{"admin.dashboard.users"|trans}}</div>
-                            </div>
+                        <div>
+                            <p class="dashboard-metric-label">Utilisateurs total</p>
+                            <p class="dashboard-metric-value">{{ users }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="stat-widget-five">
-                        <div class="stat-icon dib flat-color-1">
+
+            <div class="dashboard-metric-item">
+                <div class="card dashboard-metric-card">
+                    <div class="card-body">
+                        <div class="dashboard-metric-icon subscribers">
+                            <i class="pe-7f-id"></i>
+                        </div>
+                        <div>
+                            <p class="dashboard-metric-label">Abonnés</p>
+                            <p class="dashboard-metric-value">{{ subscribers }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-metric-item">
+                <div class="card dashboard-metric-card">
+                    <div class="card-body">
+                        <div class="dashboard-metric-icon subscribers-verified">
+                            <i class="pe-7f-check"></i>
+                        </div>
+                        <div>
+                            <p class="dashboard-metric-label">Abonnés vérifiés</p>
+                            <p class="dashboard-metric-value">{{ verified_subscribers }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-metric-item">
+                <div class="card dashboard-metric-card">
+                    <div class="card-body">
+                        <div class="dashboard-metric-icon professionals">
+                            <i class="pe-7f-portfolio"></i>
+                        </div>
+                        <div>
+                            <p class="dashboard-metric-label">Professionnels</p>
+                            <p class="dashboard-metric-value">{{ professionals }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-metric-item">
+                <div class="card dashboard-metric-card">
+                    <div class="card-body">
+                        <div class="dashboard-metric-icon professionals-verified">
+                            <i class="pe-7f-medal"></i>
+                        </div>
+                        <div>
+                            <p class="dashboard-metric-label">Professionnels vérifiés</p>
+                            <p class="dashboard-metric-value">{{ verified_professionals }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-metric-item">
+                <div class="card dashboard-metric-card">
+                    <div class="card-body">
+                        <div class="dashboard-metric-icon announcements">
                             <i class="pe-7f-speaker"></i>
                         </div>
-                        <div class="stat-content">
-                            <div class="text-left dib">
-                                <div class="stat-text"><span class="count">{{post|length}}</span></div>
-                                <div class="stat-heading">{{"admin.dashboard.annonce"|trans}}</div>
-                            </div>
+                        <div>
+                            <p class="dashboard-metric-label">Annonces total</p>
+                            <p class="dashboard-metric-value">{{ announcement_total }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="stat-widget-five">
-                        <div class="stat-icon dib flat-color-2">
-                            <i class="pe-7f-cart"></i>
+            <div class="dashboard-metric-item">
+                <div class="card dashboard-metric-card">
+                    <div class="card-body">
+                        <div class="dashboard-metric-icon announcements-rejected">
+                            <i class="pe-7f-close-circle"></i>
                         </div>
-                        <div class="stat-content">
-                            <div class="text-left dib">
-                                <div class="stat-text"><span class="count">{{order|length}}</span></div>
-                                <div class="stat-heading">{{"admin.dashboard.orders"|trans}}</div>
-                            </div>
+                        <div>
+                            <p class="dashboard-metric-label">Annonces rejetées</p>
+                            <p class="dashboard-metric-value">{{ announcement_rejected }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="stat-widget-five">
-                        <div class="stat-icon dib flat-color-3">
-                            <i class="pe-7f-pen"></i>
+
+            <div class="dashboard-metric-item">
+                <div class="card dashboard-metric-card">
+                    <div class="card-body">
+                        <div class="dashboard-metric-icon announcements-draft">
+                            <i class="pe-7f-edit"></i>
                         </div>
-                        <div class="stat-content">
-                            <div class="text-left dib">
-                                <div class="stat-text"><span class="count">{{article|length}}</span></div>
-                                <div class="stat-heading">{{"admin.dashboard.article"|trans}}</div>
-                            </div>
+                        <div>
+                            <p class="dashboard-metric-label">Annonces en brouillon</p>
+                            <p class="dashboard-metric-value">{{ announcement_draft }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-metric-item">
+                <div class="card dashboard-metric-card">
+                    <div class="card-body">
+                        <div class="dashboard-metric-icon announcements-moderation">
+                            <i class="pe-7f-attention"></i>
+                        </div>
+                        <div>
+                            <p class="dashboard-metric-label">Annonces en modération</p>
+                            <p class="dashboard-metric-value">{{ announcement_moderation }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-metric-item">
+                <div class="card dashboard-metric-card">
+                    <div class="card-body">
+                        <div class="dashboard-metric-icon announcements-published">
+                            <i class="pe-7f-check"></i>
+                        </div>
+                        <div>
+                            <p class="dashboard-metric-label">Annonces publiées</p>
+                            <p class="dashboard-metric-value">{{ announcement_published }}</p>
                         </div>
                     </div>
                 </div>
