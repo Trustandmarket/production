@@ -22,15 +22,17 @@
     margin-bottom: 24px;
 }
 
-.dashboard-page-title {
+.content .dashboard-page-header > h1.dashboard-page-title {
+    all: unset;
     margin: 0;
     color: #101828;
     font-size: 28px;
     line-height: 1.2;
     font-weight: 700;
+    font-family: "Open Sans", sans-serif;
     text-transform: uppercase;
     display: inline-block !important;
-    width: fit-content !important;
+    width: auto !important;
     max-width: none !important;
     position: relative;
     z-index: 2;
@@ -41,10 +43,11 @@
     background-image: none !important;
     background: #f1f2f7 !important;
     padding: 0 16px 0 0 !important;
+    float: none !important;
 }
 
-.dashboard-page-title::before,
-.dashboard-page-title::after {
+.content .dashboard-page-header > h1.dashboard-page-title::before,
+.content .dashboard-page-header > h1.dashboard-page-title::after {
     content: none !important;
     display: none !important;
     border: 0 !important;
