@@ -402,6 +402,13 @@
                     {% set assignedCurrentPage = assignedCurrentPage > assignedTotalPages ? assignedTotalPages : assignedCurrentPage %}
                     {% set assignedOffset = (assignedCurrentPage - 1) * experiencesPerPage %}
 
+                    {% set receivedTotal = experiences_received|length %}
+                    {% set receivedTotalPages = receivedTotal > 0 ? experiences_received|batch(experiencesPerPage)|length : 1 %}
+                    {% set receivedRequestedPage = app.request.query.getInt('receivedPage', 1) %}
+                    {% set receivedCurrentPage = receivedRequestedPage < 1 ? 1 : receivedRequestedPage %}
+                    {% set receivedCurrentPage = receivedCurrentPage > receivedTotalPages ? receivedTotalPages : receivedCurrentPage %}
+                    {% set receivedOffset = (receivedCurrentPage - 1) * experiencesPerPage %}
+
                     <div class="creerExperienceDiv col-12 my-2">
                         <a href="{{ path('experiences_index') }}" class="webDisplayCreateBtn">Créer une expérience</a>
                     </div>
@@ -500,6 +507,31 @@
 
                     {% if 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles or 'ROLE_SOCIETE' in app.user.roles %}
                         <h2 class="font-weight-bold" id="experiences-received">Expérience(s) reçue(s)</h2>
+                        {% for item in experiences_received|slice(receivedOffset, experiencesPerPage) %}
+                            <div class="experience_div">
+                                <h2>Projet : {% if item.exp_type_experience == "Production musicale" %}
+                                        {{ item.exp_type_experience }} - {{ item.exp_ville }} - {{ item.exp_univers }}
+                                    {% else %}
+                                        {{ item.exp_type_experience }} - {{ item.exp_lieu_evt }} - {{ item.exp_nom_evt }}
+                                    {% endif %}</h2>
+                                <div class="footer_link">
+                                    <div class="left_link"></div>
+                                    <div class="right_link">
+                                        <a href="" class="apercuExp" attr-id="{{ item.id }}">Aperçu</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% include 'partials/pagination.html.twig' with {
+                            currentPage: receivedCurrentPage,
+                            totalPages: receivedTotalPages,
+                            routeName: routeName,
+                            routeParams: routeParams,
+                            query: currentQuery,
+                            pageParameter: 'receivedPage',
+                            anchor: '#experiences-received',
+                            ariaLabel: 'Pagination des expériences reçues'
+                        } only %}
                     {% endif %}
 
                     <a href="{{ path('experiences_index') }}" class="mobileDisplayCreateBtn">Créer une expérience</a>

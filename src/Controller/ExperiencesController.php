@@ -196,31 +196,7 @@ class ExperiencesController extends AbstractController
 
     private function getExperienceProfessionalRecipients(?int $excludeUserId = null): array
     {
-        $targetActivities = [
-            "Studio d'enregistrement",
-            'Mixage audio',
-            'Mastering audio',
-        ];
-
-        $activityRows = $this->service_manager->postCategorie1('product_activity');
-        $activityIds = [];
-
-        foreach ($activityRows as $activityRow) {
-            if (!in_array($activityRow['name'] ?? '', $targetActivities, true)) {
-                continue;
-            }
-
-            if (!empty($activityRow['termTaxonomyId'])) {
-                $activityIds[] = (string) $activityRow['termTaxonomyId'];
-            }
-
-            if (!empty($activityRow['termId'])) {
-                $activityIds[] = (string) $activityRow['termId'];
-            }
-        }
-
-        $activityIds = array_values(array_unique(array_filter($activityIds)));
-
+        $activityIds = $this->getExperienceTargetActivityIds();
         if (empty($activityIds)) {
             return [];
         }
@@ -268,6 +244,106 @@ SQL;
         }
 
         return array_values($recipients);
+    }
+
+    private function getExperienceTargetActivityIds(): array
+    {
+        $targetActivities = [
+            "Studio d'enregistrement",
+            'Mixage audio',
+            'Mastering audio',
+        ];
+
+        $activityRows = $this->service_manager->postCategorie1('product_activity');
+        $activityIds = [];
+
+        foreach ($activityRows as $activityRow) {
+            if (!in_array($activityRow['name'] ?? '', $targetActivities, true)) {
+                continue;
+            }
+
+            if (!empty($activityRow['termTaxonomyId'])) {
+                $activityIds[] = (string) $activityRow['termTaxonomyId'];
+            }
+
+            if (!empty($activityRow['termId'])) {
+                $activityIds[] = (string) $activityRow['termId'];
+            }
+        }
+
+        return array_values(array_unique(array_filter($activityIds)));
+    }
+
+    private function isExperienceProfessionalRecipient(int $userId): bool
+    {
+        $activityIds = $this->getExperienceTargetActivityIds();
+        if (empty($activityIds)) {
+            return false;
+        }
+
+        $connection = $this->entityManager->getConnection();
+        $sql = <<<SQL
+SELECT COUNT(1)
+FROM wp_users u
+INNER JOIN wp_usermeta um ON um.user_id = u.id
+WHERE u.id = :user
+  AND um.meta_key = :metaKey
+  AND um.meta_value IN (:activityIds)
+  AND (
+    u.roles LIKE :roleAuto
+    OR u.roles LIKE :roleSociete
+  )
+SQL;
+
+        $count = (int) $connection->executeQuery(
+            $sql,
+            [
+                'user' => $userId,
+                'metaKey' => 'activite_principale',
+                'activityIds' => $activityIds,
+                'roleAuto' => '%ROLE_AUTO_ENTREPRENEUR%',
+                'roleSociete' => '%ROLE_SOCIETE%',
+            ],
+            [
+                'activityIds' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            ]
+        )->fetchOne();
+
+        return $count > 0;
+    }
+
+    private function getReceivedExperiencesForProfessional(int $userId): array
+    {
+        if (!$this->isExperienceProfessionalRecipient($userId)) {
+            return [];
+        }
+
+        $connection = $this->entityManager->getConnection();
+        $sql = <<<SQL
+SELECT wp.ID AS id
+FROM wp_posts wp
+WHERE (wp.post_type = :type OR wp.post_type = :type2)
+  AND wp.post_status = :status
+  AND wp.post_author <> :user
+ORDER BY wp.ID DESC
+SQL;
+
+        $rows = $connection->executeQuery($sql, [
+            'type' => 'exp_experiences',
+            'type2' => 'exp_evenementiel',
+            'status' => 'publish',
+            'user' => $userId,
+        ])->fetchAllAssociative();
+
+        $experiences = [];
+        foreach ($rows as $row) {
+            $experience = $this->service_manager->getOneUserExperiencesProcess($row['id']);
+            if (!empty($experience)) {
+                $experiences[] = $experience;
+            }
+        }
+
+        return $experiences;
     }
 
     private function sendBrevoTemplateEmail(array $to, int $templateId, array $params, array $bcc = []): void
@@ -547,11 +623,17 @@ SQL;
         $experiences_publish = $this->service_manager->getAllUserExperiencesProcess($this->getUser()->getId(), 'publish');
         $experiences_draft = $this->service_manager->getAllUserExperiencesProcess($this->getUser()->getId(), 'draft');
         $experiences_assigned = $this->service_manager->getAllUserExperiencesProcess($this->getUser()->getId(), 'assigned');
+        $isExperienceProfessional = in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles(), true)
+            || in_array('ROLE_SOCIETE', $this->getUser()->getRoles(), true);
+        $experiences_received = $isExperienceProfessional
+            ? $this->getReceivedExperiencesForProfessional($this->getUser()->getId())
+            : [];
         //dd($experiences_publish);
         return $this->render('experiences/liste_experience.html.twig', [
             'experiences_publish' => $experiences_publish,
             'experiences_draft' => $experiences_draft,
             'experiences_assigned' => $experiences_assigned,
+            'experiences_received' => $experiences_received,
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
