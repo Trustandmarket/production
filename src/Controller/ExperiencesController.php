@@ -329,18 +329,22 @@ SQL;
         $whereSql = <<<SQL
 FROM wp_posts wp
 WHERE (wp.post_type = :type OR wp.post_type = :type2)
-  AND wp.post_status = :status
+  AND wp.post_status IN (:statuses)
   AND wp.post_author <> :user
 SQL;
 
         $params = [
             'type' => 'exp_experiences',
             'type2' => 'exp_evenementiel',
-            'status' => 'publish',
+            'statuses' => ['publish', 'assigned'],
             'user' => $userId,
         ];
 
-        $total = (int) $connection->executeQuery('SELECT COUNT(1) ' . $whereSql, $params)->fetchOne();
+        $types = [
+            'statuses' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+        ];
+
+        $total = (int) $connection->executeQuery('SELECT COUNT(1) ' . $whereSql, $params, $types)->fetchOne();
         if ($total === 0) {
             return $emptyPagination;
         }
@@ -362,10 +366,10 @@ SQL;
                 'limit' => $perPage,
                 'offset' => $offset,
             ]),
-            [
+            array_merge($types, [
                 'limit' => \PDO::PARAM_INT,
                 'offset' => \PDO::PARAM_INT,
-            ]
+            ])
         )->fetchAllAssociative();
 
         $experiences = [];

@@ -9714,7 +9714,7 @@ class ServiceManager
     {
         $conn = $this->entityManager->getConnection();
         $sql = 'SELECT  wp.ID as id, wp.post_title as titre, wp.post_status as status, wp.post_content as exp_ville, wp.post_excerpt as exp_univers,
-        wp.post_content as exp_besoins, wp.post_content as exp_options,wp.post_content as exp_precisions, wp.post_content as exp_type_experience,
+        wp.post_author as post_author, wp.post_content as exp_besoins, wp.post_content as exp_options,wp.post_content as exp_precisions, wp.post_content as exp_type_experience,
         wp.post_content as exp_lieu_evt,wp.post_content as exp_lieu_evt, wp.post_content as exp_participants_evt,
         wp.post_date as created_at
             FROM wp_posts wp

@@ -320,6 +320,13 @@
             color: #9b9b9b;
         }
 
+        .received-contact-disabled {
+            color: #9b9b9b;
+            cursor: not-allowed;
+            font-family: "Palanquin Dark", sans-serif;
+            text-decoration: underline;
+        }
+
 
         @media (max-width: 575.98px) {
             main, .container {
@@ -511,7 +518,13 @@
                                         {{ item.exp_type_experience }} - {{ item.exp_lieu_evt }} - {{ item.exp_nom_evt }}
                                     {% endif %}</h2>
                                 <div class="footer_link">
-                                    <div class="left_link"></div>
+                                    <div class="left_link">
+                                        {% if item.status|lower == 'assigned' %}
+                                            <span class="received-contact-disabled" title="Le projet est déjà attribué.">Contacter le client</span>
+                                        {% else %}
+                                            <a href="{{ path('chat_chat', {'destinataire': item.post_author}) }}">Contacter le client</a>
+                                        {% endif %}
+                                    </div>
                                     <div class="right_link">
                                         <a href="" class="apercuExp" attr-id="{{ item.id }}">Aperçu</a>
                                     </div>
