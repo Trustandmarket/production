@@ -1,0 +1,51 @@
+{% set currentPage = currentPage|default(1) %}
+{% set totalPages = totalPages|default(1) %}
+{% set routeName = routeName|default(app.request.attributes.get('_route')) %}
+{% set routeParams = routeParams|default(app.request.attributes.get('_route_params')) %}
+{% set query = query|default(app.request.query.all) %}
+{% set pageParameter = pageParameter|default('page') %}
+{% set anchor = anchor|default('') %}
+
+{% if totalPages > 1 %}
+    <nav class="tm-pagination-wrapper" aria-label="{{ ariaLabel|default('Pagination') }}">
+        <ul class="pagination tm-pagination justify-content-center flex-wrap mb-0">
+            {% set previousPage = currentPage - 1 %}
+            {% set nextPage = currentPage + 1 %}
+
+            <li class="page-item {{ currentPage <= 1 ? 'disabled' : '' }}">
+                {% if currentPage <= 1 %}
+                    <span class="page-link" aria-disabled="true">Précédent</span>
+                {% else %}
+                    {% set previousParams = routeParams|merge(query|merge({(pageParameter): previousPage})) %}
+                    <a class="page-link" href="{{ path(routeName, previousParams) }}{{ anchor }}">Précédent</a>
+                {% endif %}
+            </li>
+
+            {% for page in 1..totalPages %}
+                {% if page == 1 or page == totalPages or (page >= currentPage - 2 and page <= currentPage + 2) %}
+                    <li class="page-item {{ page == currentPage ? 'active' : '' }}">
+                        {% if page == currentPage %}
+                            <span class="page-link">{{ page }}</span>
+                        {% else %}
+                            {% set pageParams = routeParams|merge(query|merge({(pageParameter): page})) %}
+                            <a class="page-link" href="{{ path(routeName, pageParams) }}{{ anchor }}">{{ page }}</a>
+                        {% endif %}
+                    </li>
+                {% elseif page == 2 or page == totalPages - 1 %}
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">...</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            <li class="page-item {{ currentPage >= totalPages ? 'disabled' : '' }}">
+                {% if currentPage >= totalPages %}
+                    <span class="page-link" aria-disabled="true">Suivant</span>
+                {% else %}
+                    {% set nextParams = routeParams|merge(query|merge({(pageParameter): nextPage})) %}
+                    <a class="page-link" href="{{ path(routeName, nextParams) }}{{ anchor }}">Suivant</a>
+                {% endif %}
+            </li>
+        </ul>
+    </nav>
+{% endif %}

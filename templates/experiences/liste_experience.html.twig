@@ -299,6 +299,27 @@
             margin: 0;
         }
 
+        .tm-pagination-wrapper {
+            margin: 10px 0 24px;
+        }
+
+        .tm-pagination .page-link {
+            color: #000;
+            border-color: #dedede;
+            font-family: "Palanquin Dark", sans-serif;
+        }
+
+        .tm-pagination .page-item.active .page-link,
+        .tm-pagination .page-item.active span.page-link {
+            background-color: #f17c30;
+            border-color: #f17c30;
+            color: #fff;
+        }
+
+        .tm-pagination .page-item.disabled .page-link {
+            color: #9b9b9b;
+        }
+
 
         @media (max-width: 575.98px) {
             main, .container {
@@ -355,11 +376,30 @@
             <div class="container mt-2 pt-4">
                 {% include 'menuProfile.html.twig' %}
                 <div class="list_experiences">
+                    {% set experiencesPerPage = 5 %}
+                    {% set routeName = app.request.attributes.get('_route') %}
+                    {% set routeParams = app.request.attributes.get('_route_params') %}
+                    {% set currentQuery = app.request.query.all %}
+
+                    {% set draftTotal = experiences_draft|length %}
+                    {% set draftTotalPages = draftTotal > 0 ? experiences_draft|batch(experiencesPerPage)|length : 1 %}
+                    {% set draftRequestedPage = app.request.query.getInt('draftPage', 1) %}
+                    {% set draftCurrentPage = draftRequestedPage < 1 ? 1 : draftRequestedPage %}
+                    {% set draftCurrentPage = draftCurrentPage > draftTotalPages ? draftTotalPages : draftCurrentPage %}
+                    {% set draftOffset = (draftCurrentPage - 1) * experiencesPerPage %}
+
+                    {% set publishTotal = experiences_publish|length %}
+                    {% set publishTotalPages = publishTotal > 0 ? experiences_publish|batch(experiencesPerPage)|length : 1 %}
+                    {% set publishRequestedPage = app.request.query.getInt('publishPage', 1) %}
+                    {% set publishCurrentPage = publishRequestedPage < 1 ? 1 : publishRequestedPage %}
+                    {% set publishCurrentPage = publishCurrentPage > publishTotalPages ? publishTotalPages : publishCurrentPage %}
+                    {% set publishOffset = (publishCurrentPage - 1) * experiencesPerPage %}
+
                     <div class="creerExperienceDiv col-12 my-2">
                         <a href="{{ path('experiences_index') }}" class="webDisplayCreateBtn">Créer une expérience</a>
                     </div>
-                    <h2 class="font-weight-bold">Expérience(s) en brouillon</h2>
-                    {% for item in experiences_draft %}
+                    <h2 class="font-weight-bold" id="experiences-draft">Expérience(s) en brouillon</h2>
+                    {% for item in experiences_draft|slice(draftOffset, experiencesPerPage) %}
                         <div class="experience_div">
                             <h2>Projet : {% if item.exp_type_experience == "Production musicale" %}
                                     {{ item.exp_type_experience }} - {{ item.exp_ville }} - {{ item.exp_univers }}
@@ -380,8 +420,19 @@
                             </div>
                         </div>
                     {% endfor %}
-                    <h2 class="font-weight-bold">Expérience(s) publiée(s)</h2>
-                    {% for item in experiences_publish %}
+                    {% include 'partials/pagination.html.twig' with {
+                        currentPage: draftCurrentPage,
+                        totalPages: draftTotalPages,
+                        routeName: routeName,
+                        routeParams: routeParams,
+                        query: currentQuery,
+                        pageParameter: 'draftPage',
+                        anchor: '#experiences-draft',
+                        ariaLabel: 'Pagination des expériences en brouillon'
+                    } only %}
+
+                    <h2 class="font-weight-bold" id="experiences-publish">Expérience(s) publiée(s)</h2>
+                    {% for item in experiences_publish|slice(publishOffset, experiencesPerPage) %}
                         <div class="experience_div">
                             <h2>Projet : {% if item.exp_type_experience == "Production musicale" %}
                                     {{ item.exp_type_experience }} - {{ item.exp_ville }} - {{ item.exp_univers }}
@@ -400,6 +451,17 @@
                             </div>
                         </div>
                     {% endfor %}
+                    {% include 'partials/pagination.html.twig' with {
+                        currentPage: publishCurrentPage,
+                        totalPages: publishTotalPages,
+                        routeName: routeName,
+                        routeParams: routeParams,
+                        query: currentQuery,
+                        pageParameter: 'publishPage',
+                        anchor: '#experiences-publish',
+                        ariaLabel: 'Pagination des expériences publiées'
+                    } only %}
+
                     <a href="{{ path('experiences_index') }}" class="mobileDisplayCreateBtn">Créer une expérience</a>
                 </div>
             </div>
