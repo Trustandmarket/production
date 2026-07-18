@@ -358,7 +358,7 @@
                     <div class="creerExperienceDiv col-12 my-2">
                         <a href="{{ path('experiences_index') }}" class="webDisplayCreateBtn">Créer une expérience</a>
                     </div>
-                    <h2 class="font-weight-bold">Expérience(s) en cours</h2>
+                    <h2 class="font-weight-bold">Expérience(s) en brouillon</h2>
                     {% for item in experiences_draft %}
                         <div class="experience_div">
                             <h2>Projet : {% if item.exp_type_experience == "Production musicale" %}
@@ -380,7 +380,7 @@
                             </div>
                         </div>
                     {% endfor %}
-                    <h2 class="font-weight-bold">Expérience(s) validée(s)</h2>
+                    <h2 class="font-weight-bold">Expérience(s) publiée(s)</h2>
                     {% for item in experiences_publish %}
                         <div class="experience_div">
                             <h2>Projet : {% if item.exp_type_experience == "Production musicale" %}
