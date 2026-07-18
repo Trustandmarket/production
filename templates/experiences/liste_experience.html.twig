@@ -395,6 +395,13 @@
                     {% set publishCurrentPage = publishCurrentPage > publishTotalPages ? publishTotalPages : publishCurrentPage %}
                     {% set publishOffset = (publishCurrentPage - 1) * experiencesPerPage %}
 
+                    {% set assignedTotal = experiences_assigned|length %}
+                    {% set assignedTotalPages = assignedTotal > 0 ? experiences_assigned|batch(experiencesPerPage)|length : 1 %}
+                    {% set assignedRequestedPage = app.request.query.getInt('assignedPage', 1) %}
+                    {% set assignedCurrentPage = assignedRequestedPage < 1 ? 1 : assignedRequestedPage %}
+                    {% set assignedCurrentPage = assignedCurrentPage > assignedTotalPages ? assignedTotalPages : assignedCurrentPage %}
+                    {% set assignedOffset = (assignedCurrentPage - 1) * experiencesPerPage %}
+
                     <div class="creerExperienceDiv col-12 my-2">
                         <a href="{{ path('experiences_index') }}" class="webDisplayCreateBtn">Créer une expérience</a>
                     </div>
@@ -444,6 +451,8 @@
                                 <div class="left_link">
                                     <a class="delete"
                                        href="{{ path('experiences_post_delete_get', {'id' : item.id}) }}">Supprimer</a>
+                                    <a class="assign" style="margin-left: 1rem;"
+                                       href="{{ path('experiences_assign_get', {'id' : item.id}) }}">Attribué ?</a>
                                 </div>
                                 <div class="right_link">
                                     <a href="" class="apercuExp" attr-id="{{ item.id }}">Aperçu</a>
@@ -460,6 +469,36 @@
                         pageParameter: 'publishPage',
                         anchor: '#experiences-publish',
                         ariaLabel: 'Pagination des expériences publiées'
+                    } only %}
+
+                    <h2 class="font-weight-bold" id="experiences-assigned">Expérience(s) attribuée(s)</h2>
+                    {% for item in experiences_assigned|slice(assignedOffset, experiencesPerPage) %}
+                        <div class="experience_div">
+                            <h2>Projet : {% if item.exp_type_experience == "Production musicale" %}
+                                    {{ item.exp_type_experience }} - {{ item.exp_ville }} - {{ item.exp_univers }}
+                                {% else %}
+                                    {{ item.exp_type_experience }} - {{ item.exp_lieu_evt }} - {{ item.exp_nom_evt }}
+                                {% endif %}</h2>
+                            <div class="footer_link">
+                                <div class="left_link">
+                                    <a class="delete"
+                                       href="{{ path('experiences_post_delete_get', {'id' : item.id}) }}">Supprimer</a>
+                                </div>
+                                <div class="right_link">
+                                    <a href="" class="apercuExp" attr-id="{{ item.id }}">Aperçu</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% include 'partials/pagination.html.twig' with {
+                        currentPage: assignedCurrentPage,
+                        totalPages: assignedTotalPages,
+                        routeName: routeName,
+                        routeParams: routeParams,
+                        query: currentQuery,
+                        pageParameter: 'assignedPage',
+                        anchor: '#experiences-assigned',
+                        ariaLabel: 'Pagination des expériences attribuées'
                     } only %}
 
                     <a href="{{ path('experiences_index') }}" class="mobileDisplayCreateBtn">Créer une expérience</a>
@@ -953,6 +992,46 @@
                     },
                     error: function (response) {
                         swal("Erreur de suppression", "", "error");
+                    },
+                });
+            } else {
+                swal.close();
+            }
+        });
+        return false;
+    });
+
+    $(document).on('click', '.assign', function (e) {
+        e.preventDefault();
+        var urlPath = $(this).attr('href');
+        swal({
+            title: "Experience attribuee ?",
+            text: "Cette experience sera deplacee dans la liste des experiences attribuees.",
+            type: "info",
+            showCancelButton: true,
+            confirmButtonClass: "btn-success",
+            confirmButtonText: "Attribuer",
+            cancelButtonText: "Annuler",
+            closeOnConfirm: false,
+            closeOnCancel: false,
+            showLoaderOnConfirm: true
+        }, function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: urlPath,
+                    type: 'GET',
+                    success: function (reponse) {
+                        if (reponse == 1) {
+                            swal("Experience attribuee", "", "success");
+                            window.setTimeout(function () {
+                                window.location = "";
+                            }, 200);
+                        } else {
+                            swal("Erreur d'attribution", "", "error");
+                        }
+                    },
+                    error: function () {
+                        swal("Erreur d'attribution", "", "error");
                     },
                 });
             } else {

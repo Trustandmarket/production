@@ -546,10 +546,12 @@ SQL;
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $experiences_publish = $this->service_manager->getAllUserExperiencesProcess($this->getUser()->getId(), 'publish');
         $experiences_draft = $this->service_manager->getAllUserExperiencesProcess($this->getUser()->getId(), 'draft');
+        $experiences_assigned = $this->service_manager->getAllUserExperiencesProcess($this->getUser()->getId(), 'assigned');
         //dd($experiences_publish);
         return $this->render('experiences/liste_experience.html.twig', [
             'experiences_publish' => $experiences_publish,
             'experiences_draft' => $experiences_draft,
+            'experiences_assigned' => $experiences_assigned,
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
@@ -577,6 +579,35 @@ SQL;
             $this->service_manager->deletePosts($request->get('id'));
             $r = 1;
         }
+        return $this->render('admin/resultat.html.twig', [
+            'result' => $r,
+        ]);
+    }
+
+    /**
+     * @Route("/{_locale}/profil-utilisateur/experiences/assign", name="assign_get", methods="GET", requirements={"_locale": "fr"})
+     */
+    public function assignExperience(Request $request)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $r = 0;
+        $id = (int) $request->get('id');
+
+        if ($id > 0) {
+            $experience = $this->entityManager->getRepository(WpPosts::class)->find($id);
+            if (
+                $experience
+                && (int) $experience->getPostAuthor() === (int) $this->getUser()->getId()
+                && $experience->getPostStatus() === 'publish'
+                && in_array($experience->getPostType(), ['exp_experiences', 'exp_evenementiel'], true)
+            ) {
+                $experience->setPostStatus('assigned');
+                $this->entityManager->persist($experience);
+                $this->entityManager->flush();
+                $r = 1;
+            }
+        }
+
         return $this->render('admin/resultat.html.twig', [
             'result' => $r,
         ]);
