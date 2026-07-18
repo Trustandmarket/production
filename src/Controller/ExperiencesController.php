@@ -312,28 +312,61 @@ SQL;
         return $count > 0;
     }
 
-    private function getReceivedExperiencesForProfessional(int $userId): array
+    private function getReceivedExperiencesForProfessional(int $userId, int $page = 1, int $perPage = 5): array
     {
+        $emptyPagination = [
+            'items' => [],
+            'page' => max(1, $page),
+            'total' => 0,
+            'total_pages' => 1,
+        ];
+
         if (!$this->isExperienceProfessionalRecipient($userId)) {
-            return [];
+            return $emptyPagination;
         }
 
         $connection = $this->entityManager->getConnection();
-        $sql = <<<SQL
-SELECT wp.ID AS id
+        $whereSql = <<<SQL
 FROM wp_posts wp
 WHERE (wp.post_type = :type OR wp.post_type = :type2)
   AND wp.post_status = :status
   AND wp.post_author <> :user
-ORDER BY wp.ID DESC
 SQL;
 
-        $rows = $connection->executeQuery($sql, [
+        $params = [
             'type' => 'exp_experiences',
             'type2' => 'exp_evenementiel',
             'status' => 'publish',
             'user' => $userId,
-        ])->fetchAllAssociative();
+        ];
+
+        $total = (int) $connection->executeQuery('SELECT COUNT(1) ' . $whereSql, $params)->fetchOne();
+        if ($total === 0) {
+            return $emptyPagination;
+        }
+
+        $totalPages = max(1, (int) ceil($total / $perPage));
+        $page = max(1, min($page, $totalPages));
+        $offset = ($page - 1) * $perPage;
+
+        $sql = <<<SQL
+SELECT wp.ID AS id
+{$whereSql}
+ORDER BY wp.ID DESC
+LIMIT :limit OFFSET :offset
+SQL;
+
+        $rows = $connection->executeQuery(
+            $sql,
+            array_merge($params, [
+                'limit' => $perPage,
+                'offset' => $offset,
+            ]),
+            [
+                'limit' => \PDO::PARAM_INT,
+                'offset' => \PDO::PARAM_INT,
+            ]
+        )->fetchAllAssociative();
 
         $experiences = [];
         foreach ($rows as $row) {
@@ -343,7 +376,12 @@ SQL;
             }
         }
 
-        return $experiences;
+        return [
+            'items' => $experiences,
+            'page' => $page,
+            'total' => $total,
+            'total_pages' => $totalPages,
+        ];
     }
 
     private function sendBrevoTemplateEmail(array $to, int $templateId, array $params, array $bcc = []): void
@@ -625,15 +663,22 @@ SQL;
         $experiences_assigned = $this->service_manager->getAllUserExperiencesProcess($this->getUser()->getId(), 'assigned');
         $isExperienceProfessional = in_array('ROLE_AUTO_ENTREPRENEUR', $this->getUser()->getRoles(), true)
             || in_array('ROLE_SOCIETE', $this->getUser()->getRoles(), true);
-        $experiences_received = $isExperienceProfessional
-            ? $this->getReceivedExperiencesForProfessional($this->getUser()->getId())
-            : [];
+        $receivedPagination = $isExperienceProfessional
+            ? $this->getReceivedExperiencesForProfessional($this->getUser()->getId(), $request->query->getInt('receivedPage', 1), 5)
+            : [
+                'items' => [],
+                'page' => 1,
+                'total' => 0,
+                'total_pages' => 1,
+            ];
         //dd($experiences_publish);
         return $this->render('experiences/liste_experience.html.twig', [
             'experiences_publish' => $experiences_publish,
             'experiences_draft' => $experiences_draft,
             'experiences_assigned' => $experiences_assigned,
-            'experiences_received' => $experiences_received,
+            'experiences_received' => $receivedPagination['items'],
+            'received_current_page' => $receivedPagination['page'],
+            'received_total_pages' => $receivedPagination['total_pages'],
             'header' => $this->service_manager->naveMenuItem(10),
             'footer' => $this->service_manager->naveMenuItem(18),
             'prestations' => $this->service_manager->postCategorieWithMultilang('product_cat', 0),
