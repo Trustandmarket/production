@@ -498,6 +498,10 @@
                         ariaLabel: 'Pagination des expériences attribuées'
                     } only %}
 
+                    {% if 'ROLE_AUTO_ENTREPRENEUR' in app.user.roles or 'ROLE_SOCIETE' in app.user.roles %}
+                        <h2 class="font-weight-bold" id="experiences-received">Expérience(s) reçue(s)</h2>
+                    {% endif %}
+
                     <a href="{{ path('experiences_index') }}" class="mobileDisplayCreateBtn">Créer une expérience</a>
                 </div>
             </div>
