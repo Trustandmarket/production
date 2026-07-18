@@ -327,6 +327,21 @@
             text-decoration: underline;
         }
 
+        .received-contact-link {
+            color: #f17c30 !important;
+            border: 1px solid #f17c30;
+            border-radius: 6px;
+            padding: 4px 9px;
+            font-family: "Palanquin Dark", sans-serif;
+            text-decoration: none !important;
+            transition: background-color .2s ease, color .2s ease;
+        }
+
+        .received-contact-link:hover {
+            background-color: #f17c30;
+            color: #fff !important;
+        }
+
 
         @media (max-width: 575.98px) {
             main, .container {
@@ -522,7 +537,7 @@
                                         {% if item.status|lower == 'assigned' %}
                                             <span class="received-contact-disabled" title="Le projet est déjà attribué.">Contacter le client</span>
                                         {% else %}
-                                            <a href="{{ path('chat_chat', {'destinataire': item.post_author}) }}">Contacter le client</a>
+                                            <a class="received-contact-link" href="{{ path('chat_chat', {'destinataire': item.post_author}) }}">Contacter le client</a>
                                         {% endif %}
                                     </div>
                                     <div class="right_link">
