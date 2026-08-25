@@ -17,7 +17,7 @@ class AnnouncementAiModerationBackofficeController extends AbstractController
     private const JOB_STATUS_PENDING = 'pending';
     private const JOB_STATUS_PROCESSING = 'processing';
     private const JOB_STATUS_APPROVED = 'approved';
-    private const JOB_STATUS_MANUAL_REVIEW = 'manual_review';
+    private const JOB_STATUS_REJECTED = 'rejected';
     private const JOB_STATUS_FAILED = 'failed';
     private const JOB_STATUS_CANCELLED = 'cancelled';
 
@@ -29,7 +29,7 @@ class AnnouncementAiModerationBackofficeController extends AbstractController
         self::JOB_STATUS_PENDING,
         self::JOB_STATUS_PROCESSING,
         self::JOB_STATUS_APPROVED,
-        self::JOB_STATUS_MANUAL_REVIEW,
+        self::JOB_STATUS_REJECTED,
         self::JOB_STATUS_FAILED,
         self::JOB_STATUS_CANCELLED,
     ];
@@ -114,14 +114,14 @@ class AnnouncementAiModerationBackofficeController extends AbstractController
 
         $avgParams = $params;
         $avgParams['status_approved'] = self::JOB_STATUS_APPROVED;
-        $avgParams['status_manual_review'] = self::JOB_STATUS_MANUAL_REVIEW;
+        $avgParams['status_rejected'] = self::JOB_STATUS_REJECTED;
         $avgParams['status_failed'] = self::JOB_STATUS_FAILED;
         $avgSecondsRaw = $conn->fetchOne(
             "SELECT AVG(TIMESTAMPDIFF(SECOND, j.created_at, j.processed_at))
              FROM announcement_ai_moderation_jobs j
              WHERE {$whereSql}
                AND j.processed_at IS NOT NULL
-               AND j.status IN (:status_approved, :status_manual_review, :status_failed)",
+               AND j.status IN (:status_approved, :status_rejected, :status_failed)",
             $avgParams
         );
 
@@ -133,12 +133,12 @@ class AnnouncementAiModerationBackofficeController extends AbstractController
             $params + ['decision_code' => 'auto_publish']
         );
 
-        $manualReviewCount = (int) $conn->fetchOne(
+        $rejectedCount = (int) $conn->fetchOne(
             "SELECT COUNT(*)
              FROM announcement_ai_moderation_jobs j
              WHERE {$whereSql}
-               AND j.status = :manual_review",
-            $params + ['manual_review' => self::JOB_STATUS_MANUAL_REVIEW]
+               AND j.status = :rejected",
+            $params + ['rejected' => self::JOB_STATUS_REJECTED]
         );
 
         $topErrorsRows = $conn->fetchAllAssociative(
@@ -178,7 +178,7 @@ class AnnouncementAiModerationBackofficeController extends AbstractController
                 'total_jobs' => $totalJobs,
                 'by_status' => $byStatus,
                 'auto_publish_count' => $autoPublishCount,
-                'manual_review_count' => $manualReviewCount,
+                'rejected_count' => $rejectedCount,
                 'avg_processing_seconds' => $avgSecondsRaw !== null ? round((float) $avgSecondsRaw, 2) : null,
                 'top_errors' => $topErrors,
             ],

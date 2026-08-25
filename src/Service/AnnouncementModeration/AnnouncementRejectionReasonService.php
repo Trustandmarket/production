@@ -34,10 +34,10 @@ class AnnouncementRejectionReasonService
                 "SELECT id, decision_code, decision_summary
                  FROM announcement_ai_moderation_jobs
                  WHERE announcement_id = :announcementId
-                   AND status IN ('manual_review', 'failed', 'approved')
+                   AND status IN ('rejected', 'failed', 'approved')
                  ORDER BY
                    CASE
-                     WHEN status = 'manual_review' THEN 1
+                     WHEN status = 'rejected' THEN 1
                      WHEN status = 'failed' THEN 2
                      WHEN status = 'approved' THEN 3
                      ELSE 4

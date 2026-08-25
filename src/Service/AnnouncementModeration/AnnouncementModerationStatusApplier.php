@@ -49,6 +49,10 @@ class AnnouncementModerationStatusApplier
             return 'publish';
         }
 
+        if ($decision->getOutcome() === 'reject') {
+            return 'trash';
+        }
+
         return 'moderation';
     }
 }

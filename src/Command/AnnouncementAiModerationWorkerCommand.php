@@ -73,7 +73,6 @@ class AnnouncementAiModerationWorkerCommand extends Command
         $failed = 0;
         $skipped = 0;
         $notificationErrors = 0;
-        $manualReviewDigestItems = [];
 
         while ($processed < $limit) {
             $candidate = $this->jobManager->findNextPendingJob($targetJobId);
@@ -111,7 +110,9 @@ class AnnouncementAiModerationWorkerCommand extends Command
                 $decision = $this->decisionService->decide($prechecks['passed'], $aiEvaluation);
                 $this->jobManager->completeJob($jobId, $decision, $checks, $context->toArray());
                 $statusResult = [
-                    'target_status' => $decision->getOutcome() === 'publish' ? 'publish' : 'moderation',
+                    'target_status' => $decision->getOutcome() === 'publish'
+                        ? 'publish'
+                        : ($decision->getOutcome() === 'reject' ? 'trash' : 'moderation'),
                     'changed' => false,
                 ];
 
@@ -131,12 +132,16 @@ class AnnouncementAiModerationWorkerCommand extends Command
                     }
                 }
 
-                if ($decision->getOutcome() === 'manual_review') {
-                    $manualReviewDigestItems[] = $this->notificationService->buildManualReviewDigestItem(
-                        $jobId,
-                        $context,
-                        $decision
-                    );
+                if (!$dryRunSideEffects && !$noNotify && $decision->getOutcome() === 'reject') {
+                    $notificationResult = $this->notificationService->sendAutoRejectNotification($context);
+                    if (!$notificationResult['ok']) {
+                        $notificationErrors++;
+                        $io->warning(sprintf(
+                            'Notification auto reject non envoyee pour job #%d: %s',
+                            $jobId,
+                            $notificationResult['error']
+                        ));
+                    }
                 }
 
                 $succeeded++;
@@ -162,19 +167,6 @@ class AnnouncementAiModerationWorkerCommand extends Command
 
             if ($targetJobId !== null) {
                 break;
-            }
-        }
-
-        if (!$dryRunSideEffects && !$noNotify && $manualReviewDigestItems !== []) {
-            $digestResult = $this->notificationService->sendManualReviewDigest($manualReviewDigestItems);
-            if (!$digestResult['ok']) {
-                $notificationErrors++;
-                $io->warning('Echec envoi digest admin Trust: ' . $digestResult['error']);
-            } else {
-                $io->text(sprintf(
-                    'Digest admin Trust envoye pour %d annonce(s) en revue manuelle.',
-                    count($manualReviewDigestItems)
-                ));
             }
         }
 

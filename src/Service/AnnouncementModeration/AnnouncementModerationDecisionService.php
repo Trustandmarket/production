@@ -13,11 +13,11 @@ class AnnouncementModerationDecisionService
     {
         if (!$hardRulesPass) {
             return new AnnouncementModerationDecision(
-                'manual_review',
-                'manual_review',
+                'reject',
+                'rejected',
                 'rules_only',
-                'hard_rules_failed',
-                'Les regles deterministes exigent une revue manuelle.',
+                'hard_rules_auto_reject',
+                'Les regles deterministes rendent l annonce non eligible a la publication.',
                 false,
                 null,
                 null,
@@ -61,11 +61,11 @@ class AnnouncementModerationDecisionService
         }
 
         return new AnnouncementModerationDecision(
-            'manual_review',
-            'manual_review',
+            'reject',
+            'rejected',
             'rules_and_ai',
-            'ai_manual_review',
-            $summary !== '' ? $summary : 'Le moteur IA demande une revue manuelle.',
+            'ai_auto_reject',
+            $summary !== '' ? $summary : 'Le moteur IA declare l annonce non eligible a la publication.',
             true,
             false,
             $confidence,
