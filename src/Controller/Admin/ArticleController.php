@@ -219,34 +219,11 @@ class ArticleController extends AbstractController
             }
             // meta post
 
-            if (!empty($session->get('file'))) {
-                $id1 = $this->sm->createPosts(
-                    $uid,
-                    $date,
-                    $date,
-                    $request->get('description'),
-                    $request->get('titre'),
-                    $request->get('titre'),
-                    'publish',
-                    'open',
-                    'open',
-                    $name,
-                    $name,
-                    $name,
-                    $name,
-                    $date,
-                    $date,
-                    $request->get('description'),
-                    $id,
-                    $session->get('file'),
-                    0,
-                    'attachment',
-                    'annonce',
-                    0,
-                    0
-                );
-            }
-            $session->set('file', ' ');
+            $this->sm->upsertArticleCoverImage(
+                $id,
+                $request->get('image_guid'),
+                $uid
+            );
         }
 
         return $this->render('admin/resultat.html.twig', [
@@ -294,16 +271,11 @@ class ArticleController extends AbstractController
                 }
             }
 
-            if (!empty($session->get('file')) && $id > 0) {
-                $img = $this->sm->postParentImage($id);
-                if ($img) {
-                    $id1 = $this->sm->updateImage(
-                        $img->getId(),
-                        $session->get('file')
-                    );
-                }
-            }
-            $session->set('file', '');
+            $this->sm->upsertArticleCoverImage(
+                $id,
+                $request->get('image_guid'),
+                $uid
+            );
         }
 
         return $this->render('admin/resultat.html.twig', [

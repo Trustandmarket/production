@@ -4354,6 +4354,68 @@ class ServiceManager
             ->findOneBy(['postParent' => $id, 'postType' => 'attachment']);
     }
 
+    /**
+     * Crée ou remplace l'image de couverture d'un article.
+     *
+     * L'absence de nouvelle image ne doit jamais modifier l'attachement courant :
+     * le contrôleur n'appelle donc cette méthode qu'avec un guid issu d'un upload
+     * réalisé par le formulaire en cours.
+     */
+    public function upsertArticleCoverImage($postId, $guid, $postAuthor)
+    {
+        $guid = trim((string) $guid);
+        if ($guid === '') {
+            return null;
+        }
+
+        $article = $this->entityManager
+            ->getRepository(WpPosts::class)
+            ->findOneBy(['id' => $postId, 'postType' => 'post']);
+        if (!$article) {
+            return null;
+        }
+
+        $image = $this->postParentImage($postId);
+        if ($image) {
+            $image->setGuid($guid);
+            $this->entityManager->persist($image);
+            $this->entityManager->flush();
+
+            return $image->getId();
+        }
+
+        $date = new DateTime();
+        $fileName = basename((string) parse_url($guid, PHP_URL_PATH));
+        $image = new WpPosts();
+        $image->setPostAuthor((int) $postAuthor);
+        $image->setPostDate($date);
+        $image->setPostDateGmt($date);
+        $image->setPostContent('');
+        $image->setPostTitle($fileName);
+        $image->setPostExcerpt('');
+        $image->setPostStatus('inherit');
+        $image->setCommentStatus('closed');
+        $image->setPingStatus('closed');
+        $image->setPostPassword('');
+        $image->setPostName($fileName);
+        $image->setToPing('');
+        $image->setPinged('');
+        $image->setPostModified($date);
+        $image->setPostModifiedGmt($date);
+        $image->setPostContentFiltered('');
+        $image->setPostParent((int) $postId);
+        $image->setGuid($guid);
+        $image->setMenuOrder(0);
+        $image->setPostType('attachment');
+        $image->setPostMimeType('image');
+        $image->setCommentCount('0');
+
+        $this->entityManager->persist($image);
+        $this->entityManager->flush();
+
+        return $image->getId();
+    }
+
     // Fontion qui permet d'uploder les Fichiers
     /**
      * @param $file

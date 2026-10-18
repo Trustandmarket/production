@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use App\Entity\WpPosts;
@@ -94,6 +95,24 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * @Route("/{_locale}/admin/articles/upload-cover", name="blog_article_upload_cover", methods={"POST"})
+     */
+    public function uploadCover(Request $request): JsonResponse
+    {
+        $guid = $this->sm->upload1(
+            $request->files->get('file'),
+            $this->getParameter('product_directory'),
+            $this->getUser()->getId()
+        );
+
+        if (trim((string) $guid) === '') {
+            return $this->json(['success' => false], Response::HTTP_BAD_REQUEST);
+        }
+
+        return $this->json(['success' => true, 'guid' => $guid]);
+    }
+
+    /**
      * @Route("/{_locale}/admin/updateUpload", name="update_upload")
      */
     public function updateUpload(Request $request, SessionInterface $session)
@@ -169,34 +188,11 @@ class ArticleController extends AbstractController
             }
             // meta post
 
-            if (!empty($session->get('file'))) {
-                $id1 = $this->sm->createPosts(
-                    $uid,
-                    $date,
-                    $date,
-                    $request->get('description'),
-                    $request->get('titre'),
-                    $request->get('titre'),
-                    'publish',
-                    'open',
-                    'open',
-                    $name,
-                    $name,
-                    $name,
-                    $name,
-                    $date,
-                    $date,
-                    $request->get('description'),
-                    $id,
-                    $session->get('file'),
-                    0,
-                    'attachment',
-                    'annonce',
-                    0,
-                    0
-                );
-            }
-            $session->set('file', ' ');
+            $this->sm->upsertArticleCoverImage(
+                $id,
+                $request->get('image_guid'),
+                $uid
+            );
         }
 
         return $this->render('admin/resultat.html.twig', [
@@ -246,16 +242,11 @@ class ArticleController extends AbstractController
                 }
             }
 
-            if (!empty($session->get('file')) && $id > 0) {
-                $img = $this->sm->postParentImage($id);
-                if ($img && $session->get('file') != '') {
-                    $id1 = $this->sm->updateImage(
-                        $img->getId(),
-                        $session->get('file')
-                    );
-                }
-            }
-            $session->set('file', '');
+            $this->sm->upsertArticleCoverImage(
+                $id,
+                $request->get('image_guid'),
+                $uid
+            );
         }
 
         return $this->render('admin/resultat.html.twig', [

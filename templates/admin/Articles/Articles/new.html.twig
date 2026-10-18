@@ -106,6 +106,7 @@
                                 </div>
                             </div>
                             <input type="hidden" name="status" value="publish" id="status">
+                            <input type="hidden" name="image_guid" value="" id="image_guid">
 
                             <div class="m-3">
                                 <button type="button" id="brouillon" style="float:left"
@@ -137,7 +138,7 @@
 
         var myDropzone = new Dropzone("div.dropzone",
             {
-                url: "{{ path('upload') }}",
+                url: "{{ path('blog_article_upload_cover') }}",
                 paramName: "file", // The name that will be used to transfer the file
                 maxFilesize: 1, // MB
                 uploadMultiple: true,
@@ -150,7 +151,9 @@
                 dictFileTooBig: "Ce fichier est trop grand, La taille max est 1 Mb",
                 dictRemoveFile: "{{ 'admin.article.remove'|trans }}",
                 success: function (file, response) {
-                    suc = 1;
+                    if (response && response.success && response.guid) {
+                        $('#image_guid').val(response.guid);
+                    }
                 }
             });
 
@@ -160,44 +163,10 @@
             var temp = tinymce.activeEditor.getContent();
             $('#article1').val(temp);
 
-            $('#send').addClass('running');
-            toastr.info('Envoie des données en cours...');
-
             var $form = $(this);
-            var formdata = (window.FormData) ? new FormData($form[0]) : null;
-            var data = (formdata !== null) ? formdata : $form.serialize() + '&description=' + temp;
-
-            if (myDropzone.files != "") {
-                myDropzone.processQueue();
-                myDropzone.on("successmultiple", function (file, response) {
-                    $.ajax({
-                        url: $form.attr('action'),
-                        type: $form.attr('method'),
-                        contentType: false,
-                        processData: false,
-                        data: data,
-                        success: function (reponse) {
-                            if (reponse > 0) {
-                                toastr.clear();
-                                toastr.success(' Enregistrement terminé!');
-                                $('#success').show();
-                                $('html,body').scrollTop(0);
-                                window.location = document.referrer;
-                            } else if (reponse == 0) {
-                                $('#send').removeClass('running');
-                                toastr.clear();
-                                toastr.error('{{ 'erreur'|trans }}');
-
-                            }
-                        },
-                        error: function (reponse) {
-                            $('#send').removeClass('running');
-                            toastr.clear();
-                            toastr.error('{{ 'erreur'|trans }}');
-                        }
-                    });
-                });
-            } else {
+            var submitArticle = function () {
+                var formdata = (window.FormData) ? new FormData($form[0]) : null;
+                var data = (formdata !== null) ? formdata : $form.serialize() + '&description=' + temp;
                 $.ajax({
                     url: $form.attr('action'),
                     type: $form.attr('method'),
@@ -205,12 +174,10 @@
                     processData: false,
                     data: data,
                     success: function (reponse) {
-
                         if (reponse > 0) {
                             toastr.clear();
                             toastr.success('Enregistrement terminé');
-                            //$('#article').hide();
-                            //$('#success').show();
+                            $('#success').show();
                             $('html,body').scrollTop(0);
                             window.location = document.referrer;
                         } else if (reponse == 0) {
@@ -223,9 +190,23 @@
                         $('#send').removeClass('running');
                         toastr.clear();
                         toastr.error('{{ 'erreur'|trans }}');
-
                     }
                 });
+            };
+
+            $('#send').addClass('running');
+            toastr.info('Envoi des données en cours...');
+
+            if (myDropzone.getQueuedFiles().length > 0) {
+                myDropzone.on("successmultiple", function (files, response) {
+                    if (response && response.success && response.guid) {
+                        $('#image_guid').val(response.guid);
+                    }
+                    submitArticle();
+                });
+                myDropzone.processQueue();
+            } else {
+                submitArticle();
             }
             return false;
         });
