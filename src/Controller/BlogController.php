@@ -67,14 +67,14 @@ class BlogController extends AbstractController
         $post = $this->service_manager->getDetailsOfBlogPostBySlug(
             $request->get('slug')
         );
-        if ($post) {
-            $meta_desc = $this->service_manager->readPostMeta(
-                $post->getId(),
-                'meta_desc'
-            );
-        } else {
-            $meta_desc = null;
+        if (!$post) {
+            throw $this->createNotFoundException('Article non disponible.');
         }
+
+        $meta_desc = $this->service_manager->readPostMeta(
+            $post->getId(),
+            'meta_desc'
+        );
         $relation = $this->service_manager->readTermRelation($post->getId());
         $categorie = null;
         if ($relation) {

@@ -16,7 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
@@ -63,7 +63,7 @@ class WpPostsCrudController extends AbstractCrudController
             IdField::new('id', 'Id'),
             TextField::new('postTitle', 'Titre'),
             TextField::new('postStatus', 'Statut')->setTemplatePath('admin/Annonces/Annonces/Fields/status.html.twig'),
-            DateField::new('postDate', 'Date'),
+            DateTimeField::new('postDate', 'Date de publication'),
         ];
     }
 
@@ -85,7 +85,7 @@ class WpPostsCrudController extends AbstractCrudController
         return $this->render('admin/Articles/Articles/new.html.twig', [
             'categorie' => $this->service_manager->postCategorie('category', 0),
             'lang' => $context->getRequest()->getLocale(),
-            'd' => new \DateTime(),
+            'd' => new \DateTime('now', new \DateTimeZone('Europe/Paris')),
         ]);
     }
 
@@ -109,7 +109,7 @@ class WpPostsCrudController extends AbstractCrudController
             'relation' => $this->service_manager->readTermRelation($p->getId()),
             'img' => $img,
             'lang' => $context->getRequest()->getLocale(),
-            'd' => new \DateTime(),
+            'd' => new \DateTime('now', new \DateTimeZone('Europe/Paris')),
         ]);
     }
 

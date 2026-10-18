@@ -22,6 +22,7 @@ use App\Entity\WpUsermeta;
 use App\Entity\User;
 use Cocur\Slugify\Slugify;
 use DateTime;
+use DateTimeZone;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -4316,12 +4317,14 @@ class ServiceManager
         $id,
         $status,
         $categorie,
-        $locale = null
+        $locale = null,
+        $scheduledAt = null
     ) {
         $p = $this->entityManager
             ->getRepository(WpPosts::class)
             ->findOneById($id);
         if ($p) {
+            $previousStatus = $p->getPostStatus();
             if ($locale == 'en') {
                 $p->setPostContentFiltered($article);
                 $p->setPostExcerpt($name);
@@ -4329,6 +4332,17 @@ class ServiceManager
                 $p->setPostTitle($name);
                 $p->setPostContent($article);
             }
+
+            if ($status === 'future') {
+                $publication = $this->prepareArticlePublication($status, $scheduledAt);
+                $p->setPostDate($publication['postDate']);
+                $p->setPostDateGmt($publication['postDateGmt']);
+            } elseif ($status === 'publish' && $previousStatus === 'future') {
+                $publication = $this->prepareArticlePublication($status);
+                $p->setPostDate($publication['postDate']);
+                $p->setPostDateGmt($publication['postDateGmt']);
+            }
+
             $p->setPostStatus($status);
             $p->setPostName($this->slugify($name));
             $this->entityManager->persist($p);
@@ -4341,6 +4355,55 @@ class ServiceManager
         }
 
         return $p->getid();
+    }
+
+    /**
+     * Prépare le statut et les dates de publication d'un article.
+     * post_date est conservée en heure de Paris et post_date_gmt en UTC.
+     */
+    public function prepareArticlePublication($status, $scheduledAt = null)
+    {
+        $allowedStatuses = ['draft', 'publish', 'future', 'trash'];
+        if (!in_array($status, $allowedStatuses, true)) {
+            throw new \InvalidArgumentException('Statut de publication invalide.');
+        }
+
+        $parisTimeZone = new DateTimeZone('Europe/Paris');
+        $utcTimeZone = new DateTimeZone('UTC');
+        $now = new DateTime('now', $parisTimeZone);
+
+        if ($status === 'future') {
+            $scheduledAt = trim((string) $scheduledAt);
+            $publicationDate = DateTime::createFromFormat(
+                '!Y-m-d\\TH:i',
+                $scheduledAt,
+                $parisTimeZone
+            );
+            $dateErrors = DateTime::getLastErrors();
+
+            if (
+                !$publicationDate
+                || ($dateErrors !== false && ($dateErrors['warning_count'] > 0 || $dateErrors['error_count'] > 0))
+                || $publicationDate->format('Y-m-d\\TH:i') !== $scheduledAt
+            ) {
+                throw new \InvalidArgumentException('La date de publication planifiée est invalide.');
+            }
+
+            if ($publicationDate <= $now) {
+                throw new \InvalidArgumentException('La date de publication doit être future.');
+            }
+        } else {
+            $publicationDate = $now;
+        }
+
+        $publicationDateGmt = clone $publicationDate;
+        $publicationDateGmt->setTimezone($utcTimeZone);
+
+        return [
+            'status' => $status,
+            'postDate' => $publicationDate,
+            'postDateGmt' => $publicationDateGmt,
+        ];
     }
 
     /**
@@ -6333,11 +6396,17 @@ class ServiceManager
         $sql = 'SELECT DISTINCT wp.* ,wp.guid as title,wp.guid as descriptionPost,
             wp.guid as imagePost
             FROM wp_posts wp
-            WHERE wp.post_type =:categoriePost and wp.post_status=:statut
+            WHERE wp.post_type =:categoriePost
+              and (wp.post_status=:statut or wp.post_status=:scheduledStatus)
+              and wp.post_date_gmt <= UTC_TIMESTAMP()
             ORDER BY wp.id DESC';
 
         $stmt = $conn->prepare($sql);
-        $stmt = $stmt->executeQuery(['statut' => 'publish', 'categoriePost' => 'post']);
+        $stmt = $stmt->executeQuery([
+            'statut' => 'publish',
+            'scheduledStatus' => 'future',
+            'categoriePost' => 'post',
+        ]);
 
         $data = $stmt->fetchAllAssociative();
         for ($i = 0; $i < sizeof($data); $i++) {
@@ -6396,12 +6465,18 @@ class ServiceManager
         $sql = 'SELECT DISTINCT wp.* ,wp.guid as title,wp.guid as descriptionPost,
             wp.guid as imagePost
             FROM wp_posts wp
-            WHERE wp.post_type =:categoriePost and wp.post_status=:statut
+            WHERE wp.post_type =:categoriePost
+              and (wp.post_status=:statut or wp.post_status=:scheduledStatus)
+              and wp.post_date_gmt <= UTC_TIMESTAMP()
             ORDER BY wp.id DESC
             LIMIT ' . $number;
 
         $stmt = $conn->prepare($sql);
-        $stmt = $stmt->executeQuery(['statut' => 'publish', 'categoriePost' => 'post']);
+        $stmt = $stmt->executeQuery([
+            'statut' => 'publish',
+            'scheduledStatus' => 'future',
+            'categoriePost' => 'post',
+        ]);
 
         $data = $stmt->fetchAllAssociative();
         for ($i = 0; $i < sizeof($data); $i++) {
@@ -6465,12 +6540,16 @@ class ServiceManager
             JOIN wp_term_relationships wtr ON wp.id=wtr.object_id
             JOIN wp_term_taxonomy wtt ON wtr.term_taxonomy_id=wtt.term_taxonomy_id
             JOIN wp_terms wpSousCategorie ON wtt.term_id=wpSousCategorie.term_id
-            WHERE wp.post_type =:categoriePost and wp.post_status =:statut and wpSousCategorie.slug =:tag
+            WHERE wp.post_type =:categoriePost
+              and (wp.post_status=:statut or wp.post_status=:scheduledStatus)
+              and wp.post_date_gmt <= UTC_TIMESTAMP()
+              and wpSousCategorie.slug =:tag
             ORDER BY wp.id DESC';
 
         $stmt = $conn->prepare($sql);
         $stmt = $stmt->executeQuery([
             'statut' => 'publish',
+            'scheduledStatus' => 'future',
             'categoriePost' => 'post',
             'tag' => $tag,
         ]);
@@ -6566,15 +6645,23 @@ class ServiceManager
         $data = $this->entityManager
             ->createQuery(
                 'SELECT wp FROM App\Entity\WpPosts wp
-            WHERE wp.postName=:postName and wp.postType=:postType and wp.postStatus=:postStatus'
+            WHERE wp.postName=:postName
+              and wp.postType=:postType
+              and wp.postStatus IN (:postStatuses)
+              and wp.postDateGmt <= :publicationDate'
             )
             ->setParameters([
                 'postName' => $slug,
                 'postType' => 'post',
-                'postStatus' => 'publish',
+                'postStatuses' => ['publish', 'future'],
+                'publicationDate' => new DateTime('now', new DateTimeZone('UTC')),
             ])
             ->setMaxResults(1)
             ->getOneOrNullResult();
+
+        if (!$data) {
+            return null;
+        }
 
         $img = $this->entityManager
             ->getRepository(wpPosts::class)
@@ -6617,12 +6704,16 @@ class ServiceManager
         JOIN wp_term_relationships wtr ON wp.id=wtr.object_id
         JOIN wp_term_taxonomy wtt ON wtr.term_taxonomy_id=wtt.term_taxonomy_id
         JOIN wp_terms wpSousCategorie ON wtt.term_id=wpSousCategorie.term_id
-        WHERE wp.post_type =:categoriePost and wp.post_status =:statut and wpSousCategorie.slug =:tag
+        WHERE wp.post_type =:categoriePost
+          and (wp.post_status=:statut or wp.post_status=:scheduledStatus)
+          and wp.post_date_gmt <= UTC_TIMESTAMP()
+          and wpSousCategorie.slug =:tag
         ORDER BY wp.id DESC';
 
         $stmt = $conn->prepare($sql);
         $stmt = $stmt->executeQuery([
             'statut' => 'publish',
+            'scheduledStatus' => 'future',
             'categoriePost' => 'post',
             'tag' => $data1,
         ]);
@@ -6699,13 +6790,16 @@ class ServiceManager
         JOIN wp_term_relationships wtr ON wp.id=wtr.object_id
         JOIN wp_term_taxonomy wtt ON wtr.term_taxonomy_id=wtt.term_taxonomy_id
         JOIN wp_terms wpSousCategorie ON wtt.term_id=wpSousCategorie.term_id
-        WHERE wp.post_type =:categoriePost and wp.post_status =:statut
+        WHERE wp.post_type =:categoriePost
+          and (wp.post_status=:statut or wp.post_status=:scheduledStatus)
+          and wp.post_date_gmt <= UTC_TIMESTAMP()
         ORDER BY wp.ID DESC
         LIMIT ' . $number;
 
         $stmt = $conn->prepare($sql);
         $stmt = $stmt->executeQuery([
             'statut' => 'publish',
+            'scheduledStatus' => 'future',
             'categoriePost' => 'post'
         ]);
 

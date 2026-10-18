@@ -83,13 +83,22 @@
                             <input type="hidden" name="image_guid" value="" id="image_guid">
 
                             <div class="form-group">
-                                <select name="status" required class="form-control">
+                                <select name="status" id="status" required class="form-control">
                                     <option disabled>Status</option>
                                     <option value="draft" {% if article.postStatus == 'draft' %} selected {% endif %}>{{ 'admin.annonce.draft'|trans }}</option>
                                     <option value="publish" {% if article.postStatus == 'publish' %} selected {% endif %}>{{ 'admin.annonce.publish'|trans }}</option>
+                                    <option value="future" {% if article.postStatus == 'future' %} selected {% endif %}>Planifié</option>
                                     <option value="trash" {% if article.postStatus == 'trash' %} selected {% endif %}>{{ 'admin.annonce.trash'|trans }}</option>
 
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduled_at">Date et heure de publication</label>
+                                <input type="datetime-local" name="scheduled_at" id="scheduled_at"
+                                       min="{{ d|date('Y-m-d\\TH:i') }}"
+                                       value="{% if article.postStatus == 'future' %}{{ article.postDate|date('Y-m-d\\TH:i') }}{% endif %}"
+                                       class="form-control">
+                                <small class="form-text text-muted">Heure de Paris. Requis pour le statut « Planifié ».</small>
                             </div>
                             <div class="form-group">
                                 <label for="meta_desc">Méta description</label>
@@ -169,6 +178,10 @@
             e.preventDefault();
             let temp = tinymce.activeEditor.getContent();
             $('#article1').val(temp);
+            if ($('#status').val() === 'future' && $('#scheduled_at').val() === '') {
+                toastr.error('Veuillez choisir une date et une heure de publication.');
+                return false;
+            }
             let $form = $(this);
             let submitArticle = function () {
                 let formdata = (window.FormData) ? new FormData($form[0]) : null;
@@ -191,10 +204,10 @@
                             toastr.error('Une erreur survenue');
                         }
                     },
-                    error: function () {
+                    error: function (response) {
                         $('#send').removeClass('running');
                         toastr.clear();
-                        toastr.error('Une erreur survenue');
+                        toastr.error(response.responseText || 'Une erreur survenue');
                     }
                 });
             };

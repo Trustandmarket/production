@@ -108,12 +108,22 @@
                             <input type="hidden" name="status" value="publish" id="status">
                             <input type="hidden" name="image_guid" value="" id="image_guid">
 
+                            <div class="form-group mt-3">
+                                <label for="scheduled_at">Date et heure de publication</label>
+                                <input type="datetime-local" name="scheduled_at" id="scheduled_at"
+                                       min="{{ d|date('Y-m-d\\TH:i') }}" class="form-control">
+                                <small class="form-text text-muted">Heure de Paris. Requis uniquement pour une publication planifiée.</small>
+                            </div>
+
                             <div class="m-3">
                                 <button type="button" id="brouillon" style="float:left"
                                         class="btn btn-warning btn-sm btn-lg ld-over-inverse ">Sauvegarder en
                                     brouillon<i class="ld ld-ring ld-spin"></i></button>
                                 <button type="submit" id="send" style="float:right;position:relative"
                                         class="btn btn-success btn-sm btn-lg ld-over-inverse ">{{ 'admin.article.post'|trans }}
+                                    <i class="ld ld-ring ld-spin"></i></button>
+                                <button type="button" id="planifier" style="float:right;position:relative;margin-right:10px"
+                                        class="btn btn-info btn-sm btn-lg ld-over-inverse">Planifier
                                     <i class="ld ld-ring ld-spin"></i></button>
                             </div>
                         </form>
@@ -163,6 +173,11 @@
             var temp = tinymce.activeEditor.getContent();
             $('#article1').val(temp);
 
+            if ($('#status').val() === 'future' && $('#scheduled_at').val() === '') {
+                toastr.error('Veuillez choisir une date et une heure de publication.');
+                return false;
+            }
+
             var $form = $(this);
             var submitArticle = function () {
                 var formdata = (window.FormData) ? new FormData($form[0]) : null;
@@ -189,7 +204,7 @@
                     error: function (reponse) {
                         $('#send').removeClass('running');
                         toastr.clear();
-                        toastr.error('{{ 'erreur'|trans }}');
+                        toastr.error(reponse.responseText || '{{ 'erreur'|trans }}');
                     }
                 });
             };
@@ -218,6 +233,14 @@
             $('#article').submit();
 
 
+        });
+        $(document).on('click', '#planifier', function (e) {
+            e.preventDefault();
+            $('#status').val('future');
+            $('#article').submit();
+        });
+        $(document).on('click', '#send', function () {
+            $('#status').val('publish');
         });
 
         toastr.options = {

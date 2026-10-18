@@ -138,13 +138,21 @@ class ArticleController extends AbstractController
     /**
      * @Route("/{_locale}/admin/admin_create_post", name="admin_create_post")
      */
-    public function submitAnnonce(Request $request, SessionInterface $session)
+    public function submitAnnonce(Request $request)
     {
         $u = $this->getUser();
         $uid = $u->getId();
-        $date = new DateTime();
         $id = 0;
         if ($request->get('titre') != '') {
+            try {
+                $publication = $this->sm->prepareArticlePublication(
+                    $request->get('status'),
+                    $request->get('scheduled_at')
+                );
+            } catch (\InvalidArgumentException $exception) {
+                return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+            }
+
             $ids = explode(', ', $request->get('titre'));
             $name = $this->sm->slugify($request->get('titre'));
             for ($i = 1; $i < sizeof($ids); $i++) {
@@ -155,8 +163,8 @@ class ArticleController extends AbstractController
 
             $id = $this->sm->createPosts(
                 $uid,
-                $date,
-                $date,
+                $publication['postDate'],
+                $publication['postDateGmt'],
                 $request->get('description'),
                 $request->get('titre'),
                 $request->get('titre'),
@@ -167,8 +175,8 @@ class ArticleController extends AbstractController
                 $name,
                 $name,
                 $name,
-                $date,
-                $date,
+                $publication['postDate'],
+                $publication['postDateGmt'],
                 $request->get('description'),
                 0,
                 $request->get('titre'),
@@ -203,24 +211,28 @@ class ArticleController extends AbstractController
     /**
      * @Route("/{_locale}/admin/admin_edit_post", name="admin_edit_post")
      * @param Request $request
-     * @param SessionInterface $session
      * @return Response
      */
-    public function updateAnnonce(Request $request, SessionInterface $session)
+    public function updateAnnonce(Request $request)
     {
         $u = $this->getUser();
         $uid = $u->getId();
         $id = 0;
 
         if ($request->get('titre') != '' && $uid > 0) {
-            $id = $this->sm->updateArticle(
-                $request->get('titre'),
-                $request->get('description'),
-                $request->get('id'),
-                $request->get('status'),
-                $request->get('categorie'),
-                $request->getLocale()
-            );
+            try {
+                $id = $this->sm->updateArticle(
+                    $request->get('titre'),
+                    $request->get('description'),
+                    $request->get('id'),
+                    $request->get('status'),
+                    $request->get('categorie'),
+                    $request->getLocale(),
+                    $request->get('scheduled_at')
+                );
+            } catch (\InvalidArgumentException $exception) {
+                return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+            }
 
             if ($request->get('meta_desc')) {
                 $meta_desc = $this->sm->readPostMeta($id, 'meta_desc');
