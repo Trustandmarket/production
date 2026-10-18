@@ -2,6 +2,9 @@
 {% block page_title %}Modification de l'article{% endblock %}
 
 {% block main %}
+    {% set articles_list_url = ea_url()
+        .setController('App\\Controller\\Admin\\Articles\\Articles\\WpPostsCrudController')
+        .setAction('index') %}
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
           integrity="sha512-FOS5ANNUsuvefA5Fm6hZBLsxqfF105LIysEgV8VNz29jZLVYIhI+MOLKPBmMXgkHhARFHf5pE7KbXOLE6TXW0A=="
@@ -55,7 +58,7 @@
                             <i class="fa fa-check"></i>
                             <i class="fa fa-check"></i>
                             Article modifié avec succès<br>
-                            <a href="?entity=Article&action=list&menuIndex=4&submenuIndex=0" style="margin-left:50px">
+                            <a href="{{ articles_list_url }}" style="margin-left:50px">
                                 <span class="badge badge-pill badge-info">{{ 'admin.menu.all-post'|trans }}</span>
                             </a>
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -199,6 +202,7 @@
                             toastr.success('Article modifié avec succès');
                             $('#success').show();
                             $('html,body').scrollTop(0);
+                            window.location.href = "{{ articles_list_url }}";
                         } else if (response == 0) {
                             $('#send').removeClass('running');
                             toastr.clear();
