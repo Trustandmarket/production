@@ -199,7 +199,7 @@
                             toastr.success('Article modifié avec succès');
                             $('#success').show();
                             $('html,body').scrollTop(0);
-                            window.location.href = "{{ articles_list_url }}";
+                            window.location.href = "{{ articles_list_url|escape('js') }}";
                         } else if (response == 0) {
                             $('#send').removeClass('running');
                             toastr.clear();

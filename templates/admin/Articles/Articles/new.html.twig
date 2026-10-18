@@ -194,7 +194,7 @@
                             toastr.success('Enregistrement terminé');
                             $('#success').show();
                             $('html,body').scrollTop(0);
-                            window.location.href = "{{ articles_list_url }}";
+                            window.location.href = "{{ articles_list_url|escape('js') }}";
                         } else if (reponse == 0) {
                             $('#send').removeClass('running');
                             toastr.clear();
