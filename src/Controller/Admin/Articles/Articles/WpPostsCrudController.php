@@ -86,6 +86,10 @@ class WpPostsCrudController extends AbstractCrudController
             'categorie' => $this->service_manager->postCategorie('category', 0),
             'lang' => $context->getRequest()->getLocale(),
             'd' => new \DateTime('now', new \DateTimeZone('Europe/Paris')),
+            'articles_list_url' => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Crud::PAGE_INDEX)
+                ->generateUrl(),
         ]);
     }
 
@@ -110,6 +114,10 @@ class WpPostsCrudController extends AbstractCrudController
             'img' => $img,
             'lang' => $context->getRequest()->getLocale(),
             'd' => new \DateTime('now', new \DateTimeZone('Europe/Paris')),
+            'articles_list_url' => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Crud::PAGE_INDEX)
+                ->generateUrl(),
         ]);
     }
 
