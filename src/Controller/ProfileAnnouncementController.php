@@ -74,13 +74,26 @@ class ProfileAnnouncementController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $r = $this->em->getRepository(WpPosts::class)->find($request->get('id'));
-        if ($r->getPostType() == 'product') {
+        if (!$r instanceof WpPosts) {
+            throw $this->createNotFoundException('Annonce introuvable.');
+        }
+
+        if ((int) $r->getPostAuthor() !== (int) $this->getUser()->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer cette annonce.');
+        }
+
+        if ($r->getPostStatus() === 'trash') {
+            $this->service_manager->deleteProductAll($r->getId());
+        } elseif ($r->getPostType() == 'product') {
             $r->setPostStatus('trash');
+            $this->em->persist($r);
+            $this->em->flush();
         } else {
             $r->setPostType('draft-delete');
+            $this->em->persist($r);
+            $this->em->flush();
         }
-        $this->em->persist($r);
-        $this->em->flush();
+
         return $this->render('admin/resultat.html.twig', [
             'result' => 1,
         ]);
